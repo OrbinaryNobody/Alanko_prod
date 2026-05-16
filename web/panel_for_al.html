@@ -1,0 +1,3834 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Studio Alanko — Admin Panel</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+
+  <style>
+
+    :root {
+      --color-bg: #05060a;
+      --color-text: #ffffff;
+      --color-muted: rgba(255,255,255,0.6);
+
+      --pal-dark-green: #2C473E;
+      --pal-mid-green: #6A8E4E;
+      --pal-light-green: #B0D182;
+      --pal-off-white: #F4F1EA;
+
+      --radius-card: 28px;
+      --radius-pill: 999px;
+
+      --container-width: 1450px;
+
+      --glass-bg: rgba(255,255,255,0.03);
+      --glass-border: rgba(255,255,255,0.06);
+
+      --font-main: 'Inter', sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--color-bg);
+      color: white;
+      font-family: var(--font-main);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+
+      background:
+        radial-gradient(circle at top left, rgba(176,209,130,0.08), transparent 25%),
+        radial-gradient(circle at bottom right, rgba(106,142,78,0.08), transparent 25%);
+
+      z-index: -1;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      max-width: var(--container-width);
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+    
+
+    /* =========================================
+       HEADER
+    ========================================= */
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 999;
+
+      backdrop-filter: blur(20px);
+
+      background: rgba(5,6,10,0.75);
+
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .header-inner {
+      height: 90px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: 1rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    nav {
+      display: flex;
+      gap: 12px;
+    }
+
+    .pill {
+      padding: 10px 18px;
+
+      border-radius: var(--radius-pill);
+
+      border: 1px solid rgba(255,255,255,0.08);
+
+      background: rgba(255,255,255,0.03);
+
+      transition: 0.3s;
+
+      font-size: 0.85rem;
+    }
+
+    .pill:hover,
+    .pill.active {
+      background: var(--pal-mid-green);
+      border-color: var(--pal-mid-green);
+    }
+
+    .admin-badge {
+      padding: 10px 18px;
+
+      border-radius: 16px;
+
+      background: rgba(176,209,130,0.08);
+
+      border: 1px solid rgba(176,209,130,0.2);
+
+      color: var(--pal-light-green);
+
+      font-size: 0.8rem;
+    }
+
+    /* =========================================
+       HERO
+    ========================================= */
+
+    .hero {
+      padding: 110px 0 70px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 30px;
+    }
+
+    .hero-left {
+      position: relative;
+
+      overflow: hidden;
+
+      border-radius: 40px;
+
+      padding: 60px;
+
+      min-height: 500px;
+
+      background:
+        linear-gradient(
+          135deg,
+          rgba(176,209,130,0.08),
+          rgba(255,255,255,0.02)
+        );
+
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .hero-left::before {
+      content: "";
+
+      position: absolute;
+
+      width: 500px;
+      height: 500px;
+
+      border-radius: 50%;
+
+      background: rgba(176,209,130,0.08);
+
+      filter: blur(100px);
+
+      top: -200px;
+      right: -100px;
+    }
+
+    .hero-label {
+      color: var(--pal-mid-green);
+
+      text-transform: uppercase;
+
+      letter-spacing: 3px;
+
+      font-size: 0.85rem;
+
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      font-size: 5rem;
+      line-height: 0.95;
+      font-weight: 900;
+
+      margin-bottom: 24px;
+    }
+
+    .hero p {
+      max-width: 620px;
+
+      line-height: 1.8;
+
+      color: var(--color-muted);
+
+      margin-bottom: 40px;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .hero-btn {
+      padding: 16px 28px;
+
+      border-radius: 16px;
+
+      border: none;
+
+      cursor: pointer;
+
+      font-weight: 700;
+
+      transition: 0.35s;
+    }
+
+    .hero-btn.primary {
+      background: var(--pal-light-green);
+      color: #0a0c14;
+
+      box-shadow: 0 10px 40px rgba(176,209,130,0.18);
+    }
+
+    .hero-btn.primary:hover {
+      transform: translateY(-3px) scale(1.03);
+    }
+
+    .hero-btn.secondary {
+      background: rgba(255,255,255,0.04);
+
+      border: 1px solid rgba(255,255,255,0.08);
+
+      color: white;
+    }
+
+    .hero-btn.secondary:hover {
+      background: rgba(255,255,255,0.08);
+    }
+
+    /* =========================================
+       STATS
+    ========================================= */
+
+    .hero-right {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+    }
+
+    .stat-card {
+      position: relative;
+
+      overflow: hidden;
+
+      min-height: 230px;
+
+      border-radius: 30px;
+
+      padding: 30px;
+
+      background: var(--glass-bg);
+
+      border: 1px solid var(--glass-border);
+
+      backdrop-filter: blur(20px);
+
+      transition: 0.35s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-6px);
+
+      box-shadow:
+        0 20px 60px rgba(0,0,0,0.45),
+        0 0 40px rgba(176,209,130,0.08);
+    }
+
+    .stat-icon {
+      width: 60px;
+      height: 60px;
+
+      border-radius: 18px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: 1.5rem;
+
+      background: rgba(176,209,130,0.08);
+
+      color: var(--pal-light-green);
+
+      margin-bottom: 24px;
+    }
+
+    .stat-number {
+      font-size: 3rem;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    .stat-label {
+      color: var(--color-muted);
+    }
+
+    /* =========================================
+       SECTION
+    ========================================= */
+
+    section {
+      padding: 40px 0 100px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+
+      margin-bottom: 40px;
+    }
+
+    .section-header h2 {
+      font-size: 2rem;
+      font-weight: 800;
+    }
+
+    .header-line {
+      flex: 1;
+      height: 1px;
+
+      margin-left: 20px;
+
+      background:
+        linear-gradient(
+          90deg,
+          rgba(255,255,255,0.1),
+          transparent
+        );
+    }
+
+    /* =========================================
+       STUDENT GRID
+    ========================================= */
+
+    .students-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  align-items: start;
+}
+
+#studentsAchievementsGrid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+  align-items: stretch;
+}
+
+#studentsAchievementsGrid .student-card {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 220px;
+}
+
+#studentsAchievementsGrid .student-image {
+  flex: 1;
+  min-height: 0;
+}
+
+#studentsAchievementsGrid .student-info {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.student-card {
+  position: relative;
+  overflow: hidden;
+
+  border-radius: 24px;
+
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+
+  transition: 0.35s;
+
+  display: flex;
+  flex-direction: column;
+
+  height: fit-content;
+}
+
+    .student-card:hover {
+      transform: translateY(-8px);
+
+      box-shadow:
+        0 20px 60px rgba(0,0,0,0.45),
+        0 0 40px rgba(176,209,130,0.08);
+    }
+.student-image {
+  height: 220px;
+  overflow: hidden;
+}
+
+.student-image img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  transition: 0.5s;
+}
+
+.student-info {
+  padding: 18px;
+}
+
+.student-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 10px;
+}
+
+.student-name {
+  font-size: 1.05rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.student-move {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 46px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.student-move.up {
+  color: #d8ffda;
+  background: rgba(114, 255, 151, 0.16);
+  border: 1px solid rgba(114, 255, 151, 0.3);
+}
+
+.student-move.down {
+  color: #9ae78d;
+  background: rgba(34, 86, 33, 0.18);
+  border: 1px solid rgba(86, 167, 97, 0.3);
+}
+
+.student-score-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 12px 0 10px;
+}
+
+.student-score {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.95rem;
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.score-move-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--color-text);
+  font-size: 1rem;
+  transition: 0.2s ease;
+}
+
+.score-move-badge.up {
+  background: rgba(114, 255, 151, 0.18);
+  border-color: rgba(114, 255, 151, 0.35);
+  color: #b8ffbf;
+}
+
+.score-move-badge.down {
+  background: rgba(255, 98, 98, 0.12);
+  border-color: rgba(255, 98, 98, 0.35);
+  color: #ffb7b7;
+}
+
+.student-age {
+  color: var(--pal-light-green);
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.student-group {
+  color: var(--color-muted);
+
+  margin-bottom: 14px;
+
+  line-height: 1.45;
+  font-size: 0.84rem;
+}
+
+.student-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  flex: 1;
+
+  padding: 10px 12px;
+
+  border-radius: 16px;
+
+  border: none;
+
+  cursor: pointer;
+
+  font-size: 0.76rem;
+  font-weight: 700;
+
+  transition: 0.3s;
+}
+
+    .action-btn.primary {
+      background: var(--pal-mid-green);
+      color: white;
+    }
+
+    .action-btn.secondary {
+      background: rgba(255,255,255,0.04);
+
+      border: 1px solid rgba(255,255,255,0.08);
+
+      color: white;
+    }
+
+    .action-btn:hover {
+      transform: scale(1.03);
+    }
+
+    /* =========================================
+       ADD STUDENT
+    ========================================= */
+
+.admin-layout {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+    .glass-panel {
+      background: var(--glass-bg);
+
+      border: 1px solid var(--glass-border);
+
+      border-radius: 30px;
+
+      padding: 34px;
+
+      backdrop-filter: blur(20px);
+    }
+
+    .glass-panel h3 {
+      font-size: 1.4rem;
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+
+      margin-bottom: 10px;
+
+      color: var(--color-muted);
+
+      font-size: 0.9rem;
+    }
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+
+  padding: 18px 20px;
+
+  border-radius: 18px;
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  background: rgba(255,255,255,0.045);
+
+  color: white;
+
+  outline: none;
+
+  font-size: 0.95rem;
+
+  transition:
+    border-color 0.25s ease,
+    background 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: rgba(176,209,130,0.7);
+
+  background: rgba(255,255,255,0.06);
+
+  box-shadow:
+    0 0 0 4px rgba(176,209,130,0.08);
+}
+
+    textarea {
+      resize: none;
+      min-height: 120px;
+    }
+
+    .upload-zone {
+      border: 2px dashed rgba(176,209,130,0.3);
+
+      border-radius: 24px;
+
+      padding: 40px 20px;
+
+      text-align: center;
+
+      cursor: pointer;
+
+      transition: 0.3s;
+
+      position: relative;
+    }
+
+    .upload-zone:hover {
+      background: rgba(176,209,130,0.04);
+    }
+
+    .upload-zone iconify-icon {
+      font-size: 2rem;
+
+      color: var(--pal-light-green);
+
+      margin-bottom: 12px;
+    }
+
+    .upload-file-name {
+      margin-top: 12px;
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.78);
+      min-height: 1.2em;
+    }
+
+    .login-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.92);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 24px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s ease, visibility 0.25s ease;
+    }
+
+    .login-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .login-box {
+      width: min(520px, 100%);
+      background: #0f1118;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 30px;
+      padding: 34px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.45);
+    }
+
+    .login-box h2 {
+      margin-bottom: 22px;
+      font-size: 1.8rem;
+    }
+
+    .login-box .form-group {
+      margin-bottom: 18px;
+    }
+
+    .login-box input {
+      width: 100%;
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04);
+      color: white;
+      outline: none;
+    }
+
+    .login-box .login-error {
+      color: #f87171;
+      margin-top: 8px;
+      min-height: 22px;
+      font-size: 0.9rem;
+    }
+
+    .submit-btn {
+      width: 100%;
+
+      padding: 18px;
+
+      border: none;
+
+      border-radius: 16px;
+
+      background: var(--pal-light-green);
+
+      color: #0a0c14;
+
+      font-weight: 800;
+
+      cursor: pointer;
+
+      margin-top: 14px;
+
+      transition: 0.35s;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-3px);
+
+      box-shadow: 0 10px 40px rgba(176,209,130,0.18);
+    }
+
+    /* =========================================
+       ACHIEVEMENTS
+    ========================================= */
+
+    .achievements-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .achievement-card {
+      position: relative;
+
+      overflow: hidden;
+
+      border-radius: 30px;
+
+      min-height: 420px;
+
+      display: flex;
+      align-items: flex-end;
+
+      padding: 30px;
+
+      background-size: cover;
+      background-position: center;
+
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .achievement-card::before {
+      content: "";
+
+      position: absolute;
+      inset: 0;
+
+      background:
+        linear-gradient(
+          to top,
+          rgba(0,0,0,0.9),
+          rgba(0,0,0,0.25)
+        );
+    }
+
+    .achievement-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .achievement-content h3 {
+      font-size: 2rem;
+      margin-bottom: 12px;
+    }
+
+    .achievement-content p {
+      color: rgba(255,255,255,0.7);
+
+      line-height: 1.7;
+
+      margin-bottom: 20px;
+    }
+
+    .achievement-tags {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .achievement-tag {
+      padding: 10px 14px;
+
+      border-radius: 16px;
+
+      background: rgba(255,255,255,0.08);
+
+      border: 1px solid rgba(255,255,255,0.1);
+
+      font-size: 0.75rem;
+    }
+
+    /* =========================================
+       RESPONSIVE
+    ========================================= */
+
+    @media (max-width: 1200px) {
+
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .admin-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .students-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+    }
+
+    @media (max-width: 768px) {
+
+      .hero h1 {
+        font-size: 3rem;
+      }
+
+      .hero-left {
+        padding: 40px;
+      }
+
+      .students-grid,
+      .achievements-grid,
+      .hero-right {
+        grid-template-columns: 1fr;
+      }
+
+      nav {
+        display: none;
+      }
+
+      .container {
+        padding: 0 20px;
+      }
+
+    }
+
+
+    /* =========================================
+   COLLECTIVE ACHIEVEMENTS
+========================================= */
+
+.collective-achievements-section {
+  padding: 40px 0 120px;
+}
+
+.collective-layout {
+  display: grid;
+  grid-template-columns: 430px 1fr;
+  gap: 28px;
+}
+
+/* LEFT PANEL */
+
+.achievement-create-panel {
+  position: sticky;
+  top: 120px;
+
+  height: fit-content;
+}
+
+.panel-label {
+  color: var(--pal-mid-green);
+
+  font-size: 0.8rem;
+
+  letter-spacing: 3px;
+
+  margin-bottom: 18px;
+}
+
+.achievement-create-panel h3 {
+  font-size: 2rem;
+
+  margin-bottom: 14px;
+}
+
+.panel-description {
+  color: var(--color-muted);
+
+  line-height: 1.7;
+
+  margin-bottom: 32px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.upload-title {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.upload-sub {
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+
+.video-zone {
+  border-color: rgba(106,142,78,0.45);
+}
+
+.publish-btn {
+  margin-top: 20px;
+
+  width: 100%;
+
+  border: none;
+
+  border-radius: 16px;
+
+  padding: 18px;
+
+  background: var(--pal-light-green);
+
+  color: #05060a;
+
+  font-weight: 800;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  cursor: pointer;
+
+  transition: 0.35s;
+}
+
+.publish-btn:hover {
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 15px 40px rgba(176,209,130,0.25);
+}
+
+.right-panel {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+.showcase-card {
+  position: relative;
+
+  min-height: 260px;
+
+  border-radius: 34px;
+
+  overflow: hidden;
+
+  background-size: cover;
+  background-position: center;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  padding: 28px;
+
+  border: 1px solid rgba(255,255,255,0.06);
+
+  transition: 0.45s;
+}
+
+.showcase-card:hover {
+  transform: translateY(-10px);
+
+  box-shadow:
+    0 30px 80px rgba(0,0,0,0.5),
+    0 0 60px rgba(176,209,130,0.08);
+}
+
+.showcase-overlay {
+  position: absolute;
+  inset: 0;
+
+  background:
+    linear-gradient(
+      to top,
+      rgba(0,0,0,0.92),
+      rgba(0,0,0,0.15)
+    );
+}
+
+.showcase-top,
+.showcase-content {
+  position: relative;
+  z-index: 2;
+}
+
+.showcase-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.achievement-status {
+  padding: 10px 16px;
+
+  border-radius: 16px;
+
+  background: rgba(176,209,130,0.12);
+
+  border: 1px solid rgba(176,209,130,0.2);
+
+  color: var(--pal-light-green);
+
+  font-size: 0.75rem;
+
+  font-weight: 700;
+
+  letter-spacing: 1px;
+}
+
+.card-action-btn {
+  width: 48px;
+  height: 48px;
+
+  border-radius: 50%;
+
+  border: 1px solid rgba(255,255,255,0.1);
+
+  background: rgba(255,255,255,0.08);
+
+  color: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  backdrop-filter: blur(20px);
+
+  transition: 0.3s;
+}
+
+.card-action-btn:hover {
+  background: var(--pal-mid-green);
+}
+
+.showcase-category {
+  color: var(--pal-light-green);
+
+  font-size: 0.8rem;
+
+  letter-spacing: 2px;
+
+  margin-bottom: 16px;
+}
+
+.showcase-content h3 {
+  font-size: 1.7rem;
+
+  line-height: 1.1;
+
+  margin-bottom: 18px;
+}
+
+.showcase-content p {
+  line-height: 1.6;
+
+  color: rgba(255,255,255,0.72);
+
+  margin-bottom: 18px;
+  font-size: 0.95rem;
+}
+
+.showcase-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.showcase-tag {
+  padding: 10px 16px;
+
+  border-radius: 16px;
+
+  background: rgba(255,255,255,0.08);
+
+  border: 1px solid rgba(255,255,255,0.1);
+
+  font-size: 0.78rem;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 1200px) {
+
+  .collective-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .achievement-create-panel {
+    position: relative;
+    top: auto;
+  }
+
+}
+
+@media (max-width: 768px) {
+
+  .achievements-showcase {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .showcase-card {
+    min-height: 420px;
+  }
+
+}
+
+
+/* =========================================
+   TASK MODAL
+========================================= */
+
+.task-modal {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(0,0,0,0.7);
+
+  backdrop-filter: blur(12px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  opacity: 0;
+  pointer-events: none;
+
+  transition: 0.3s;
+
+  z-index: 5000;
+}
+
+.task-modal.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.task-window {
+  width: min(920px, calc(100% - 40px));
+
+  max-height: 82vh;
+
+  overflow: hidden;
+
+  border-radius: 32px;
+
+  background: #0f1118;
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  padding: 32px;
+
+  box-shadow:
+    0 30px 100px rgba(0,0,0,0.55);
+
+  display: flex;
+  flex-direction: column;
+}
+
+.task-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 28px;
+}
+
+.task-top h3 {
+  font-size: 1.6rem;
+}
+
+.close-modal {
+  width: 42px;
+  height: 42px;
+
+  border-radius: 50%;
+
+  border: none;
+
+  cursor: pointer;
+
+  background: rgba(255,255,255,0.06);
+
+  color: white;
+
+  font-size: 1.2rem;
+}
+
+.task-list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 16px;
+
+  overflow-y: auto;
+
+  padding-right: 8px;
+
+  max-height: calc(82vh - 140px);
+}
+.task-list::-webkit-scrollbar {
+  width: 10px;
+}
+
+.task-list::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.03);
+  border-radius: 999px; 
+}
+
+.task-list::-webkit-scrollbar-thumb {
+  background: rgba(176,209,130,0.35);
+  border-radius: 999px;
+}
+
+.task-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(176,209,130,0.55);
+}
+
+.task-item {
+  padding: 22px;
+
+  border-radius: 24px;
+
+  background: rgba(255,255,255,0.03);
+
+  border: 1px solid rgba(255,255,255,0.06);
+
+  transition: 0.25s ease;
+}
+
+.task-item:hover {
+  background: rgba(255,255,255,0.05);
+
+  border-color: rgba(176,209,130,0.18);
+}
+
+.task-item-title {
+  font-weight: 700;
+
+  margin-bottom: 8px;
+}
+
+.task-item-sub {
+  color: var(--color-muted);
+
+  line-height: 1.5;
+
+  font-size: 0.92rem;
+}
+
+.task-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.task-status.not_started {
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.85);
+}
+
+.task-status.completed {
+  background: rgba(176,209,130,0.18);
+  color: var(--pal-light-green);
+}
+
+.task-status.in_progress {
+  background: rgba(255,193,7,0.15);
+  color: #facc15;
+}
+
+.task-card {
+  margin-bottom: 14px;
+  padding: 16px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.task-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.task-card-title {
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.task-card-details {
+  color: var(--color-muted);
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+.task-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.task-upload-btn,
+.task-view-btn,
+.task-assessment-btn,
+.task-grade-btn {
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  transition: 0.3s;
+}
+
+.task-upload-btn {
+  background: var(--pal-light-green);
+  color: #05060a;
+}
+
+.task-grade-btn {
+  background: rgba(176,209,130,0.2);
+  color: var(--pal-light-green);
+  border: 1px solid rgba(176,209,130,0.4);
+}
+
+.task-grade-btn:hover {
+  background: rgba(176,209,130,0.35);
+  border-color: var(--pal-light-green);
+}
+
+.task-assessment-btn {
+  background: rgba(106,142,78,0.3);
+  color: var(--pal-light-green);
+  border: 1px solid rgba(106,142,78,0.5);
+}
+
+.task-assessment-btn:hover {
+  background: rgba(106,142,78,0.5);
+  border-color: var(--pal-light-green);
+}
+
+.task-view-btn {
+  background: rgba(255,255,255,0.08);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+.task-file-input {
+  display: none;
+}
+
+.modal-subtitle {
+  color: var(--color-muted);
+  margin-top: 6px;
+  font-size: 0.95rem;
+}
+
+/* =========================================
+   ASSESSMENT MODAL
+========================================= */
+
+.assessment-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 6000;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.assessment-modal-overlay.active {
+  display: flex;
+}
+
+.assessment-modal-content {
+  background: var(--color-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 28px;
+  padding: 40px;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  width: 90%;
+  animation: slideUp 0.4s ease-out;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.assessment-close-btn {
+  float: right;
+  background: none;
+  border: none;
+  color: var(--color-muted);
+  font-size: 1.8rem;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.3s;
+}
+
+.assessment-close-btn:hover {
+  color: var(--color-text);
+}
+
+.assessment-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  color: var(--pal-light-green);
+}
+
+.assessment-section {
+  margin-bottom: 28px;
+}
+
+.assessment-section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 14px;
+  color: var(--color-text);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--pal-mid-green);
+}
+
+.assessment-card {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 12px;
+  transition: 0.3s;
+}
+
+.assessment-card:hover {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.1);
+}
+
+.assessment-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.assessment-row:last-child {
+  margin-bottom: 0;
+}
+
+.assessment-label {
+  color: var(--color-muted);
+  font-weight: 500;
+}
+
+.assessment-value {
+  font-weight: 700;
+  color: var(--pal-light-green);
+}
+
+.assessment-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.assessment-indicator.good {
+  background: rgba(106,142,78,0.2);
+  color: var(--pal-light-green);
+  border: 1px solid rgba(106,142,78,0.4);
+}
+
+.assessment-indicator.medium {
+  background: rgba(255,193,7,0.15);
+  color: #FFD700;
+  border: 1px solid rgba(255,193,7,0.3);
+}
+
+.assessment-indicator.poor {
+  background: rgba(255,0,0,0.1);
+  color: #FF6B6B;
+  border: 1px solid rgba(255,0,0,0.2);
+}
+
+.assessment-indicator.gray {
+  background: rgba(255,255,255,0.05);
+  color: var(--color-muted);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.recommendation-text {
+  background: rgba(176,209,130,0.08);
+  border-left: 4px solid var(--pal-mid-green);
+  padding: 14px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--color-text);
+  margin: 16px 0;
+}
+
+.assessment-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.stat-box {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--pal-light-green);
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+
+
+button {
+  font-family: inherit;
+}
+
+.hero-btn,
+.submit-btn,
+.action-btn,
+.task-upload-btn,
+.task-view-btn,
+.task-assessment-btn,
+.task-grade-btn,
+.publish-btn,
+.card-action-btn,
+.close-modal {
+  border-radius: 16px !important;
+
+  border: 1px solid rgba(255,255,255,0.08) !important;
+
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+
+  box-shadow:
+    0 8px 24px rgba(0,0,0,0.18);
+}
+
+
+.action-btn:hover,
+.submit-btn:hover,
+.publish-btn:hover,
+.task-upload-btn:hover,
+.task-view-btn:hover,
+.task-grade-btn:hover,
+.task-assessment-btn:hover {
+  transform: translateY(-2px);
+
+  border-color: rgba(176,209,130,0.5);
+
+  box-shadow:
+    0 12px 30px rgba(0,0,0,0.28);
+}
+
+.achievements-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.achievement-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.achievement-card h4 {
+  margin-bottom: 10px;
+  color: var(--pal-light-green);
+}
+
+.achievement-card p {
+  margin-bottom: 8px;
+  color: var(--color-text);
+}
+
+.achievement-card button {
+  background: var(--pal-light-green);
+  color: #0a0c14;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.achievement-card button:hover {
+  background: var(--pal-mid-green);
+}
+  </style>
+</head>
+
+<body>
+
+<header>
+
+  <div class="container header-inner">
+
+    <div class="logo">
+      STUDIO ALANKO
+    </div>
+
+    <nav>
+      <a href="#" class="pill active">Dashboard</a>
+      <a href="#" class="pill">Students</a>
+      <a href="#" class="pill">Achievements</a>
+      <a href="#" class="pill">Media</a>
+    </nav>
+
+    <div class="admin-badge">
+      ADMIN PANEL
+    </div>
+
+  </div>
+
+</header>
+
+<!-- HERO -->
+
+<section class="hero">
+
+  <div class="container">
+
+    <div class="hero-grid">
+
+      <div class="hero-left">
+
+        <div class="hero-label">
+          ADMIN CONTROL CENTER
+        </div>
+
+        <h1>
+          Studio<br>
+          Alanko<br>
+          Dashboard
+        </h1>
+
+        <p>
+          Управление учениками, достижениями, видеоархивом и внутренней системой платформы. Полный контроль над экосистемой Studio Alanko.
+        </p>
+
+        <div class="hero-buttons">
+
+          <button class="hero-btn primary">
+            Добавить ребёнка
+          </button>
+
+          <button class="hero-btn secondary">
+            Загрузить достижение
+          </button>
+
+        </div>
+
+      </div>
+
+      <div class="hero-right">
+
+        <div class="stat-card">
+
+          <div class="stat-icon">
+            <iconify-icon icon="solar:users-group-rounded-bold"></iconify-icon>
+          </div>
+
+          <div class="stat-number">
+            132
+          </div>
+
+          <div class="stat-label">
+            Активных учеников
+          </div>
+
+        </div>
+
+        <div class="stat-card">
+
+          <div class="stat-icon">
+            <iconify-icon icon="solar:medal-ribbon-star-bold"></iconify-icon>
+          </div>
+
+          <div class="stat-number">
+            48
+          </div>
+
+          <div class="stat-label">
+            Достижений
+          </div>
+
+        </div>
+
+        <div class="stat-card">
+
+          <div class="stat-icon">
+            <iconify-icon icon="solar:video-library-bold"></iconify-icon>
+          </div>
+
+          <div class="stat-number">
+            320
+          </div>
+
+          <div class="stat-label">
+            Загруженных видео
+          </div>
+
+        </div>
+
+        <div class="stat-card">
+
+          <div class="stat-icon">
+            <iconify-icon icon="solar:chart-2-bold"></iconify-icon>
+          </div>
+
+          <div class="stat-number">
+            +18%
+          </div>
+
+          <div class="stat-label">
+            Рост активности
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- STUDENTS -->
+
+<section>
+
+  <div class="container">
+
+    <div class="section-header">
+
+      <h2>
+        Управление учениками и заданиями
+      </h2>
+
+      <div class="header-line"></div>
+
+    </div>
+
+    <div class="admin-layout">
+
+      <!-- LEFT -->
+
+      <div class="glass-panel">
+
+        <!-- TAB BUTTONS -->
+        <div style="display:flex; gap:10px; margin-bottom:30px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:20px;">
+          <button class="tab-btn active" data-tab="student-tab" style="flex:1; padding:12px; border:none; background:none; color:var(--pal-light-green); font-weight:700; cursor:pointer; border-bottom:2px solid var(--pal-light-green);">
+            УЧЕНИКИ
+          </button>
+          <button class="tab-btn" data-tab="achievements-tab" style="flex:1; padding:12px; border:none; background:none; color:var(--color-muted); font-weight:700; cursor:pointer; border-bottom:2px solid transparent;">
+            ДОСТИЖЕНИЯ
+          </button>
+        </div>
+
+        <!-- TAB 1: STUDENTS -->
+        <div id="student-tab" class="tab-content" style="display:block;">
+          <h3>Добавить ребёнка</h3>
+
+        <form id="studentForm">
+          <div class="form-group">
+            <label for="studentEmail">Email</label>
+            <input id="studentEmail" name="email" type="email" placeholder="student@example.com" required>
+          </div>
+
+          <div class="form-group">
+            <label for="studentFirstName">Имя</label>
+            <input id="studentFirstName" name="first_name" type="text" placeholder="Имя" required>
+          </div>
+
+          <div class="form-group">
+            <label for="studentLastName">Фамилия</label>
+            <input id="studentLastName" name="last_name" type="text" placeholder="Фамилия">
+          </div>
+
+          <div class="form-group">
+            <label for="studentMiddleName">Отчество</label>
+            <input id="studentMiddleName" name="middle_name" type="text" placeholder="Отчество" required>
+          </div>
+
+          <div class="form-group">
+            <label>Описание</label>
+            <textarea id="studentDescription" placeholder="Краткое описание ученика"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Фото ученика</label>
+            <div class="upload-zone" id="studentImageZone">
+              <iconify-icon icon="solar:upload-bold"></iconify-icon>
+              <div>
+                Нажмите здесь, чтобы выбрать фото
+              </div>
+              <input id="studentImage" name="image" type="file" accept="image/*" required style="position:absolute; inset:0; width:100%; height:100%; opacity:0; cursor:pointer;" />
+            </div>
+            <img id="studentImagePreview" src="" alt="Превью фото ученика" style="display:none; width:100%; height:auto; margin-top:14px; border-radius:18px; object-fit:cover; border:1px solid rgba(255,255,255,0.08);" />
+          </div>
+
+          <button type="submit" class="submit-btn">
+            СОЗДАТЬ ПРОФИЛЬ
+          </button>
+
+          <div class="login-error" id="studentStatus"></div>
+        </form>
+        </div>
+
+        <!-- TAB 2: ACHIEVEMENTS -->
+        <div id="achievements-tab" class="tab-content" style="display:none;">
+          <h3>Управление достижениями</h3>
+
+          <div class="achievements-list" id="achievementsTabList">
+            <!-- Достижения будут загружены сюда -->
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+
+      <div class="students-grid" id="studentsGrid">
+
+</div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- TASKS MANAGEMENT -->
+
+<section>
+
+  <div class="container">
+
+    <div class="section-header">
+
+      <h2>
+        Управление заданиями
+      </h2>
+
+      <div class="header-line"></div>
+
+    </div>
+
+    <div class="admin-layout">
+
+      <!-- LEFT: CREATE TASK -->
+
+<div class="glass-panel">
+
+  <h3>
+    Добавить задание
+  </h3>
+
+  <!-- CREATE CATEGORY -->
+
+  <div
+    style="
+      padding:20px;
+      border-radius:24px;
+      background:rgba(255,255,255,0.03);
+      border:1px solid rgba(255,255,255,0.06);
+      margin-bottom:26px;
+    "
+  >
+
+    <div
+      style="
+        font-size:0.85rem;
+        letter-spacing:2px;
+        color:var(--pal-light-green);
+        margin-bottom:16px;
+        font-weight:700;
+      "
+    >
+      СОЗДАНИЕ КАТЕГОРИИ
+    </div>
+
+    <div class="form-group" style="margin-bottom:14px;">
+
+      <label>Название категории</label>
+
+      <input
+        id="newCategoryName"
+        type="text"
+        placeholder="Например: Растяжка"
+      >
+
+    </div>
+    <div class="glass-panel achievement-create-panel" style="margin-bottom:14px;">
+      <label>Описание категории</label>
+      <textarea id="newCategoryDescription" placeholder="Краткое описание категории"></textarea>
+    </div>
+
+    <button
+      id="createCategoryButton"
+      type="button"
+      class="submit-btn"
+      style="
+        margin-top:0;
+        padding:16px;
+      "
+    >
+      СОЗДАТЬ КАТЕГОРИЮ
+    </button>
+    <div class="login-error" id="categoryStatus" style="margin-top:12px;"></div>
+
+  </div>
+
+  <!-- CREATE TASK -->
+
+  <div
+    style="
+      font-size:0.85rem;
+      letter-spacing:2px;
+      color:var(--pal-light-green);
+      margin-bottom:20px;
+      font-weight:700;
+    "
+  >
+    СОЗДАНИЕ ЗАДАНИЯ
+  </div>
+
+  <div class="form-group">
+    <label>Название задания</label>
+
+    <input
+      id="newTaskTitle"
+      type="text"
+      placeholder="Например: Продольный шпагат"
+    >
+  </div>
+
+  <div class="form-group">
+    <label>Категория задания</label>
+
+    <select id="newTaskCategorySelect">
+      <option value="">Выберите категорию</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>Максимальный балл</label>
+    <input id="newTaskMaxScore" type="number" min="0" value="100" placeholder="Например: 100">
+  </div>
+
+  <div class="form-group">
+    <label>Описание</label>
+
+    <textarea id="newTaskDescription" placeholder="Опишите задание для ученика"></textarea>
+  </div>
+
+  <button id="createTaskButton" type="button" class="submit-btn">
+    СОЗДАТЬ ЗАДАНИЕ
+  </button>
+  <div class="login-error" id="taskStatus" style="margin-top:12px;"></div>
+
+</div>
+
+      <!-- RIGHT: TASK LIST -->
+
+      <div class="glass-panel">
+
+        <h3>
+          Список заданий
+        </h3>
+
+        <div class="task-list" id="teacherTaskList"></div>
+
+  <div class="task-modal" id="editTaskModal">
+    <div class="task-window">
+      <div class="task-top">
+        <h3>Редактировать задание</h3>
+        <button class="close-modal" id="closeEditTaskModal">✕</button>
+      </div>
+      <form id="editTaskForm">
+        <div class="form-group">
+          <label for="editTaskTitle">Название задания</label>
+          <input id="editTaskTitle" type="text" placeholder="Название задания" required>
+        </div>
+        <div class="form-group">
+          <label for="editTaskCategorySelect">Категория задания</label>
+          <select id="editTaskCategorySelect" required>
+            <option value="">Выберите категорию</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="editTaskDescription">Описание</label>
+          <textarea id="editTaskDescription" placeholder="Описание задания"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="editTaskMaxScore">Максимальный балл</label>
+          <input id="editTaskMaxScore" type="number" min="0" value="100" placeholder="Например: 100">
+        </div>
+        <div class="form-group">
+          <label for="editTaskDeadline">Дедлайн (для будущего)</label>
+          <input id="editTaskDeadline" type="text" placeholder="не назначен" disabled>
+        </div>
+        <button type="submit" class="submit-btn">СОХРАНИТЬ ИЗМЕНЕНИЯ</button>
+        <div class="login-error" id="editTaskStatus" style="margin-top:12px;"></div>
+      </form>
+    </div>
+  </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+<!-- ACHIEVEMENTS ADMIN SECTION -->
+
+<section class="collective-achievements-section">
+
+  <div class="container">
+
+    <div class="section-header">
+
+      <h2>
+        Достижения коллектива
+      </h2>
+
+      <div class="header-line"></div>
+
+    </div>
+
+    <div class="collective-layout">
+
+      <!-- ===================================== -->
+      <!-- LEFT: CREATE ACHIEVEMENT -->
+      <!-- ===================================== -->
+
+      <div class="glass-panel achievement-create-panel">
+
+        <div class="panel-label">
+          COLLECTIVE MANAGEMENT
+        </div>
+
+        <h3>
+          Добавить новое достижение
+        </h3>
+
+        <p class="panel-description">
+          Публикуйте победы, фестивали, шоу, чемпионаты и важные события коллектива Studio Alanko.
+        </p>
+
+        <form id="achievementForm">
+          <div class="form-group">
+            <label for="achievementTitle">Название достижения</label>
+            <input id="achievementTitle" name="title" type="text" placeholder="Например: Чемпионы России" required>
+          </div>
+
+          <div class="form-group">
+            <label for="achievementDescription">Описание</label>
+            <textarea id="achievementDescription" name="description" placeholder="Расскажите подробнее о достижении коллектива"></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="achievementDate">Дата</label>
+              <input id="achievementDate" name="event_date" type="date">
+            </div>
+
+            <div class="form-group">
+              <label for="achievementPlace">Место</label>
+              <input id="achievementPlace" name="place" type="text" placeholder="1 место">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Тип назначения</label>
+            <select id="achievementAssignmentType" name="assignment_type" onchange="toggleStudentSelect()">
+              <option value="collective">Всем ученикам (коллективное достижение)</option>
+              <option value="individual">Одному ученику</option>
+            </select>
+          </div>
+
+          <div class="form-group" id="studentSelectGroup" style="display: none;">
+            <label for="achievementStudent">Выберите ученика</label>
+            <select id="achievementStudent" name="student_id">
+              <option value="">Выберите ученика</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Обложка достижения / медиа</label>
+            <div class="upload-zone">
+              <iconify-icon icon="solar:gallery-add-bold"></iconify-icon>
+              <div class="upload-title">
+                Загрузить фото или видео
+              </div>
+              <div class="upload-sub">
+                PNG / JPG / WEBP / MP4 / PDF
+              </div>
+              <div class="upload-file-name" id="achievementFileName">Файл не выбран</div>
+              <input id="achievementFile" type="file" accept="image/*,video/mp4,application/pdf" style="position:absolute; inset:0; width:100%; height:100%; opacity:0; cursor:pointer;" />
+            </div>
+          </div>
+
+          <button type="submit" class="publish-btn">
+            <iconify-icon icon="solar:medal-ribbon-star-bold"></iconify-icon>
+            Опубликовать достижение
+          </button>
+
+          <div class="login-error" id="achievementStatus"></div>
+        </form>
+
+      </div>
+
+      <!-- ===================================== -->
+      <!-- RIGHT: STUDENTS AND ACHIEVEMENTS -->
+      <!-- ===================================== -->
+
+      <div class="right-panel">
+        <div class="students-grid" id="studentsAchievementsGrid">
+          <div class="student-card">
+            <div class="student-image">
+              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=1200" alt="Загрузка учеников..." loading="lazy">
+            </div>
+            <div class="student-info">
+              <div class="student-top">
+                <div class="student-name">Загрузка...</div>
+              </div>
+              <div class="student-group">Пожалуйста, подождите</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="achievements-showcase" id="achievementsShowcase"></div>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- TASK MODAL -->
+
+<div class="task-modal" id="taskModal">
+
+  <div class="task-window">
+
+    <div class="task-top">
+
+      <div>
+        <h3>
+          Задания ученика
+        </h3>
+        <div class="modal-subtitle" id="taskModalStudentName">Выберите ученика, чтобы увидеть задачи</div>
+      </div>
+
+      <button class="close-modal" id="closeModal">
+        ✕
+      </button>
+
+    </div>
+
+    <div class="task-list" id="taskList"></div>
+
+  </div>
+
+</div>
+
+<!-- ACHIEVEMENTS MODAL -->
+
+<div class="task-modal" id="achievementsModal">
+
+  <div class="task-window">
+
+    <div class="task-top">
+
+      <div>
+        <h3>
+          Достижения ученика
+        </h3>
+        <div class="modal-subtitle" id="achievementsModalStudentName">Выберите ученика, чтобы увидеть достижения</div>
+      </div>
+
+      <button class="close-modal" id="closeAchievementsModal">
+        ✕
+      </button>
+
+    </div>
+
+    <div class="task-list" id="achievementsModalList"></div>
+
+  </div>
+
+</div>
+
+<!-- GRADE TASK MODAL -->
+
+<div class="task-modal" id="gradeTaskModal">
+
+  <div class="task-window">
+
+    <div class="task-top">
+
+      <div>
+        <h3>
+          Оценить задание
+        </h3>
+        <div class="modal-subtitle" id="gradeTaskModalTitle">Оцените выполненное задание</div>
+      </div>
+
+      <button class="close-modal" id="closeGradeTaskModal">
+        ✕
+      </button>
+
+    </div>
+
+    <form id="gradeTaskForm" style="padding: 20px;">
+      <div class="form-group">
+        <label for="gradeTaskStatus">Статус задания</label>
+        <select id="gradeTaskStatus">
+          <option value="not_started">Не начато</option>
+          <option value="in_progress">В работе</option>
+          <option value="completed">Выполнено</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="gradeTaskScore" id="gradeTaskScoreLabel">Оценка (0 - 100)</label>
+        <input id="gradeTaskScore" type="number" min="0" placeholder="Введите оценку">
+      </div>
+
+      <div class="form-group">
+        <label for="gradeTaskComment">Комментарий учителя</label>
+        <textarea id="gradeTaskComment" placeholder="Ваши замечания или похвала..."></textarea>
+      </div>
+
+      <div id="gradeTaskError" style="color: red; margin-bottom: 10px;"></div>
+
+      <button type="submit" class="submit-btn">СОХРАНИТЬ ОЦЕНКУ</button>
+    </form>
+
+  </div>
+
+</div>
+
+<script src="js/auth.js"></script>
+<script>
+const studentsGrid = document.getElementById("studentsGrid");
+const modal = document.getElementById("taskModal");
+const closeButton = document.getElementById("closeModal");
+const gradeTaskModal = document.getElementById("gradeTaskModal");
+const closeGradeTaskModalButton = document.getElementById("closeGradeTaskModal");
+const gradeTaskForm = document.getElementById("gradeTaskForm");
+const gradeTaskStatus = document.getElementById("gradeTaskStatus");
+const gradeTaskScore = document.getElementById("gradeTaskScore");
+const gradeTaskComment = document.getElementById("gradeTaskComment");
+const gradeTaskError = document.getElementById("gradeTaskError");
+const gradeTaskModalTitle = document.getElementById("gradeTaskModalTitle");
+const taskList = document.getElementById("taskList");
+
+let previousPositions = new Map();
+
+function loadStoredPositions() {
+  try {
+    const stored = JSON.parse(localStorage.getItem('studentPositions') || '{}');
+    return new Map(Object.entries(stored).map(([key, value]) => [key, Number(value)]));
+  } catch (error) {
+    console.warn('Не удалось загрузить предыдущие позиции студентов:', error);
+    return new Map();
+  }
+}
+
+function saveStoredPositions(positionMap) {
+  const raw = Object.fromEntries(positionMap);
+  localStorage.setItem('studentPositions', JSON.stringify(raw));
+}
+
+previousPositions = loadStoredPositions();
+const achievementsModal = document.getElementById("achievementsModal");
+const closeAchievementsButton = document.getElementById("closeAchievementsModal");
+const achievementsModalList = document.getElementById("achievementsModalList");
+const achievementsTabList = document.getElementById("achievementsTabList");
+const achievementsModalStudentName = document.getElementById("achievementsModalStudentName");
+const loginOverlay = document.getElementById("loginOverlay");
+const loginForm = document.getElementById("loginForm");
+const loginError = document.getElementById("loginError");
+const studentForm = document.getElementById("studentForm");
+const studentStatus = document.getElementById("studentStatus");
+const achievementForm = document.getElementById("achievementForm");
+const achievementStatus = document.getElementById("achievementStatus");
+const achievementStudentSelect = document.getElementById("achievementStudent");
+const categoryNameInput = document.getElementById("newCategoryName");
+const categoryDescriptionInput = document.getElementById("newCategoryDescription");
+const createCategoryButton = document.getElementById("createCategoryButton");
+const taskTitleInput = document.getElementById("newTaskTitle");
+const taskCategorySelect = document.getElementById("newTaskCategorySelect");
+const taskDescriptionInput = document.getElementById("newTaskDescription");
+const taskMaxScoreInput = document.getElementById("newTaskMaxScore");
+const createTaskButton = document.getElementById("createTaskButton");
+const categoryStatus = document.getElementById("categoryStatus");
+const taskStatus = document.getElementById("taskStatus");
+const teacherTaskList = document.getElementById("teacherTaskList");
+const studentImageInput = document.getElementById("studentImage");
+const studentImagePreview = document.getElementById("studentImagePreview");
+const editTaskModal = document.getElementById("editTaskModal");
+const closeEditTaskModalBtn = document.getElementById("closeEditTaskModal");
+const editTaskForm = document.getElementById("editTaskForm");
+const editTaskTitleInput = document.getElementById("editTaskTitle");
+const editTaskCategorySelect = document.getElementById("editTaskCategorySelect");
+const editTaskDescriptionInput = document.getElementById("editTaskDescription");
+const editTaskMaxScoreInput = document.getElementById("editTaskMaxScore");
+const editTaskDeadlineInput = document.getElementById("editTaskDeadline");
+const editTaskStatus = document.getElementById("editTaskStatus");
+let currentEditTaskId = null;
+let currentOpenedStudentId = null;
+let loadedStudents = [];
+let currentGradingTask = null;
+let currentGradingStudentId = null;
+const savedStudentPasswords = JSON.parse(sessionStorage.getItem("studentPasswords") || "{}");
+
+function getStudentId(student) {
+  return student.id || student.student_id || student.user_id;
+}
+
+function getSavedStudentPassword(student) {
+  const studentId = getStudentId(student);
+  return student.password || (studentId ? savedStudentPasswords[studentId] : "");
+}
+
+async function apiFetch(path, options = {}) {
+  return fetchWithAuth(path, options);
+}
+
+function toggleStudentSelect() {
+  const assignmentType = document.getElementById("achievementAssignmentType").value;
+  const studentSelectGroup = document.getElementById("studentSelectGroup");
+  if (assignmentType === "individual") {
+    studentSelectGroup.style.display = "block";
+  } else {
+    studentSelectGroup.style.display = "none";
+  }
+}
+
+async function initializePanel() {
+  requireAuth();
+  await Promise.all([loadStudents(), loadStudentsForAchievements(), loadStudentOptions(), loadCategories(), loadTasks(), loadAchievementsForShowcase()]);
+}
+
+async function loadStudents() {
+  try {
+    console.log("🔄 Загрузка студентов...");
+    const response = await apiFetch("/teacher/students-tasks");
+    const data = await response.json();
+    console.log("✅ Студенты загружены:", data.data);
+    const students = (data.data || []).map(student => ({
+      ...student,
+      password: getSavedStudentPassword(student)
+    }));
+
+    loadedStudents = students;
+    renderStudents(students);
+    return students;
+  } catch (error) {
+    console.error("❌ Ошибка загрузки студентов:", error);
+    return [];
+  }
+}
+
+async function loadStudentOptions() {
+  try {
+    const response = await apiFetch("/teacher/students");
+    const data = await response.json();
+    achievementStudentSelect.innerHTML = '<option value="">Не назначать</option>';
+
+    (data.data || []).forEach(student => {
+      const option = document.createElement("option");
+      option.value = student.id;
+      option.textContent = student.full_name || student.email;
+      achievementStudentSelect.appendChild(option);
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function loadStudentsForAchievements() {
+  try {
+    const response = await apiFetch("/teacher/students");
+    const data = await response.json();
+    renderStudentsForAchievements(data.data || []);
+  } catch (error) {
+    console.error(error);
+    const studentsAchievementsGrid = document.getElementById("studentsAchievementsGrid");
+    studentsAchievementsGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: rgba(255,255,255,0.5);">Ошибка загрузки учеников</div>`;
+  }
+}
+
+async function loadCategories() {
+  try {
+    const response = await apiFetch("/teacher/categories");
+    const data = await response.json();
+    const categories = data.data || [];
+
+    if (taskCategorySelect) {
+      taskCategorySelect.innerHTML = `<option value="">Выберите категорию</option>`;
+      categories.forEach(category => {
+        const option = document.createElement("option");
+        option.value = category.id;
+        option.textContent = category.name;
+        taskCategorySelect.appendChild(option);
+      });
+    }
+
+    if (editTaskCategorySelect) {
+      editTaskCategorySelect.innerHTML = `<option value="">Выберите категорию</option>`;
+      categories.forEach(category => {
+        const option = document.createElement("option");
+        option.value = category.id;
+        option.textContent = category.name;
+        editTaskCategorySelect.appendChild(option);
+      });
+    }
+
+    const achievementType = document.getElementById("achievementType");
+    if (achievementType) {
+      achievementType.innerHTML = `<option value="">Не выбрано</option>`;
+      categories.forEach(category => {
+        const option = document.createElement("option");
+        option.value = category.id;
+        option.textContent = category.name;
+        achievementType.appendChild(option);
+      });
+    }
+  } catch (error) {
+    console.error("Ошибка загрузки категорий:", error);
+  }
+}
+
+async function loadTasks() {
+  if (!teacherTaskList) return;
+  try {
+    const response = await apiFetch("/teacher/tasks");
+    const data = await response.json();
+    renderTeacherTasks(data.data || []);
+  } catch (error) {
+    console.error("Ошибка загрузки заданий:", error);
+    teacherTaskList.innerHTML = `<div class="task-item"><div class="task-item-title">Не удалось загрузить задания</div></div>`;
+  }
+}
+
+function renderTeacherTasks(tasks) {
+  if (!teacherTaskList) return;
+  teacherTaskList.innerHTML = "";
+
+  if (!tasks.length) {
+    teacherTaskList.innerHTML = `<div class="task-item"><div class="task-item-title">Пока нет заданий</div><div class="task-item-sub">Создайте первое задание в форме слева.</div></div>`;
+    return;
+  }
+
+  tasks.forEach(task => {
+    const item = document.createElement("div");
+    item.className = "task-item";
+    item.innerHTML = `
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+        <div style="font-size:1rem; font-weight:800; color:var(--pal-light-green);">${task.category_name || "Без категории"}</div>
+        <button class="card-action-btn" type="button"> <iconify-icon icon="solar:pen-bold"></iconify-icon> </button>
+      </div>
+      <div class="task-item-title">${task.title}</div>
+      <div class="task-item-sub">${task.description || "Без описания"}</div>
+      <div class="task-item-sub"><strong>Дедлайн:</strong> ${task.deadline || "не назначен"}</div>
+    `;
+    teacherTaskList.appendChild(item);
+    const editBtn = item.querySelector('.card-action-btn');
+    if (editBtn) {
+      editBtn.addEventListener('click', () => openEditTaskModal(task));
+    }
+  });
+}
+
+function handleStudentImageChange() {
+  if (!studentImageInput || !studentImagePreview) return;
+  const file = studentImageInput.files[0];
+  if (!file) {
+    studentImagePreview.style.display = "none";
+    studentImagePreview.src = "";
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    studentImagePreview.src = reader.result;
+    studentImagePreview.style.display = "block";
+  };
+  reader.readAsDataURL(file);
+}
+
+async function submitCategoryForm() {
+  if (!categoryNameInput || !categoryStatus) return;
+  const name = categoryNameInput.value.trim();
+  const description = categoryDescriptionInput?.value.trim() || "";
+
+  if (!name) {
+    categoryStatus.textContent = "Укажите название категории";
+    return;
+  }
+
+  categoryStatus.textContent = "";
+
+  try {
+    const response = await apiFetch("/teacher/create-category", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, description })
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.detail || "Ошибка при создании категории");
+    }
+
+    categoryStatus.textContent = "Категория создана";
+    categoryNameInput.value = "";
+    if (categoryDescriptionInput) categoryDescriptionInput.value = "";
+    await loadCategories();
+  } catch (error) {
+    console.error("Ошибка создания категории:", error);
+    categoryStatus.textContent = error.message;
+  }
+}
+
+async function submitTaskForm() {
+  if (!taskTitleInput || !taskCategorySelect || !taskStatus) return;
+  const title = taskTitleInput.value.trim();
+  const categoryId = taskCategorySelect.value;
+  const description = taskDescriptionInput?.value.trim() || "";
+  const maxScore = parseInt(taskMaxScoreInput.value, 10) || 0;
+
+  if (!title || !categoryId) {
+    taskStatus.textContent = "Укажите название задания и категорию";
+    return;
+  }
+
+  if (maxScore < 0) {
+    taskStatus.textContent = "Максимальный балл должен быть неотрицательным";
+    return;
+  }
+
+  taskStatus.textContent = "";
+
+  try {
+    const response = await apiFetch("/teacher/create-task", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title, category_id: parseInt(categoryId, 10), description, difficulty: 1, max_score: maxScore })
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.detail || "Ошибка при создании задания");
+    }
+
+    taskStatus.textContent = "Задание создано и назначено всем ученикам";
+    taskTitleInput.value = "";
+    taskDescriptionInput.value = "";
+    taskCategorySelect.value = "";
+    if (taskMaxScoreInput) {
+      taskMaxScoreInput.value = "100";
+    }
+    await Promise.all([loadTasks(), loadStudents()]);
+  } catch (error) {
+    console.error("Ошибка создания задания:", error);
+    taskStatus.textContent = error.message;
+  }
+}
+
+function openEditTaskModal(task) {
+  if (!editTaskModal || !editTaskForm) return;
+  currentEditTaskId = task.id;
+  editTaskTitleInput.value = task.title || "";
+  editTaskCategorySelect.value = task.category_id || "";
+  editTaskDescriptionInput.value = task.description || "";
+  editTaskMaxScoreInput.value = task.max_score || 100;
+  editTaskDeadlineInput.value = task.deadline || "не назначен";
+  editTaskStatus.textContent = "";
+  editTaskModal.classList.add("active");
+}
+
+function closeEditTaskModal() {
+  if (!editTaskModal) return;
+  editTaskModal.classList.remove("active");
+}
+
+async function submitEditTaskForm(event) {
+  event.preventDefault();
+  if (!currentEditTaskId) return;
+
+  const title = editTaskTitleInput.value.trim();
+  const categoryId = editTaskCategorySelect.value;
+  const description = editTaskDescriptionInput.value.trim();
+  const maxScore = parseInt(editTaskMaxScoreInput.value, 10) || 0;
+
+  if (!title || !categoryId) {
+    editTaskStatus.textContent = "Укажите название задания и категорию";
+    return;
+  }
+
+  if (maxScore < 0) {
+    editTaskStatus.textContent = "Максимальный балл должен быть неотрицательным";
+    return;
+  }
+
+  editTaskStatus.textContent = "";
+
+  try {
+    const response = await apiFetch(`/teacher/tasks/${currentEditTaskId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title,
+        description,
+        category_id: parseInt(categoryId, 10),
+        difficulty: 1,
+        max_score: maxScore
+      })
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.detail || "Ошибка при обновлении задания");
+    }
+
+    editTaskStatus.textContent = "Задание обновлено";
+    closeEditTaskModal();
+    await loadTasks();
+  } catch (error) {
+    console.error("Ошибка обновления задания:", error);
+    editTaskStatus.textContent = error.message;
+  }
+}
+
+function renderStudentsForAchievements(students) {
+  const studentsAchievementsGrid = document.getElementById("studentsAchievementsGrid");
+  studentsAchievementsGrid.innerHTML = "";
+
+  if (!students.length) {
+    studentsAchievementsGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: rgba(255,255,255,0.5);">Учеников пока нет</div>`;
+    return;
+  }
+
+  students.forEach((student) => {
+    const card = document.createElement("div");
+    card.className = "student-card";
+
+    const avatar = student.image_url || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=1200";
+
+    card.innerHTML = `
+      <div class="student-image">
+        <img src="${avatar}" alt="${student.full_name}" loading="lazy">
+      </div>
+      <div class="student-info">
+        <div class="student-top">
+          <div class="student-name">${student.full_name}</div>
+        </div>
+        <div class="student-group">${student.email}</div>
+        <div class="student-actions">
+          <button class="action-btn primary">Достижения</button>
+        </div>
+      </div>
+    `;
+
+    const achievementsButton = card.querySelector(".action-btn");
+    achievementsButton.addEventListener("click", () => {
+      openAchievements(student);
+    });
+
+    studentsAchievementsGrid.appendChild(card);
+  });
+}
+
+function renderStudents(students) {
+  console.log("🎨 Рендерим студентов, кол-во:", students.length);
+  studentsGrid.innerHTML = "";
+
+  if (!students.length) {
+    console.log("⚠️ Студенты не найдены!");
+    studentsGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: rgba(255,255,255,0.5);">Студентов пока нет</div>`;
+    return;
+  }
+
+  students.forEach((student, idx) => {
+    console.log(`  📌 Студент ${idx + 1}:`, student.student_name);
+    const card = document.createElement("div");
+    card.className = "student-card";
+
+    const avatar = student.image_url || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=1200";
+    const moveDirection = student.movement;
+    const moveArrow = moveDirection === "up" ? "↑" : moveDirection === "down" ? "↓" : "–";
+    const moveTitle = moveDirection === "up"
+      ? `Движение вверх`
+      : moveDirection === "down"
+      ? `Движение вниз`
+      : "Без изменения";
+    const scoreValue = student.rating_points ?? student.rating ?? 0;
+    const displayRank = student.rank || idx + 1;
+
+    card.innerHTML = `
+      <div class="student-image">
+        <img src="${avatar}" alt="${student.student_name}" loading="lazy">
+      </div>
+      <div class="student-info">
+        <div class="student-top">
+          <div class="student-name">${displayRank}. ${student.student_name}</div>
+        </div>
+        <div class="student-score-row">
+          <div class="student-score">${scoreValue} баллов</div>
+          <div class="score-move-badge ${moveDirection || ''}" title="${moveTitle}">${moveArrow}</div>
+        </div>
+        <div class="student-group">${student.email}</div>
+        <div class="student-group">Пароль: ${getSavedStudentPassword(student) || "не установлен"}</div>
+        <div class="student-actions">
+          <button class="action-btn primary">Задания</button>
+        </div>
+      </div>
+    `;
+
+    const taskButton = card.querySelector(".action-btn");
+    taskButton.addEventListener("click", () => {
+      openTasks(student);
+    });
+
+    studentsGrid.appendChild(card);
+  });
+  console.log("✅ Рендеринг завершен!");
+}
+
+async function submitStudentForm(event) {
+  event.preventDefault();
+  studentStatus.textContent = "";
+
+  const email = document.getElementById("studentEmail").value.trim();
+  const firstName = document.getElementById("studentFirstName").value.trim();
+  const lastName = document.getElementById("studentLastName").value.trim();
+  const middleName = document.getElementById("studentMiddleName").value.trim();
+  const imageField = document.getElementById("studentImage");
+
+  if (!email || !firstName || !middleName) {
+    studentStatus.textContent = "Заполните обязательные поля";
+    return;
+  }
+
+  if (!imageField.files.length) {
+    studentStatus.textContent = "Загрузите фото ученика";
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("email", email);
+  formData.append("first_name", firstName);
+  formData.append("last_name", lastName);
+  formData.append("middle_name", middleName);
+  formData.append("image", imageField.files[0]);
+
+  try {
+    const response = await apiFetch("/teacher/add-student", {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.detail || "Ошибка при создании ученика");
+    }
+
+    console.log("✅ Ученик создан успешно:", data);
+    studentStatus.textContent = "Ученик успешно создан";
+    studentForm.reset();
+    if (studentImagePreview) {
+      studentImagePreview.style.display = "none";
+      studentImagePreview.src = "";
+    }
+
+    const createdStudentId = data.user_id || data.id;
+    if (createdStudentId && data.password) {
+      savedStudentPasswords[createdStudentId] = data.password;
+      sessionStorage.setItem("studentPasswords", JSON.stringify(savedStudentPasswords));
+    }
+
+    // Переключаемся на таб студентов
+    const studentTabBtn = document.querySelector('[data-tab="student-tab"]');
+    const studentTabContent = document.getElementById("student-tab");
+    
+    if (studentTabBtn && studentTabContent) {
+      studentTabBtn.style.color = "var(--pal-light-green)";
+      studentTabBtn.style.borderBottom = "2px solid var(--pal-light-green)";
+      studentTabContent.style.display = "block";
+    }
+    
+    // Малая задержка для гарантирования обновления
+    setTimeout(async () => {
+      console.log("Обновляем данные студентов и опций...");
+      await Promise.all([loadStudents(), loadStudentOptions()]);
+    }, 300);
+  } catch (error) {
+    console.error("Ошибка при создании ученика:", error);
+    studentStatus.textContent = error.message;
+  }
+}
+
+async function submitAchievementForm(event) {
+  event.preventDefault();
+  achievementStatus.textContent = "";
+
+  const title = document.getElementById("achievementTitle").value.trim();
+  const description = document.getElementById("achievementDescription").value.trim();
+  const eventDate = document.getElementById("achievementDate").value;
+  const place = document.getElementById("achievementPlace").value.trim();
+  const assignmentType = document.getElementById("achievementAssignmentType").value;
+  const studentId = document.getElementById("achievementStudent").value;
+  const fileInput = document.getElementById("achievementFile");
+
+  if (!title) {
+    achievementStatus.textContent = "Укажите название достижения";
+    return;
+  }
+
+  if (assignmentType === "individual" && !studentId) {
+    achievementStatus.textContent = "Выберите ученика";
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("title", title);
+  formData.append("description", description);
+  if (eventDate) formData.append("event_date", eventDate);
+  if (place) formData.append("place", place);
+  formData.append("assignment_type", assignmentType);
+  if (assignmentType === "individual" && studentId) {
+    formData.append("student_id", studentId);
+  }
+  if (fileInput.files.length) {
+    formData.append("file", fileInput.files[0]);
+  }
+
+  try {
+    const response = await apiFetch("/teacher/achievements/create", {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await response.json();
+    console.log('Create achievement response:', data);
+    if (!response.ok) {
+      throw new Error(data.detail || "Ошибка при загрузке достижения");
+    }
+
+    achievementStatus.textContent = "Достижение создано";
+    achievementForm.reset();
+    const achievementFileName = document.getElementById("achievementFileName");
+    if (achievementFileName) {
+      achievementFileName.textContent = "Файл не выбран";
+    }
+    toggleStudentSelect(); // Сбросить видимость селекта
+    await loadStudentsForAchievements();
+    await loadAchievementsForShowcase();
+  } catch (error) {
+    achievementStatus.textContent = error.message;
+  }
+}
+
+async function uploadTaskVideo(studentTaskId, file) {
+  if (!file) return;
+
+  const formData = new FormData();
+  formData.append("student_task_id", studentTaskId);
+  formData.append("file", file);
+
+  try {
+    const response = await apiFetch("/teacher/upload-video", {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.detail || "Ошибка при загрузке видео");
+    }
+
+    alert("Видео успешно загружено");
+
+    const students = await loadStudents();
+    const updatedStudent = students.find(s => s.student_id === currentOpenedStudentId);
+    if (updatedStudent) {
+      openTasks(updatedStudent);
+    } else {
+      modal.classList.remove("active");
+    }
+  } catch (error) {
+    console.error("❌ Ошибка загрузки видео:", error);
+    alert(error.message || "Ошибка загрузки видео");
+  }
+}
+
+async function openTasks(student) {
+  currentOpenedStudentId = student.student_id;
+  const taskModalStudentName = document.getElementById("taskModalStudentName");
+  taskModalStudentName.textContent = student.student_name;
+  taskList.innerHTML = "";
+
+  if (!student.categories || !student.categories.length) {
+    taskList.innerHTML = `<div class="task-item"><div class="task-item-title">Нет задач для этого ученика</div></div>`;
+    modal.classList.add("active");
+    return;
+  }
+
+  student.categories.forEach(category => {
+    const categoryHeader = document.createElement("div");
+    categoryHeader.className = "task-card";
+    categoryHeader.innerHTML = `
+      <div class="task-card-header">
+        <div class="task-card-title">${category.category_name || "Без категории"}</div>
+      </div>
+    `;
+
+    const categoryTasks = document.createElement("div");
+    category.tasks.forEach(task => {
+      const taskCard = document.createElement("div");
+      taskCard.className = "task-card";
+
+      const rawStatus = String(task.status || "not_started").trim().toLowerCase();
+      const normalizedStatus = rawStatus === "in progress" ? "in_progress" : rawStatus === "not started" ? "not_started" : rawStatus;
+      const statusClass = normalizedStatus === "completed" ? "completed" : normalizedStatus === "in_progress" ? "in_progress" : "not_started";
+      const statusLabel = normalizedStatus === "completed" ? "Выполнено" : normalizedStatus === "in_progress" ? "В работе" : "Не начато";
+
+      const videoInfo = task.has_video ? `<span class="task-status completed">Видео загружено</span>` : "";
+      const videoLink = task.videos && task.videos.length > 0 ? `<button class="task-view-btn" data-video-url="${task.videos[0].video_url}">Посмотреть видео</button>` : "";
+
+      const scoreValue = task.score !== null && task.score !== undefined ? task.score : "-";
+      const scoreDisplay = `<div style="margin-top: 10px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 4px;"><strong>Оценка:</strong> ${scoreValue}/${task.max_score || 100}</div>`;
+
+      taskCard.innerHTML = `
+        <div class="task-card-header">
+          <div>
+            <div class="task-card-title">${task.title}</div>
+            <div class="task-card-details">${task.description || "Без описания"}</div>
+          </div>
+          <div>
+            <span class="task-status ${statusClass}">${statusLabel}</span>
+          </div>
+        </div>
+        <div class="task-card-details">
+          ${scoreDisplay}
+          ${videoInfo}
+        </div>
+        <div class="task-card-actions">
+          <button class="task-assessment-btn" type="button" data-student-id="${student.student_id}" data-task-id="${task.task_id}" title="Оценить готовность студента">📊 Оценка</button>
+          <button class="task-upload-btn" type="button" data-task-id="${task.student_task_id}">Загрузить видео</button>
+          <button class="task-grade-btn" type="button" data-task-id="${task.student_task_id}">Оценить</button>
+          ${videoLink}
+        </div>
+      `;
+
+      const fileInput = document.createElement("input");
+      fileInput.type = "file";
+      fileInput.accept = "video/mp4";
+      fileInput.className = "task-file-input";
+      fileInput.dataset.taskId = task.student_task_id;
+      fileInput.addEventListener("change", async (event) => {
+        if (event.target.files.length) {
+          await uploadTaskVideo(task.student_task_id, event.target.files[0]);
+        }
+      });
+
+      taskCard.appendChild(fileInput);
+      categoryTasks.appendChild(taskCard);
+    });
+
+    categoryHeader.appendChild(categoryTasks);
+    taskList.appendChild(categoryHeader);
+  });
+
+  taskList.querySelectorAll(".task-upload-btn").forEach(button => {
+    button.addEventListener("click", (event) => {
+      const taskId = event.currentTarget.dataset.taskId;
+      const input = taskList.querySelector(`input.task-file-input[data-task-id="${taskId}"]`);
+      if (input) {
+        input.click();
+      }
+    });
+  });
+
+  taskList.querySelectorAll(".task-grade-btn").forEach(button => {
+    button.addEventListener("click", (event) => {
+      const taskId = event.currentTarget.dataset.taskId;
+      const category = Array.from(taskList.children).find(cat => {
+        const tasks = cat.querySelectorAll("[data-task-id]");
+        return Array.from(tasks).some(t => t.dataset.taskId === taskId);
+      });
+      if (category) {
+        const taskCard = category.querySelector(`[data-task-id="${taskId}"]`).closest(".task-card");
+        const task = student.categories.flatMap(c => c.tasks).find(t => t.student_task_id == taskId);
+        if (task) {
+          openGradeTaskModal(task);
+        }
+      }
+    });
+  });
+
+  taskList.querySelectorAll(".task-assessment-btn").forEach(button => {
+    button.addEventListener("click", (event) => {
+      const studentId = parseInt(event.currentTarget.dataset.studentId);
+      const taskId = parseInt(event.currentTarget.dataset.taskId);
+      openAssessmentModal(studentId, taskId);
+    });
+  });
+
+  taskList.querySelectorAll(".task-view-btn").forEach(button => {
+    button.addEventListener("click", (event) => {
+      const url = event.currentTarget.dataset.videoUrl;
+      if (url) {
+        window.open(url, "_blank");
+      }
+    });
+  });
+
+  modal.classList.add("active");
+}
+
+async function uploadAchievementMedia(achievementId, file) {
+  if (!file) return;
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    console.log('Uploading achievement media', achievementId, file.name, file.type, file.size);
+    const response = await apiFetch(`/teacher/achievements/${achievementId}/upload-media`, {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      console.error('Upload media response not OK', response.status, data);
+      throw new Error(data.detail || "Ошибка при обновлении файла достижения");
+    }
+    console.log('Upload media response', data);
+    return data.file_url || data.video_url || null;
+  } catch (error) {
+    console.error("Ошибка обновления файла достижения:", error);
+    alert(error.message || "Ошибка при обновлении файла достижения");
+    return null;
+  }
+}
+
+async function uploadAchievementVideo(achievementId, file) {
+  if (!file) return null;
+  const formData = new FormData();
+  formData.append('file', file);
+
+  try {
+    console.log('Uploading achievement video', achievementId, file.name, file.type, file.size);
+    const response = await apiFetch(`/teacher/achievements/${achievementId}/upload-video`, {
+      method: 'POST',
+      body: formData
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      console.error('Upload video response not OK', response.status, data);
+      throw new Error(data.detail || 'Ошибка при загрузке видео достижения');
+    }
+
+    console.log('Upload video response', data);
+    return data.video_url || null;
+  } catch (error) {
+    console.error('Ошибка загрузки видео достижения:', error);
+    alert(error.message || 'Ошибка при загрузке видео достижения');
+    return null;
+  }
+}
+
+async function openAchievements(student) {
+  const studentName = student.full_name || student.student_name || student.email || "Ученик";
+  achievementsModalStudentName.textContent = studentName;
+achievementsModalList.innerHTML = `<div class="task-item"><div class="task-item-title">Загрузка достижений...</div></div>`;
+  achievementsModal.classList.add("active");
+
+  const studentId = student.id || student.student_id || student.user_id;
+  if (!studentId) {
+    achievementsModalList.innerHTML = `<div class="task-item"><div class="task-item-title">Ошибка: не найден ID ученика</div></div>`;
+    return;
+  }
+
+  try {
+    const response = await apiFetch(`/teacher/student-achievements/${studentId}`);
+    const data = await response.json();
+    console.log('Achievements API response:', data);
+    const achievements = data.data || [];
+    console.log('Achievements array:', achievements);
+
+    achievementsModalList.innerHTML = "";
+
+    if (!achievements.length) {
+      achievementsModalList.innerHTML = `<div class="task-item"><div class="task-item-title">У этого ученика пока нет достижений</div></div>`;
+      return;
+    }
+
+    const individualAchievements = achievements.filter(a => !a.is_collective);
+    const collectiveAchievements = achievements.filter(a => a.is_collective);
+    console.log('Individual achievements:', individualAchievements.length, 'Collective achievements:', collectiveAchievements.length);
+
+    // Функция для рендеринга секции
+    const renderSection = (title, achs) => {
+      if (achs.length === 0) return;
+      const sectionHeader = document.createElement("div");
+      sectionHeader.className = "task-card";
+      sectionHeader.innerHTML = `<div class="task-card-header"><div class="task-card-title">${title}</div></div>`;
+      achievementsModalList.appendChild(sectionHeader);
+
+      achs.forEach(achievement => {
+        const achievementCard = document.createElement("div");
+        achievementCard.className = "task-card";
+
+        const hasFile = Boolean(achievement.file_url);
+        const isVideo = achievement.file_url && achievement.file_url.toLowerCase().endsWith(".mp4");
+        const fileLabel = hasFile ? (isVideo ? "Видео" : "Файл") : "Файл не загружен";
+
+        achievementCard.innerHTML = `
+          <div class="task-card-header">
+            <div>
+              <div class="task-card-title">${achievement.title}</div>
+              <div class="task-card-details">${achievement.description || "Без описания"}</div>
+            </div>
+            <div>
+              <span class="task-status ${hasFile ? "completed" : "not_started"}">${achievement.event_date ? new Date(achievement.event_date).toLocaleDateString("ru-RU") : "Без даты"}</span>
+            </div>
+          </div>
+          <div class="task-card-details">
+            ${achievement.place ? `Место: ${achievement.place}` : ""}
+          </div>
+          <div class="task-card-details" style="margin-top:12px;">
+            <strong>${fileLabel}</strong>
+            ${hasFile ? `<a href="${achievement.file_url}" target="_blank" rel="noreferrer" class="task-view-btn" style="margin-left:12px;">Скачать</a>` : ""}
+          </div>
+          ${achievement.video_url ? `
+          <div class="task-card-details" style="margin-top:12px;">
+            <strong>Видео достижения</strong>
+            <video controls style="max-width:100%; margin-top:8px;">
+              <source src="${achievement.video_url}" type="video/mp4">
+              Ваш браузер не поддерживает видео.
+            </video>
+          </div>
+          ` : ""}
+          <div class="task-card-actions">
+            <button class="task-upload-btn" type="button" data-achievement-id="${achievement.id}">${hasFile ? "Обновить файл" : "Загрузить файл"}</button>
+            <button class="task-upload-video-btn" type="button" data-achievement-id="${achievement.id}" style="margin-left:12px;">${achievement.video_url ? 'Обновить видео' : 'Загрузить видео'}</button>
+          </div>
+        `;
+
+        const fileInput = document.createElement("input");
+        fileInput.type = "file";
+        fileInput.accept = ".pdf,image/*";
+        fileInput.className = "task-file-input";
+        fileInput.dataset.achievementId = achievement.id;
+        fileInput.addEventListener("change", async (event) => {
+          if (event.target.files.length) {
+            const file = event.target.files[0];
+            const fileUrl = await uploadAchievementMedia(achievement.id, file);
+            if (fileUrl) {
+              await openAchievements(student);
+            }
+          }
+        });
+
+        const videoInput = document.createElement("input");
+        videoInput.type = "file";
+        videoInput.accept = "video/mp4,video/mpeg";
+        videoInput.className = "task-video-input";
+        videoInput.dataset.achievementId = achievement.id;
+        videoInput.addEventListener("change", async (event) => {
+          if (event.target.files.length) {
+            const file = event.target.files[0];
+            const videoUrl = await uploadAchievementVideo(achievement.id, file);
+            if (videoUrl) {
+              await openAchievements(student);
+            }
+          }
+        });
+
+        achievementCard.appendChild(fileInput);
+        achievementCard.appendChild(videoInput);
+        achievementsModalList.appendChild(achievementCard);
+      });
+    };
+
+    renderSection("Личные достижения", individualAchievements);
+    renderSection("Коллективные достижения", collectiveAchievements);
+
+    achievementsModalList.querySelectorAll(".task-upload-btn").forEach(button => {
+      button.addEventListener("click", (event) => {
+        const achievementId = event.currentTarget.dataset.achievementId;
+        const input = achievementsModalList.querySelector(`input.task-file-input[data-achievement-id="${achievementId}"]`);
+        if (input) {
+          input.click();
+        }
+      });
+    });
+
+    achievementsModalList.querySelectorAll(".task-upload-video-btn").forEach(button => {
+      button.addEventListener("click", (event) => {
+        const achievementId = event.currentTarget.dataset.achievementId;
+        const input = achievementsModalList.querySelector(`input.task-video-input[data-achievement-id="${achievementId}"]`);
+        if (input) {
+          input.click();
+        }
+      });
+    });
+  } catch (error) {
+    console.error("Ошибка загрузки достижений:", error);
+    achievementsModalList.innerHTML = `<div class="task-item"><div class="task-item-title">Ошибка загрузки достижений</div></div>`;
+  }
+}
+
+closeButton.addEventListener("click", () => {
+  modal.classList.remove("active");
+});
+
+modal.addEventListener("click", (e) => {
+  if (e.target === modal) {
+    modal.classList.remove("active");
+  }
+});
+
+closeAchievementsButton.addEventListener("click", () => {
+  achievementsModal.classList.remove("active");
+});
+
+achievementsModal.addEventListener("click", (e) => {
+  if (e.target === achievementsModal) {
+    achievementsModal.classList.remove("active");
+  }
+});
+
+if (closeEditTaskModalBtn) {
+  closeEditTaskModalBtn.addEventListener("click", closeEditTaskModal);
+}
+
+if (editTaskModal) {
+  editTaskModal.addEventListener("click", (e) => {
+    if (e.target === editTaskModal) {
+      closeEditTaskModal();
+    }
+  });
+}
+
+if (editTaskForm) {
+  editTaskForm.addEventListener("submit", submitEditTaskForm);
+}
+
+if (gradeTaskForm) {
+  gradeTaskForm.addEventListener("submit", submitGradeTask);
+}
+
+if (closeGradeTaskModalButton) {
+  closeGradeTaskModalButton.addEventListener("click", () => {
+    gradeTaskModal.classList.remove("active");
+  });
+}
+
+gradeTaskModal.addEventListener("click", (e) => {
+  if (e.target === gradeTaskModal) {
+    gradeTaskModal.classList.remove("active");
+  }
+});
+
+studentForm.addEventListener("submit", submitStudentForm);
+achievementForm.addEventListener("submit", submitAchievementForm);
+if (createCategoryButton) {
+  createCategoryButton.addEventListener("click", submitCategoryForm);
+}
+if (createTaskButton) {
+  createTaskButton.addEventListener("click", submitTaskForm);
+}
+if (studentImageInput) {
+  studentImageInput.addEventListener("change", handleStudentImageChange);
+}
+
+const achievementFileInput = document.getElementById("achievementFile");
+const achievementFileName = document.getElementById("achievementFileName");
+if (achievementFileInput && achievementFileName) {
+  achievementFileInput.addEventListener("change", (event) => {
+    const files = event.target.files;
+    achievementFileName.textContent = files.length ? `Выбрано: ${files[0].name}` : "Файл не выбран";
+  });
+}
+
+// Обработчик для переключения табов
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const tabName = btn.getAttribute('data-tab');
+    
+    // Скрыть все табы
+    document.querySelectorAll('.tab-content').forEach(tab => {
+      tab.style.display = 'none';
+    });
+    
+    // Убрать активный класс со всех кнопок
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      b.style.color = 'rgba(255,255,255,0.5)';
+      b.style.borderBottom = 'none';
+    });
+    
+    // Показать выбранный таб
+    const tabContent = document.getElementById(tabName);
+    if (tabContent) {
+      tabContent.style.display = 'block';
+      if (tabName === 'achievements-tab') {
+        loadAchievements();
+      }
+    }
+    
+    // Активировать кнопку
+    btn.style.color = 'var(--pal-light-green)';
+    btn.style.borderBottom = '2px solid var(--pal-light-green)';
+  });
+});
+
+// Grade Task Modal Functions
+function openGradeTaskModal(task, studentId = null) {
+  currentGradingTask = task;
+  currentGradingStudentId = studentId || currentOpenedStudentId;
+  
+  // Reset form
+  gradeTaskForm.reset();
+  gradeTaskError.textContent = "";
+  const maxScore = task.max_score || 100;
+  gradeTaskScore.max = maxScore;
+  gradeTaskScore.min = 0;
+  
+  // Set default values
+  gradeTaskStatus.value = task.status || "not_started";
+  gradeTaskScore.value = task.score ?? "";
+  gradeTaskScore.placeholder = `Введите оценку до ${maxScore}`;
+  document.getElementById("gradeTaskScoreLabel").textContent = `Оценка (0 - ${maxScore})`;
+  gradeTaskComment.value = task.comment || "";
+  
+  // Update modal title
+  gradeTaskModalTitle.textContent = `Оцените: ${task.title} (макс ${maxScore} баллов)`;
+  
+  // Show modal
+  gradeTaskModal.classList.add("active");
+}
+
+async function submitGradeTask(event) {
+  event.preventDefault();
+  gradeTaskError.textContent = "";
+  
+  if (!currentGradingTask) {
+    gradeTaskError.textContent = "Ошибка: задание не выбрано";
+    return;
+  }
+  
+  const status = gradeTaskStatus.value;
+  const score = parseInt(gradeTaskScore.value, 10);
+  const comment = gradeTaskComment.value.trim();
+  
+  // Validate score
+  const maxScore = currentGradingTask.max_score || 100;
+  if (isNaN(score) || score < 0 || score > maxScore) {
+    gradeTaskError.textContent = `Оценка должна быть от 0 до ${maxScore}`;
+    return;
+  }
+  
+  try {
+    const response = await apiFetch(`/teacher/student-tasks/${currentGradingTask.student_task_id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        status: status,
+        score: score,
+        comment: comment
+      })
+    });
+    
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.detail || "Ошибка при сохранении оценки");
+    }
+
+    currentGradingTask.status = status;
+    currentGradingTask.score = score;
+    currentGradingTask.comment = comment;
+
+    // Close modal and reload tasks
+    gradeTaskModal.classList.remove("active");
+    
+    // Reload tasks to show updated scores
+    const students = await loadStudents();
+    const updatedStudent = students.find(s => s.student_id === currentGradingStudentId);
+    if (updatedStudent) {
+      openTasks(updatedStudent);
+    }
+  } catch (error) {
+    console.error("Ошибка при сохранении оценки:", error);
+    gradeTaskError.textContent = error.message;
+  }
+}
+
+// Assessment Modal Functions
+const assessmentModal = document.getElementById('assessmentModal');
+const assessmentCloseBtn = document.getElementById('assessmentCloseBtn');
+
+function openAssessmentModal(studentId, taskId) {
+  if (assessmentModal) {
+    assessmentModal.classList.add('active');
+    loadAssessmentData(studentId, taskId);
+  }
+}
+
+function closeAssessmentModal() {
+  if (assessmentModal) {
+    assessmentModal.classList.remove('active');
+  }
+}
+
+if (assessmentCloseBtn) {
+  assessmentCloseBtn.addEventListener('click', closeAssessmentModal);
+}
+
+if (assessmentModal) {
+  assessmentModal.addEventListener('click', (e) => {
+    if (e.target === assessmentModal) {
+      closeAssessmentModal();
+    }
+  });
+}
+
+async function loadAssessmentData(studentId, taskId) {
+  try {
+    const response = await apiFetch(`/teacher/student/${studentId}/task/${taskId}/assessment`);
+    
+    if (!response.ok) {
+      throw new Error('Failed to load assessment data');
+    }
+    
+    const data = await response.json();
+    displayAssessmentData(data);
+  } catch (error) {
+    console.error('Error loading assessment:', error);
+    document.getElementById('assessmentRecommendation').textContent = 'Ошибка при загрузке данных';
+  }
+}
+
+function displayAssessmentData(data) {
+  // Task Info
+  document.getElementById('assessmentTaskTitle').textContent = `Оценка задачи: ${data.task.title}`;
+  document.getElementById('assessmentTaskName').textContent = data.task.title;
+  document.getElementById('assessmentTaskDifficulty').textContent = `Уровень ${data.task.difficulty}`;
+  document.getElementById('assessmentTaskMaxScore').textContent = data.task.max_score;
+  
+  // Assessment Indicator
+  const indicator = document.getElementById('assessmentIndicator');
+  const indicatorText = document.getElementById('assessmentIndicatorText');
+  const readiness = data.assessment.readiness_level;
+  
+  indicator.className = `assessment-indicator ${data.assessment.indicator_color}`;
+  
+  const readinessLabels = {
+    'good': '✓ Хорошо подготовлен',
+    'medium': '○ Средне подготовлен',
+    'poor': '! Слабо подготовлен',
+    'unknown': '? Недостаточно данных'
+  };
+  
+  indicatorText.textContent = readinessLabels[readiness] || 'Неизвестный статус';
+  
+  // Recommendation
+  document.getElementById('assessmentRecommendation').textContent = data.assessment.recommendation;
+  
+  // Student Performance
+  document.getElementById('assessmentAvgScore').textContent = data.student_performance.average_score_similar.toFixed(1);
+  document.getElementById('assessmentTasksCompleted').textContent = data.student_performance.tasks_completed_similar;
+  document.getElementById('assessmentBestScore').textContent = data.student_performance.best_score;
+  document.getElementById('assessmentWorstScore').textContent = data.student_performance.worst_score;
+  
+  // Class Statistics
+  document.getElementById('assessmentClassAvg').textContent = data.class_average.toFixed(1);
+  document.getElementById('assessmentClassCompleted').textContent = data.students_completed_task;
+  
+  // Current Status
+  document.getElementById('assessmentStatus').textContent = data.current_status.status;
+  document.getElementById('assessmentCurrentScore').textContent = data.current_status.score || '-';
+}
+
+// Make openAssessmentModal globally accessible
+window.openAssessmentModal = openAssessmentModal;
+
+async function loadAchievementsForShowcase() {
+  const showcaseElement = document.getElementById("achievementsShowcase");
+  if (!showcaseElement) {
+    console.error('achievementsShowcase element not found, skipping load');
+    return;
+  }
+  try {
+    const response = await apiFetch('/teacher/achievements');
+    const data = await response.json();
+    renderShowcaseAchievements(data.data, showcaseElement);
+  } catch (error) {
+    console.error('Ошибка загрузки достижений для showcase:', error);
+  }
+}
+
+function renderShowcaseAchievements(achievements, element) {
+  if (!element) {
+    console.error('achievementsShowcase element not found');
+    return;
+  }
+  element.innerHTML = '';
+  if (!achievements || !achievements.length) {
+    element.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: rgba(255,255,255,0.5);">Достижений пока нет</div>';
+    return;
+  }
+
+  // achievements.forEach(achievement => {
+  //   const card = document.createElement('div');
+  //   card.className = 'showcase-card';
+  //   card.style.backgroundImage = `url('${achievement.file_url || achievement.video_url || ''}')`;
+
+  //   card.innerHTML = `
+  //     <div class="showcase-top">
+  //       <div class="achievement-status">${achievement.is_collective ? 'Коллективное' : 'Индивидуальное'}</div>
+  //       <div class="card-action-btn" onclick="editAchievement(${achievement.id})">
+  //         <iconify-icon icon="solar:pen-bold"></iconify-icon>
+  //       </div>
+  //     </div>
+  //     <div class="showcase-content">
+  //       <div class="showcase-category">${achievement.place || 'Без места'}</div>
+  //       <h3>${achievement.title}</h3>
+  //       <p>${achievement.description || ''}</p>
+  //       <div class="showcase-tags">
+  //         <div class="showcase-tag">${achievement.event_date ? new Date(achievement.event_date).toLocaleDateString('ru-RU') : 'Без даты'}</div>
+  //       </div>
+  //     </div>
+  //   `;
+
+  //   element.appendChild(card);
+  // });
+}
+
+function editAchievement(achievementId) {
+  // TODO: Implement edit achievement modal
+  alert('Редактирование достижения пока не реализовано');
+}
+function promptUploadAchievementVideo(achievementId) {
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.accept = 'video/*';
+  fileInput.onchange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await apiFetch(`/teacher/achievements/${achievementId}/upload-video`, {
+        method: 'POST',
+        body: formData
+      });
+      if (response.ok) {
+        alert('Видео загружено успешно');
+        loadAchievements();
+        loadAchievementsForShowcase();
+      } else {
+        alert('Ошибка загрузки видео');
+      }
+    } catch (error) {
+      console.error('Ошибка:', error);
+      alert('Ошибка загрузки видео');
+    }
+  };
+  fileInput.click();
+}
+
+
+initializePanel();
+</script>
+
+<!-- Assessment Modal -->
+<div class="assessment-modal-overlay" id="assessmentModal">
+  <div class="assessment-modal-content">
+    <button class="assessment-close-btn" id="assessmentCloseBtn">&times;</button>
+    <h2 class="assessment-title" id="assessmentTaskTitle">Оценка задачи</h2>
+    
+    <!-- Task Info -->
+    <div class="assessment-section">
+      <div class="assessment-section-title">Информация о задаче</div>
+      <div class="assessment-card">
+        <div class="assessment-row">
+          <span class="assessment-label">Название:</span>
+          <span class="assessment-value" id="assessmentTaskName">-</span>
+        </div>
+        <div class="assessment-row">
+          <span class="assessment-label">Уровень сложности:</span>
+          <span class="assessment-value" id="assessmentTaskDifficulty">-</span>
+        </div>
+        <div class="assessment-row">
+          <span class="assessment-label">Макс. оценка:</span>
+          <span class="assessment-value" id="assessmentTaskMaxScore">-</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Assessment Indicator -->
+    <div class="assessment-section">
+      <div class="assessment-section-title">Оценка готовности</div>
+      <div class="assessment-indicator" id="assessmentIndicator">
+        <span id="assessmentIndicatorText">Оценка...</span>
+      </div>
+      <div class="recommendation-text" id="assessmentRecommendation">
+        Получение данных...
+      </div>
+    </div>
+    
+    <!-- Student Performance -->
+    <div class="assessment-section">
+      <div class="assessment-section-title">Производительность студента</div>
+      <div class="assessment-card">
+        <div class="assessment-row">
+          <span class="assessment-label">Средняя оценка (похожие задачи):</span>
+          <span class="assessment-value" id="assessmentAvgScore">-</span>
+        </div>
+        <div class="assessment-row">
+          <span class="assessment-label">Выполненных похожих задач:</span>
+          <span class="assessment-value" id="assessmentTasksCompleted">-</span>
+        </div>
+        <div class="assessment-row">
+          <span class="assessment-label">Лучшая оценка:</span>
+          <span class="assessment-value" id="assessmentBestScore">-</span>
+        </div>
+        <div class="assessment-row">
+          <span class="assessment-label">Худшая оценка:</span>
+          <span class="assessment-value" id="assessmentWorstScore">-</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Class Statistics -->
+    <div class="assessment-section">
+      <div class="assessment-section-title">Средние показатели класса</div>
+      <div class="assessment-stats-grid">
+        <div class="stat-box">
+          <div class="stat-value" id="assessmentClassAvg">-</div>
+          <div class="stat-label">Средняя оценка</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value" id="assessmentClassCompleted">-</div>
+          <div class="stat-label">Выполнено учениками</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Current Status -->
+    <div class="assessment-section">
+      <div class="assessment-section-title">Текущий статус</div>
+      <div class="assessment-card">
+        <div class="assessment-row">
+          <span class="assessment-label">Статус:</span>
+          <span class="assessment-value" id="assessmentStatus">-</span>
+        </div>
+        <div class="assessment-row">
+          <span class="assessment-label">Оценка:</span>
+          <span class="assessment-value" id="assessmentCurrentScore">-</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

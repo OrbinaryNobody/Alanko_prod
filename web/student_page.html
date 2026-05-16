@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Studio Alanko - Личный кабинет</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+
+  <style>
+    /* ============================================================
+       0. ПЕРЕМЕННЫЕ И БАЗОВЫЕ СТИЛИ
+       ============================================================ */
+    :root {
+      --color-bg: #05060a;
+      --color-text: #ffffff;
+      --color-muted: rgba(255,255,255,0.6);
+      --overlay-gradient: linear-gradient(90deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.2) 100%);
+      
+      --pal-dark-green: #2C473E;
+      --pal-mid-green: #6A8E4E; 
+      --pal-light-green: #B0D182;
+      
+      --font-primary: 'Inter', sans-serif;
+      --radius-pill: 999px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-primary);
+      background: var(--color-bg);
+      color: var(--color-text);
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+
+    .pill {
+      border: 1px solid rgba(255,255,255,0.4);
+      border-radius: var(--radius-pill);
+      padding: 8px 16px;
+      font-size: 0.75rem;
+      transition: 0.3s;
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+      font-weight: 500;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .pill:hover {
+      background: var(--pal-mid-green);
+      border-color: var(--pal-mid-green);
+    }
+
+    /* ============================================================
+       ШАПКА (HEADER)
+       ============================================================ */
+    header {
+      position: absolute;
+      width: 100%;
+      z-index: 10;
+      padding: 24px 0;
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .logo-text {
+      font-weight: 900;
+      font-size: 1rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    nav {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 12px;
+    }
+
+    /* ============================================================
+       БЛОК №1: ГЛАВНЫЙ ЭКРАН (HERO)
+       ============================================================ */
+    .hero {
+      min-height: 100vh;
+      position: relative;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: url('images/img_9084.PNG') center bottom / cover no-repeat;
+      z-index: 0;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: var(--overlay-gradient);
+      z-index: 1;
+    }
+
+    .hero .container { position: relative; z-index: 2; width: 100%; }
+
+    .hero-content { max-width: 650px; }
+    .hero-title-img img { width: 100%; max-width: 400px; display: block; }
+    
+    .hero-sub {
+      margin-top: 16px;
+      color: var(--color-muted);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .info-block {
+      margin-top: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .info-block h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--pal-light-green);
+    }
+
+    .info-block p {
+      font-size: 1rem;
+      color: var(--color-muted);
+      max-width: 450px;
+      line-height: 1.6;
+    }
+
+    /* ============================================================
+       БЛОК №2: ДОСТИЖЕНИЯ + ЭФФЕКТ СВЕТЛЯЧКА
+       ============================================================ */
+    .achievements-section {
+      padding: 100px 0;
+      background: var(--color-bg);
+      position: relative;
+    }
+
+    /* Направляющая линия */
+    .glowworm-track {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.05);
+      overflow: hidden;
+    }
+
+    /* Сам светлячок */
+    .glowworm {
+      position: absolute;
+      top: -1px;
+      left: -150px;
+      width: 120px;
+      height: 3px;
+      background: var(--pal-light-green);
+      box-shadow: 0 0 20px 4px var(--pal-light-green);
+      border-radius: 99px;
+      opacity: 0;
+      transition: left 2.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+    }
+
+    /* Активация анимации через JS */
+    .achievements-section.animate-glow .glowworm {
+      left: 100%;
+      opacity: 1;
+    }
+
+    .achievements-header { margin-bottom: 50px; }
+    .achievements-header h2 { font-size: 2.2rem; font-weight: 700; }
+
+    /* Горизонтальный скролл видео */
+    .video-scroll-container {
+      display: flex;
+      gap: 24px;
+      overflow-x: auto;
+      padding-bottom: 30px;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: thin;
+      scrollbar-color: var(--pal-mid-green) rgba(255,255,255,0.05);
+    }
+
+    .video-scroll-container::-webkit-scrollbar { height: 6px; }
+    .video-scroll-container::-webkit-scrollbar-thumb {
+      background: var(--pal-mid-green);
+      border-radius: 10px;
+    }
+
+    .video-card {
+      flex: 0 0 300px;
+      scroll-snap-align: start;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .video-wrapper {
+      width: 100%;
+      aspect-ratio: 9 / 16;
+      background: #111;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .video-wrapper video { width: 100%; height: 100%; object-fit: cover; }
+    .video-title { font-size: 1rem; font-weight: 500; color: var(--color-muted); margin-bottom: 8px; }
+    .video-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .video-actions .pill {
+      flex: 1 1 140px;
+      justify-content: center;
+      text-align: center;
+    }
+
+    /* Адаптив */
+    @media (max-width: 768px) {
+      nav { display: none; }
+      .container { padding: 0 24px; }
+      .video-card { flex: 0 0 240px; }
+    }
+
+    /* ============================================================
+       БЛОК №3: НАГРАДЫ И РЕЗУЛЬТАТЫ
+       ============================================================ */
+    .awards-section {
+  padding: 100px 0;
+  background: #07080d;
+  position: relative;
+  z-index: 1;
+}
+
+.awards-header {
+  margin-bottom: 40px;
+}
+
+.awards-header h2 {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.awards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.achievements-tabs {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.achievement-tab {
+  padding: 12px 20px;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.04);
+  color: #fff;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.achievement-tab.active {
+  background: var(--pal-mid-green);
+  color: #07080d;
+  border-color: var(--pal-mid-green);
+}
+
+.awards-grid-hidden {
+  display: none;
+}
+
+.award-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: 0.3s;
+}
+
+.award-card:hover {
+  border-color: var(--pal-mid-green);
+  transform: translateY(-4px);
+}
+
+.award-content h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.award-date {
+  font-size: 0.8rem;
+  color: var(--pal-light-green);
+  display: block;
+  margin-bottom: 8px;
+}
+
+.award-content p {
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+
+.download-btn {
+  margin-top: 16px;
+  justify-content: space-between;
+}
+
+/* MOBILE */
+@media (max-width: 900px) {
+  .awards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+    /* ============================================================
+       БЛОК №4: РЕЙТИНГ УЧЕНИКА
+       ============================================================ */
+    .rating-section {
+  padding: 100px 0;
+  background: var(--color-bg);
+  position: relative;
+  z-index: 1;
+}
+
+.rating-header {
+  margin-bottom: 40px;
+}
+
+.rating-header h2 {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.rating-summary {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.rating-card {
+  flex: 1;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rating-card span {
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+
+.rating-card strong {
+  font-size: 2rem;
+  color: var(--pal-light-green);
+}
+
+.rating-history {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.history-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+}
+
+.history-info h4 {
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+
+.history-info p {
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+
+.history-total {
+  margin-top: 20px;
+  font-size: 1rem;
+  color: var(--pal-light-green);
+}
+
+@media (max-width: 768px) {
+  .rating-summary {
+    flex-direction: column;
+  }
+
+  .history-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+
+/* ============================================================
+   БЛОК: ОБЩИЙ РЕЙТИНГ (как на главной)
+============================================================ */
+
+.leaderboard-section {
+  padding: 100px 0;
+  background: var(--color-bg);
+}
+
+.leaderboard-header {
+  margin-bottom: 40px;
+}
+
+.leaderboard-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 15px;
+}
+
+.leaderboard-table th {
+  text-align: left;
+  padding: 10px 20px;
+  color: var(--pal-mid-green);
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.leaderboard-row {
+  background: rgba(255, 255, 255, 0.03);
+  transition: transform 0.3s ease, background 0.3s ease;
+  border-radius: 15px;
+}
+
+.leaderboard-row:hover {
+  background: rgba(255, 255, 255, 0.07);
+  transform: scale(1.01);
+}
+
+.leaderboard-row.current-user-row {
+  background: rgba(84, 215, 136, 0.14);
+}
+
+.leaderboard-row td {
+  padding: 20px;
+  color: #fff;
+  font-size: 1.05rem;
+}
+
+.score-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.score-value {
+  font-weight: 700;
+}
+
+.movement-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.08);
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.85);
+}
+
+.movement-badge.up {
+  background: rgba(114, 255, 151, 0.18);
+  border-color: rgba(114, 255, 151, 0.35);
+  color: #b8ffbf;
+}
+
+.movement-badge.down {
+  background: rgba(255, 98, 98, 0.14);
+  border-color: rgba(255, 98, 98, 0.35);
+  color: #ffb7b7;
+}
+
+.movement-badge.same {
+  opacity: 0.8;
+}
+
+/* Скругления */
+.leaderboard-row td:first-child {
+  border-radius: 15px 0 0 15px;
+  font-weight: 900;
+  color: var(--pal-light-green);
+}
+
+.leaderboard-row td:last-child {
+  border-radius: 0 15px 15px 0;
+}
+
+/* Кружок с местом */
+.rank-badge {
+  display: inline-block;
+  width: 35px;
+  height: 35px;
+  line-height: 35px;
+  text-align: center;
+  background: rgba(255,255,255,0.1);
+  border-radius: 50%;
+  font-size: 0.9rem;
+}
+
+/* ТОП-3 */
+.rank-badge.top-gold {
+  background: #FFD700;
+  color: #000;
+}
+
+.rank-badge.top-silver {
+  background: #C0C0C0;
+  color: #000;
+}
+
+.rank-badge.top-bronze {
+  background: #CD7F32;
+  color: #000;
+}
+
+/* Адаптив */
+@media (max-width: 768px) {
+  .leaderboard-table thead {
+    display: none;
+  }
+
+  .leaderboard-row td {
+    padding: 12px 10px;
+    font-size: 0.9rem;
+  }
+}
+
+/* ============================================================
+   БЛОК: ЗАЧЁТЫ (КРУГОВЫЕ ДИАГРАММЫ)
+============================================================ */
+
+.exams-section {
+  position: relative;
+  padding: 140px 0 120px;
+  background: var(--color-bg);
+  overflow: hidden;
+}
+
+
+.exams-header {
+  margin-bottom: 50px;
+}
+
+.exams-header h2 {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.exams-header p {
+  color: var(--color-muted);
+}
+
+/* сетка */
+.exams-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
+}
+
+/* карточка */
+.exam-card {
+  text-align: center;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px;
+  padding: 30px 20px;
+  transition: 0.3s;
+}
+
+.exam-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--pal-mid-green);
+}
+
+/* круг */
+.circle {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  margin: 0 auto 20px;
+}
+
+.circle svg {
+  width: 140px;
+  height: 140px;
+  transform: rotate(-90deg);
+}
+
+/* фон круга */
+.circle .bg {
+  fill: none;
+  stroke: rgba(255,255,255,0.08);
+  stroke-width: 10;
+}
+
+/* прогресс */
+.circle .progress {
+  fill: none;
+  stroke: var(--pal-light-green);
+  stroke-width: 10;
+  stroke-linecap: round;
+  stroke-dasharray: 377;
+  stroke-dashoffset: 377;
+  transition: stroke-dashoffset 1.5s ease;
+  filter: drop-shadow(0 0 10px rgba(176,209,130,0.5));
+}
+
+/* проценты */
+.percent {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: var(--pal-light-green);
+}
+
+/* подпись */
+.exam-card h3 {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.category-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 24px;
+}
+
+.category-modal.active {
+  display: flex;
+}
+
+.category-modal-content {
+  width: min(980px, 100%);
+  max-height: min(90vh, 780px);
+  overflow: auto;
+  background: rgba(8, 12, 19, 0.97);
+  border: 1px solid rgba(176, 209, 130, 0.18);
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.35);
+}
+
+.category-modal-content h3 {
+  margin-bottom: 16px;
+  font-size: 1.4rem;
+  color: var(--color-text);
+}
+
+.category-modal-close {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.15);
+  color: var(--color-text);
+  padding: 10px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  margin-bottom: 20px;
+}
+
+.category-task-list {
+  display: grid;
+  gap: 16px;
+}
+
+.category-task-item {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+  padding: 18px;
+}
+
+.category-task-item h4 {
+  margin-bottom: 8px;
+  font-size: 1rem;
+}
+
+.category-task-item p {
+  color: var(--color-muted);
+  margin-bottom: 8px;
+}
+
+.category-task-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.category-task-meta span,
+.category-task-meta a {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.75);
+}
+
+.category-task-meta a {
+  color: var(--pal-light-green);
+  text-decoration: none;
+}
+
+.category-task-meta a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 900px) {
+  .exams-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 500px) {
+  .exams-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.global-glow {
+  display: none !important;
+}
+.awards-section,
+.rating-section,
+.leaderboard-section,
+.exams-section {
+  position: relative;
+  z-index: 1;
+}
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container header-content">
+      <div class="logo-text">Studio Alanko</div>
+      <nav>
+        <a href="#" class="pill">(РАСПИСАНИЕ)</a>
+        <a href="#" class="pill">(ПРОГРЕСС)</a>
+      </nav>
+      <div class="actions">
+        <span class="pill" style="color: var(--pal-light-green); border-color: var(--pal-mid-green);">(ID: 481516)</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ГЛАВНЫЙ ЭКРАН -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-content">
+          <div class="hero-title-img">
+            <img src="images/Logo.PNG" alt="ALANKO">
+          </div>
+          <div class="hero-sub" id="studentRole">( ЛИЧНЫЙ КАБИНЕТ УЧЕНИКА )</div>
+          <div class="info-block">
+            <h2 id="studentWelcome">ДОБРО ПОЖАЛОВАТЬ,<br>АРИНА ВОЛКОВА</h2>
+            <p id="studentIntroText">Твоя личная статистика, актуальное расписание тренировок и доступ к закрытым материалам студии.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- БЛОК ДОСТИЖЕНИЙ -->
+    <section class="achievements-section">
+      <div class="glowworm-track">
+        <div class="glowworm"></div>
+      </div>
+
+      <div class="container">
+        <div class="achievements-header">
+          <h2>Мои достижения</h2>
+        </div>
+
+        <div class="achievements-tabs video-tabs">
+          <button type="button" class="achievement-tab video-tab active" data-target="individual-videos">Личные достижения</button>
+          <button type="button" class="achievement-tab video-tab" data-target="collective-videos">Коллективные достижения</button>
+        </div>
+
+        <div class="video-scroll-container" id="studentIndividualVideosContainer">
+          <div class="video-card">
+            <div class="video-wrapper">
+              <div style="display:flex; align-items:center; justify-content:center; height:100%; color:rgba(255,255,255,0.6);">Загрузка видео...</div>
+            </div>
+            <p class="video-title">Пожалуйста, подождите</p>
+          </div>
+        </div>
+
+        <div class="video-scroll-container awards-grid-hidden" id="studentCollectiveVideosContainer" style="display:none;">
+          <div class="video-card">
+            <div class="video-wrapper">
+              <div style="display:flex; align-items:center; justify-content:center; height:100%; color:rgba(255,255,255,0.6);">Загрузка коллективных видео...</div>
+            </div>
+            <p class="video-title">Пожалуйста, подождите</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="awards-section">
+      <div class="container">
+        <div class="awards-header">
+          <h2>Награды и результаты</h2>
+        </div>
+
+        <div class="achievements-tabs">
+          <button type="button" class="achievement-tab active" data-target="individual">Мои достижения</button>
+          <button type="button" class="achievement-tab" data-target="collective">Коллективные достижения</button>
+        </div>
+
+        <div class="awards-grid" id="studentIndividualAwardsGrid">
+          <div class="award-card">
+            <div class="award-content">
+              <h3>Загрузка достижений...</h3>
+              <span class="award-date"></span>
+              <p>Ваши достижения будут отображаться здесь после входа.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="awards-grid awards-grid-hidden" id="studentCollectiveAwardsGrid" style="display:none;">
+          <div class="award-card">
+            <div class="award-content">
+              <h3>Загрузка коллективных достижений...</h3>
+              <span class="award-date"></span>
+              <p>Коллективные достижения будут отображаться здесь после входа.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+<section class="rating-section">
+  <div class="container">
+
+    <div class="rating-header">
+      <h2>Успеваемость ученика</h2>
+    </div>
+
+    <div class="rating-summary">
+      <div class="rating-card">
+        <span>Текущие баллы</span>
+        <strong id="ratingPoints">1280</strong>
+      </div>
+
+      <div class="rating-card">
+        <span>Место в рейтинге</span>
+        <strong id="ratingPlace">#0</strong>
+      </div>
+
+      <div class="rating-card">
+        <span>Задания</span>
+        <strong id="ratingTasks">0</strong>
+      </div>
+    </div>
+
+    <div class="rating-history" id="ratingHistoryList">
+      <div class="history-row">
+        <div class="history-info">
+          <h4>История рейтинга загружается...</h4>
+          <p>Пожалуйста, подождите.</p>
+        </div>
+      </div>
+    </div>
+
+    </div>
+
+  </div>
+</section>
+<section class="leaderboard-section">
+  <div class="container">
+    
+    <div class="leaderboard-header">
+      <div class="leader-label">РЕЙТИНГ</div>
+      <h2 class="leader-name" style="font-size: 2.5rem; margin-bottom: 10px;">
+        Общий рейтинг
+      </h2>
+      <p style="color: rgba(255,255,255,0.5);">
+        Рейтинг формируется на основе всех занятий
+      </p>
+    </div>
+
+    <table class="leaderboard-table">
+      <thead>
+        <tr>
+          <th>Место</th>
+          <th>Студент</th>
+          <th>Баллы</th>
+        </tr>
+      </thead>
+
+      <tbody id="leaderboardTableBody">
+        <tr class="leaderboard-row">
+          <td colspan="3" style="text-align:center; padding:20px; color: rgba(255,255,255,0.6);">Загрузка рейтинга...</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+</section>
+<section class="exams-section">
+  <div class="container">
+    <div class="exams-header">
+      <h2>Зачёты</h2>
+      <p>Прогресс выполнения задач по категориям</p>
+    </div>
+
+    <div class="exams-grid" id="studentCategoriesGrid">
+      <div class="exam-card">
+        <div class="circle">
+          <svg>
+            <circle class="bg" cx="70" cy="70" r="60"></circle>
+            <circle class="progress" cx="70" cy="70" r="60"></circle>
+          </svg>
+          <div class="percent">0%</div>
+        </div>
+        <h3>Загрузка категорий...</h3>
+      </div>
+    </div>
+  </div>
+</section>
+  </main>
+
+  <div class="global-glow"></div>
+
+  <div class="category-modal" id="categoryModal">
+    <div class="category-modal-content">
+      <button type="button" class="category-modal-close" id="closeCategoryModal">Закрыть</button>
+      <h3 id="categoryModalTitle">Категория</h3>
+      <div class="category-task-list" id="categoryTaskList"></div>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script>
+    requireAuth();
+
+    const studentWelcome = document.getElementById('studentWelcome');
+    const studentIntroText = document.getElementById('studentIntroText');
+    const ratingPointsEl = document.getElementById('ratingPoints');
+    const ratingPlaceEl = document.getElementById('ratingPlace');
+    const ratingTasksEl = document.getElementById('ratingTasks');
+    const ratingHistoryList = document.getElementById('ratingHistoryList');
+    const leaderboardTableBody = document.getElementById('leaderboardTableBody');
+    const studentIndividualVideosContainer = document.getElementById('studentIndividualVideosContainer');
+    const studentCollectiveVideosContainer = document.getElementById('studentCollectiveVideosContainer');
+    const studentIndividualAwardsGrid = document.getElementById('studentIndividualAwardsGrid');
+    const studentCollectiveAwardsGrid = document.getElementById('studentCollectiveAwardsGrid');
+    const achievementTabs = document.querySelectorAll('.achievement-tab:not(.video-tab)');
+    const videoTabs = document.querySelectorAll('.video-tab');
+    const studentCategoriesGrid = document.getElementById('studentCategoriesGrid');
+    const categoryModal = document.getElementById('categoryModal');
+    const categoryModalTitle = document.getElementById('categoryModalTitle');
+    const categoryTaskList = document.getElementById('categoryTaskList');
+    const closeCategoryModal = document.getElementById('closeCategoryModal');
+    let currentUserId = null;
+
+    function apiFetch(path, options = {}) {
+      return fetchWithAuth(path, options);
+    }
+
+    function createVideoCard(video) {
+      const url = video.video_url || video.url || '';
+      const title = video.title || video.name || 'Видео достижения';
+      const fileUrl = video.file_url || null;
+      const card = document.createElement('div');
+      card.className = 'video-card';
+      card.innerHTML = `
+        <div class="video-wrapper">
+          <video src="${url}" controls preload="metadata"></video>
+        </div>
+        <div>
+          <p class="video-title">${title}</p>
+          <div class="video-actions">
+            <a href="${url}" class="pill" target="_blank" rel="noopener">Посмотреть</a>
+            ${fileUrl ? `<a href="${fileUrl}" class="pill" target="_blank" rel="noopener">Скачать</a>` : ''}
+          </div>
+        </div>
+      `;
+      return card;
+    }
+
+    function renderVideoList(container, videos, emptyTitle, emptyMessage) {
+      container.innerHTML = '';
+      if (!videos || !videos.length) {
+        container.innerHTML = `
+          <div class="video-card">
+            <div class="video-wrapper">
+              <div style="display:flex; align-items:center; justify-content:center; height:100%; color:rgba(255,255,255,0.6);">${emptyTitle}</div>
+            </div>
+            <p class="video-title">${emptyMessage}</p>
+          </div>
+        `;
+        return;
+      }
+
+      videos.forEach(video => {
+        container.appendChild(createVideoCard(video));
+      });
+    }
+
+    function renderStudentVideos(videos) {
+      const individualVideos = (videos || []).filter(video => video.is_collective === false || video.is_collective === undefined);
+      const collectiveVideos = (videos || []).filter(video => video.is_collective === true);
+
+      renderVideoList(
+        studentIndividualVideosContainer,
+        individualVideos,
+        'У вас пока нет личных видео достижений',
+        'Личные видео появятся здесь после загрузки преподавателем.'
+      );
+
+      renderVideoList(
+        studentCollectiveVideosContainer,
+        collectiveVideos,
+        'У вас пока нет коллективных видео достижений',
+        'Коллективные видео появятся здесь после загрузки преподавателем.'
+      );
+    }
+
+    function renderAchievementCards(container, achievements, emptyTitle, emptyMessage) {
+      container.innerHTML = '';
+      if (!achievements || !achievements.length) {
+        container.innerHTML = `
+          <div class="award-card">
+            <div class="award-content">
+              <h3>${emptyTitle}</h3>
+              <span class="award-date"></span>
+              <p>${emptyMessage}</p>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      achievements.forEach(achievement => {
+        const card = document.createElement('div');
+        card.className = 'award-card';
+        card.innerHTML = `
+          <div class="award-content">
+            <h3>${achievement.title || 'Достижение'}</h3>
+            <span class="award-date">${achievement.event_date ? new Date(achievement.event_date).toLocaleDateString('ru-RU') : ''}</span>
+            <p>${achievement.description || 'Описание отсутствует'}</p>
+            ${achievement.place ? `<p><strong>Результат:</strong> ${achievement.place}</p>` : ''}
+            ${achievement.awarded_at ? `<p><strong>Дата получения:</strong> ${new Date(achievement.awarded_at).toLocaleDateString('ru-RU')}</p>` : ''}
+          </div>
+          ${achievement.file_url ? `<a href="${achievement.file_url}" class="pill download-btn" target="_blank" rel="noopener">Скачать файл <iconify-icon icon="solar:download-linear"></iconify-icon></a>` : ''}
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderStudentAchievements(achievements) {
+      renderAchievementCards(
+        studentIndividualAwardsGrid,
+        achievements?.individual,
+        'Пока нет личных достижений',
+        'Твои достижения появятся здесь после добавления их преподавателем.'
+      );
+      renderAchievementCards(
+        studentCollectiveAwardsGrid,
+        achievements?.collective,
+        'Пока нет коллективных достижений',
+        'Коллективные достижения появятся здесь после работы команды.'
+      );
+    }
+
+    achievementTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        achievementTabs.forEach(item => item.classList.toggle('active', item === tab));
+        studentIndividualAwardsGrid.style.display = tab.dataset.target === 'individual' ? 'grid' : 'none';
+        studentCollectiveAwardsGrid.style.display = tab.dataset.target === 'collective' ? 'grid' : 'none';
+      });
+    });
+
+    videoTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        videoTabs.forEach(item => item.classList.toggle('active', item === tab));
+        studentIndividualVideosContainer.style.display = tab.dataset.target === 'individual-videos' ? 'flex' : 'none';
+        studentCollectiveVideosContainer.style.display = tab.dataset.target === 'collective-videos' ? 'flex' : 'none';
+      });
+    });
+
+    function isTaskComplete(task) {
+      return task.status === 'completed' || Number(task.score) > 0;
+    }
+
+    function openCategoryModal(categoryName, tasks) {
+      categoryModalTitle.textContent = `${categoryName} — ${tasks.filter(isTaskComplete).length}/${tasks.length} выполнено`;
+      categoryTaskList.innerHTML = '';
+
+      if (!tasks.length) {
+        categoryTaskList.innerHTML = `
+          <div class="category-task-item">
+            <h4>Нет задач</h4>
+            <p>Для этой категории пока нет задач.</p>
+          </div>
+        `;
+      } else {
+        tasks.forEach(task => {
+          const taskItem = document.createElement('div');
+          taskItem.className = 'category-task-item';
+
+          const videoLinks = (task.videos || []).map(video => `
+            <a href="${video.video_url}" target="_blank" rel="noopener">Смотреть видео</a>
+          `).join('');
+
+          taskItem.innerHTML = `
+            <h4>${task.title || 'Без названия'}</h4>
+            <p>${task.description || 'Описание отсутствует'}</p>
+            <div class="category-task-meta">
+              <span>Статус: ${task.status || 'неизвестно'}</span>
+              <span>Оценка: ${task.score ?? 0} / ${task.max_score ?? '-'}</span>
+              ${videoLinks || '<span>Видео не прикреплено</span>'}
+            </div>
+          `;
+
+          categoryTaskList.appendChild(taskItem);
+        });
+      }
+
+      categoryModal.classList.add('active');
+    }
+
+    function renderCategoryCards(tasks) {
+      const categories = {};
+      (tasks || []).forEach(task => {
+        const name = task.category_name || 'Без категории';
+        if (!categories[name]) categories[name] = [];
+        categories[name].push(task);
+      });
+
+      studentCategoriesGrid.innerHTML = '';
+
+      if (!Object.keys(categories).length) {
+        studentCategoriesGrid.innerHTML = `
+          <div class="exam-card">
+            <div class="circle">
+              <svg>
+                <circle class="bg" cx="70" cy="70" r="60"></circle>
+                <circle class="progress" cx="70" cy="70" r="60"></circle>
+              </svg>
+              <div class="percent">0%</div>
+            </div>
+            <h3>Задачи не найдены</h3>
+            <p style="color: rgba(255,255,255,0.6); margin-top: 12px;">У вас пока нет задач для категорий.</p>
+          </div>
+        `;
+        return;
+      }
+
+      Object.entries(categories).forEach(([categoryName, categoryTasks]) => {
+        const total = categoryTasks.length;
+        const completed = categoryTasks.filter(isTaskComplete).length;
+        const percent = total ? Math.round((completed / total) * 100) : 0;
+
+        const card = document.createElement('div');
+        card.className = 'exam-card';
+        card.dataset.percent = percent;
+        card.innerHTML = `
+          <div class="circle">
+            <svg>
+              <circle class="bg" cx="70" cy="70" r="60"></circle>
+              <circle class="progress" cx="70" cy="70" r="60"></circle>
+            </svg>
+            <div class="percent">0%</div>
+          </div>
+          <h3>${categoryName}</h3>
+          <p style="color: rgba(255,255,255,0.7); margin-top: 10px;">${completed} из ${total} задач</p>
+        `;
+        card.addEventListener('click', () => openCategoryModal(categoryName, categoryTasks));
+        studentCategoriesGrid.appendChild(card);
+      });
+
+      animateExamCards();
+    }
+
+    async function loadStudentTasks() {
+      try {
+        const response = await apiFetch('/user/tasks');
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.detail || 'Не удалось загрузить задачи');
+        }
+        renderCategoryCards(data);
+      } catch (error) {
+        console.error(error);
+        studentCategoriesGrid.innerHTML = `
+          <div class="exam-card">
+            <div class="circle">
+              <svg>
+                <circle class="bg" cx="70" cy="70" r="60"></circle>
+                <circle class="progress" cx="70" cy="70" r="60"></circle>
+              </svg>
+              <div class="percent">0%</div>
+            </div>
+            <h3>Не удалось загрузить категории</h3>
+            <p style="color: rgba(255,255,255,0.6); margin-top: 12px;">Попробуйте обновить страницу.</p>
+          </div>
+        `;
+      }
+    }
+
+    closeCategoryModal.addEventListener('click', () => categoryModal.classList.remove('active'));
+    categoryModal.addEventListener('click', event => {
+      if (event.target === categoryModal) {
+        categoryModal.classList.remove('active');
+      }
+    });
+
+    function animateExamCards() {
+      const cards = document.querySelectorAll('.exam-card');
+      cards.forEach(card => {
+        const percent = Number(card.dataset.percent);
+        if (Number.isNaN(percent)) return;
+
+        const circle = card.querySelector('.progress');
+        const text = card.querySelector('.percent');
+        const radius = 60;
+        const circumference = 2 * Math.PI * radius;
+        const offset = circumference - (percent / 100) * circumference;
+
+        circle.style.strokeDasharray = circumference;
+        circle.style.strokeDashoffset = circumference;
+
+        setTimeout(() => {
+          circle.style.strokeDashoffset = offset;
+        }, 120);
+
+        let count = 0;
+        const step = Math.max(1, Math.round(percent / 25));
+        const interval = setInterval(() => {
+          count = Math.min(percent, count + step);
+          text.textContent = `${count}%`;
+          if (count >= percent) {
+            clearInterval(interval);
+          }
+        }, 18);
+      });
+    }
+
+    function renderRatingHistory(history) {
+      ratingHistoryList.innerHTML = '';
+      if (!history || !history.length) {
+        ratingHistoryList.innerHTML = `
+          <div class="history-row">
+            <div class="history-info">
+              <h4>История рейтинга отсутствует</h4>
+              <p>Рейтинг начнёт отслеживаться после первой оценки.</p>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      history.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'history-row';
+        row.innerHTML = `
+          <div class="history-info">
+            <h4>${item.reason || 'Обновление рейтинга'}</h4>
+            <p>${new Date(item.timestamp).toLocaleDateString('ru-RU', { year: 'numeric', month: 'long', day: 'numeric' })} — ${item.points_change > 0 ? '+' : ''}${item.points_change} баллов</p>
+            <p>Текущий рейтинг: ${item.points_after} баллов</p>
+            <p>Место: #${item.place_estimate}</p>
+          </div>
+        `;
+        ratingHistoryList.appendChild(row);
+      });
+    }
+
+    function renderLeaderboard(leaderboard) {
+      leaderboardTableBody.innerHTML = '';
+      if (!leaderboard || !leaderboard.length) {
+        leaderboardTableBody.innerHTML = `
+          <tr class="leaderboard-row">
+            <td colspan="3" style="text-align:center; padding:20px; color: rgba(255,255,255,0.6);">Рейтинг пока недоступен</td>
+          </tr>
+        `;
+        return;
+      }
+
+      const uniquePlaces = [...new Set(leaderboard.map(item => item.place))].slice(0, 3);
+    leaderboard.forEach(item => {
+        const row = document.createElement('tr');
+        row.className = 'leaderboard-row';
+        if (item.user_id && item.user_id === currentUserId) {
+          row.classList.add('current-user-row');
+        }
+        const movement = (item.movement || item.direction || '').toLowerCase();
+        const arrow = movement === 'up' ? '↗' : movement === 'down' ? '↘' : '';
+        const badgeClass = movement ? `movement-badge ${movement}` : 'movement-badge';
+        const scoreValue = item.rating ?? item.rating_points ?? 0;
+        let rankBadgeClass = 'rank-badge';
+        if (item.place === uniquePlaces[0]) rankBadgeClass += ' top-gold';
+        else if (item.place === uniquePlaces[1]) rankBadgeClass += ' top-silver';
+        else if (item.place === uniquePlaces[2]) rankBadgeClass += ' top-bronze';
+        row.innerHTML = `
+          <td><span class="${rankBadgeClass}">${item.place}</span></td>
+          <td>${item.full_name}</td>
+          <td>
+            <div class="score-cell">
+              <span class="score-value">${scoreValue}</span>
+              <span class="${badgeClass}" title="${movement === 'up' ? 'Движение вверх' : movement === 'down' ? 'Движение вниз' : 'Без изменения'}">${arrow}</span>
+            </div>
+          </td>
+        `;
+        leaderboardTableBody.appendChild(row);
+      });
+    }
+
+    function getStudentLeaderboardRating(leaderboard, userId) {
+      if (!Array.isArray(leaderboard) || !userId) return null;
+      const entry = leaderboard.find(item => item.user_id === userId || item.id === userId);
+      return entry ? (entry.rating ?? entry.rating_points ?? null) : null;
+    }
+
+    async function loadStudentDashboard() {
+      try {
+        const response = await apiFetch('/user/dashboard');
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.detail || 'Не удалось загрузить данные студента');
+        }
+
+        currentUserId = data.user_id;
+        studentWelcome.innerHTML = `ДОБРО ПОЖАЛОВАТЬ,<br>${data.user?.full_name || data.user?.email || 'Ученик'}!`;
+        studentIntroText.textContent = 'Здесь собраны твои достижения, текущее место в рейтинге и загруженные видео.';
+        const dashboardRating = data.rating ?? data.rating_points ?? data.user?.rating ?? data.user?.rating_points;
+        const leaderboardRating = getStudentLeaderboardRating(data.leaderboard, currentUserId);
+        let ratingVal = dashboardRating ?? leaderboardRating ?? 0;
+        if (dashboardRating === 0 && leaderboardRating && leaderboardRating !== 0) {
+          ratingVal = leaderboardRating;
+        }
+        ratingPointsEl.textContent = String(ratingVal);
+        ratingPlaceEl.textContent = data.place ? `#${data.place}${data.total_students ? ` / ${data.total_students}` : ''}` : '-';
+        ratingTasksEl.textContent = data.tasks ?? 0;
+
+        renderStudentVideos(data.achievement_videos?.length ? data.achievement_videos : data.videos);
+        renderStudentAchievements(data.achievements);
+        renderRatingHistory(data.history);
+        renderLeaderboard(data.leaderboard);
+        await loadStudentTasks();
+      } catch (error) {
+        console.error(error);
+        studentIntroText.textContent = 'Не удалось загрузить данные профиля. Попробуйте снова.';
+        studentVideosContainer.innerHTML = `
+          <div class="video-card">
+            <div class="video-wrapper">
+              <div style="display:flex; align-items:center; justify-content:center; height:100%; color:rgba(255,255,255,0.6);">Ошибка загрузки видео</div>
+            </div>
+            <p class="video-title">Повторите вход</p>
+          </div>
+        `;
+        studentIndividualAwardsGrid.innerHTML = `
+          <div class="award-card">
+            <div class="award-content">
+              <h3>Ошибка загрузки личных достижений</h3>
+              <span class="award-date"></span>
+              <p>Попробуйте обновить страницу или войти снова.</p>
+            </div>
+          </div>
+        `;
+        studentCollectiveAwardsGrid.innerHTML = `
+          <div class="award-card">
+            <div class="award-content">
+              <h3>Ошибка загрузки коллективных достижений</h3>
+              <span class="award-date"></span>
+              <p>Попробуйте обновить страницу или войти снова.</p>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    loadStudentDashboard();
+  </script>
+
+  <script>
+    // Скрипт для запуска светлячка при скролле
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-glow');
+          observer.unobserve(entry.target); // Запуск только один раз
+        }
+      });
+    }, { threshold: 0.15 });
+
+    observer.observe(document.querySelector('.achievements-section'));
+
+    const examSection = document.querySelector('.exams-section');
+
+const examObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      examSection.classList.add('visible');
+      animateExamCards();
+      examObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.3 });
+
+examObserver.observe(examSection);
+
+
+  </script>
+</body>
+</html>

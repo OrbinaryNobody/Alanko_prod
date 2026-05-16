@@ -1,0 +1,2361 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Studio Alanko - Пространство движения</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+
+  <style>
+    /* ============================================================
+       0. ГЛОБАЛЬНЫЕ НАСТРОЙКИ И ПЕРЕМЕННЫЕ
+       ============================================================ */
+    :root {
+      --color-bg: #05060a;
+      --color-text: #ffffff;
+      --color-muted: rgba(255,255,255,0.6);
+      --overlay-gradient: linear-gradient(90deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.2) 100%);
+      
+      /* Цветовая палитра из ваших изображений */
+      --pal-dark-green: #2C473E;
+      --pal-mid-green: #6A8E4E;
+      --pal-light-green: #B0D182;
+      --pal-off-white: #F4F1EA;
+      --pal-grey: #666666;
+
+      --font-primary: 'Inter', sans-serif;
+      
+      --spacing-sm: 8px;
+      --spacing-md: 16px;
+      --spacing-lg: 24px;
+      --spacing-xl: 48px;
+      
+      --radius-pill: 999px;
+      --radius-card: 24px;
+      --container-max-width: 1400px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+  scroll-behavior: smooth;
+}
+    body {
+      font-family: var(--font-primary);
+      background: var(--color-bg);
+      color: var(--color-text);
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: var(--container-max-width);
+      margin: 0 auto;
+      padding: 0 var(--spacing-xl);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* Компонент интерактивной кнопки-пилюли */
+    .pill {
+      border: 1px solid rgba(255,255,255,0.4);
+      border-radius: var(--radius-pill);
+      padding: 6px 14px;
+      font-size: 0.75rem;
+      transition: 0.3s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .pill:hover {
+      background: var(--pal-mid-green);
+      color: #fff;
+      border-color: var(--pal-mid-green);
+    }
+
+    /* ============================================================
+       ШАПКА САЙТА (HEADER)
+       ============================================================ */
+    header {
+  position: absolute;
+  width: 100%;
+  z-index: 10;
+  padding: var(--spacing-lg) 0;
+}
+
+.header-content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ЛОГО — просто слева */
+.logo-text {
+  font-weight: 900;
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ЦЕНТР — навигация */
+nav {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+}
+
+/* ПРАВО — время */
+.actions {
+  display: flex;
+  align-items: center;
+}
+
+/* виджет времени */
+.time-widget {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.7);
+  letter-spacing: 1px;
+}
+
+.time-widget span:first-child {
+  font-weight: 600;
+  color: var(--pal-light-green);
+}
+
+    /* ============================================================
+       БЛОК №1: ГЛАВНЫЙ ЭКРАН (HERO SECTION)
+       ============================================================ */
+    .hero {
+      height: 100vh;
+      position: relative;
+      display: flex;
+      align-items: normal;
+      padding-top: 190px;
+      justify-content: flex-start;
+      overflow: hidden;
+    }
+
+    /* Фоновое фото */
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: url('images/img_9084.PNG') center bottom / cover no-repeat;
+      z-index: 0;
+    }
+
+    /* Слой затемнения */
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: var(--overlay-gradient);
+      z-index: 1;
+    }
+
+    .hero .container {
+      margin: 0;
+      padding-left: var(--spacing-xl);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 650px;
+    }
+
+    /* Основной графический заголовок-лого */
+    .hero-title-img img {
+      width: 100%;
+      max-width: 600px;
+      display: block;
+    }
+
+    .hero-sub {
+      margin-top: var(--spacing-md);
+      color: var(--color-muted);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Текстовый блок описания */
+    .info-block {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+    }
+
+    .info-block h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .info-block p {
+      font-size: 0.85rem;
+      color: var(--color-muted);
+      max-width: 420px;
+    }
+    .hero-login-btn {
+      width: 300px;
+  margin-top: 20px;
+  display: inline-block;
+  padding: 16px 32px;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 999px;
+
+  background: var(--pal-light-green);
+  color: #0a0c14;
+
+  transition: 0.3s;
+  box-shadow: 0 10px 30px rgba(176,209,130,0.25);
+
+   text-align: center; 
+}
+
+.hero-login-btn:hover {
+  background: var(--pal-mid-green);
+  color: white;
+  transform: translateY(-2px) scale(1.03);
+}
+    /* ============================================================
+       БЛОК №2: БЕНТО-СЕТКА (BENTO GRID)
+       ============================================================ */
+    /* ============================================================
+   БЛОК 2: CAROUSEL (НАПРАВЛЕНИЯ) — ЗАКОММЕНТИРОВАН
+   Будет реализован после загрузки фото
+   ============================================================ */
+/*
+.carousel-section {
+  padding: 80px 0;
+  overflow: hidden;
+}
+
+.carousel-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.carousel-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.header-decoration {
+  flex: 1;
+  height: 1px;
+  margin-left: 20px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.1), transparent);
+}
+
+.marquee-container {
+  overflow: hidden;
+}
+
+.marquee-content {
+  display: flex;
+  width: max-content;
+  animation: scroll 40s linear infinite;
+}
+
+.carousel-group {
+  display: flex;
+  gap: 20px;
+}
+
+.carousel-item {
+  width: 320px;
+  height: 420px;
+  flex-shrink: 0;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.carousel-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+*/
+/* ============================================================
+   БЛОК №3: ДОСТИЖЕНИЯ / ИНТЕРАКТИВНЫЙ ВЫБОР
+============================================================ */
+
+.achievements-section {
+  padding: 100px 0;
+  position: relative;
+  background:
+    radial-gradient(circle at top right, rgba(176,209,130,0.06), transparent 35%),
+    var(--color-bg);
+}
+
+.achievements-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.achievements-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.achievement-tabs {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+
+.achievement-tab {
+  padding: 12px 22px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.03);
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 0.9rem;
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+}
+
+.achievement-tab:hover {
+  border-color: var(--pal-mid-green);
+  background: rgba(106,142,78,0.12);
+}
+
+.achievement-tab.active {
+  background: var(--pal-mid-green);
+  border-color: var(--pal-mid-green);
+  box-shadow: 0 10px 40px rgba(106,142,78,0.18);
+}
+
+.achievement-display {
+  position: relative;
+  min-height: 520px;
+}
+
+.achievement-card {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: translateY(40px);
+  pointer-events: none;
+  transition: 0.5s ease;
+}
+
+.achievement-card.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
+}
+
+.achievement-content {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 40px;
+  align-items: center;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 28px;
+  padding: 28px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+  overflow: hidden;
+}
+
+.achievement-image {
+  border-radius: 22px;
+  overflow: hidden;
+  height: 460px;
+}
+
+.achievement-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.achievement-info h3 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 18px;
+  color: var(--pal-light-green);
+}
+
+.achievement-info p {
+  color: var(--color-muted);
+  line-height: 1.7;
+  margin-bottom: 24px;
+  font-size: 0.95rem;
+}
+
+.achievement-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.achievement-badge {
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: rgba(176,209,130,0.08);
+  border: 1px solid rgba(176,209,130,0.18);
+  font-size: 0.8rem;
+  color: var(--pal-light-green);
+}
+
+@media (max-width: 768px) {
+  .achievement-content {
+    grid-template-columns: 1fr;
+  }
+
+  .achievement-image {
+    height: 320px;
+  }
+
+  .achievement-info h3 {
+    font-size: 1.5rem;
+  }
+
+  .achievement-display {
+    min-height: 760px;
+  }
+}
+
+/* ============================================================
+   БЛОК №4: ЛУЧШИЕ УЧЕНИКИ / VIDEO SHOWCASE
+============================================================ */
+
+.students-section {
+  padding: 110px 0;
+  position: relative;
+  background:
+    radial-gradient(circle at left top, rgba(176,209,130,0.05), transparent 35%),
+    var(--color-bg);
+}
+
+.students-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.students-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.students-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.student-card {
+  position: relative;
+  height: 420px;
+  border-radius: 24px;
+  overflow: hidden;
+  cursor: pointer;
+  background: #111;
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: 0.35s;
+}
+
+.student-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+}
+
+.student-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.student-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      to top,
+      rgba(0,0,0,0.9) 0%,
+      rgba(0,0,0,0.45) 45%,
+      rgba(0,0,0,0.1) 100%
+    );
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 28px;
+}
+
+.play-button {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.18);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+}
+
+.student-name {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.student-role {
+  font-size: 0.85rem;
+  color: var(--color-muted);
+  margin-bottom: 18px;
+}
+
+.student-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.student-tag {
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+}
+/* Активация портала при открытии модалки ученика */
+.student-modal.active .portal {
+  opacity: 1;
+}
+
+/* Убедимся, что портал всегда за контентом модалки */
+.student-modal .portal {
+  z-index: 1;
+}
+.student-modal-box {
+  z-index: 2; /* Контент выше портала */
+}
+
+/* ==== ЭФФЕКТ ДЛЯ УЧЕНИКА: СВЕЧЕНИЕ ПО ГРАНЯМ ==== */
+.portal-edge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.95);
+  /* Размер чуть больше бокса модалки */
+  width: calc(min(980px, 90vw) + 12px);
+  height: calc(620px + 12px);
+  
+  opacity: 0;
+  z-index: 1;
+  border-radius: 32px;
+  overflow: hidden;
+  transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  pointer-events: none;
+}
+
+/* Активация при открытии модалки ученика */
+.student-modal.active .portal-edge {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* Бегущий луч по периметру */
+.portal-edge::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 160deg,
+    var(--pal-light-green) 180deg, 
+    transparent 200deg,
+    transparent 360deg
+  );
+  animation: rotatePortal 3s linear infinite;
+}
+
+/* Внутренняя маска, чтобы оставить только тонкую рамку */
+.portal-edge::after {
+  content: "";
+  position: absolute;
+  inset: 3px; /* Толщина рамки */
+  background: #0a0c14; /* Цвет фона карточки */
+  border-radius: 29px;
+}
+
+/* Мягкое свечение за рамкой */
+.student-modal.active .portal-edge {
+  box-shadow: 0 0 40px rgba(176, 209, 130, 0.3);
+}
+
+@keyframes rotatePortal {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Адаптивность для мобилок */
+@media (max-width: 992px) {
+  .portal-edge {
+    width: calc(90vw + 10px);
+    height: calc(100% - 30px);
+  }
+}
+
+/* ============================================================
+   MODAL STUDENT PROFILE
+============================================================ */
+
+.student-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.78);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 9999;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.35s;
+}
+
+.student-modal.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.student-modal-box {
+  position: relative;
+  z-index: 2;
+
+  width: min(980px, 90vw);
+  background: #0a0c14;
+  border-radius: 28px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+
+  transform: scale(0.92);
+  opacity: 0;
+  transition: 0.4s ease;
+}
+
+.student-modal.active .student-modal-box {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.student-modal-content {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+}
+
+.student-modal-image {
+  height: 620px;
+}
+
+.student-modal-image img,
+.student-modal-image video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 24px;
+  background: #000;
+}
+
+.video-player {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+  gap: 16px;
+  height: 100%;
+}
+
+.video-player video {
+  width: 100%;
+  flex: 1;
+  min-height: 300px;
+  border-radius: 24px;
+  background: #000;
+}
+
+.video-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.video-task-name {
+  font-size: 1rem;
+  color: rgba(255,255,255,0.92);
+  font-weight: 600;
+}
+
+.video-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.video-nav-btn {
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.05);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.video-nav-btn:hover {
+  background: rgba(176,209,130,0.16);
+  border-color: rgba(176,209,130,0.3);
+}
+
+.video-nav-btn[disabled] {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.08);
+}
+
+.video-counter {
+  color: var(--color-muted);
+  font-size: 0.95rem;
+}
+
+.video-fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  border-radius: 24px;
+  background: rgba(0,0,0,0.72);
+  color: var(--color-muted);
+  text-align: center;
+  font-size: 1rem;
+}
+
+.student-modal-info {
+  padding: 42px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.student-modal-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--pal-mid-green);
+  margin-bottom: 14px;
+}
+
+.student-modal-info h3 {
+  font-size: 2.3rem;
+  font-weight: 900;
+  margin-bottom: 14px;
+  color: var(--pal-light-green);
+}
+
+.student-modal-sub {
+  font-size: 0.95rem;
+  color: var(--color-muted);
+  margin-bottom: 28px;
+}
+
+.student-modal-text {
+  line-height: 1.7;
+  color: rgba(255,255,255,0.72);
+  margin-bottom: 30px;
+}
+
+.student-modal-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.student-stat {
+  padding: 12px 18px;
+  border-radius: 999px;
+  background: rgba(176,209,130,0.07);
+  border: 1px solid rgba(176,209,130,0.16);
+  color: var(--pal-light-green);
+  font-size: 0.8rem;
+}
+
+.close-student-modal {
+  
+  position: absolute;
+  top: 28px;
+  right: 28px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  z-index: 20;
+}
+
+@media (max-width: 992px) {
+  .students-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .student-modal-content {
+    grid-template-columns: 1fr;
+  }
+
+  .student-modal-image {
+    height: 360px;
+  }
+
+  .student-modal-info h3 {
+    font-size: 1.7rem;
+  }
+}
+
+/* ============================================================
+   БЛОК РУКОВОДИТЕЛЯ
+============================================================ */
+.leader-section {
+  padding: 120px 0;
+  background: var(--color-bg);
+  overflow: hidden;
+}
+
+.leader-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.leader-photo {
+    aspect-ratio: 3 / 5;
+  position: relative;
+  border-radius: 40px;
+  overflow: hidden;
+    width: 100%;
+      max-height: 800px;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+}
+
+.leader-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Эффект тени на тексте перед появлением */
+.reveal-box {
+  opacity: 0;
+  transform: translateX(50px);
+  filter: blur(20px); /* Сильное размытие как в тени */
+  transition: all 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Когда блок в поле зрения */
+.reveal-box.active {
+  opacity: 1;
+  transform: translateX(0);
+  filter: blur(0);
+}
+
+.leader-label {
+  color: var(--pal-mid-green);
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+}
+
+.leader-name {
+  font-size: 4rem;
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 30px;
+  color: #fff;
+}
+
+.leader-text {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  color: rgba(255,255,255,0.7);
+}
+
+.leader-text p {
+  margin-bottom: 20px;
+}
+
+.leader-signature {
+  margin-top: 40px;
+  font-family: 'Cursive', sans-serif; /* Можно подключить рукописный шрифт */
+  font-size: 2rem;
+  color: var(--pal-light-green);
+  opacity: 0.8;
+}
+
+/* Адаптив */
+@media (max-width: 992px) {
+  .leader-container {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .leader-photo {
+    height: 500px;
+  }
+  .leader-name {
+    font-size: 2.5rem;
+  }
+}
+/* ============================================================
+   БЛОК: ТАБЛИЦА ЛИДЕРОВ (LEADERBOARD)
+============================================================ */
+.leaderboard-section {
+    padding: 100px 0;
+    background: var(--color-bg);
+}
+
+.leaderboard-header {
+    margin-bottom: 60px;
+    text-align: left;
+}
+
+.leaderboard-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 15px; /* Отступы между строками */
+}
+
+.leaderboard-table th {
+    text-align: left;
+    padding: 10px 20px;
+    color: var(--pal-mid-green);
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.leaderboard-row {
+    background: rgba(255, 255, 255, 0.03);
+    transition: transform 0.3s ease, background 0.3s ease;
+    border-radius: 15px;
+}
+
+.leaderboard-row:hover {
+    background: rgba(255, 255, 255, 0.07);
+    transform: scale(1.01);
+}
+
+.leaderboard-row td {
+    padding: 20px;
+    color: #fff;
+    font-size: 1.1rem;
+}
+
+/* Скругление углов для первой и последней ячейки в строке */
+.leaderboard-row td:first-child { border-radius: 15px 0 0 15px; font-weight: 900; color: var(--pal-light-green); }
+.leaderboard-row td:last-child { border-radius: 0 15px 15px 0; }
+
+.points-cell {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    justify-content: space-between;
+}
+
+/* Стили для стрелок динамики */
+.trend-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+}
+
+.trend-up {
+    color: #4CAF50;
+    background: rgba(76, 175, 80, 0.1);
+}
+
+.trend-down {
+    color: var(--pal-dark-green);
+    background: rgba(44, 71, 62, 0.15);
+}
+
+/* Номер места в кружке для ТОП-3 */
+.rank-badge {
+    display: inline-block;
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+    text-align: center;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    font-size: 0.9rem;
+}
+
+.leaderboard-row:nth-child(1) .rank-badge { background: #FFD700; color: #000; } /* Золото */
+.leaderboard-row:nth-child(2) .rank-badge { background: #C0C0C0; color: #000; } /* Серебро */
+.leaderboard-row:nth-child(3) .rank-badge { background: #CD7F32; color: #000; } /* Бронза */
+
+@media (max-width: 768px) {
+    .leaderboard-table thead { display: none; } /* Скрываем заголовки на мобилках */
+    .leaderboard-row td { padding: 15px 10px; font-size: 0.9rem; }
+}
+
+/* ============================================================
+   БЛОК: FAQ (ACCORDION)
+============================================================ */
+.faq-section {
+    padding: 100px 0;
+    background: var(--color-bg);
+}
+
+.faq-header {
+    margin-bottom: 60px;
+}
+
+.faq-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.faq-item {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    margin-bottom: 10px;
+}
+
+.faq-question {
+    width: 100%;
+    padding: 25px 0;
+    background: none;
+    border: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    text-align: left;
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.faq-question:hover {
+    color: var(--pal-light-green);
+}
+
+.faq-icon {
+    font-size: 1.5rem;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--pal-mid-green);
+}
+
+.faq-item.active .faq-icon {
+    transform: rotate(45deg); /* Превращаем плюс в крестик */
+}
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.faq-answer-content {
+    padding-bottom: 30px;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.8;
+    font-size: 1rem;
+    max-width: 80%;
+}
+
+@media (max-width: 768px) {
+    .faq-question { font-size: 1rem; }
+    .faq-answer-content { max-width: 100%; }
+}
+    /* ============================================================
+       БЛОК №6: СВЯЗАТЬСЯ С НАМИ (FOOTER & CONTACTS)
+       ============================================================ */
+    .contact-footer {
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      padding: 80px 0 40px 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      position: relative;
+      z-index: 5;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 60px;
+      margin-bottom: 80px;
+    }
+
+    .contact-info h2 {
+      font-size: 2.5rem;
+      font-weight: 900;
+      margin-bottom: 20px;
+      color: var(--pal-light-green);
+    }
+
+    .contact-info p {
+      color: var(--color-muted);
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    /* Навигационные колонки футера */
+    .footer-links {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+    }
+
+    .link-group h4 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+      color: var(--pal-mid-green);
+    }
+
+    .link-group ul { list-style: none; }
+    .link-group ul li { margin-bottom: 12px; }
+    .link-group ul li a { font-size: 0.9rem; color: var(--color-text); transition: 0.3s; }
+    .link-group ul li a:hover { color: var(--pal-light-green); }
+
+    /* Нижняя техническая панель */
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 40px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .footer-logo { display: flex; align-items: center; gap: 10px; font-weight: 900; font-size: 1.2rem; }
+    .social-icons { display: flex; gap: 20px; font-size: 1.5rem; }
+    .copyright { font-size: 0.75rem; color: var(--color-muted); }
+
+    .cta-button-footer {
+      display: inline-block;
+      padding: 12px 30px;
+      background-color: var(--pal-off-white);
+      color: var(--pal-dark-green);
+      border-radius: var(--radius-pill);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      transition: all 0.3s;
+    }
+
+    .cta-button-footer:hover {
+      background-color: var(--pal-mid-green);
+      color: #fff;
+      transform: scale(1.05);
+    }
+
+    /* ============================================================
+   АДАПТАЦИЯ ДЛЯ CAROUSEL (ЗАКОММЕНТИРОВАНА)
+   ============================================================ */
+/*
+@media (max-width: 768px) {
+  .carousel-section { padding: 60px 0; }
+}
+*/
+
+/* Адаптация под мобильные устройства */
+    @media (max-width: 768px) {
+      nav { display: none; }
+      .footer-top { grid-template-columns: 1fr; gap: 40px; }
+      .footer-links { grid-template-columns: 1fr 1fr; }
+      .bento-grid { display: flex; flex-direction: column; gap: 16px; }
+      .hero { padding-top: 120px; height: auto; padding-bottom: 60px; }
+    }
+
+    /* ==== LOGIN MODAL ==== */
+/* ==== LOGIN MODAL ==== */
+.login-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.3s;
+  z-index: 100000;
+}
+
+.login-modal.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.login-box {
+  position: relative;
+  z-index: 2;
+
+  width: 420px;
+  padding: 42px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+
+  border-radius: 32px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+
+  backdrop-filter: blur(24px);
+
+  border: 1px solid rgba(255,255,255,0.12);
+
+  box-shadow:
+    0 30px 80px rgba(0,0,0,0.55),
+    0 0 60px rgba(176,209,130,0.08);
+
+  transform: scale(0.82) translateY(20px);
+  opacity: 0;
+
+  transition:
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.45s ease;
+}
+
+.login-modal.active .login-box {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+}
+
+/* Заголовок */
+.login-box h2 {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 800;
+  color: white;
+  margin-bottom: 6px;
+}
+
+.login-box form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* INPUT */
+.login-box input {
+  width: 100%;
+
+  padding: 18px 20px;
+
+  border-radius: 18px;
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  background: rgba(255,255,255,0.05);
+
+  color: white;
+
+  font-size: 1rem;
+  font-weight: 500;
+
+  outline: none;
+
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.2s ease,
+    background 0.25s ease;
+}
+
+/* placeholder */
+.login-box input::placeholder {
+  color: rgba(255,255,255,0.38);
+}
+
+/* ФОКУС — ЗЕЛЕНАЯ ОБВОДКА */
+.login-box input:focus {
+  border-color: var(--pal-light-green);
+
+  background: rgba(255,255,255,0.07);
+
+  box-shadow:
+    0 0 0 4px rgba(176,209,130,0.16),
+    0 0 25px rgba(176,209,130,0.18);
+
+  transform: translateY(-1px);
+}
+
+/* КНОПКА */
+.login-box button {
+  margin-top: 10px;
+
+  height: 58px;
+
+  border: none;
+  border-radius: 999px;
+
+  background: linear-gradient(
+    135deg,
+    var(--pal-light-green),
+    var(--pal-mid-green)
+  );
+
+  color: #08110b;
+
+  font-size: 1rem;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    filter 0.25s ease;
+}
+
+.login-box button:hover {
+  transform: translateY(-2px) scale(1.02);
+
+  box-shadow:
+    0 12px 35px rgba(176,209,130,0.28);
+
+  filter: brightness(1.03);
+}
+
+.login-box button:active {
+  transform: scale(0.98);
+}
+
+/* Ошибка */
+#loginError {
+  text-align: center;
+  color: #ff7d7d !important;
+  font-size: 0.9rem;
+  margin-top: 4px !important;
+}
+
+/* MOBILE */
+@media (max-width: 540px) {
+  .login-box {
+    width: calc(100vw - 32px);
+    padding: 30px 24px;
+    border-radius: 26px;
+  }
+
+  .login-box h2 {
+    font-size: 1.6rem;
+  }
+
+  .login-box input {
+    padding: 16px 18px;
+  }
+}
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container header-content">
+      <div class="logo-text">Dance Studio Alanko</div>
+<nav>
+  <a href="#achievements" class="pill">ДОСТИЖЕНИЯ</a>
+  <a href="#leader" class="pill">РУКОВОДИТЕЛЬ</a>
+  <a href="#award" class="pill">ПРЕМИЯ</a>
+  <a href="#faq" class="pill">ВОПРОСЫ</a>
+  <a href="#faq" class="pill">ДЛЯ РОДИТЕЛЕЙ</a>
+</nav>
+<div class="actions">
+  <div class="time-widget">
+    <span id="day"></span>
+    <span id="time"></span>
+  </div>
+</div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-content">
+        <div class="hero-title-img">
+          <img src="images/Logo.PNG" alt="Studio Alanko">
+        </div>
+        <div class="hero-sub"> ПЛАТФОРМА ДВИЖЕНИЯ </div>
+        <div class="info-block">
+          <h2>
+            ДЕТСКОЕ ОТДЕЛЕНИЕ,<br>
+            СОВРЕМЕННОЙ ХАРЕОГРАФИИ
+          </h2>
+          <p>
+            Вкладываем в каждого ученика большой профессионализм с раннего возраста!
+          </p>
+          <a href="login.html" class="hero-login-btn login-btn">Войти на платформу</a>
+        </div>
+      </div>
+    </section>
+    
+
+    <!-- ============================================================
+         БЛОК 2: CAROUSEL (НАПРАВЛЕНИЯ)
+         ЗАКОММЕНТИРОВАН — БУДЕТ РЕАЛИЗОВАН ПОЗЖЕ
+         ============================================================ -->
+    <!-- <section class="carousel-section">
+  <div class="container carousel-header">
+    <h2>Направления Studio Alanko</h2>
+    <div class="header-decoration"></div>
+  </div>
+
+  <div class="marquee-container">
+    <div class="marquee-content">
+
+      <!-- ГРУППА 1 -->
+      <!-- <div class="carousel-group">
+        <div class="carousel-item">
+          <img src="https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=800" />
+        </div>
+        <div class="carousel-item">
+          <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=800" />
+        </div>
+        <div class="carousel-item">
+          <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=800" />
+        </div>
+        <div class="carousel-item">
+          <img src="https://images.unsplash.com/photo-1547153760-18fc86324498?w=800" />
+        </div>
+        <div class="carousel-item">
+          <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800" />
+        </div>
+      </div> -->
+
+      <!-- ГРУППА 2 (копия!)
+      <div class="carousel-group">
+        <div class="carousel-item">
+          <img src="https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=800" />
+        </div>
+        <div class="carousel-item">
+          <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=800" />
+        </div>
+        <div class="carousel-item">
+          <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=800" />
+        </div>
+        <div class="carousel-item">
+          <img src="https://images.unsplash.com/photo-1547153760-18fc86324498?w=800" />
+        </div>
+        <div class="carousel-item">
+          <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800" />
+        </div>
+      </div> -->
+
+    </div>
+  </div>
+</section>
+<section class="achievements-section" id="achievements">
+
+  <div class="container">
+
+    <div class="achievements-header">
+      <h2>Наши достижения</h2>
+      <div class="header-decoration"></div>
+    </div>
+
+    <!-- горизонтальный список -->
+    <div class="achievement-tabs">
+
+      <button class="achievement-tab active" data-target="achieve1">
+        Чемпионы России
+      </button>
+
+      <button class="achievement-tab" data-target="achieve2">
+        Международные фестивали
+      </button>
+
+      <button class="achievement-tab" data-target="achieve3">
+        Собственные шоу
+      </button>
+
+      <button class="achievement-tab" data-target="achieve4">
+        Обучение детей
+      </button>
+
+    </div>
+
+    <!-- выпадающий контент -->
+    <div class="achievement-display">
+
+      <!-- карточка 1 -->
+      <div class="achievement-card active" id="achieve1">
+        <div class="achievement-content">
+
+          <div class="achievement-image">
+            <img src="https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=1200" alt="">
+          </div>
+
+          <div class="achievement-info">
+            <h3>Чемпионы России</h3>
+            <p>
+              Наши ученики и команды регулярно занимают призовые места
+              на крупнейших чемпионатах страны. Мы создаем не просто
+              танцоров — мы формируем сильных артистов и лидеров сцены.
+            </p>
+
+            <div class="achievement-meta">
+              <div class="achievement-badge">15+ побед</div>
+              <div class="achievement-badge">2021–2026</div>
+              <div class="achievement-badge">Федеральный уровень</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- карточка 2 -->
+      <div class="achievement-card" id="achieve2">
+        <div class="achievement-content">
+
+          <div class="achievement-image">
+            <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1200" alt="">
+          </div>
+
+          <div class="achievement-info">
+            <h3>Международные фестивали</h3>
+            <p>
+              Studio Alanko представляет страну на международных сценах,
+              участвуя в фестивалях, баттлах и крупных танцевальных
+              форумах Европы и Азии.
+            </p>
+
+            <div class="achievement-meta">
+              <div class="achievement-badge">12 стран</div>
+              <div class="achievement-badge">Global Events</div>
+              <div class="achievement-badge">World Stage</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- карточка 3 -->
+      <div class="achievement-card" id="achieve3">
+        <div class="achievement-content">
+
+          <div class="achievement-image">
+            <img src="https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=1200" alt="">
+          </div>
+
+          <div class="achievement-info">
+            <h3>Собственные шоу</h3>
+            <p>
+              Мы создаем авторские постановки, масштабные перформансы
+              и сценические проекты, объединяющие танец, музыку,
+              визуальное искусство и комьюнити.
+            </p>
+
+            <div class="achievement-meta">
+              <div class="achievement-badge">20+ постановок</div>
+              <div class="achievement-badge">Live Performance</div>
+              <div class="achievement-badge">Creative Production</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- карточка 4 -->
+      <div class="achievement-card" id="achieve4">
+        <div class="achievement-content">
+
+          <div class="achievement-image">
+            <img src="https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=1200" alt="">
+          </div>
+
+          <div class="achievement-info">
+            <h3>Обучение детей</h3>
+            <p>
+              Мы развиваем новое поколение артистов через дисциплину,
+              свободу самовыражения и сильную педагогическую систему,
+              которая помогает раскрыть потенциал каждого.
+            </p>
+
+            <div class="achievement-meta">
+              <div class="achievement-badge">300+ учеников</div>
+              <div class="achievement-badge">Junior Program</div>
+              <div class="achievement-badge">Future Talent</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+  
+</section>
+<section class="students-section">
+
+  <div class="container">
+
+    <div class="students-header">
+      <h2>Лучшие ученики Studio Alanko</h2>
+      <div class="header-decoration"></div>
+    </div>
+
+    <div class="students-grid">
+      <!-- Студенты загружаются динамически из API /public/leaderboard -->
+    </div>
+
+  </div>
+
+</section>
+
+</main>
+<!-- ============================================================
+MODAL STUDENT PROFILE
+============================================================ -->
+
+<div class="student-modal" id="studentModal">
+  
+  <div class="portal-edge"></div>
+
+  <div class="student-modal-box">
+
+    <div class="close-student-modal">
+      <iconify-icon icon="solar:close-circle-bold"></iconify-icon>
+    </div>
+
+    <div class="student-modal-content">
+
+      <div class="student-modal-image">
+        <div class="video-player">
+          <video id="videoPlayer" class="video-element" controls preload="metadata">
+            <source id="modalVideoSource" src="" type="video/mp4">
+            Ваш браузер не поддерживает видео.
+          </video>
+
+          <div class="video-meta">
+            <div class="video-task-name" id="modalVideoTaskName">Выполненное задание</div>
+            <div class="video-controls">
+              <button type="button" class="video-nav-btn" id="modalPrevVideo">← Назад</button>
+              <span class="video-counter" id="modalVideoCounter">0 из 0</span>
+              <button type="button" class="video-nav-btn" id="modalNextVideo">Вперед →</button>
+            </div>
+          </div>
+
+          <div class="video-fallback" id="modalVideoFallback" hidden>Видео ещё не загружено.</div>
+        </div>
+      </div>
+
+      <div class="student-modal-info">
+
+        <div class="student-modal-label">
+          Лучший ученик
+        </div>
+
+        <h3 id="modalStudentName"></h3>
+
+        <div class="student-modal-sub" id="modalStudentRole"></div>
+
+        <div class="student-modal-text" id="modalStudentDescription"></div>
+
+        <div class="student-modal-stats">
+          <div class="student-stat" id="modalStat1"></div>
+          <div class="student-stat" id="modalStat2"></div>
+          <div class="student-stat" id="modalStat3"></div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+<section class="leader-section" id="leader">
+  <div class="container leader-container">
+    <!-- Слева: Фото -->
+    <div class="leader-photo">
+      <img src="images/logo_alina.PNG" alt="Руководитель">
+      <div class="photo-overlay"></div>
+    </div>
+
+    <!-- Справа: Текст (который будет проявляться) -->
+    <div class="leader-content reveal-box">
+      <div class="leader-label">Основатель платформы движения ALANKO</div>
+      <h2 class="leader-name">Алина Анатольевна Комоватова</h2>
+      <div class="leader-text">
+        <p>«Танец — это не просто набор движений, это способ говорить, когда слов недостаточно. Моя миссия — создать пространство, где каждый сможет найти свой истинный голос через движение.»</p>
+        <p>Обладая более чем 15-летним опытом в индустрии, Елена объединила лучших хореографов страны, чтобы создать уникальную экосистему развития талантов.</p>
+      </div>
+      <div class="leader-signature">Вижу цель - не вижу препятствий!</div>
+    </div>
+  </div>
+</section>
+<section class="leaderboard-section" id="award">
+  <div class="container">
+    
+    <div class="leaderboard-header">
+      <div class="leader-label">LIVE — РЕЙТИНГ ПРЕМИИ</div>
+      <h2 class="leader-name" style="font-size: 3rem; margin-bottom: 10px;">Топ-5 Участников</h2>
+      <p style="color: rgba(255,255,255,0.5);">Данные обновляются в реальном времени на основе активности студентов</p>
+    </div>
+
+    <table class="leaderboard-table">
+      <thead>
+        <tr>
+          <th>Место</th>
+          <th>Студент</th>
+          <th>Баллы / Динамика</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Данные загружаются динамически из API /public/leaderboard -->
+      </tbody>
+    </table>
+
+  </div>
+</section>
+
+<section class="faq-section" id="faq">
+    <div class="container">
+        
+        <div class="faq-header">
+            <div class="leader-label">ОТВЕТЫ НА ВОПРОСЫ</div>
+            <h2 class="leader-name" style="font-size: 3rem;">Часто задаваемые вопросы</h2>
+        </div>
+
+        <div class="faq-container">
+            <!-- Вопрос 1 -->
+            <div class="faq-item">
+                <button class="faq-question">
+                    Нужна ли специальная подготовка для начала занятий?
+                    <iconify-icon icon="solar:add-circle-bold" class="faq-icon"></iconify-icon>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Нет, в Studio Alanko есть группы для всех уровней подготовки — от полных новичков ("Zero Level") до профессиональных танцоров. Наши педагоги помогут вам адаптироваться с первого занятия.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Вопрос 2 -->
+            <div class="faq-item">
+                <button class="faq-question">
+                    Как записаться на пробное занятие?
+                    <iconify-icon icon="solar:add-circle-bold" class="faq-icon"></iconify-icon>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Вы можете оставить заявку через форму внизу сайта ("Стать клиентом") или написать нам в любой удобный мессенджер. Администратор подберет группу и время.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Вопрос 3 -->
+            <div class="faq-item">
+                <button class="faq-question">
+                    Какие возрастные ограничения в вашей студии?
+                    <iconify-icon icon="solar:add-circle-bold" class="faq-icon"></iconify-icon>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Мы работаем с учениками от 6 лет. У нас есть специализированные детские группы, подростковые команды и взрослые составы без верхнего возрастного ценза.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Вопрос 4 -->
+            <div class="faq-item">
+                <button class="faq-question">
+                    Можно ли арендовать зал для самостоятельных тренировок?
+                    <iconify-icon icon="solar:add-circle-bold" class="faq-icon"></iconify-icon>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Да, наши залы доступны для почасовой аренды. Для действующих учеников студии действуют специальные льготные условия на самоподготовку.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Вопрос 5 -->
+            <div class="faq-item">
+                <button class="faq-question">
+                    Что брать с собой на первую тренировку?
+                    <iconify-icon icon="solar:add-circle-bold" class="faq-icon"></iconify-icon>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Удобную спортивную одежду, которая не сковывает движения, чистую сменную обувь (кроссовки или кеды) и хорошее настроение. Вода в студии всегда есть.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Вопрос 6 -->
+            <div class="faq-item">
+                <button class="faq-question">
+                    Участвуют ли ваши ученики в соревнованиях?
+                    <iconify-icon icon="solar:add-circle-bold" class="faq-icon"></iconify-icon>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Конечно! Мы формируем команды для участия в федеральных и международных чемпионатах. Наши ученики регулярно привозят награды и занимают топовые места в рейтингах.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+    <footer class="contact-footer">
+      <div class="container">
+        <div class="footer-top">
+          <div class="contact-info">
+            <h2>Свяжитесь с нами</h2>
+            <p>Готовы начать свое путешествие в мир танца? Напишите нам, и мы поможем подобрать идеальное направление для вашего старта.</p>
+            <a href="#" class="cta-button-footer">СТАТЬ КЛИЕНТОМ →</a>
+          </div>
+          
+          <div class="footer-links">
+            <div class="link-group">
+              <h4>Навигация</h4>
+              <ul>
+                <li><a href="#">Главная</a></li>
+                <li><a href="#">О студии</a></li>
+                <li><a href="#">Блог</a></li>
+                <li><a href="#">Карьера</a></li>
+              </ul>
+            </div>
+            <div class="link-group">
+              <h4>Предложения</h4>
+              <ul>
+                <li><a href="#">Абонементы</a></li>
+                <li><a href="#">Интенсивы</a></li>
+                <li><a href="#">Аренда залов</a></li>
+                <li><a href="#">Мерч</a></li>
+              </ul>
+            </div>
+            <div class="link-group">
+              <h4>Помощь</h4>
+              <ul>
+                <li><a href="#">FAQ</a></li>
+                <li><a href="#">Правила</a></li>
+                <li><a href="#">Контакты</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        
+
+        <div class="footer-bottom">
+          <div class="footer-logo">
+            <iconify-icon icon="solar:star-bold" style="color: var(--pal-light-green);"></iconify-icon>
+            ALANKO
+          </div>
+          <div class="copyright">
+            © 2026 Alanko Global Movement Management. All Rights Reserved
+          </div>
+          <div class="social-icons">
+            <a href="#"><iconify-icon icon="ri:twitter-x-fill"></iconify-icon></a>
+            <a href="#"><iconify-icon icon="ri:linkedin-box-fill"></iconify-icon></a>
+            <a href="#"><iconify-icon icon="ri:youtube-fill"></iconify-icon></a>
+            <a href="#"><iconify-icon icon="ri:instagram-line"></iconify-icon></a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </main>
+<div class="login-modal" id="loginModal">
+  <div class="portal"></div>
+  <div class="login-box">
+    <h2>Вход в аккаунт</h2>
+    <form id="loginForm">
+      <input type="email" id="loginEmail" placeholder="Email" required>
+      <input type="password" id="loginPassword" placeholder="Пароль" required>
+      <button type="submit">Войти</button>
+    </form>
+    <div id="loginError" style="color: red; margin-top: 10px;"></div>
+  </div>
+</div>
+<script src="js/auth.js"></script>
+<script>
+  // --- ЛОГИКА ДЛЯ ВХОДА ---
+  const loginBtns = document.querySelectorAll('.login-btn');
+  const loginModal = document.querySelector('.login-modal');
+
+  loginBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      loginModal.classList.add('active');
+      document.body.classList.add('modal-open');
+    });
+  });
+
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+
+    try {
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.detail || 'Ошибка входа');
+
+      setToken(data.access_token);
+
+      // Декодировать токен для роли
+      const payload = JSON.parse(atob(data.access_token.split('.')[1]));
+      const redirectHash = '#authToken=' + encodeURIComponent(data.access_token);
+      if (payload.role === 'admin') {
+        window.location.href = 'panel_for_al.html' + redirectHash;
+      } else {
+        window.location.href = 'student_page.html' + redirectHash;
+      }
+    } catch (error) {
+      document.getElementById('loginError').textContent = error.message;
+    }
+  });
+
+
+  // --- ЗАКРЫТИЕ ВСЕХ МОДАЛОК ---
+  window.addEventListener('click', (e) => {
+    if (e.target === loginModal || e.target === studentModal || e.target.closest('.close-student-modal')) {
+      loginModal.classList.remove('active');
+      studentModal.classList.remove('active');
+      document.body.classList.remove('modal-open');
+    }
+  });
+
+  // --- ОБЪЕКТ ДАННЫХ ДОСТИЖЕНИЙ (БЛОК 3) ---
+  const achievementsData = {
+    achieve1: {
+      title: "Чемпионы России",
+      description: "Наши ученики и команды регулярно занимают призовые места на крупнейших чемпионатах страны. Мы создаем не просто танцоров — мы формируем сильных артистов и лидеров сцены.",
+      image: "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=1200",
+      badges: ["15+ побед", "2021–2026", "Федеральный уровень"]
+    },
+    achieve2: {
+      title: "Международные фестивали",
+      description: "Studio Alanko представляет страну на международных сценах, участвуя в фестивалях, баттлах и крупных танцевальных форумах Европы и Азии.",
+      image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1200",
+      badges: ["12 стран", "Global Events", "World Stage"]
+    },
+    achieve3: {
+      title: "Собственные шоу",
+      description: "Мы создаем авторские постановки, масштабные перформансы и сценические проекты, объединяющие танец, музыку, визуальное искусство и комьюнити.",
+      image: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=1200",
+      badges: ["20+ постановок", "Live Performance", "Creative Production"]
+    },
+    achieve4: {
+      title: "Обучение детей",
+      description: "Мы развиваем новое поколение артистов через дисциплину, свободу самовыражения и сильную педагогическую систему, которая помогает раскрыть потенциал каждого.",
+      image: "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=1200",
+      badges: ["300+ учеников", "Junior Program", "Future Talent"]
+    }
+  };
+
+  // --- ФУНКЦИЯ ОБНОВЛЕНИЯ СОДЕРЖИМОГО КАРТОЧКИ ДОСТИЖЕНИЯ ---
+  function updateAchievementCard(cardId) {
+    const data = achievementsData[cardId];
+    if (!data) return;
+
+    const card = document.getElementById(cardId);
+    if (!card) return;
+
+    // Обновляем изображение
+    const imgElement = card.querySelector('.achievement-image img');
+    if (imgElement) imgElement.src = data.image;
+
+    // Обновляем заголовок
+    const titleElement = card.querySelector('.achievement-info h3');
+    if (titleElement) titleElement.textContent = data.title;
+
+    // Обновляем описание
+    const descElement = card.querySelector('.achievement-info p');
+    if (descElement) descElement.textContent = data.description;
+
+    // Обновляем бейджи
+    const metaElement = card.querySelector('.achievement-meta');
+    if (metaElement) {
+      metaElement.innerHTML = data.badges.map(badge => 
+        `<div class="achievement-badge">${badge}</div>`
+      ).join('');
+    }
+  }
+
+  // --- ТАБЫ ДОСТИЖЕНИЙ ---
+  const tabs = document.querySelectorAll('.achievement-tab');
+  const achCards = document.querySelectorAll('.achievement-card');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      achCards.forEach(c => c.classList.remove('active'));
+      tab.classList.add('active');
+      
+      const targetId = tab.dataset.target;
+      const targetCard = document.getElementById(targetId);
+      if (targetCard) {
+        updateAchievementCard(targetId); // Обновляем данные перед показом
+        targetCard.classList.add('active');
+      }
+    });
+  });
+
+  // Инициализируем первую карточку при загрузке
+  updateAchievementCard('achieve1');
+
+  // --- ЗАГРУЗКА ДАННЫХ ЛИДЕРБОРДА (БЛОКИ 4 + 5) ---
+  let studentVideos = [];
+  let currentVideoIndex = 0;
+
+  const videoPlayer = document.getElementById('videoPlayer');
+  const modalVideoSource = document.getElementById('modalVideoSource');
+  const modalVideoTaskName = document.getElementById('modalVideoTaskName');
+  const modalVideoCounter = document.getElementById('modalVideoCounter');
+  const modalVideoFallback = document.getElementById('modalVideoFallback');
+  const modalPrevVideo = document.getElementById('modalPrevVideo');
+  const modalNextVideo = document.getElementById('modalNextVideo');
+
+  function updateVideoModal() {
+    if (!videoPlayer || !modalVideoSource || !modalVideoTaskName || !modalVideoCounter || !modalVideoFallback) return;
+
+    if (studentVideos.length === 0) {
+      modalVideoSource.src = '';
+      videoPlayer.load();
+      modalVideoFallback.hidden = false;
+      modalVideoTaskName.textContent = 'Видео ещё не загружено';
+      modalVideoCounter.textContent = '0 из 0';
+      videoPlayer.style.display = 'none';
+      modalPrevVideo?.setAttribute('disabled', 'true');
+      modalNextVideo?.setAttribute('disabled', 'true');
+      return;
+    }
+
+    const video = studentVideos[currentVideoIndex];
+    modalVideoSource.src = video.video_url;
+    videoPlayer.style.display = 'block';
+    modalVideoFallback.hidden = true;
+    modalVideoTaskName.textContent = video.task_name || 'Выполненное задание';
+    modalVideoCounter.textContent = `${currentVideoIndex + 1} из ${studentVideos.length}`;
+    videoPlayer.load();
+    videoPlayer.play().catch(() => {});
+
+    if (modalPrevVideo) {
+      if (currentVideoIndex === 0) {
+        modalPrevVideo.setAttribute('disabled', 'true');
+      } else {
+        modalPrevVideo.removeAttribute('disabled');
+      }
+    }
+    if (modalNextVideo) {
+      if (currentVideoIndex === studentVideos.length - 1) {
+        modalNextVideo.setAttribute('disabled', 'true');
+      } else {
+        modalNextVideo.removeAttribute('disabled');
+      }
+    }
+  }
+
+  async function loadStudentVideos(studentId) {
+    studentVideos = [];
+    currentVideoIndex = 0;
+    updateVideoModal();
+
+    try {
+      const response = await fetch(`${API_URL}/public/student/${studentId}/videos`);
+      if (!response.ok) throw new Error('Failed to load student videos');
+      const data = await response.json();
+      studentVideos = data.videos || [];
+      currentVideoIndex = 0;
+      updateVideoModal();
+    } catch (error) {
+      console.error('Error loading student videos:', error);
+      studentVideos = [];
+      currentVideoIndex = 0;
+      updateVideoModal();
+    }
+  }
+
+  modalPrevVideo?.addEventListener('click', () => {
+    if (currentVideoIndex > 0) {
+      currentVideoIndex -= 1;
+      updateVideoModal();
+    }
+  });
+
+  modalNextVideo?.addEventListener('click', () => {
+    if (currentVideoIndex < studentVideos.length - 1) {
+      currentVideoIndex += 1;
+      updateVideoModal();
+    }
+  });
+
+  async function loadLeaderboardData() {
+    try {
+      const response = await fetch(`${API_URL}/public/leaderboard`);
+      if (!response.ok) throw new Error('Failed to load leaderboard');
+      
+      const data = await response.json();
+      
+      // БЛОК 4: Заполняем ТОП-3 студентов
+      populateTopStudents(data.top_3_students);
+      
+      // БЛОК 5: Заполняем таблицу лидеров (ТОП-5)
+      populateLeaderboard(data.top_5_leaderboard);
+      
+    } catch (error) {
+      console.error('Error loading leaderboard:', error);
+    }
+  }
+
+  // --- ФУНКЦИЯ ЗАПОЛНЕНИЯ ТОП-3 СТУДЕНТОВ (БЛОК 4) ---
+  function populateTopStudents(students) {
+    const studentsGrid = document.querySelector('.students-grid');
+    if (!studentsGrid) return;
+    
+    // Очищаем сетку
+    studentsGrid.innerHTML = '';
+    
+    // Генерируем карточки для ТОП-3
+    students.slice(0, 3).forEach((student, index) => {
+      const card = document.createElement('div');
+      card.className = 'student-card';
+      
+      // Устанавливаем data атрибуты
+      card.setAttribute('data-user-id', student.user_id);
+      card.setAttribute('data-name', student.full_name);
+      card.setAttribute('data-role', student.role || 'Студент');
+      card.setAttribute('data-image', student.image_url);
+      card.setAttribute('data-description', student.description || student.full_name);
+      card.setAttribute('data-stat1', `Баллы: ${student.rating}`);
+      card.setAttribute('data-stat2', `Место: ${index + 1}`);
+      card.setAttribute('data-stat3', 'Top Student');
+      
+      card.innerHTML = `
+        <img src="${student.image_url}" alt="${student.full_name}">
+        <div class="student-overlay">
+          <div class="play-button">
+            <iconify-icon icon="solar:play-bold"></iconify-icon>
+          </div>
+          <div class="student-name">${student.full_name}</div>
+          <div class="student-role">${student.role || 'Студент'}</div>
+          <div class="student-tags">
+            <div class="student-tag">Место ${index + 1}</div>
+            <div class="student-tag">${student.rating} баллов</div>
+          </div>
+        </div>
+      `;
+      
+      // Добавляем обработчик клика для модалки и загрузки видео
+      card.addEventListener('click', async () => {
+        const modal = document.getElementById('studentModal');
+        if (!modal) return;
+
+        document.getElementById('modalStudentName').textContent = card.dataset.name;
+        document.getElementById('modalStudentRole').textContent = card.dataset.role;
+        document.getElementById('modalStudentDescription').textContent = card.dataset.description;
+        document.getElementById('modalStat1').textContent = card.dataset.stat1;
+        document.getElementById('modalStat2').textContent = card.dataset.stat2;
+        document.getElementById('modalStat3').textContent = card.dataset.stat3;
+
+        await loadStudentVideos(card.dataset.userId);
+
+        modal.classList.add('active');
+        document.body.classList.add('modal-open');
+      });
+      
+      studentsGrid.appendChild(card);
+    });
+  }
+
+  // --- ФУНКЦИЯ ЗАПОЛНЕНИЯ ТАБЛИЦЫ ЛИДЕРОВ (БЛОК 5) ---
+  function populateLeaderboard(leaderboard) {
+    const tbody = document.querySelector('.leaderboard-table tbody');
+    if (!tbody) return;
+    
+    // Очищаем таблицу
+    tbody.innerHTML = '';
+    
+    // Генерируем строки для ТОП-5
+    leaderboard.slice(0, 5).forEach((entry) => {
+      const tr = document.createElement('tr');
+      tr.className = 'leaderboard-row';
+      
+      // Определяем иконку динамики
+      let trendIcon = 'solar:arrow-right-up-bold';
+      let trendClass = 'trend-up';
+      
+      if (entry.movement === 'down') {
+        trendIcon = 'solar:arrow-right-down-bold';
+        trendClass = 'trend-down';
+      } else if (entry.movement === 'same') {
+        trendIcon = 'solar:arrow-right-bold';
+        trendClass = 'trend-same';
+      }
+      
+      tr.innerHTML = `
+        <td><span class="rank-badge">${entry.place}</span></td>
+        <td>${entry.full_name}</td>
+        <td class="points-cell">
+          <span>${entry.rating} очков</span>
+          <div class="trend-icon ${trendClass}" title="${entry.movement === 'up' ? 'Растет' : entry.movement === 'down' ? 'Опускается' : 'Без изменений'}">
+            <iconify-icon icon="${trendIcon}"></iconify-icon>
+          </div>
+        </td>
+      `;
+      
+      tbody.appendChild(tr);
+    });
+  }
+
+  // Загружаем данные при загрузке страницы
+  loadLeaderboardData();
+
+  // --- АНИМАЦИЯ ПОЯВЛЕНИЯ РУКОВОДИТЕЛЯ ---
+const observerOptions = {
+  threshold: 0.3 // Запуск, когда 30% блока показалось на экране
+};
+
+const leaderObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('active');
+    }
+  });
+}, observerOptions);
+
+// Находим наш текстовый блок и вешаем на него наблюдение
+const leaderReveal = document.querySelector('.reveal-box');
+if (leaderReveal) {
+  leaderObserver.observe(leaderReveal);
+}
+
+// --- ЛОГИКА FAQ АККОРДЕОНА ---
+const faqItems = document.querySelectorAll('.faq-item');
+
+faqItems.forEach(item => {
+    const question = item.querySelector('.faq-question');
+    
+    question.addEventListener('click', () => {
+        const isOpen = item.classList.contains('active');
+        
+        // Закрываем все остальные (если нужен эффект "только один открытый")
+        faqItems.forEach(i => {
+            i.classList.remove('active');
+            i.querySelector('.faq-answer').style.maxHeight = null;
+        });
+
+        // Если кликнутый был закрыт — открываем его
+        if (!isOpen) {
+            item.classList.add('active');
+            const answer = item.querySelector('.faq-answer');
+            answer.style.maxHeight = answer.scrollHeight + "px";
+        }
+    });
+});
+
+function updateTime() {
+  const now = new Date();
+
+  const days = [
+    "ВОСКРЕСЕНЬЕ",
+    "ПОНЕДЕЛЬНИК",
+    "ВТОРНИК",
+    "СРЕДА",
+    "ЧЕТВЕРГ",
+    "ПЯТНИЦА",
+    "СУББОТА"
+  ];
+
+  const day = days[now.getDay()];
+
+  const time = now.toLocaleTimeString('ru-RU', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+
+  document.getElementById('day').textContent = day;
+  document.getElementById('time').textContent = time;
+}
+
+// обновление каждую секунду
+setInterval(updateTime, 1000);
+updateTime();
+</script>
+</body>
+</html>

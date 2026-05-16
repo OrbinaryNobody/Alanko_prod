@@ -1,0 +1,1 @@
+from .all_models import Base, Role, User, UserRole, StudentProfile, Category, Task, StudentTask, Gallery, RatingsHistory, TaskMedia, Achievement, UserAchievement
