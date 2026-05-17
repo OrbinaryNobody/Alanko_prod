@@ -1,0 +1,12 @@
+.env
+postgres_data/
+minio_data/
+node_modules/
+__pycache__/
+*.pyc
+dist/
+build/
+uploads/
+certbot/
+*.pem
+*.key

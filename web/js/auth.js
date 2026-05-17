@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:8000';
+const API_URL = '/api';
 const AUTH_TOKEN_KEY = 'authToken';
 
 function getTokenFromHash() {

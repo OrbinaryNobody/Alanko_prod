@@ -33,11 +33,11 @@ services:
     image: minio/minio
     container_name: alanko_minio
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - "127.0.0.1:9000:9000"
+      - "127.0.0.1:9001:9001"
     environment:
       MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin123
+      MINIO_ROOT_PASSWORD: rGTVTyi3GYs6f667Ng9F25vB5ReB73GQ
     command: server /data --console-address ":9001"
     volumes:
       - minio_data:/data

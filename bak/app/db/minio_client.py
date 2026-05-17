@@ -14,7 +14,7 @@ MINIO_PUBLIC_HOST = MINIO_PUBLIC_URL.replace("http://", "").replace("https://", 
 minio_client = Minio(
     MINIO_INTERNAL_URL,
     access_key="minioadmin",
-    secret_key="minioadmin123",
+    secret_key="rGTVTyi3GYs6f667Ng9F25vB5ReB73GQ",
     secure=False
 )
 

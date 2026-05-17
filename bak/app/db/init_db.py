@@ -193,38 +193,3 @@ def init_db():
             print("Admin user created")
         else:
             print("Admin user already exists")
-        
-        # Проверяем, есть ли категории
-        result = conn.execute(text("SELECT COUNT(*) FROM categories"))
-        count = result.fetchone()[0]
-        if count == 0:
-            # Вставляем категории
-            conn.execute(text("""
-                INSERT INTO categories (name, description) VALUES 
-                ('Танцы', 'Задания по танцам'),
-                ('Музыка', 'Музыкальные задания'),
-                ('Театр', 'Театральные задания')
-            """))
-            conn.commit()
-            print("Categories inserted into database")
-        else:
-            print("Categories already exist")
-        
-        # Проверяем, есть ли задания
-        result = conn.execute(text("SELECT COUNT(*) FROM tasks"))
-        count = result.fetchone()[0]
-        if count == 0:
-            # Вставляем задания
-            conn.execute(text("""
-                INSERT INTO tasks (category_id, title, description, difficulty, max_score) VALUES 
-                (1, 'Танец 1', 'Описание танца 1', 1, 100),
-                (1, 'Танец 2', 'Описание танца 2', 2, 100),
-                (2, 'Пение 1', 'Описание пения 1', 1, 100),
-                (2, 'Пение 2', 'Описание пения 2', 2, 100),
-                (3, 'Театр 1', 'Описание театра 1', 1, 100),
-                (3, 'Театр 2', 'Описание театра 2', 2, 100)
-            """))
-            conn.commit()
-            print("Tasks inserted into database")
-        else:
-            print("Tasks already exist")
