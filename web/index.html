@@ -454,6 +454,11 @@ nav {
   }
 }
 
+@media (max-width: 768px) {
+  .hero::before {
+    background-position: 65% bottom;
+  }
+}
 /* ============================================================
    БЛОК №4: ЛУЧШИЕ УЧЕНИКИ / VIDEO SHOWCASE
 ============================================================ */
@@ -1234,6 +1239,12 @@ nav {
       .footer-links { grid-template-columns: 1fr 1fr; }
       .bento-grid { display: flex; flex-direction: column; gap: 16px; }
       .hero { padding-top: 120px; height: auto; padding-bottom: 60px; }
+      .hero-login-btn {
+        width: auto;
+        max-width: 240px;
+        padding: 16px 24px;
+        font-size: 0.95rem;
+      }
     }
 
     /* ==== LOGIN MODAL ==== */
