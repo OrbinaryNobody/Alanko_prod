@@ -11,7 +11,11 @@ from api.user import router as user_router
 from api.assessment import router as assessment_router
 from api.public import router as public_router
 from fastapi.middleware.cors import CORSMiddleware
-app = FastAPI()
+app = FastAPI(
+    docs_url=None,
+    redoc_url=None,
+    openapi_url=None
+)
 
 app.add_middleware(
     CORSMiddleware,
