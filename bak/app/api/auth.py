@@ -6,9 +6,14 @@ from services.auth_service import auth_service
 
 router = APIRouter()
 
+@router.get("/health")
+def health():
+    return {"status": "ok", "service": "auth"}
+
+
 @router.post("/")
 async def state():
-	return{"state": "work"}
+    return {"state": "work"}
 
 
 @router.post("/login")

@@ -12,6 +12,7 @@ from api.assessment import router as assessment_router
 from api.public import router as public_router
 from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI(
+    title="Alanko API",
     docs_url=None,
     redoc_url=None,
     openapi_url=None
@@ -47,14 +48,19 @@ def on_startup():
         import traceback
         traceback.print_exc(file=sys.stderr)
 
-app.include_router(auth.router, prefix="/auth")
+@app.get("/")
+def health_check():
+    return {"status": "ok", "service": "alanko"}
 
-app.include_router(teacher_router)
-app.include_router(assessment_router)
 
-app.include_router(admin_router)
-app.include_router(user_router)
-app.include_router(public_router)
+app.include_router(auth.router, prefix="/api/auth")
+
+app.include_router(teacher_router, prefix="/api")
+app.include_router(assessment_router, prefix="/api")
+
+app.include_router(admin_router, prefix="/api")
+app.include_router(user_router, prefix="/api")
+app.include_router(public_router, prefix="/api")
 
 
 

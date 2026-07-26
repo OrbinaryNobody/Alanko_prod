@@ -308,6 +308,373 @@ nav {
   }
 }
 */
+
+
+/* ============================================================
+   БЛОК КОЛЛАБОРАЦИИ (ALANKO X PARTNER)
+   ============================================================ */
+.collab-section {
+  position: relative;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  padding: 120px 0;
+  overflow: hidden;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Неоднородный фоновый слой: световые пятна + топографический паттерн */
+:root {
+  --neon-green: #B0D182;
+  --bg-dark: #05060A;
+  
+  /* Новые плавные линии вместо нижних кругов */
+  --lines-mask: url("data:image/svg+xml,%3Csvg width='1200' height='800' viewBox='0 0 1200 800' xmlns='http://www.w3.org/2000/svg' fill='none' stroke='white' stroke-width='4' stroke-linecap='round'%3E%3Cpath d='M-100 150 Q 200 350 400 150 T 900 200 T 1300 100'/%3E%3Cpath d='M-100 450 Q 300 600 600 400 T 1000 500 T 1300 400'/%3E%3Cpath d='M200 -100 Q 150 200 300 450 T 200 900'/%3E%3Cpath d='M800 -100 Q 900 300 700 500 T 800 900'/%3E%3C!-- Плавные органические волны снизу по центру вместо кругов --%3E%3Cpath d='M 300 750 Q 450 600 600 720 T 950 680'/%3E%3Cpath d='M 350 780 Q 520 630 680 750 T 1000 710'/%3E%3Cpath d='M 400 720 Q 550 580 750 700'/%3E%3C/svg%3E");
+}
+
+.collab-bg-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: var(--bg-dark);
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.static-lines,
+.glow-mask-layer {
+  position: absolute;
+  inset: 0;
+  -webkit-mask-image: var(--lines-mask);
+  -webkit-mask-size: cover;
+  -webkit-mask-position: center;
+  mask-image: var(--lines-mask);
+  mask-size: cover;
+  mask-position: center;
+}
+
+.static-lines {
+  background-color: var(--neon-green);
+  opacity: 0.15;
+}
+
+.glow-mask-layer {
+  filter: drop-shadow(0 0 10px var(--neon-green)) drop-shadow(0 0 25px var(--neon-green));
+}
+
+.light-orb {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--neon-green) 0%, rgba(176, 209, 130, 0) 70%);
+  will-change: transform;
+}
+
+.orb-1 { width: 700px; height: 700px; top: -150px; left: -150px; animation: float1 12s infinite alternate ease-in-out; }
+.orb-2 { width: 900px; height: 900px; bottom: -300px; right: -200px; animation: float2 16s infinite alternate ease-in-out; }
+.orb-3 { width: 600px; height: 600px; top: 30%; left: 30%; animation: float3 14s infinite alternate ease-in-out; }
+
+@keyframes float1 { 
+  0% { transform: translate(0, 0); } 
+  100% { transform: translate(700px, 400px); } 
+}
+@keyframes float2 { 
+  0% { transform: translate(0, 0); } 
+  100% { transform: translate(-800px, -400px); } 
+}
+@keyframes float3 { 
+  0% { transform: translate(0, 0); } 
+  100% { transform: translate(600px, -300px); } 
+}
+
+/* ============================================================
+   ОБНОВЛЕНИЕ КАРТОЧЕК: Усиленный блюр для читаемости текста 
+   на фоне нового шумного паттерна
+   ============================================================ */
+.collab-card {
+  flex: 1;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  /* Более плотная темная подложка */
+  background: rgba(10, 10, 10, 0.45);
+  border: 1px solid rgba(176, 209, 130, 0.15);
+  border-radius: var(--radius-card);
+  padding: 36px 28px;
+  /* Усиленное размытие заднего фона */
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.collab-program-info {
+  width: 100%;
+  /* Более плотная темная подложка */
+  background: linear-gradient(180deg, rgba(10, 10, 10, 0.7) 0%, rgba(10, 10, 10, 0.4) 100%);
+  border: 1px solid rgba(176, 209, 130, 0.2);
+  border-radius: var(--radius-card);
+  padding: 40px;
+  text-align: center;
+  /* Усиленное размытие заднего фона */
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.collab-container {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+/* Карточки двух студий */
+.collab-duo {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  width: 100%;
+  margin-bottom: 50px;
+}
+
+.collab-card {
+  flex: 1;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-card);
+  padding: 36px 28px;
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.collab-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(176, 209, 130, 0.25);
+}
+
+.collab-headings {
+  position: relative;
+  margin-bottom: 20px;
+  line-height: 0.95;
+}
+
+/* Зеленый плашечный маркер поверх заголовка */
+.collab-accent-tag {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-8deg);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #05060a;
+  background: var(--pal-light-green);
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  box-shadow: 0 4px 12px rgba(176, 209, 130, 0.3);
+}
+
+.collab-headings .title-serif {
+  font-family: 'Times New Roman', Georgia, serif;
+  font-size: 3.2rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+  margin-top: 10px;
+}
+
+.collab-headings .title-sans {
+  font-family: var(--font-primary);
+  font-size: 2.8rem;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  color: var(--color-text);
+}
+
+.collab-card-desc {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--color-muted);
+  margin-bottom: 24px;
+}
+
+/* Скругленные иконки-кнопки (при наведении зелёные) */
+.collab-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--color-text);
+  font-size: 1.3rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.collab-icon-btn:hover {
+  background-color: var(--pal-light-green);
+  border-color: var(--pal-light-green);
+  color: #05060a;
+  transform: scale(1.08);
+  box-shadow: 0 8px 20px rgba(176, 209, 130, 0.3);
+}
+
+/* Центральный блок описания программы */
+.collab-program-info {
+  width: 100%;
+  background: linear-gradient(180deg, rgba(176, 209, 130, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border: 1px solid rgba(176, 209, 130, 0.18);
+  border-radius: var(--radius-card);
+  padding: 40px;
+  text-align: center;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+}
+
+.collab-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--pal-light-green);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.collab-program-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--color-text);
+  margin-bottom: 16px;
+  letter-spacing: -0.01em;
+}
+
+.collab-program-desc {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--color-muted);
+  max-width: 720px;
+  margin: 0 auto 32px;
+}
+
+/* Яркая кнопка покупки курса */
+.collab-cta-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.collab-buy-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 18px 42px;
+  font-size: 1.05rem;
+  font-weight: 800;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(135deg, var(--pal-light-green), var(--pal-mid-green));
+  color: #05060a;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  box-shadow: 0 10px 30px rgba(176, 209, 130, 0.3);
+}
+
+.collab-buy-btn iconify-icon {
+  font-size: 1.3rem;
+  transition: transform 0.3s ease;
+}
+
+.collab-buy-btn:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 15px 40px rgba(176, 209, 130, 0.45);
+  filter: brightness(1.08);
+}
+
+.collab-buy-btn:hover iconify-icon {
+  transform: translateX(4px);
+}
+
+.collab-price-tag {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* Боковые фото у краев экрана */
+.collab-image {
+  position: absolute;
+  bottom: 0;
+  height: 80%;
+  width: 22vw;
+  max-width: 360px;
+  z-index: 1;
+  opacity: 0.85;
+  transition: opacity 0.3s ease;
+}
+
+.collab-image:hover {
+  opacity: 1;
+}
+
+.collab-image.left-img {
+  left: 0;
+  border-top-right-radius: var(--radius-card);
+  overflow: hidden;
+}
+
+.collab-image.right-img {
+  right: 0;
+  border-top-left-radius: var(--radius-card);
+  overflow: hidden;
+}
+
+.collab-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+/* Адаптивность */
+@media (max-width: 1200px) {
+  .collab-image { width: 18vw; }
+  .collab-duo { gap: 30px; }
+}
+
+@media (max-width: 992px) {
+  .collab-image { display: none; }
+  .collab-duo { flex-direction: column; align-items: center; }
+  .collab-card { width: 100%; max-width: 100%; }
+  .collab-program-info { padding: 30px 20px; }
+  .collab-program-title { font-size: 1.4rem; }
+}
+
+@media (max-width: 540px) {
+  .collab-buy-btn {
+    width: 100%;
+    padding: 16px 24px;
+    font-size: 0.9rem;
+  }
+}
 /* ============================================================
    БЛОК №3: ДОСТИЖЕНИЯ / ИНТЕРАКТИВНЫЙ ВЫБОР
 ============================================================ */
@@ -459,6 +826,155 @@ nav {
     background-position: 65% bottom;
   }
 }
+
+
+:root {
+  /* Временные переменные плоской минималистичной палитры */
+  --site-bg: #0a0a0a;
+  --site-text: #ffffff;
+  --site-accent: #ffffff;
+  --site-muted: #888888;
+}
+
+.collab-section {
+  position: relative;
+  background-color: var(--site-bg);
+  color: var(--site-text);
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding: 100px 0;
+}
+
+.collab-container {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  gap: 80px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.collab-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 50%;
+}
+
+.collab-headings {
+  position: relative;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 0.95;
+}
+
+.title-serif {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 5.5rem;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  color: var(--site-text);
+}
+
+.title-sans {
+  font-family: sans-serif;
+  font-size: 5rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  color: var(--site-text);
+}
+
+/* Линия строго под текстом */
+.heading-base-line {
+  width: 120%;
+  height: 2px;
+  background-color: var(--site-accent);
+  margin-top: 8px;
+}
+
+.collab-desc {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--site-muted);
+  margin-bottom: 32px;
+  max-width: 260px;
+}
+
+.collab-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 0;
+  border: 1px solid var(--site-accent);
+  background-color: transparent;
+  color: var(--site-text);
+  font-size: 1.5rem;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.collab-btn:hover {
+  background-color: var(--site-text);
+  color: var(--site-bg);
+}
+
+.collab-image {
+  position: absolute;
+  bottom: 0;
+  height: 85%;
+  width: 25vw;
+  max-width: 400px;
+  z-index: 1;
+}
+
+.collab-image.left-img {
+  left: 0;
+}
+
+.collab-image.right-img {
+  right: 0;
+}
+
+.collab-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  filter: grayscale(100%);
+}
+
+@media (max-width: 1200px) {
+  .title-serif { font-size: 4rem; }
+  .title-sans { font-size: 3.5rem; }
+  .collab-image { width: 22vw; }
+}
+
+@media (max-width: 768px) {
+  .collab-section {
+    padding: 80px 0;
+    min-height: auto;
+  }
+  .collab-container {
+    flex-direction: column;
+    gap: 60px;
+  }
+  .collab-block {
+    width: 100%;
+    padding: 0 24px;
+  }
+  .collab-image {
+    display: none;
+  }
+}
+
 /* ============================================================
    БЛОК №4: ЛУЧШИЕ УЧЕНИКИ / VIDEO SHOWCASE
 ============================================================ */
@@ -1672,6 +2188,96 @@ nav {
 
   </div>
   
+</section>
+
+
+<!-- ============================================================
+     БЛОК КОЛЛАБОРАЦИИ (ALANKO X PARTNER)
+============================================================ -->
+<section class="collab-section" id="collab">
+  <!-- Неоднородный фоновый слой (радиальные свечения + топографический паттерн) -->
+<div class="collab-bg-overlay">
+  <!-- 1. Тусклые статичные линии (база) -->
+  <div class="static-lines"></div>
+
+  <!-- 2. Слой-маска, вырезающий свет -->
+  <div class="glow-mask-layer">
+    <!-- Анимированные источники света -->
+    <div class="light-orb orb-1"></div>
+    <div class="light-orb orb-2"></div>
+    <div class="light-orb orb-3"></div>
+  </div>
+</div>
+
+  <!-- Боковые изображения по краям страницы -->
+  <div class="collab-image left-img">
+    <img src="https://images.unsplash.com/photo-1547153760-18fc86324498?w=800" alt="Alanko Dance">
+  </div>
+
+  <div class="container collab-container">
+    
+    <!-- Верхняя часть: Студии (Alanko x Partner) -->
+    <div class="collab-duo">
+      
+      <!-- Карточка 1: ALANKO -->
+      <div class="collab-card">
+        <div class="collab-headings">
+          <span class="collab-accent-tag">DANCE</span>
+          <h3 class="title-serif">ALANKO</h3>
+          <h3 class="title-sans">STUDIO</h3>
+        </div>
+        <p class="collab-card-desc">
+          Базовая профессиональная подготовка, авторская техника движения и системная дисциплина.
+        </p>
+        <a href="#about-alanko" class="collab-icon-btn" aria-label="Подробнее об Alanko">
+          <iconify-icon icon="solar:arrow-right-up-linear"></iconify-icon>
+        </a>
+      </div>
+
+      <!-- Карточка 2: PARTNER -->
+      <div class="collab-card">
+        <div class="collab-headings">
+          <span class="collab-accent-tag">GUEST</span>
+          <h3 class="title-serif">PARTNER</h3>
+          <h3 class="title-sans">STUDIO</h3>
+        </div>
+        <p class="collab-card-desc">
+          Уникальные мастер-классы, новые танцевальные стили и регулярные совместные перформансы.
+        </p>
+        <a href="#about-partner" class="collab-icon-btn" aria-label="Подробнее о партнере">
+          <iconify-icon icon="solar:arrow-right-up-linear"></iconify-icon>
+        </a>
+      </div>
+
+    </div>
+
+
+    <div class="collab-program-info">
+      <div class="collab-badge">
+        <iconify-icon icon="solar:stars-bold"></iconify-icon>
+        СПЕЦИАЛЬНЫЙ КУРС КОЛЛАБОРАЦИИ
+      </div>
+      <h2 class="collab-program-title">
+        СИНЕРГИЯ ДВИЖЕНИЯ: ALANKO × PARTNER
+      </h2>
+      <p class="collab-program-desc">
+        Интенсивный 8-недельный курс, объединяющий лучшую хореографическую базу Studio Alanko и передовые техники наших партнеров. Вас ждут совместные съемки клипа, мастер-классы от топовых презентеров и гарантированное участие в финальном сценическом шоу.
+      </p>
+
+    <div class="collab-cta-wrapper">
+        <a href="#buy-course" class="collab-buy-btn">
+          <span>Записаться на курс</span>
+          <iconify-icon icon="solar:ticket-sale-bold"></iconify-icon>
+        </a>
+        <div class="collab-price-tag">Ограниченное количество мест</div>
+      </div>
+    </div> 
+
+  </div>
+
+  <div class="collab-image right-img">
+    <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=800" alt="Partner Dance">
+  </div>
 </section>
 <section class="students-section">
 
