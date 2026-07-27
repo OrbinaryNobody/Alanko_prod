@@ -975,6 +975,200 @@ nav {
   }
 }
 
+
+
+/* ============================================================
+   БЛОК: ЧАСТНЫЕ ТРЕНИРОВКИ (PRICING)
+============================================================ */
+.pricing-section {
+  padding: 100px 0;
+  background: var(--color-bg);
+}
+
+.pricing-header {
+  text-align: center;
+  margin-bottom: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pricing-process {
+  margin-top: 24px;
+  max-width: 700px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-card);
+  padding: 32px;
+  text-align: center;
+}
+
+.pricing-process h3 {
+  font-size: 1.2rem;
+  color: var(--pal-light-green);
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+.pricing-process p {
+  color: var(--color-muted);
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+
+/* Увеличенное расстояние между карточками */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px; /* Увеличено с 20px */
+}
+
+/* Базовые стили карточки с добавленной анимацией */
+.pricing-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 20px;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+  animation: alanko-glow ease-in-out infinite alternate;
+}
+
+/* Уникальный ритм переливания для каждой карточки */
+.pricing-card:nth-child(1) {
+  animation-duration: 3.2s;
+  animation-delay: 0s;
+}
+
+.pricing-card:nth-child(2) {
+  animation-duration: 4.5s;
+  animation-delay: 1.2s;
+}
+
+.pricing-card:nth-child(3) {
+  animation-duration: 3.8s;
+  animation-delay: 0.5s;
+}
+
+.pricing-card:nth-child(4) {
+  animation-duration: 5.1s;
+  animation-delay: 2s;
+}
+
+/* Анимация пульсирующего свечения */
+@keyframes alanko-glow {
+  0% {
+    box-shadow: 0 0 10px rgba(176, 209, 130, 0.02);
+    border-color: rgba(255, 255, 255, 0.06);
+  }
+  100% {
+    box-shadow: 0 0 35px rgba(176, 209, 130, 0.15);
+    border-color: rgba(176, 209, 130, 0.25);
+  }
+}
+
+.pricing-card-header {
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 24px;
+}
+
+.pricing-card-header h3 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+  color: var(--color-text);
+}
+
+.pricing-card-header p {
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}
+
+.pricing-price {
+  margin-bottom: 32px;
+  display: flex;
+  align-items: baseline;
+}
+
+.pricing-price .price {
+  font-size: 2.8rem;
+  font-weight: 900;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+}
+
+.pricing-price .currency {
+  font-size: 1.2rem;
+  color: var(--color-text);
+  margin-left: 6px;
+  font-weight: 700;
+}
+
+.pricing-price .period {
+  color: var(--color-muted);
+  font-size: 0.85rem;
+  margin-left: 4px;
+}
+
+.pricing-features {
+  list-style: none;
+  margin-bottom: 36px;
+  flex-grow: 1;
+}
+
+.pricing-features li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.pricing-features li iconify-icon {
+  color: var(--pal-mid-green);
+  font-size: 1.2rem;
+}
+
+.pricing-btn {
+  width: 100%;
+  padding: 16px 0;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-pill);
+  font-size: 0.9rem;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  background: transparent;
+  color: var(--color-text);
+  margin-top: auto;
+}
+
+.pricing-card:hover .pricing-btn {
+  background: var(--pal-light-green);
+  color: #05060a;
+  border-color: var(--pal-light-green);
+}
+
+/* Адаптивность */
+@media (max-width: 1200px) {
+  .pricing-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .pricing-grid {
+    grid-template-columns: 1fr;
+  }
+  .pricing-process {
+    padding: 24px;
+    margin: 24px 20px 0;
+  }
+}
+
 /* ============================================================
    БЛОК №4: ЛУЧШИЕ УЧЕНИКИ / VIDEO SHOWCASE
 ============================================================ */
@@ -1152,10 +1346,30 @@ nav {
 .student-modal.active .portal-edge {
   box-shadow: 0 0 40px rgba(176, 209, 130, 0.3);
 }
+/* Анимация переливающегося свечения (доминирует зеленый, минимум золота) */
+@keyframes alanko-glow {
+  0% {
+    box-shadow: 
+      -15px 15px 35px rgba(176, 209, 130, 0.35),
+      15px -15px 15px rgba(235, 195, 64, 0.05); /* Золотой сведен к минимуму */
+    border-color: rgba(176, 209, 130, 0.4);
+  }
+  100% {
+    box-shadow: 
+      15px -15px 35px rgba(176, 209, 130, 0.25),
+      -15px 15px 25px rgba(235, 195, 64, 0.12); /* Очень легкий золотой оттенок */
+    border-color: rgba(185, 207, 110, 0.45); 
+  }
+}
 
-@keyframes rotatePortal {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.pricing-card:hover {
+  border-color: var(--pal-light-green);
+  box-shadow: 
+    0 0 50px rgba(176, 209, 130, 0.5),
+    0 0 20px rgba(235, 195, 64, 0.15); /* Тонкий золотой блик на фоне яркого зеленого */
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.04);
+  animation-play-state: paused;
 }
 
 /* Адаптивность для мобилок */
@@ -2375,6 +2589,100 @@ MODAL STUDENT PROFILE
         <p>Обладая более чем 15-летним опытом в индустрии, Елена объединила лучших хореографов страны, чтобы создать уникальную экосистему развития талантов.</p>
       </div>
       <div class="leader-signature">Вижу цель - не вижу препятствий!</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     БЛОК: ЧАСТНЫЕ ТРЕНИРОВКИ (ALANKO)
+============================================================ -->
+<section class="pricing-section" id="private-training">
+  <div class="container">
+    
+    <div class="pricing-header">
+      <div class="leader-label">ИНДИВИДУАЛЬНЫЙ ПОДХОД</div>
+      <h2 class="title-sans" style="font-size: 3rem;">Частные тренировки</h2>
+      
+      <div class="pricing-process">
+        <h3>Как проходит занятие?</h3>
+        <p>Разбор техники, постановка хореографии и детальная отработка движений. Хореограф полностью адаптирует программу под ваш уровень, чтобы обеспечить максимальный прогресс в комфортном темпе.</p>
+      </div>
+    </div>
+
+    <div class="pricing-grid">
+      
+      <!-- Карточка 1 -->
+      <div class="pricing-card">
+        <div class="pricing-card-header">
+          <h3>1 ребенок</h3>
+          <p>Индивидуальный фокус</p>
+        </div>
+        <div class="pricing-price">
+          <span class="price">800</span>
+          <span class="currency">₽</span><span class="period">/занятие</span>
+        </div>
+        <ul class="pricing-features">
+          <li><iconify-icon icon="solar:check-circle-linear"></iconify-icon> 100% внимание педагога</li>
+          <li><iconify-icon icon="solar:check-circle-linear"></iconify-icon> Персональная хореография</li>
+          <li><iconify-icon icon="solar:check-circle-linear"></iconify-icon> Гибкий график занятий</li>
+        </ul>
+        <a href="#book" class="pricing-btn">Записаться</a>
+      </div>
+
+      <!-- Карточка 2 -->
+      <div class="pricing-card">
+        <div class="pricing-card-header">
+          <h3>2 ребенка</h3>
+          <p>Сплит-тренировка</p>
+        </div>
+        <div class="pricing-price">
+          <span class="price">600</span>
+          <span class="currency">₽</span><span class="period">/занятие</span>
+        </div>
+        <ul class="pricing-features">
+          <li><iconify-icon icon="solar:check-circle-linear"></iconify-icon> Развитие взаимодействия</li>
+          <li><iconify-icon icon="solar:check-circle-linear"></iconify-icon> Парная хореография</li>
+          <li><iconify-icon icon="solar:check-circle-linear"></iconify-icon> Общие цели</li>
+        </ul>
+        <a href="#book" class="pricing-btn">Записаться</a>
+      </div>
+
+      <!-- Карточка 3 -->
+      <div class="pricing-card">
+        <div class="pricing-card-header">
+          <h3>3 ребенка</h3>
+          <p>Мини-группа</p>
+        </div>
+        <div class="pricing-price">
+          <span class="price">500</span>
+          <span class="currency">₽</span><span class="period">/занятие</span>
+        </div>
+        <ul class="pricing-features">
+          <li><iconify-icon icon="solar:check-circle-linear"></iconify-icon> Групповая динамика</li>
+          <li><iconify-icon icon="solar:check-circle-linear"></iconify-icon> Основы синхрона</li>
+          <li><iconify-icon icon="solar:check-circle-linear"></iconify-icon> Подготовка к команде</li>
+        </ul>
+        <a href="#book" class="pricing-btn">Записаться</a>
+      </div>
+
+      <!-- Карточка 4 -->
+      <div class="pricing-card">
+        <div class="pricing-card-header">
+          <h3>4 ребенка</h3>
+          <p>Малая команда</p>
+        </div>
+        <div class="pricing-price">
+          <span class="price">450</span>
+          <span class="currency">₽</span><span class="period">/занятие</span>
+        </div>
+        <ul class="pricing-features">
+          <li><iconify-icon icon="solar:check-circle-linear"></iconify-icon> Командная работа</li>
+          <li><iconify-icon icon="solar:check-circle-linear"></iconify-icon> Сценические рисунки</li>
+          <li><iconify-icon icon="solar:check-circle-linear"></iconify-icon> Выгодный формат</li>
+        </ul>
+        <a href="#book" class="pricing-btn">Записаться</a>
+      </div>
+
     </div>
   </div>
 </section>

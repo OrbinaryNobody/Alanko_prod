@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALANKO STUDIO | Завершение регистрации</title>
+  <style>
+    :root {
+      --neon-green: #B0D182;
+      --bg-dark: #05060A;
+      --text-main: #FFFFFF;
+      --text-muted: rgba(255, 255, 255, 0.6);
+      
+      /* Трафарет линий для фона */
+      --lines-mask: url("data:image/svg+xml,%3Csvg width='1200' height='800' viewBox='0 0 1200 800' xmlns='http://www.w3.org/2000/svg' fill='none' stroke='white' stroke-width='4' stroke-linecap='round'%3E%3Cpath d='M-100 150 Q 200 350 400 150 T 900 200 T 1300 100'/%3E%3Cpath d='M-100 450 Q 300 600 600 400 T 1000 500 T 1300 400'/%3E%3Cpath d='M200 -100 Q 150 200 300 450 T 200 900'/%3E%3Cpath d='M800 -100 Q 900 300 700 500 T 800 900'/%3E%3Cpath d='M 300 750 Q 450 600 600 720 T 950 680'/%3E%3Cpath d='M 350 780 Q 520 630 680 750 T 1000 710'/%3E%3Cpath d='M 400 720 Q 550 580 750 700'/%3E%3C/svg%3E");
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    /* =========================================
+       ФОН (Аппаратное свечение и линии)
+       ========================================= */
+    .collab-bg-overlay {
+      position: fixed; /* Fixed, чтобы фон не обрывался при скролле */
+      inset: 0;
+      background-color: var(--bg-dark);
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .static-lines,
+    .glow-mask-layer {
+      position: absolute;
+      inset: 0;
+      -webkit-mask-image: var(--lines-mask);
+      -webkit-mask-size: cover;
+      -webkit-mask-position: center;
+      mask-image: var(--lines-mask);
+      mask-size: cover;
+      mask-position: center;
+    }
+
+    .static-lines {
+      background-color: var(--neon-green);
+      opacity: 0.15;
+    }
+
+    .glow-mask-layer {
+      filter: drop-shadow(0 0 10px var(--neon-green)) drop-shadow(0 0 25px var(--neon-green));
+    }
+
+    .light-orb {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--neon-green) 0%, rgba(176, 209, 130, 0) 70%);
+      will-change: transform;
+    }
+
+    .orb-1 { width: 700px; height: 700px; top: -150px; left: -150px; animation: float1 12s infinite alternate ease-in-out; }
+    .orb-2 { width: 900px; height: 900px; bottom: -300px; right: -200px; animation: float2 16s infinite alternate ease-in-out; }
+    .orb-3 { width: 600px; height: 600px; top: 30%; left: 30%; animation: float3 14s infinite alternate ease-in-out; }
+
+    @keyframes float1 { 0% { transform: translate(0, 0); } 100% { transform: translate(700px, 400px); } }
+    @keyframes float2 { 0% { transform: translate(0, 0); } 100% { transform: translate(-800px, -400px); } }
+    @keyframes float3 { 0% { transform: translate(0, 0); } 100% { transform: translate(600px, -300px); } }
+
+    /* =========================================
+       КОНТЕНТ СТРАНИЦЫ
+       ========================================= */
+    .page-content {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 80px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 120px;
+    }
+
+    /* Типографика */
+    h1, h2, h3 {
+      font-family: 'Times New Roman', Times, serif; /* Отсылка к логотипу ALANKO */
+      font-weight: normal;
+      letter-spacing: -0.02em;
+    }
+
+    h1 {
+      font-size: clamp(3rem, 5vw, 4.5rem);
+      line-height: 1.1;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1.2;
+      margin-bottom: 20px;
+    }
+
+    p {
+      color: var(--text-muted);
+      font-size: 1.125rem;
+      max-width: 600px;
+    }
+
+    .text-center {
+      text-align: center;
+      margin: 0 auto;
+    }
+
+    /* Кнопки (Плоский дизайн) */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--neon-green);
+      color: var(--bg-dark);
+      padding: 16px 32px;
+      font-size: 1rem;
+      font-weight: bold;
+      text-decoration: none;
+      border-radius: 4px; /* Минималистичные углы */
+      border: 1px solid var(--neon-green);
+      transition: background-color 0.2s, color 0.2s;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background-color: transparent;
+      color: var(--neon-green);
+    }
+
+    /* Hero Секция */
+    .hero-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 40px;
+    }
+
+    .hero-section p {
+      margin-bottom: 40px;
+    }
+
+    /* Карточки (Стили направлений/преподавателей) */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .card {
+      background: rgba(5, 6, 10, 0.6);
+      border: 1px solid rgba(176, 209, 130, 0.2);
+      border-radius: 12px;
+      padding: 32px;
+      backdrop-filter: blur(10px);
+      transition: border-color 0.3s;
+    }
+
+    .card:hover {
+      border-color: var(--neon-green);
+    }
+
+    .card-tag {
+      display: inline-block;
+      background: var(--neon-green);
+      color: var(--bg-dark);
+      font-size: 0.75rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+    }
+
+    .card h3 {
+      font-size: 1.75rem;
+      color: #FFF;
+      margin-bottom: 16px;
+    }
+
+    .card p {
+      font-size: 1rem;
+    }
+
+    /* Разделенные секции (Текст + Изображение/Графика) */
+    .split-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .split-section:nth-child(even) {
+      direction: rtl; /* Меняем порядок блоков */
+    }
+
+    .split-section:nth-child(even) > * {
+      direction: ltr; /* Возвращаем нормальное чтение тексту */
+    }
+
+    .split-placeholder {
+      background: rgba(176, 209, 130, 0.05);
+      border: 1px solid rgba(176, 209, 130, 0.2);
+      border-radius: 12px;
+      aspect-ratio: 4/3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--neon-green);
+      font-style: italic;
+    }
+
+    /* Секция списка возможностей (Checklist) */
+    .checklist-section {
+      background: rgba(5, 6, 10, 0.8);
+      border-top: 1px solid rgba(176, 209, 130, 0.2);
+      border-bottom: 1px solid rgba(176, 209, 130, 0.2);
+      padding: 80px 0;
+      margin: 0 -20px; /* Выход за пределы контейнера для full-width фона */
+    }
+
+    .checklist-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 60px;
+    }
+
+    .checklist-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #FFF;
+    }
+
+    .check-icon {
+      width: 20px;
+      height: 20px;
+      background: var(--neon-green);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .check-icon::after {
+      content: '✓';
+      color: var(--bg-dark);
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    /* Финальный CTA */
+    .cta-section {
+      text-align: center;
+      padding: 40px 0 80px;
+    }
+
+    /* Адаптив */
+    @media (max-width: 900px) {
+      .split-section,
+      .checklist-container {
+        grid-template-columns: 1fr;
+        direction: ltr; /* Сброс чередования на мобильных */
+      }
+      .checklist-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Аппаратный фон с маской и свечением -->
+  <div class="collab-bg-overlay">
+    <div class="static-lines"></div>
+    <div class="glow-mask-layer">
+      <div class="light-orb orb-1"></div>
+      <div class="light-orb orb-2"></div>
+      <div class="light-orb orb-3"></div>
+    </div>
+  </div>
+
+  <!-- Основной контент страницы -->
+  <main class="page-content">
+    
+    <!-- Hero -->
+    <section class="hero-section">
+      <h1>Система движений<br>в одном курсе</h1>
+      <p class="text-center">Вы в одном шаге от старта. Базовая профессиональная подготовка, авторская техника и системная дисциплина.</p>
+      <a href="#payment" class="btn">Оформить участие</a>
+    </section>
+
+    <!-- Карточки направлений/результатов -->
+    <section class="cards-grid">
+      <div class="card">
+        <span class="card-tag">Основа</span>
+        <h3>Базовая техника</h3>
+        <p>Детальный разбор механики тела. Построение прочного фундамента для любых танцевальных направлений.</p>
+      </div>
+      <div class="card">
+        <span class="card-tag">Стиль</span>
+        <h3>Авторская хореография</h3>
+        <p>Изучение уникальных связок и паттернов движения от резидентов ALANKO STUDIO.</p>
+      </div>
+      <div class="card">
+        <span class="card-tag">Практика</span>
+        <h3>Перформанс</h3>
+        <p>Работа с подачей, динамикой и музыкальностью. Подготовка к съемкам и живым выступлениям.</p>
+      </div>
+    </section>
+
+    <!-- Текстовые блоки с контентом -->
+    <section class="split-section">
+      <div>
+        <span class="card-tag">Процесс</span>
+        <h2>Тренировки без компромиссов</h2>
+        <p>Никаких шаблонных связок. Мы фокусируемся на осознанном контроле каждой мышцы. Вы получаете инструменты, которые делают ваш танец техничным и индивидуальным.</p>
+      </div>
+      <div class="split-placeholder">
+        [ Место для видео/фото с тренировки ]
+      </div>
+    </section>
+
+    <section class="split-section">
+      <div>
+        <span class="card-tag">Сообщество</span>
+        <h2>Окружение решает</h2>
+        <p>Закрытые мастер-классы, совместные перформансы и регулярная обратная связь от хореографов. Вы становитесь частью профессионального комьюнити.</p>
+      </div>
+      <div class="split-placeholder">
+        [ Место для фото студии/команды ]
+      </div>
+    </section>
+
+    <!-- Технические детали курса (Checklist) -->
+    <section class="checklist-section">
+      <div class="checklist-container">
+        <div>
+          <h2>Всё необходимое для роста</h2>
+          <p>Прозрачная структура курса. Вы точно знаете, над чем работаете на каждой тренировке.</p>
+        </div>
+        <div class="checklist-grid">
+          <div class="check-item"><div class="check-icon"></div><span>12 офлайн сессий в месяц</span></div>
+          <div class="check-item"><div class="check-icon"></div><span>Доступ к видеотеке базы</span></div>
+          <div class="check-item"><div class="check-icon"></div><span>Разбор домашнего задания</span></div>
+          <div class="check-item"><div class="check-icon"></div><span>Индивидуальный фидбек</span></div>
+          <div class="check-item"><div class="check-icon"></div><span>Участие в съемках студии</span></div>
+          <div class="check-item"><div class="check-icon"></div><span>Закрытый чат участников</span></div>
+          <div class="check-item"><div class="check-icon"></div><span>Скидка на интенсивы</span></div>
+          <div class="check-item"><div class="check-icon"></div><span>Сертификат о прохождении</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Финальный призыв к действию -->
+    <section class="cta-section">
+      <h2>Готовы начать?</h2>
+      <p class="text-center" style="margin-bottom: 32px;">Бронирование места на курс требует подтверждения оплаты.</p>
+      <a href="#payment" class="btn">Перейти к оплате</a>
+    </section>
+
+  </main>
+</body>
+</html>
