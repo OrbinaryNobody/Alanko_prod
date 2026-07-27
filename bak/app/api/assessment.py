@@ -2,19 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from models import User, Task, StudentTask
 from db.database import get_db
-from core.security import verify_token
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from core.permissions import get_current_user
+from api.teacher.common import get_current_teacher_or_admin
 
 router = APIRouter(prefix="/teacher", tags=["teacher"])
-security = HTTPBearer()
-
-
-def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    token = credentials.credentials
-    payload = verify_token(token)
-    if not payload:
-        raise HTTPException(status_code=401, detail="Invalid token")
-    return payload
 
 
 # =========================
@@ -25,6 +16,7 @@ def get_task_assessment(
     student_id: int,
     task_id: int,
     current_user: dict = Depends(get_current_user),
+    teacher_id: int = Depends(get_current_teacher_or_admin),
     db: Session = Depends(get_db)
 ):
     """

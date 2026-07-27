@@ -6,21 +6,15 @@ from models.all_models import Achievement, UserAchievement, RatingsHistory
 from services.file_service import file_service
 from db.minio_client import BUCKET_NAMES
 
+
+from core.permissions import get_current_user
 from db.database import get_db
-from core.security import verify_token
 from models import User, StudentTask, StudentProfile, TaskMedia, Task
 
 router = APIRouter(prefix="/user", tags=["user"])
 security = HTTPBearer()
 
 logger = logging.getLogger("alanko.user")
-
-
-def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    payload = verify_token(credentials.credentials)
-    if not payload:
-        raise HTTPException(status_code=401, detail="Invalid token")
-    return payload
 
 
 # =========================
