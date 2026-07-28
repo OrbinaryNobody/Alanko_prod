@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
+from core.access import AccessContext
 from db.database import get_db
 from schemas.task import TaskCreate, TaskUpdate
 from services.data_access import teacher_service
 
-from .common import get_current_teacher_or_admin
+from core.permissions import require_create_tasks, require_edit_programs
 
 router = APIRouter(prefix="/teacher", tags=["teacher"])
 
@@ -13,7 +14,7 @@ router = APIRouter(prefix="/teacher", tags=["teacher"])
 @router.post("/create-task")
 def create_task(
     data: TaskCreate,
-    user_id: int = Depends(get_current_teacher_or_admin),
+    ctx: AccessContext = Depends(require_create_tasks),
     db: Session = Depends(get_db)
 ):
     task, students_count = teacher_service.create_task(db, data=data)
@@ -27,7 +28,7 @@ def create_task(
 
 @router.get("/tasks")
 def get_tasks(
-    user_id: int = Depends(get_current_teacher_or_admin),
+    ctx: AccessContext = Depends(require_create_tasks),
     db: Session = Depends(get_db)
 ):
     tasks = teacher_service.get_tasks(db)
@@ -53,7 +54,7 @@ def get_tasks(
 def update_task(
     task_id: int,
     task_data: TaskUpdate,
-    user_id: int = Depends(get_current_teacher_or_admin),
+    ctx: AccessContext = Depends(require_edit_programs),
     db: Session = Depends(get_db)
 ):
     task = teacher_service.update_task(db, task_id=task_id, task_data=task_data)

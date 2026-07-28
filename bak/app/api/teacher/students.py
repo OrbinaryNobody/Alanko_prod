@@ -1,67 +1,71 @@
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from sqlalchemy.orm import Session
 
+from core.access import AccessContext
 from db.database import get_db
 from schemas.task import StudentTaskUpdate
 from services.file_service import file_service
 from services.data_access import student_service
 
-from core.permissions import require_upload_media
-from .common import get_current_teacher_or_admin
+from core.permissions import (
+    require_grade_tasks,
+    require_manage_enrollments,
+    require_upload_media,
+    require_view_students,
+)
 
 router = APIRouter(prefix="/teacher", tags=["teacher"])
 
 
-@router.post("/add-student")
-async def add_student(
-    first_name: str = Form(...),
-    last_name: str = Form(None),
-    middle_name: str = Form(...),
-    email: str = Form(...),
-    image: UploadFile = File(...),
-    teacher_id: int = Depends(get_current_teacher_or_admin),
-    db: Session = Depends(get_db)
-):
-    try:
-        image_url = await file_service.upload_image(image)
-        user, generated_password = student_service.add_student_from_teacher(
-            db,
-            email=email,
-            first_name=first_name,
-            last_name=last_name,
-            middle_name=middle_name,
-            image_url=image_url,
-        )
+# @router.post("/add-student")
+# async def add_student(
+#     first_name: str = Form(...),
+#     last_name: str = Form(None),
+#     middle_name: str = Form(...),
+#     email: str = Form(...),
+#     image: UploadFile = File(...),
+#     current_user: dict = Depends(require_manage_enrollments),
+#     db: Session = Depends(get_db)
+# ):
+#     try:
+#         image_url = await file_service.upload_image(image)
+#         user, generated_password = student_service.add_student_from_teacher(
+#             db,
+#             email=email,
+#             first_name=first_name,
+#             last_name=last_name,
+#             middle_name=middle_name,
+#             image_url=image_url,
+#         )
 
-        return {
-            "message": "Student added successfully",
-            "user_id": user.id,
-            "email": user.email,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "middle_name": user.middle_name,
-            "password": generated_password,
-            "image_url": file_service.get_file_url(image_url, "student_photos")
-        }
-    except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc))
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"Error: {str(exc)}")
+#         return {
+#             "message": "Student added successfully",
+#             "user_id": user.id,
+#             "email": user.email,
+#             "first_name": user.first_name,
+#             "last_name": user.last_name,
+#             "middle_name": user.middle_name,
+#             "password": generated_password,
+#             "image_url": file_service.get_file_url(image_url, "student_photos")
+#         }
+#     except ValueError as exc:
+#         raise HTTPException(status_code=400, detail=str(exc))
+#     except Exception as exc:
+#         raise HTTPException(status_code=500, detail=f"Error: {str(exc)}")
 
 
 @router.post("/upload-video")
 async def upload_video(
     file: UploadFile = File(...),
     student_task_id: int = Form(...),
-    teacher_id: int = Depends(get_current_teacher_or_admin),
-    current_user: dict = Depends(require_upload_media),
+    ctx: AccessContext = Depends(require_upload_media),
     db: Session = Depends(get_db)
 ):
     try:
         student_task, media = student_service.upload_student_task_video(
             db,
             student_task_id=student_task_id,
-            uploaded_by=teacher_id,
+            uploaded_by=ctx.user_id,
             video_url=await file_service.upload_video(file),
         )
     except ValueError as exc:
@@ -89,7 +93,7 @@ async def upload_video(
 def update_student_task(
     student_task_id: int,
     student_task_data: StudentTaskUpdate,
-    user_id: int = Depends(get_current_teacher_or_admin),
+    ctx: AccessContext = Depends(require_grade_tasks),
     db: Session = Depends(get_db)
 ):
     try:
@@ -115,7 +119,7 @@ def update_student_task(
 
 @router.get("/students")
 def get_students(
-    user_id: int = Depends(get_current_teacher_or_admin),
+    ctx: AccessContext = Depends(require_view_students),
     db: Session = Depends(get_db)
 ):
     return {"data": student_service.get_students_payload(db)}
@@ -123,7 +127,7 @@ def get_students(
 
 @router.get("/students-tasks")
 def get_students_tasks(
-    user_id: int = Depends(get_current_teacher_or_admin),
+    ctx: AccessContext = Depends(require_view_students),
     db: Session = Depends(get_db)
 ):
     return {"data": student_service.get_students_tasks_payload(db)}

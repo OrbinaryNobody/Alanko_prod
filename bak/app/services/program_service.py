@@ -20,10 +20,13 @@ class ProgramService:
         db.refresh(program)
         return program
 
-    def get_programs_for_user(self, db: Session, user_id: int):
+    def get_programs_for_user(self, db: Session, user_id: int, is_admin: bool = False):
         user = db.query(User).filter(User.id == user_id).first()
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
+
+        if is_admin:
+            return db.query(Program).order_by(Program.created_at.desc()).all()
 
         return (
             db.query(Program)
@@ -32,11 +35,30 @@ class ProgramService:
             .all()
         )
 
+    def update_program(self, db: Session, *, program_id: int, title: str, description: str | None, user_id: int, is_admin: bool = False):
+        program = self.ensure_program_access(db, program_id=program_id, user_id=user_id, is_admin=is_admin)
+        program.title = title
+        program.description = description
+        db.commit()
+        db.refresh(program)
+        return program
+
     def create_block(self, db: Session, *, program_id: int, title: str, description: str | None, order: int, user_id: int, is_admin: bool = False):
         program = self.ensure_program_access(db, program_id=program_id, user_id=user_id, is_admin=is_admin)
 
         block = ProgramBlock(program_id=program.id, title=title, description=description, order=order)
         db.add(block)
+        db.commit()
+        db.refresh(block)
+        return block
+
+    def publish_block(self, db: Session, *, block_id: int, user_id: int, is_admin: bool = False):
+        block = db.query(ProgramBlock).filter(ProgramBlock.id == block_id).first()
+        if not block:
+            raise HTTPException(status_code=404, detail="Block not found")
+
+        self.ensure_program_access(db, program_id=block.program_id, user_id=user_id, is_admin=is_admin)
+        block.status = "published"
         db.commit()
         db.refresh(block)
         return block

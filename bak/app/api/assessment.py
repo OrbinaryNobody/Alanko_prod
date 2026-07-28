@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from models import User, Task, StudentTask
+from core.access import AccessContext
 from db.database import get_db
-from core.permissions import get_current_user
-from api.teacher.common import get_current_teacher_or_admin
+from core.permissions import require_view_students
 
 router = APIRouter(prefix="/teacher", tags=["teacher"])
 
@@ -15,8 +15,7 @@ router = APIRouter(prefix="/teacher", tags=["teacher"])
 def get_task_assessment(
     student_id: int,
     task_id: int,
-    current_user: dict = Depends(get_current_user),
-    teacher_id: int = Depends(get_current_teacher_or_admin),
+    ctx: AccessContext = Depends(require_view_students),
     db: Session = Depends(get_db)
 ):
     """

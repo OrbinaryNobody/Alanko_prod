@@ -11,7 +11,8 @@ from schemas.achievment import AchievementCreate, AssignAchievement
 from services.data_access import achievement_service
 from services.file_service import file_service
 
-from core.permissions import require_upload_media
+from core.access import AccessContext
+from core.permissions import require_manage_achievements, require_upload_media, require_view_achievements
 from .common import get_current_teacher_or_admin
 
 router = APIRouter(prefix="/teacher", tags=["teacher"])
@@ -20,7 +21,7 @@ logger = logging.getLogger("alanko.teacher")
 
 @router.get("/achievements")
 def get_achievements(
-    user_id: int = Depends(get_current_teacher_or_admin),
+    ctx: AccessContext = Depends(require_view_achievements),
     db: Session = Depends(get_db)
 ):
     return {"data": achievement_service.get_achievements_payload(db)}
@@ -29,7 +30,7 @@ def get_achievements(
 @router.get("/student-achievements/{student_id}")
 def get_student_achievements(
     student_id: int,
-    user_id: int = Depends(get_current_teacher_or_admin),
+    ctx: AccessContext = Depends(require_view_achievements),
     db: Session = Depends(get_db)
 ):
     return {"data": achievement_service.get_student_achievements_payload(db, student_id)}
@@ -39,8 +40,7 @@ def get_student_achievements(
 async def upload_achievement_media(
     achievement_id: int,
     file: UploadFile = File(...),
-    teacher_id: int = Depends(get_current_teacher_or_admin),
-    current_user: dict = Depends(require_upload_media),
+    ctx: AccessContext = Depends(require_upload_media),
     db: Session = Depends(get_db)
 ):
     return await achievement_service.upload_achievement_media(db, achievement_id=achievement_id, file=file, logger=logger)
@@ -50,8 +50,7 @@ async def upload_achievement_media(
 async def upload_achievement_video(
     achievement_id: int,
     file: UploadFile = File(...),
-    teacher_id: int = Depends(get_current_teacher_or_admin),
-    current_user: dict = Depends(require_upload_media),
+    ctx: AccessContext = Depends(require_upload_media),
     db: Session = Depends(get_db)
 ):
     return await achievement_service.upload_achievement_video(db, achievement_id=achievement_id, file=file)
@@ -66,7 +65,7 @@ async def create_achievement(
     assignment_type: str = Form(...),
     student_id: int = Form(None),
     file: UploadFile = File(None),
-    teacher_id: int = Depends(get_current_teacher_or_admin),
+    ctx: AccessContext = Depends(require_manage_achievements),
     db: Session = Depends(get_db)
 ):
     return await achievement_service.create_achievement_from_form(
@@ -85,7 +84,7 @@ async def create_achievement(
 @router.post("/achievements/assign")
 def assign_achievement(
     data: AssignAchievement,
-    user_id: int = Depends(get_current_teacher_or_admin),
+    ctx: AccessContext = Depends(require_manage_achievements),
     db: Session = Depends(get_db)
 ):
     try:
@@ -99,5 +98,5 @@ def assign_achievement(
 
     return {
         "message": "assigned",
-        "assigned_by": user_id
+        "assigned_by": ctx.user_id
     }

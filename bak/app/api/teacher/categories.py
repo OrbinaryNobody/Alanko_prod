@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
+from core.access import AccessContext
 from db.database import get_db
 from schemas.task import CategoryCreate
 from services.data_access import teacher_service
 
-from .common import get_current_teacher_or_admin
+from core.permissions import require_create_tasks, require_view_programs
 
 router = APIRouter(prefix="/teacher", tags=["teacher"])
 
@@ -13,7 +14,7 @@ router = APIRouter(prefix="/teacher", tags=["teacher"])
 @router.post("/create-category")
 def create_category(
     data: CategoryCreate,
-    user_id: int = Depends(get_current_teacher_or_admin),
+    ctx: AccessContext = Depends(require_create_tasks),
     db: Session = Depends(get_db)
 ):
     category = teacher_service.create_category(
@@ -31,7 +32,7 @@ def create_category(
 
 @router.get("/categories")
 def get_categories(
-    user_id: int = Depends(get_current_teacher_or_admin),
+    ctx: AccessContext = Depends(require_view_programs),
     db: Session = Depends(get_db)
 ):
     categories = teacher_service.get_categories(db)

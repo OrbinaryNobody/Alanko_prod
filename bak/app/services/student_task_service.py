@@ -1,14 +1,37 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from models import GroupEnrollment, GroupStudentTask, ProgramTask
+from core.access import AccessContext
+from core.policies.student_task_policy import StudentTaskPolicy
+from models import Group, GroupEnrollment, GroupStudentTask, ProgramTask
 
 
 class StudentTaskService:
-    def create_manual_task(self, db: Session, *, enrollment_id: int, program_task_id: int):
+    def _find_enrollment(self, db: Session, enrollment_id: int) -> GroupEnrollment:
         enrollment = db.query(GroupEnrollment).filter(GroupEnrollment.id == enrollment_id).first()
         if not enrollment:
             raise HTTPException(status_code=404, detail="Enrollment not found")
+        return enrollment
+
+    def _find_task(self, db: Session, task_id: int) -> GroupStudentTask:
+        task = db.query(GroupStudentTask).filter(GroupStudentTask.id == task_id).first()
+        if not task:
+            raise HTTPException(status_code=404, detail="Student task not found")
+        return task
+
+    def create_manual_task(
+        self,
+        db: Session,
+        ctx: AccessContext,
+        *,
+        enrollment_id: int,
+        program_task_id: int,
+    ):
+        enrollment = self._find_enrollment(db, enrollment_id)
+        try:
+            StudentTaskPolicy.require_create_manual_task(ctx, enrollment)
+        except PermissionError as exc:
+            raise HTTPException(status_code=403, detail=str(exc)) from exc
 
         program_task = db.query(ProgramTask).filter(ProgramTask.id == program_task_id).first()
         if not program_task:
@@ -27,10 +50,20 @@ class StudentTaskService:
         db.refresh(task)
         return task
 
-    def update_task_grade(self, db: Session, *, task_id: int, grade: int, feedback: str | None):
-        task = db.query(GroupStudentTask).filter(GroupStudentTask.id == task_id).first()
-        if not task:
-            raise HTTPException(status_code=404, detail="Student task not found")
+    def update_task_grade(
+        self,
+        db: Session,
+        ctx: AccessContext,
+        *,
+        task_id: int,
+        grade: int,
+        feedback: str | None,
+    ):
+        task = self._find_task(db, task_id)
+        try:
+            StudentTaskPolicy.require_grade(ctx, task, db)
+        except PermissionError as exc:
+            raise HTTPException(status_code=403, detail=str(exc)) from exc
 
         task.grade = grade
         task.feedback = feedback

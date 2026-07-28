@@ -2,26 +2,36 @@ from models import Achievement, UserAchievement
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-
+from core.access import AccessContext
 from db.database import get_db
 from services.auth_service import auth_service
 from services.program_service import program_service
 from services.group_service import group_service
 from schemas.auth import AdminAddUserSchema
 from schemas.education import GroupCreate, GroupMemberCreate, ProgramBlockCreate, ProgramCreate, ProgramTaskCreate, EnrollmentCreate
-from core.permissions import get_current_user
+from core.access import AccessContext
+from core.access import AccessContext
+from core.permissions import Permission, get_current_user, get_access_context, has_permission, require_manage_groups, require_manage_enrollments, require_create_programs, require_create_blocks, require_create_tasks, require_manage_users
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
 
 # =========================
-# Зависимость для проверки роли админа
+# Зависимость для проверки доступа администратора
 # =========================
-def get_current_admin(current_user: dict = Depends(get_current_user)):
-    if current_user.get("role") != "admin":
-        raise HTTPException(status_code=403, detail="Access denied: Admin role required")
-    return current_user["user_id"]
+def get_current_admin(ctx: AccessContext = Depends(get_access_context), db: Session = Depends(get_db)):
+    if not ctx or not ctx.user_id:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    if not any(
+        ctx.has_permission(perm)
+        for perm in (
+            Permission.MANAGE_USERS,
+            Permission.MANAGE_GROUPS,
+            Permission.CREATE_PROGRAMS,
+        )
+    ):
+        raise HTTPException(status_code=403, detail="Access denied: Admin permissions required")
+    return ctx.user_id
 
 
 # =========================
@@ -31,6 +41,7 @@ def get_current_admin(current_user: dict = Depends(get_current_user)):
 def add_user(
     data: AdminAddUserSchema,
     admin_id: int = Depends(get_current_admin),
+    ctx: AccessContext = Depends(require_manage_users),
     db: Session = Depends(get_db)
 ):
     try:
@@ -49,6 +60,7 @@ def add_user(
 def create_program(
     data: ProgramCreate,
     admin_id: int = Depends(get_current_admin),
+    ctx: AccessContext = Depends(require_create_programs),
     db: Session = Depends(get_db)
 ):
     program = program_service.create_program(db, title=data.title, description=data.description, created_by=admin_id)
@@ -60,6 +72,7 @@ def create_block(
     program_id: int,
     data: ProgramBlockCreate,
     admin_id: int = Depends(get_current_admin),
+    ctx: AccessContext = Depends(require_create_blocks),
     db: Session = Depends(get_db)
 ):
     block = program_service.create_block(db, program_id=program_id, title=data.title, description=data.description, order=data.order, user_id=admin_id, is_admin=True)
@@ -71,6 +84,7 @@ def create_task(
     block_id: int,
     data: ProgramTaskCreate,
     admin_id: int = Depends(get_current_admin),
+    ctx: AccessContext = Depends(require_create_tasks),
     db: Session = Depends(get_db)
 ):
     task = program_service.create_task(db, block_id=block_id, title=data.title, description=data.description, max_score=data.max_score, is_manual=data.is_manual, user_id=admin_id, is_admin=True)
@@ -81,6 +95,7 @@ def create_task(
 def create_group(
     data: GroupCreate,
     admin_id: int = Depends(get_current_admin),
+    ctx: AccessContext = Depends(require_manage_groups),
     db: Session = Depends(get_db)
 ):
     group = group_service.create_group(db, title=data.title, description=data.description, program_id=data.program_id, created_by=admin_id)
@@ -92,6 +107,7 @@ def add_member(
     group_id: int,
     data: GroupMemberCreate,
     admin_id: int = Depends(get_current_admin),
+    ctx: AccessContext = Depends(require_manage_groups),
     db: Session = Depends(get_db)
 ):
     member = group_service.add_member(db, group_id=group_id, user_id=data.user_id, role=data.role, actor_id=admin_id, is_admin=True)
@@ -103,6 +119,7 @@ def enroll_student(
     group_id: int,
     data: EnrollmentCreate,
     admin_id: int = Depends(get_current_admin),
+    ctx: AccessContext = Depends(require_manage_enrollments),
     db: Session = Depends(get_db)
 ):
     enrollment = group_service.enroll_student(db, group_id=group_id, student_id=data.student_id, actor_id=admin_id, is_admin=True)

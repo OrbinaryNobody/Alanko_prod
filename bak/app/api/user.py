@@ -7,7 +7,8 @@ from services.file_service import file_service
 from db.minio_client import BUCKET_NAMES
 
 
-from core.permissions import get_current_user
+from core.access import AccessContext
+from core.permissions import Permission, get_current_user, get_access_context, has_permission, require_permission
 from db.database import get_db
 from models import User, StudentTask, StudentProfile, TaskMedia, Task
 
@@ -20,13 +21,13 @@ logger = logging.getLogger("alanko.user")
 # =========================
 # ONLY STUDENT ACCESS
 # =========================
-def require_student(current_user: dict = Depends(get_current_user)):
-    if current_user.get("role") != "student":
+def require_student(ctx: AccessContext = Depends(get_access_context), db: Session = Depends(get_db)):
+    if not has_permission(ctx, Permission.VIEW_OWN_TASKS, db) and not has_permission(ctx, Permission.VIEW_OWN_DASHBOARD, db):
         raise HTTPException(
             status_code=403,
             detail="Only students can access this resource"
         )
-    return current_user
+    return ctx
 
 
 # =========================
@@ -34,10 +35,10 @@ def require_student(current_user: dict = Depends(get_current_user)):
 # =========================
 @router.get("/dashboard")
 def dashboard(
-    current_user: dict = Depends(get_current_user),
+    ctx: AccessContext = Depends(require_permission(Permission.VIEW_OWN_DASHBOARD)),
     db: Session = Depends(get_db)
 ):
-    user_id = current_user.get("user_id")
+    user_id = ctx.user_id
     logger.info(f"/user/dashboard requested for user_id={user_id}")
 
     profile = db.query(StudentProfile).filter(
@@ -232,10 +233,10 @@ def dashboard(
 # Получить задачи студента
 @router.get("/tasks")
 def get_student_tasks(
-    current_user: dict = Depends(require_student),
+    ctx: AccessContext = Depends(require_permission(Permission.VIEW_OWN_TASKS)),
     db: Session = Depends(get_db)
 ):
-    user_id = current_user["user_id"]
+    user_id = ctx.user_id
 
     student_tasks = (
         db.query(StudentTask)
@@ -276,12 +277,11 @@ def get_student_tasks(
 @router.get("/achievements/{achievement_id}")
 def get_achievement(
     achievement_id: int,
-    current_user: dict = Depends(get_current_user),
+    ctx: AccessContext = Depends(require_permission(Permission.VIEW_OWN_ACHIEVEMENTS)),
     db: Session = Depends(get_db)
 ):
 
-    user_id = current_user["user_id"]
-    role = current_user.get("role")
+    user_id = ctx.user_id
 
     achievement = db.query(Achievement).filter(
         Achievement.id == achievement_id
@@ -291,9 +291,9 @@ def get_achievement(
         raise HTTPException(status_code=404)
 
     # =========================
-    # student — только свои
+    # Студент — только свои достижения
     # =========================
-    if role == "student":
+    if has_permission(ctx, Permission.VIEW_OWN_ACHIEVEMENTS, db):
         record = db.query(UserAchievement).filter(
             UserAchievement.user_id == user_id,
             UserAchievement.achievement_id == achievement_id
@@ -301,10 +301,6 @@ def get_achievement(
 
         if not record:
             raise HTTPException(status_code=403, detail="Not your achievement")
-
-    # =========================
-    # teacher/admin — доступ есть всегда
-    # =========================
 
     return {
         "title": achievement.title,

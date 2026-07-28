@@ -30,7 +30,10 @@ class GroupService:
         db.commit()
         return group
 
-    def get_groups_for_user(self, db: Session, user_id: int):
+    def get_groups_for_user(self, db: Session, user_id: int, is_admin: bool = False):
+        if is_admin:
+            return db.query(Group).order_by(Group.created_at.desc()).all()
+
         return (
             db.query(Group)
             .join(Group.members)
