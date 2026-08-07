@@ -9,3 +9,4 @@ passlib[bcrypt]==1.7.4
 minio
 python-multipart
 python-dotenv
+pydantic-settings

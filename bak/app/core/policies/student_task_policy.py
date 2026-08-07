@@ -1,5 +1,5 @@
 from core.access import AccessContext
-from models import GroupStudentTask, GroupEnrollment
+from models.domains.education import GroupEnrollment, GroupStudentTask
 from sqlalchemy.orm import Session
 
 
@@ -13,7 +13,7 @@ class StudentTaskPolicy:
         if not enrollment:
             raise PermissionError("Access denied: task enrollment not found")
 
-        if enrollment.group and enrollment.group.created_by == ctx.user_id:
+        if enrollment.group and ctx.can_manage(enrollment.group.created_by):
             return
 
         if any(member.user_id == ctx.user_id for member in enrollment.group.members):
@@ -26,7 +26,7 @@ class StudentTaskPolicy:
         if ctx.is_admin:
             return
 
-        if enrollment.group and enrollment.group.created_by == ctx.user_id:
+        if enrollment.group and ctx.can_manage(enrollment.group.created_by):
             return
 
         if any(member.user_id == ctx.user_id for member in enrollment.group.members):

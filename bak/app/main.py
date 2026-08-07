@@ -2,14 +2,18 @@ from fastapi import FastAPI
 import logging
 
 logging.basicConfig(level=logging.INFO)
-from api import auth
 from db.init_db import init_db
 from core.minio_init import init_minio
-from api.teacher import router as teacher_router
-from api.admin import router as admin_router
-from api.user import router as user_router
-from api.assessment import router as assessment_router
-from api.public import router as public_router
+from admin.api.routes import router as admin_router
+from profile.api.dashboard import router as profile_dashboard_router
+from profile.api.routes import router as profile_router
+from accounts.api.auth import router as accounts_auth_router
+from education.api.routes import router as education_router
+from achievements.api.routes import router as achievements_router
+from public.api.routes import router as public_router
+from assessment.api.routes import router as assessment_router_context
+from media.api.routes import router as media_router
+from catalog.api.routes import router as catalog_router
 from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI(
     title="Alanko API",
@@ -53,14 +57,15 @@ def health_check():
     return {"status": "ok", "service": "alanko"}
 
 
-app.include_router(auth.router, prefix="/api/auth")
-
-app.include_router(teacher_router, prefix="/api")
-app.include_router(assessment_router, prefix="/api")
-
+app.include_router(accounts_auth_router, prefix="/api")
+app.include_router(education_router, prefix="/api")
+app.include_router(achievements_router, prefix="/api")
+app.include_router(assessment_router_context, prefix="/api")
+app.include_router(media_router, prefix="/api")
+app.include_router(catalog_router, prefix="/api")
 app.include_router(admin_router, prefix="/api")
-app.include_router(user_router, prefix="/api")
+app.include_router(profile_dashboard_router, prefix="/api/profile")
+app.include_router(profile_router, prefix="/api")
 app.include_router(public_router, prefix="/api")
-
 
 

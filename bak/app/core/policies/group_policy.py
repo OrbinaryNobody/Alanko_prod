@@ -1,14 +1,12 @@
 from core.access import AccessContext
-from models import Group
+from models.domains.education import Group
 from typing import Any
 
 
 class GroupPolicy:
     @staticmethod
     def require_manage_group(ctx: AccessContext, group: Group) -> None:
-        if ctx.is_admin:
-            return
-        if group.created_by == ctx.user_id:
+        if ctx.is_admin or ctx.can_manage(group.created_by):
             return
         if any(member.user_id == ctx.user_id for member in group.members):
             return
@@ -16,9 +14,7 @@ class GroupPolicy:
 
     @staticmethod
     def require_view_group(ctx: AccessContext, group: Group) -> None:
-        if ctx.is_admin:
-            return
-        if group.created_by == ctx.user_id:
+        if ctx.is_admin or ctx.can_manage(group.created_by):
             return
         if any(member.user_id == ctx.user_id for member in group.members):
             return

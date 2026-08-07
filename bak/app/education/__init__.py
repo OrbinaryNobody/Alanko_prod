@@ -1,0 +1,1 @@
+"""Education bounded context."""

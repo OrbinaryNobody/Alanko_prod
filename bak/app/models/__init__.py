@@ -1,4 +1,6 @@
-from .all_models import (
+from sqlalchemy.orm import declarative_base
+
+from .domains import (
     Base,
     Role,
     User,
@@ -21,3 +23,27 @@ from .all_models import (
     GroupStudentTask,
     GroupRole,
 )
+
+__all__ = [
+    "Base",
+    "Role",
+    "User",
+    "UserRole",
+    "StudentProfile",
+    "Category",
+    "Task",
+    "StudentTask",
+    "Gallery",
+    "RatingsHistory",
+    "TaskMedia",
+    "Achievement",
+    "UserAchievement",
+    "Program",
+    "ProgramBlock",
+    "ProgramTask",
+    "Group",
+    "GroupMember",
+    "GroupEnrollment",
+    "GroupStudentTask",
+    "GroupRole",
+]

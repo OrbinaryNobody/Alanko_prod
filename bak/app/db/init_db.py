@@ -1,5 +1,5 @@
 from db.database import engine
-from models import Base
+from models.base import Base
 from sqlalchemy import text
 from core.security import hash_password
 

@@ -29,6 +29,8 @@ services:
       - .env
     environment:
       MINIO_INTERNAL_URL: minio:9000
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: rGTVTyi3GYs6f667Ng9F25vB5ReB73GQ
   minio:
     image: minio/minio
     container_name: alanko_minio
