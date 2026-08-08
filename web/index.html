@@ -2479,7 +2479,7 @@ nav {
       </p>
 
     <div class="collab-cta-wrapper">
-        <a href="#buy-course" class="collab-buy-btn">
+        <a href="collaboration.html" class="collab-buy-btn">
           <span>Записаться на курс</span>
           <iconify-icon icon="solar:ticket-sale-bold"></iconify-icon>
         </a>
@@ -2891,7 +2891,7 @@ MODAL STUDENT PROFILE
     const password = document.getElementById('loginPassword').value;
 
     try {
-      const response = await fetch(`${API_URL}/auth/login`, {
+      const response = await fetch(`${API_URL}/accounts/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })

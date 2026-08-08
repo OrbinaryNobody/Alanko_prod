@@ -17,6 +17,12 @@ class EducationFacade:
     def create_block(self, db: Session, *, ctx: AccessContext, program_id: int, title: str, description: str | None, order: int):
         return education_program_service.create_block(db, ctx=ctx, program_id=program_id, title=title, description=description, order=order)
 
+    def create_category(self, db: Session, *, ctx: AccessContext, name: str, description: str | None = None):
+        return education_task_service.create_category(db, name=name, description=description)
+
+    def get_categories(self, db: Session):
+        return education_task_service.get_categories(db)
+
     def create_task(
         self,
         db: Session,

@@ -22,6 +22,7 @@
 - Do not validate JWT/authorization inside services.
 - Do not put HTTP logic inside services.
 - Pass `ctx` through facades into services when checking permissions.
+- Avoid exposing student media through public storage. Student photos and videos should be served via authenticated/private access instead of direct public MinIO URLs.
 
 ## API and DTO
 - Routes should stay thin: accept request, build `ctx`, call facade, return DTO.

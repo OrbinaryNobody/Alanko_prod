@@ -4,6 +4,13 @@ from core.exceptions import NotFoundError
 from db.minio_client import BUCKET_NAMES
 from models.domains.auth import User
 from models.domains.student import RatingsHistory, StudentProfile, StudentTask, Task, TaskMedia
+from public.dtos.public_dto import (
+    PublicLeaderboardItem,
+    PublicLeaderboardPlace,
+    PublicLeaderboardPayload,
+    PublicStudentVideoItem,
+    PublicStudentVideosPayload,
+)
 from services.file_service import file_service
 
 

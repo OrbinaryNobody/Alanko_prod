@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Studio Alanko — Dashboard</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+
+  <style>
+    :root {
+      --bg-dark: #05060a;
+      --card-bg: rgba(255, 255, 255, 0.025);
+      --card-border: rgba(255, 255, 255, 0.07);
+      
+      --pal-dark-green: #2C473E;
+      --pal-mid-green: #6A8E4E;
+      --pal-light-green: #B0D182;
+      --pal-off-white: #F4F1EA;
+
+      --text-main: #FFFFFF;
+      --text-muted: #8E95A5;
+
+      --radius-xl: 32px;
+      --radius-lg: 20px;
+      --radius-md: 12px;
+      --radius-pill: 999px;
+
+      --font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .glow-1 {
+      position: absolute; top: -100px; left: 10%; width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(106, 142, 78, 0.15) 0%, rgba(5, 6, 10, 0) 70%);
+      pointer-events: none; z-index: -1;
+    }
+
+    .glow-2 {
+      position: absolute; top: 200px; right: 5%; width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(176, 209, 130, 0.1) 0%, rgba(5, 6, 10, 0) 70%);
+      pointer-events: none; z-index: -1;
+    }
+
+    .container { max-width: 1400px; width: 100%; margin: 0 auto; padding: 0 32px; }
+
+    /* HEADER & MAIN GRID */
+    header { padding: 24px 0; border-bottom: 1px solid var(--card-border); }
+    .header-inner { display: flex; align-items: center; justify-content: space-between; }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 1.25rem; letter-spacing: 0.05em; }
+    .brand-dot { width: 10px; height: 10px; background: var(--pal-light-green); border-radius: 50%; box-shadow: 0 0 12px var(--pal-light-green); }
+    
+    .nav-pills { display: flex; gap: 8px; background: rgba(255, 255, 255, 0.03); padding: 6px; border-radius: var(--radius-pill); border: 1px solid var(--card-border); }
+    .nav-item { padding: 8px 20px; border-radius: var(--radius-pill); color: var(--text-muted); text-decoration: none; font-size: 0.875rem; font-weight: 500; transition: all 0.25s ease; }
+    .nav-item:hover, .nav-item.active { color: var(--text-main); background: rgba(255, 255, 255, 0.08); }
+    .nav-item.active { background: var(--pal-dark-green); color: var(--pal-light-green); }
+
+    .user-profile { display: flex; align-items: center; gap: 12px; background: var(--card-bg); border: 1px solid var(--card-border); padding: 6px 16px 6px 8px; border-radius: var(--radius-pill); }
+    .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--pal-mid-green); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; }
+    .user-info { font-size: 0.85rem; font-weight: 600; }
+
+    main { padding: 48px 0; flex: 1; }
+    .dashboard-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 24px; }
+
+    .hero-banner { background: linear-gradient(135deg, rgba(44, 71, 62, 0.4) 0%, rgba(5, 6, 10, 0.6) 100%); border: 1px solid rgba(176, 209, 130, 0.15); border-radius: var(--radius-xl); padding: 48px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; backdrop-filter: blur(20px); }
+    .hero-banner::after { content: ""; position: absolute; bottom: -50px; right: -50px; width: 250px; height: 250px; background: var(--pal-mid-green); opacity: 0.15; filter: blur(80px); border-radius: 50%; }
+    
+    .tag { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; background: rgba(176, 209, 130, 0.1); border: 1px solid rgba(176, 209, 130, 0.2); border-radius: var(--radius-pill); color: var(--pal-light-green); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 24px; width: fit-content; }
+    .hero-title { font-size: 3rem; font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 16px; }
+    .hero-subtitle { color: var(--text-muted); font-size: 1rem; line-height: 1.6; max-width: 480px; margin-bottom: 40px; }
+    
+    .actions-group { display: flex; gap: 12px; }
+    .btn { padding: 14px 28px; border-radius: var(--radius-pill); font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.25s ease; display: inline-flex; align-items: center; gap: 8px; border: none; }
+    .btn-primary { background: var(--pal-light-green); color: #05060a; }
+    .btn-primary:hover { background: #c2e396; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(176, 209, 130, 0.25); }
+    .btn-secondary { background: rgba(255, 255, 255, 0.05); color: var(--text-main); border: 1px solid var(--card-border); }
+    .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-2px); }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .stat-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: 24px; display: flex; flex-direction: column; justify-content: space-between; backdrop-filter: blur(12px); transition: all 0.3s ease; }
+    .stat-box:hover { border-color: rgba(176, 209, 130, 0.3); background: rgba(255, 255, 255, 0.04); transform: translateY(-4px); }
+    .stat-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+    .stat-icon-wrapper { width: 44px; height: 44px; border-radius: 12px; background: rgba(106, 142, 78, 0.15); border: 1px solid rgba(106, 142, 78, 0.2); display: flex; align-items: center; justify-content: center; color: var(--pal-light-green); font-size: 1.25rem; }
+    .stat-trend { font-size: 0.75rem; font-weight: 700; padding: 4px 8px; border-radius: var(--radius-pill); background: rgba(176, 209, 130, 0.1); color: var(--pal-light-green); }
+    .stat-value { font-size: 2.25rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 4px; }
+    .stat-label { color: var(--text-muted); font-size: 0.85rem; font-weight: 500; }
+
+    /* PROGRAMS */
+    .programs-section { margin-top: 40px; max-width: calc(60% - 12px); }
+    .section-heading { margin-bottom: 24px; text-align: left; }
+    .section-title { font-size: 1.75rem; font-weight: 800; margin-bottom: 8px; }
+    .section-subtitle { color: var(--text-muted); font-size: 0.95rem; }
+    
+    .programs-list { display: flex; flex-direction: column; gap: 16px; margin: 0; max-width: 100%; }
+    .program-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); backdrop-filter: blur(12px); overflow: hidden; transition: border-color 0.3s ease; }
+    .program-card:hover { border-color: rgba(176, 209, 130, 0.2); }
+    .program-header { padding: 24px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none; background: transparent; transition: background 0.3s ease; }
+    .program-card.active .program-header { background: rgba(255, 255, 255, 0.02); border-bottom: 1px solid var(--card-border); }
+    
+    .program-title-wrap { display: flex; align-items: center; gap: 16px; }
+    .program-icon { width: 48px; height: 48px; border-radius: 14px; background: rgba(176, 209, 130, 0.1); color: var(--pal-light-green); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+    .program-name { font-size: 1.15rem; font-weight: 700; margin-bottom: 4px; }
+    .program-level { font-size: 0.85rem; color: var(--text-muted); }
+    .program-meta { display: flex; align-items: center; gap: 20px; }
+    .groups-count { font-size: 0.85rem; font-weight: 600; color: var(--pal-light-green); background: rgba(176, 209, 130, 0.1); padding: 6px 12px; border-radius: var(--radius-pill); }
+    .chevron { font-size: 1.25rem; color: var(--text-muted); transition: transform 0.3s ease; display: flex; }
+    .program-card.active .chevron { transform: rotate(180deg); color: var(--pal-light-green); }
+    
+    .program-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.4s ease; }
+    .program-card.active .program-body { grid-template-rows: 1fr; }
+    .groups-list { overflow: hidden; display: flex; flex-direction: column; }
+    
+    .group-row { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px 20px 80px; border-bottom: 1px solid rgba(255, 255, 255, 0.03); transition: background 0.2s ease; }
+    .group-row:last-child { border-bottom: none; }
+    .group-row:hover { background: rgba(255, 255, 255, 0.015); }
+    .group-info { flex: 1; }
+    .group-name { font-weight: 600; font-size: 0.95rem; margin-bottom: 4px; }
+    .group-students { font-size: 0.8rem; color: var(--text-muted); }
+    .group-schedule { display: flex; flex-direction: column; align-items: flex-end; margin-right: 40px; }
+    .group-schedule .day { font-weight: 700; font-size: 0.9rem; color: var(--pal-off-white); }
+    .group-schedule .time { font-size: 0.8rem; color: var(--text-muted); }
+    
+    .btn-sm { padding: 8px 16px; border-radius: var(--radius-pill); font-size: 0.8rem; font-weight: 600; cursor: pointer; border: 1px solid var(--card-border); background: rgba(255, 255, 255, 0.03); color: var(--text-main); transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-sm:hover { background: rgba(255, 255, 255, 0.08); }
+    .btn-sm.primary { background: rgba(176, 209, 130, 0.15); border-color: rgba(176, 209, 130, 0.3); color: var(--pal-light-green); }
+    .btn-sm.primary:hover { background: rgba(176, 209, 130, 0.25); }
+    .private-lesson { background: linear-gradient(90deg, rgba(176, 209, 130, 0.03) 0%, transparent 100%); }
+
+    /* SCHEDULE (Оставлено без изменений для компактности) */
+    .schedule-section { margin-top: 64px; width: 100%; display: none; } /* Скрыто для фокуса на модалке в этом примере */
+
+    /* ================= MODAL WINDOW ================= */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(5, 6, 10, 0.85); backdrop-filter: blur(12px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 24px; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+    .modal-overlay.active { opacity: 1; visibility: visible; }
+    
+    .modal-container { width: 100%; max-width: 1200px; height: 90vh; background: var(--bg-dark); border: 1px solid var(--card-border); border-radius: var(--radius-xl); display: flex; flex-direction: column; overflow: hidden; transform: translateY(20px); transition: transform 0.3s ease; box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4); }
+    .modal-overlay.active .modal-container { transform: translateY(0); }
+
+    .modal-header { padding: 32px; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: flex-start; background: var(--card-bg); z-index: 10;}
+    .modal-title { font-size: 2rem; font-weight: 800; margin-bottom: 8px; }
+    .modal-subtitle { color: var(--text-muted); font-size: 0.95rem; display: flex; gap: 16px; }
+    
+    .header-actions { display: flex; gap: 12px; align-items: center; }
+    
+    .btn-close { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); color: var(--text-main); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; font-size: 1.25rem; }
+    .btn-close:hover { background: rgba(239, 108, 108, 0.1); color: #EF6C6C; border-color: rgba(239, 108, 108, 0.3); }
+
+    /* Layout inside Modal */
+    .modal-body { 
+      padding: 32px; 
+      overflow-y: auto; 
+      display: flex; 
+      gap: 32px; 
+      flex: 1;
+    }
+
+    .blocks-container { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+    .students-container { 
+      width: 380px; 
+      flex-shrink: 0; 
+      background: rgba(0,0,0,0.2); 
+      border: 1px solid var(--card-border); 
+      border-radius: var(--radius-lg); 
+      padding: 24px; 
+      display: flex; 
+      flex-direction: column;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      opacity: 1;
+    }
+
+    /* Состояние скрытого сайдбара */
+    .students-container.hidden {
+      width: 0;
+      padding: 0;
+      opacity: 0;
+      border: none;
+      overflow: hidden;
+      margin-left: -32px; /* Убираем отступ gap */
+    }
+
+    .modal-section-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .title-left { display: flex; align-items: center; gap: 8px; }
+
+    /* Блоки программы */
+    .blocks-list { display: flex; flex-direction: column; gap: 24px; }
+    .course-block { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: 28px; position: relative; overflow: hidden; }
+    .course-block.completed { border-color: rgba(176, 209, 130, 0.2); }
+    .course-block.current { border-color: rgba(176, 209, 130, 0.5); background: rgba(176, 209, 130, 0.02); box-shadow: 0 0 20px rgba(176, 209, 130, 0.05); }
+    .course-block.future { opacity: 0.6; }
+
+    .block-header-info { display: flex; justify-content: space-between; margin-bottom: 20px; align-items: center; }
+    .status-badge { padding: 4px 10px; border-radius: var(--radius-pill); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+    .status-completed { background: rgba(176, 209, 130, 0.1); color: var(--pal-light-green); }
+    .status-current { background: var(--pal-light-green); color: #000; }
+    .status-future { background: rgba(255, 255, 255, 0.05); color: var(--text-muted); }
+    .block-dates { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
+    .course-block > h4 { font-size: 1.25rem; margin-bottom: 16px; }
+
+    /* Темы внутри блока */
+    .topics-list { display: flex; flex-direction: column; gap: 16px; }
+    .topic-item { 
+      background: rgba(255, 255, 255, 0.015); 
+      border: 1px solid rgba(255, 255, 255, 0.05); 
+      border-radius: var(--radius-md); 
+      padding: 20px; 
+    }
+    .topic-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; color: var(--text-main); }
+    .topic-desc { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 12px; line-height: 1.5; }
+    .topic-hw { 
+      font-size: 0.9rem; 
+      color: var(--pal-off-white); 
+      background: rgba(255, 255, 255, 0.03); 
+      padding: 12px; 
+      border-radius: 8px; 
+      border-left: 3px solid var(--pal-light-green);
+      margin-bottom: 16px;
+    }
+
+    /* Квадраты файлов (Материалы) */
+    .materials-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: stretch;
+    }
+    .file-square {
+      width: 86px;
+      height: 86px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+    .file-square:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(176, 209, 130, 0.3);
+      transform: translateY(-2px);
+    }
+    .file-ext {
+      font-weight: 800;
+      font-size: 1rem;
+      color: var(--pal-light-green);
+      margin-bottom: 4px;
+    }
+    .file-ext.pdf { color: #EF6C6C; }
+    .file-ext.mp3 { color: #82B1FF; }
+    .file-name {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 500;
+    }
+    
+    .add-material-btn {
+      width: 86px;
+      height: 86px;
+      border-radius: 12px;
+      border: 1px dashed var(--card-border);
+      background: transparent;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      cursor: pointer;
+      font-size: 0.7rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+    .add-material-btn iconify-icon { font-size: 1.25rem; }
+    .add-material-btn:hover {
+      border-color: var(--pal-light-green);
+      color: var(--pal-light-green);
+      background: rgba(176, 209, 130, 0.05);
+    }
+
+    /* Ученики (Сайдбар) */
+    .student-item {
+      display: flex;
+      flex-direction: column;
+      padding: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .student-item:hover { background: rgba(255, 255, 255, 0.03); }
+    .student-item:last-child { border-bottom: none; }
+
+    .student-main {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .student-identity { display: flex; align-items: center; gap: 12px; }
+    .student-avatar { width: 32px; height: 32px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; }
+    .student-name { font-size: 0.95rem; font-weight: 600; }
+    .student-status { font-size: 1.1rem; }
+    
+    .status-ok { color: var(--pal-light-green); }
+    .status-warn { color: #EF6C6C; }
+    .status-wait { color: var(--text-muted); }
+
+    /* Детализация несданной домашки */
+    .student-hw-details {
+      display: none;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.1);
+      font-size: 0.85rem;
+      color: #EF6C6C;
+      background: rgba(239, 108, 108, 0.05);
+      padding: 10px;
+      border-radius: 6px;
+    }
+    .student-item.expanded .student-hw-details {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      animation: fadeIn 0.3s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 1024px) {
+      .dashboard-grid, .programs-section { grid-template-columns: 1fr; max-width: 100%; }
+      .modal-body { flex-direction: column; }
+      .students-container { width: 100%; }
+      .students-container.hidden { width: 100%; height: 0; margin-top: -32px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow-1"></div>
+  <div class="glow-2"></div>
+
+  <!-- HEADER & DASHBOARD ВЕРСТКА -->
+  <header>
+    <div class="container header-inner">
+      <div class="brand"><div class="brand-dot"></div><span>ALANKO</span></div>
+      <nav class="nav-pills">
+        <a href="#" class="nav-item active">Дашборд</a>
+      </nav>
+      <div class="user-profile"><div class="avatar">A</div><span class="user-info">Studio Admin</span></div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <div class="programs-section" style="max-width: 100%;">
+        <div class="section-heading">
+          <h2 class="section-title">Демонстрация функционала</h2>
+          <p class="section-subtitle">Кликните на карточку программы ниже, чтобы открыть журнал с новой структурой.</p>
+        </div>
+        
+        <div class="program-card">
+          <div class="program-header" onclick="toggleProgram(this)">
+            <div class="program-title-wrap">
+              <div class="program-icon"><iconify-icon icon="solar:body-shape-bold"></iconify-icon></div>
+              <div>
+                <h3 class="program-name">Contemporary Dance</h3>
+                <span class="program-level">Средний и PRO уровни</span>
+              </div>
+            </div>
+            <div class="program-meta">
+              <span class="groups-count">1 группа</span>
+              <div class="chevron"><iconify-icon icon="solar:alt-arrow-down-bold"></iconify-icon></div>
+            </div>
+          </div>
+          <div class="program-body">
+            <div class="groups-list">
+              <div class="group-row">
+                <div class="group-info">
+                  <div class="group-name">Contemporary Mid (Подростки)</div>
+                  <div class="group-students">14 учеников</div>
+                </div>
+                <div class="group-schedule">
+                  <span class="day">Пн, Ср</span><span class="time">17:00 - 18:30</span>
+                </div>
+                <!-- Кнопка вызова модалки -->
+                <button class="btn-sm primary" onclick="openJournalModal('Contemporary Mid (Подростки)', 14)">Открыть журнал</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- МОДАЛЬНОЕ ОКНО ЖУРНАЛА ГРУППЫ -->
+  <div class="modal-overlay" id="journalModal">
+    <div class="modal-container">
+      
+      <!-- Шапка модалки -->
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title" id="modalGroupName">Contemporary Mid</h2>
+          <div class="modal-subtitle">
+            <span><iconify-icon icon="solar:user-bold"></iconify-icon> Studio Admin</span>
+            <span id="modalGroupCount"><iconify-icon icon="solar:users-group-rounded-bold"></iconify-icon> 14 учеников</span>
+          </div>
+        </div>
+        <div class="header-actions">
+          <!-- Кнопка скрытия/показа состава -->
+          <button class="btn btn-secondary btn-sm" id="toggleStudentsBtn" onclick="toggleStudentsPanel()">
+            <iconify-icon icon="solar:eye-closed-bold"></iconify-icon> Скрыть состав
+          </button>
+          <button class="btn-close" onclick="closeJournalModal()">
+            <iconify-icon icon="solar:close-circle-bold"></iconify-icon>
+          </button>
+        </div>
+      </div>
+
+      <!-- Тело модалки -->
+      <div class="modal-body">
+        
+        <!-- Левая колонка: Учебный план -->
+        <div class="blocks-container">
+          <h3 class="modal-section-title">
+            <div class="title-left">
+              <iconify-icon icon="solar:map-arrow-square-bold-duotone"></iconify-icon> Учебный план
+            </div>
+          </h3>
+          
+          <div class="blocks-list">
+            
+            <!-- Блок 1: В процессе -->
+            <div class="course-block current">
+              <div class="block-header-info">
+                <span class="status-badge status-current">Текущий этап</span>
+                <span class="block-dates">08 Авг – 21 Авг</span>
+              </div>
+              <h4>Блок 2: Партер и музыкальность</h4>
+              
+              <!-- Список тем внутри блока -->
+              <div class="topics-list">
+                
+                <!-- Тема 1 -->
+                <div class="topic-item">
+                  <h5 class="topic-title">Тема 1. Безопасный уход в партер</h5>
+                  <p class="topic-desc">Изучение базовых слайдов, перекатов (роллов) и безопасного распределения веса на полу.</p>
+                  <div class="topic-hw">
+                    <strong>ДЗ:</strong> Самостоятельно составить связку на 2 восьмерки с использованием партера и прислать видео.
+                  </div>
+                  
+                  <!-- Материалы темы -->
+                  <div class="materials-grid">
+                    <a href="#" class="file-square">
+                      <span class="file-ext">MP4</span>
+                      <span class="file-name">reference_floor...</span>
+                    </a>
+                    <a href="#" class="file-square">
+                      <span class="file-ext pdf">PDF</span>
+                      <span class="file-name">theory_weight...</span>
+                    </a>
+                    <button class="add-material-btn">
+                      <iconify-icon icon="solar:add-folder-bold"></iconify-icon>
+                      Добавить
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Тема 2 -->
+                <div class="topic-item">
+                  <h5 class="topic-title">Тема 2. Музыкальность и акценты</h5>
+                  <p class="topic-desc">Работа со слабыми и сильными долями, расстановка акцентов в хореографии.</p>
+                  <div class="topic-hw">
+                    <strong>ДЗ:</strong> Прослушать прикрепленный трек и расписать тайминг основных музыкальных акцентов.
+                  </div>
+                  
+                  <!-- Материалы темы -->
+                  <div class="materials-grid">
+                    <a href="#" class="file-square">
+                      <span class="file-ext mp3">MP3</span>
+                      <span class="file-name">track_homework...</span>
+                    </a>
+                    <button class="add-material-btn">
+                      <iconify-icon icon="solar:add-folder-bold"></iconify-icon>
+                      Добавить
+                    </button>
+                  </div>
+                </div>
+
+              </div> <!-- Конец списка тем -->
+            </div>
+
+            <!-- Блок 2: Будущий (для примера) -->
+            <div class="course-block future">
+              <div class="block-header-info">
+                <span class="status-badge status-future">Ожидается</span>
+                <span class="block-dates">22 Авг – 05 Сен</span>
+              </div>
+              <h4>Блок 3: Постановка номера</h4>
+              <div class="topics-list">
+                <div class="topic-item">
+                  <h5 class="topic-title">Тема 1. Сборка материала</h5>
+                  <p class="topic-desc">Соединение партерных и стоячих связок в единый рисунок.</p>
+                  <div class="materials-grid">
+                    <button class="add-material-btn"><iconify-icon icon="solar:add-folder-bold"></iconify-icon> Добавить</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Правая колонка: Ученики (сворачиваемая) -->
+        <div class="students-container" id="studentsSidebar">
+          <h3 class="modal-section-title">
+            <div class="title-left">
+              <iconify-icon icon="solar:users-group-rounded-bold-duotone"></iconify-icon> Состав
+            </div>
+          </h3>
+          
+          <div class="students-list">
+            
+            <!-- Ученик 1 (Все сдано) -->
+            <div class="student-item" onclick="toggleStudentDetails(this)">
+              <div class="student-main">
+                <div class="student-identity">
+                  <div class="student-avatar" style="background: rgba(176, 209, 130, 0.2); color: var(--pal-light-green);">МС</div>
+                  <span class="student-name">Мария Смирнова</span>
+                </div>
+                <iconify-icon class="student-status status-ok" icon="solar:check-circle-bold-duotone" title="Все сдано"></iconify-icon>
+              </div>
+              <div class="student-hw-details">
+                <iconify-icon icon="solar:info-circle-line-duotone" style="color: var(--pal-light-green);"></iconify-icon>
+                <span style="color: var(--pal-off-white);">Задолженностей нет. Последняя оценка: Отлично.</span>
+              </div>
+            </div>
+
+            <!-- Ученик 2 (Долг) -->
+            <div class="student-item" onclick="toggleStudentDetails(this)">
+              <div class="student-main">
+                <div class="student-identity">
+                  <div class="student-avatar" style="background: rgba(239, 108, 108, 0.2); color: #EF6C6C;">АК</div>
+                  <span class="student-name">Анна Козлова</span>
+                </div>
+                <iconify-icon class="student-status status-warn" icon="solar:danger-triangle-bold-duotone" title="Есть долги"></iconify-icon>
+              </div>
+              <!-- Детализация (открывается по клику) -->
+              <div class="student-hw-details">
+                <iconify-icon icon="solar:danger-circle-line-duotone" style="font-size: 1.2rem;"></iconify-icon>
+                <span><strong>Не сдано:</strong> Тема 1. Безопасный уход в партер (Блок 2). Дедлайн прошел.</span>
+              </div>
+            </div>
+
+            <!-- Ученик 3 (Ожидается) -->
+            <div class="student-item" onclick="toggleStudentDetails(this)">
+              <div class="student-main">
+                <div class="student-identity">
+                  <div class="student-avatar" style="background: rgba(255, 255, 255, 0.1);">ДЛ</div>
+                  <span class="student-name">Дмитрий Лазарев</span>
+                </div>
+                <iconify-icon class="student-status status-wait" icon="solar:clock-circle-bold-duotone" title="Ожидается сдача"></iconify-icon>
+              </div>
+              <!-- Детализация -->
+              <div class="student-hw-details">
+                <iconify-icon icon="solar:clock-circle-line-duotone" style="color: var(--text-muted); font-size: 1.2rem;"></iconify-icon>
+                <span style="color: var(--text-muted);"><strong>В процессе:</strong> Тема 2. Музыкальность и акценты.</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleProgram(headerElement) {
+      const currentCard = headerElement.closest('.program-card');
+      currentCard.classList.toggle('active');
+    }
+
+    const modal = document.getElementById('journalModal');
+    const modalTitle = document.getElementById('modalGroupName');
+    const modalCount = document.getElementById('modalGroupCount');
+
+    function openJournalModal(groupName, studentsCount) {
+      modalTitle.innerText = groupName;
+      modalCount.innerHTML = `<iconify-icon icon="solar:users-group-rounded-bold"></iconify-icon> ${studentsCount} учеников`;
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden'; 
+    }
+
+    function closeJournalModal() {
+      modal.classList.remove('active');
+      document.body.style.overflow = ''; 
+    }
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        closeJournalModal();
+      }
+    });
+
+    // Функция скрытия/показа панели состава (Учеников)
+    function toggleStudentsPanel() {
+      const sidebar = document.getElementById('studentsSidebar');
+      const btn = document.getElementById('toggleStudentsBtn');
+      
+      sidebar.classList.toggle('hidden');
+      
+      if (sidebar.classList.contains('hidden')) {
+        btn.innerHTML = '<iconify-icon icon="solar:eye-bold"></iconify-icon> Показать состав';
+      } else {
+        btn.innerHTML = '<iconify-icon icon="solar:eye-closed-bold"></iconify-icon> Скрыть состав';
+      }
+    }
+
+    // Функция раскрытия информации о долгах при клике на ученика
+    function toggleStudentDetails(element) {
+      // Закрываем все остальные открытые вкладки (опционально)
+      const allStudents = document.querySelectorAll('.student-item');
+      allStudents.forEach(el => {
+        if(el !== element) el.classList.remove('expanded');
+      });
+      
+      // Переключаем текущую
+      element.classList.toggle('expanded');
+    }
+  </script>
+</body>
+</html>

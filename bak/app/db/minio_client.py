@@ -24,6 +24,10 @@ BUCKET_NAMES = {
     "documents": "alanko-documents"
 }
 
+# Currently videos and student photos are exposed through public buckets.
+# This is a known security gap: student media should ideally be protected
+# behind authentication or served through a secure proxy instead of
+# directly public MinIO storage.
 PUBLIC_BUCKETS = {
     BUCKET_NAMES["videos"],
     BUCKET_NAMES["student_photos"],

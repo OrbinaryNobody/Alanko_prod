@@ -8,7 +8,7 @@ from db.database import get_db
 from education.dtos.program_dto import TaskPayload
 from education.exceptions.domain_exceptions import EducationError
 from education.facade import education_facade
-from schemas.task import TaskCreate, TaskUpdate
+from schemas.task import CategoryCreate, TaskCreate, TaskUpdate
 
 router = APIRouter(prefix="/tasks", tags=["education-tasks"])
 
@@ -58,6 +58,25 @@ def get_tasks(
 ):
     tasks = education_facade.get_tasks(db, ctx=ctx)
     return {"data": [_task_to_payload(task) for task in tasks]}
+
+
+@router.get("/categories")
+def get_categories(
+    ctx: AccessContext = Depends(require_view_programs),
+    db: Session = Depends(get_db),
+):
+    categories = education_facade.get_categories(db)
+    return {"data": [{"id": category.id, "name": category.name, "description": category.description} for category in categories]}
+
+
+@router.post("/categories", status_code=201)
+def create_category(
+    data: CategoryCreate,
+    ctx: AccessContext = Depends(require_create_tasks),
+    db: Session = Depends(get_db),
+):
+    category = education_facade.create_category(db, ctx=ctx, name=data.name, description=data.description)
+    return {"message": "Category created", "data": {"id": category.id, "name": category.name, "description": category.description}}
 
 
 @router.get("/{task_id}")

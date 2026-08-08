@@ -2501,7 +2501,7 @@ async function initializePanel() {
 async function loadStudents() {
   try {
     console.log("🔄 Загрузка студентов...");
-    const response = await apiFetch("/teacher/students-tasks");
+    const response = await apiFetch("/education/students/tasks");
     const data = await response.json();
     console.log("✅ Студенты загружены:", data.data);
     const students = (data.data || []).map(student => ({
@@ -2520,7 +2520,7 @@ async function loadStudents() {
 
 async function loadStudentOptions() {
   try {
-    const response = await apiFetch("/teacher/students");
+    const response = await apiFetch("/education/students");
     const data = await response.json();
     achievementStudentSelect.innerHTML = '<option value="">Не назначать</option>';
 
@@ -2537,7 +2537,7 @@ async function loadStudentOptions() {
 
 async function loadStudentsForAchievements() {
   try {
-    const response = await apiFetch("/teacher/students");
+    const response = await apiFetch("/education/students");
     const data = await response.json();
     renderStudentsForAchievements(data.data || []);
   } catch (error) {
@@ -2549,7 +2549,7 @@ async function loadStudentsForAchievements() {
 
 async function loadCategories() {
   try {
-    const response = await apiFetch("/teacher/categories");
+    const response = await apiFetch("/education/tasks/categories");
     const data = await response.json();
     const categories = data.data || [];
 
@@ -2591,7 +2591,7 @@ async function loadCategories() {
 async function loadTasks() {
   if (!teacherTaskList) return;
   try {
-    const response = await apiFetch("/teacher/tasks");
+    const response = await apiFetch("/education/tasks");
     const data = await response.json();
     renderTeacherTasks(data.data || []);
   } catch (error) {
@@ -2659,7 +2659,7 @@ async function submitCategoryForm() {
   categoryStatus.textContent = "";
 
   try {
-    const response = await apiFetch("/teacher/create-category", {
+    const response = await apiFetch("/education/tasks/categories", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, description })
@@ -2700,7 +2700,7 @@ async function submitTaskForm() {
   taskStatus.textContent = "";
 
   try {
-    const response = await apiFetch("/teacher/create-task", {
+    const response = await apiFetch("/education/tasks", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ title, category_id: parseInt(categoryId, 10), description, difficulty: 1, max_score: maxScore })
@@ -2764,7 +2764,7 @@ async function submitEditTaskForm(event) {
   editTaskStatus.textContent = "";
 
   try {
-    const response = await apiFetch(`/teacher/tasks/${currentEditTaskId}`, {
+    const response = await apiFetch(`/education/tasks/${currentEditTaskId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -2913,7 +2913,7 @@ async function submitStudentForm(event) {
   formData.append("image", imageField.files[0]);
 
   try {
-    const response = await apiFetch("/teacher/add-student", {
+    const response = await apiFetch("/accounts/students", {
       method: "POST",
       body: formData
     });
@@ -2994,7 +2994,7 @@ async function submitAchievementForm(event) {
   }
 
   try {
-    const response = await apiFetch("/teacher/achievements/create", {
+    const response = await apiFetch("/achievements/create", {
       method: "POST",
       body: formData
     });
@@ -3027,7 +3027,7 @@ async function uploadTaskVideo(studentTaskId, file) {
   formData.append("file", file);
 
   try {
-    const response = await apiFetch("/teacher/upload-video", {
+    const response = await apiFetch("/education/students/upload-video", {
       method: "POST",
       body: formData
     });
@@ -3185,7 +3185,7 @@ async function uploadAchievementMedia(achievementId, file) {
 
   try {
     console.log('Uploading achievement media', achievementId, file.name, file.type, file.size);
-    const response = await apiFetch(`/teacher/achievements/${achievementId}/upload-media`, {
+    const response = await apiFetch(`/achievements/${achievementId}/upload-media`, {
       method: "POST",
       body: formData
     });
@@ -3211,7 +3211,7 @@ async function uploadAchievementVideo(achievementId, file) {
 
   try {
     console.log('Uploading achievement video', achievementId, file.name, file.type, file.size);
-    const response = await apiFetch(`/teacher/achievements/${achievementId}/upload-video`, {
+    const response = await apiFetch(`/achievements/${achievementId}/upload-video`, {
       method: 'POST',
       body: formData
     });
@@ -3244,7 +3244,7 @@ achievementsModalList.innerHTML = `<div class="task-item"><div class="task-item-
   }
 
   try {
-    const response = await apiFetch(`/teacher/student-achievements/${studentId}`);
+    const response = await apiFetch(`/achievements/student/${studentId}`);
     const data = await response.json();
     console.log('Achievements API response:', data);
     const achievements = data.data || [];
@@ -3525,7 +3525,7 @@ async function submitGradeTask(event) {
   }
   
   try {
-    const response = await apiFetch(`/teacher/student-tasks/${currentGradingTask.student_task_id}`, {
+    const response = await apiFetch(`/education/students/student-tasks/${currentGradingTask.student_task_id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -3590,7 +3590,7 @@ if (assessmentModal) {
 
 async function loadAssessmentData(studentId, taskId) {
   try {
-    const response = await apiFetch(`/teacher/student/${studentId}/task/${taskId}/assessment`);
+    const response = await apiFetch(`/assessment/student/${studentId}/task/${taskId}/assessment`);
     
     if (!response.ok) {
       throw new Error('Failed to load assessment data');
@@ -3655,7 +3655,7 @@ async function loadAchievementsForShowcase() {
     return;
   }
   try {
-    const response = await apiFetch('/teacher/achievements');
+    const response = await apiFetch('/achievements');
     const data = await response.json();
     renderShowcaseAchievements(data.data, showcaseElement);
   } catch (error) {
@@ -3716,7 +3716,7 @@ function promptUploadAchievementVideo(achievementId) {
     formData.append('file', file);
 
     try {
-      const response = await apiFetch(`/teacher/achievements/${achievementId}/upload-video`, {
+      const response = await apiFetch(`/achievements/${achievementId}/upload-video`, {
         method: 'POST',
         body: formData
       });
