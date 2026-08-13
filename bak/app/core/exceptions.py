@@ -19,6 +19,10 @@ class ConflictError(DomainError):
     pass
 
 
+class InvalidWebhookError(DomainError):
+    pass
+
+
 def to_http_exception(exc: DomainError) -> HTTPException:
     if isinstance(exc, PermissionDenied):
         raise HTTPException(status_code=403, detail=str(exc)) from exc

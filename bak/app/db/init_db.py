@@ -1,5 +1,6 @@
 from db.database import engine
 from models.base import Base
+from models.all_models import *  # noqa: F401,F403
 from sqlalchemy import text
 from core.security import hash_password
 
@@ -13,6 +14,123 @@ def init_db():
         return
     
     with engine.connect() as conn:
+        # Проверяем и добавляем уникальное ограничение для PENDING-платежей
+        inspector_query = text("""
+            SELECT constraint_name FROM information_schema.table_constraints
+            WHERE table_name = 'payments' AND constraint_type = 'UNIQUE'
+            AND constraint_name = 'uq_payments_user_offer_status'
+        """)
+        result = conn.execute(inspector_query)
+        if not result.fetchone():
+            try:
+                conn.execute(text("""
+                    ALTER TABLE payments
+                    ADD CONSTRAINT uq_payments_user_offer_status UNIQUE (user_id, special_offer_id, status)
+                """))
+                conn.commit()
+                print("Added unique constraint uq_payments_user_offer_status to payments")
+            except Exception as e:
+                print(f"Failed to add unique constraint uq_payments_user_offer_status: {e}")
+                conn.rollback()
+
+        # Проверяем и добавляем lifecycle-поля для special_offers
+        inspector_query = text("""
+            SELECT column_name FROM information_schema.columns 
+            WHERE table_name = 'special_offers' AND column_name = 'status'
+        """)
+        result = conn.execute(inspector_query)
+        if not result.fetchone():
+            try:
+                conn.execute(text("""
+                    ALTER TABLE special_offers 
+                    ADD COLUMN status TEXT NOT NULL DEFAULT 'DRAFT'
+                """))
+                conn.commit()
+                print("Added status column to special_offers")
+            except Exception as e:
+                print(f"Failed to add status column to special_offers: {e}")
+                conn.rollback()
+
+        inspector_query = text("""
+            SELECT column_name FROM information_schema.columns 
+            WHERE table_name = 'special_offers' AND column_name = 'registration_opens_at'
+        """)
+        result = conn.execute(inspector_query)
+        if not result.fetchone():
+            try:
+                conn.execute(text("""
+                    ALTER TABLE special_offers 
+                    ADD COLUMN registration_opens_at TIMESTAMP WITH TIME ZONE
+                """))
+                conn.commit()
+                print("Added registration_opens_at column to special_offers")
+            except Exception as e:
+                print(f"Failed to add registration_opens_at column to special_offers: {e}")
+                conn.rollback()
+
+        inspector_query = text("""
+            SELECT column_name FROM information_schema.columns 
+            WHERE table_name = 'special_offers' AND column_name = 'registration_closes_at'
+        """)
+        result = conn.execute(inspector_query)
+        if not result.fetchone():
+            try:
+                conn.execute(text("""
+                    ALTER TABLE special_offers 
+                    ADD COLUMN registration_closes_at TIMESTAMP WITH TIME ZONE
+                """))
+                conn.commit()
+                print("Added registration_closes_at column to special_offers")
+            except Exception as e:
+                print(f"Failed to add registration_closes_at column to special_offers: {e}")
+                conn.rollback()
+
+        inspector_query = text("""
+            SELECT column_name FROM information_schema.columns 
+            WHERE table_name = 'special_offers' AND column_name = 'updated_at'
+        """)
+        result = conn.execute(inspector_query)
+        if not result.fetchone():
+            try:
+                conn.execute(text("""
+                    ALTER TABLE special_offers 
+                    ADD COLUMN updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+                """))
+                conn.commit()
+                print("Added updated_at column to special_offers")
+            except Exception as e:
+                print(f"Failed to add updated_at column to special_offers: {e}")
+                conn.rollback()
+
+        inspector_query = text("""
+            SELECT column_name FROM information_schema.columns 
+            WHERE table_name = 'special_offers' AND column_name = 'is_active'
+        """)
+        result = conn.execute(inspector_query)
+        if result.fetchone():
+            try:
+                conn.execute(text("""
+                    UPDATE special_offers
+                    SET status = CASE
+                        WHEN status IS NULL OR status = '' THEN 'REGISTRATION_OPEN'
+                        ELSE status
+                    END
+                    WHERE status IS NULL OR status = ''
+                """))
+                conn.execute(text("""
+                    UPDATE special_offers
+                    SET status = 'REGISTRATION_OPEN'
+                    WHERE is_active = 'active'
+                """))
+                conn.execute(text("""
+                    ALTER TABLE special_offers
+                    DROP COLUMN is_active
+                """))
+                conn.commit()
+                print("Migrated special_offers from is_active to lifecycle status")
+            except Exception as e:
+                print(f"Failed to migrate special_offers lifecycle columns: {e}")
+                conn.rollback()
 
         # Проверяем и добавляем недостающие колонки в achievements
         inspector_query = text("""

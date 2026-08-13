@@ -83,6 +83,51 @@ class EducationFacade:
     def enroll_student(self, db: Session, *, ctx: AccessContext, group_id: int, student_id: int):
         return education_group_service.enroll_student(db, ctx=ctx, group_id=group_id, student_id=student_id)
 
+    def has_active_registration(self, db: Session, *, ctx: AccessContext, course_id: int) -> bool:
+        from models.domains.payments import CourseEnrollment
+
+        return (
+            db.query(CourseEnrollment)
+            .filter(CourseEnrollment.user_id == ctx.user_id)
+            .filter(CourseEnrollment.course_id == course_id)
+            .filter(CourseEnrollment.status == "ACTIVE")
+            .first()
+            is not None
+        )
+
+    def register_user_for_course(self, db: Session, *, ctx: AccessContext, course_id: int, payment_id: int):
+        from core.exceptions import NotFoundError
+        from models.domains.payments import CourseEnrollment, Payment
+
+        payment = db.query(Payment).filter(Payment.id == payment_id).one_or_none()
+        if payment is None:
+            raise NotFoundError("PAYMENT_NOT_FOUND")
+
+        enrollment = (
+            db.query(CourseEnrollment)
+            .filter(CourseEnrollment.user_id == ctx.user_id)
+            .filter(CourseEnrollment.course_id == course_id)
+            .order_by(CourseEnrollment.id.desc())
+            .first()
+        )
+        if enrollment is not None:
+            if enrollment.status == "ACTIVE":
+                return enrollment
+            enrollment.status = "ACTIVE"
+            enrollment.payment_id = payment.id
+            db.flush()
+            return enrollment
+
+        enrollment = CourseEnrollment(
+            user_id=ctx.user_id,
+            course_id=course_id,
+            payment_id=payment.id,
+            status="ACTIVE",
+        )
+        db.add(enrollment)
+        db.flush()
+        return enrollment
+
     def get_groups_for_user(self, db: Session, *, ctx: AccessContext):
         return education_group_service.get_groups_for_user(db, ctx=ctx)
 

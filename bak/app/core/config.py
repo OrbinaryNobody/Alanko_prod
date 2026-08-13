@@ -31,6 +31,9 @@ class Settings(BaseSettings):
     minio_public_url: str = Field("http://localhost:9000", alias="MINIO_PUBLIC_URL")
     minio_access_key: str = Field("minioadmin", alias="MINIO_ACCESS_KEY")
     minio_secret_key: str = Field("minioadmin", alias="MINIO_SECRET_KEY")
+    yookassa_shop_id: str = Field("", alias="YOOKASSA_SHOP_ID")
+    yookassa_secret_key: str = Field("", alias="YOOKASSA_SECRET_KEY")
+    yookassa_return_url: str = Field("", alias="YOOKASSA_RETURN_URL")
 
 
 settings = Settings()
