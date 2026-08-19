@@ -13,6 +13,13 @@ Current top-level contexts:
 - admin
 - catalog
 - payments
+- consultations
+
+Current state of the implementation:
+- the project remains a modular monolith, and the `consultations` bounded context has moved from pure scaffold to an operational vertical slice;
+- the consultations context now includes model/service/repository code, student/admin API routes, schema DTOs, permission constants, and an init_db bootstrap;
+- the consultations router is registered in the app startup layer; the current empty-database workflow uses `Base.metadata.create_all()` and `app/db/init_db.py`, not Alembic;
+- payments and education remain separated by facades and service boundaries, as defined in the architecture rules.
 
 The architecture is implemented around:
 - thin API routers
@@ -23,30 +30,57 @@ The architecture is implemented around:
 - DTOs shaping API payloads
 
 ## Current implementation status
-The project is currently in the middle of a new business flow: temporary offer-based registration and payments.
+The project is currently in the middle of two parallel evolutions:
+1. the existing temporary offer/payment flow still needs the final production-grade hardening;
+2. a new private-consultations bounded context is being introduced to model teacher/student slots, participant history, invitations, and attendance.
 
 This is the current target shape:
-- offers are treated as a separate commercial/business domain for temporary programs
-- payments are treated as a separate bounded context
-- education remains the owner of learning/program enrollment logic
-- payments do not own the educational registration flow directly
+- offers are still treated as a temporary commercial/business domain for collaboration-style registration flows;
+- payments remain a separate bounded context and should not own education registration logic directly;
+- education remains the owner of learning/program enrollment logic;
+- private consultations are a new bounded context, intentionally separated from payments and education;
+- payments do not own the educational registration flow directly;
+- consultation booking is modeled as slot-based resource allocation, not as direct teacher calendar logic.
 
 ### What is already implemented
-- payments context exists with API, facade, service, repository, and provider abstraction
-- a special-offer-based payment flow exists for the current collaboration-style use case
-- payment DTOs and a frontend-facing payment endpoint exist
-- webhook handling and payment confirmation are implemented with signature verification and idempotency protections
-- database initialization uses `app/db/init_db.py` for fresh DB setup, including payment uniqueness constraints for pending payments
-- tests cover payment creation, duplicate pending payment reuse, duplicate webhook handling, and basic webhook status transitions
+- payments context exists with API, facade, service, repository, and provider abstraction;
+- a special-offer-based payment flow exists for the current collaboration-style use case;
+- payment DTOs and a frontend-facing payment endpoint exist;
+- webhook handling and payment confirmation are implemented with signature verification and idempotency protections;
+- database initialization uses `app/db/init_db.py` for fresh DB setup, including payment uniqueness constraints for pending payments;
+- tests cover payment creation, duplicate pending payment reuse, duplicate webhook handling, and basic webhook status transitions;
+- the consultations bounded context has moved beyond skeleton: it includes `facade.py`, models, repositories, services, routes, and a DTO schema layer under `bak/app/consultations`.
+
+### What is implemented in the consultations context
+- `ConsultationDay` model with date/status and working window (`available_from`, `available_to`);
+- `ConsultationSlot` model with `start_at`, `end_at`, `capacity`, `access_mode`, `status` and teacher linkage;
+- `ConsultationParticipant` model with booking + attendance state separated from deletion logic;
+- `ConsultationInvitation` model with `PENDING/ACCEPTED/DECLINED` flow;
+- repositories for day, slot, participant, and invitation persistence;
+- initial `DayService`, `SlotService`, `AvailabilityService`, and `BookingService` skeletons;
+- student route layer for availability, booking, and cancellation;
+- admin route layer for day and slot creation;
+- schema DTOs for consultation create/update payloads;
+- `init_db.py`/`Base.metadata.create_all()` bootstrap for consultation days, slots, participants, invitations, notifications, pricing, and cash-payment status;
+- permission constants and app registration hooks for consultation access.
 
 ### What is still missing for the target architecture
-- a first-class offers domain with its own API/service/repository/facade structure
-- an Offer and OfferRegistration model as real business objects
-- lifecycle/status handling for offers with capacity control
-- real YooKassa SDK integration instead of a stub provider
-- production-grade webhook event parsing for a real provider payload shape
-- transaction-safe payment + registration handling
-- structured logging and monitoring for production readiness
+- runtime validation against a live PostgreSQL instance;
+- end-to-end verification that the consultation flow works through the actual FastAPI app startup;
+- deeper business logic validation for invitation flow, attendance flow, policy enforcement, and cancellation edge cases;
+- full concurrency tests for multi-user booking under full capacity and overlapping time windows;
+- production hardening for payments/offers and final integration between the temporary flow and registration logic.
+
+### Current architecture position
+The project is no longer at the "empty design" stage: the consultation context is intentionally taking shape as a proper bounded context in the same modular pattern as payments, education, and achievements.
+The next priority is to complete the vertical slice for consultations:
+- DB schema bootstrap via `init_db.py`
+- API routes
+- permissions
+- booking transaction
+- tests
+
+Only after that should the module be considered production-ready for the first operational release.
 
 ## Immediate business goal
 The next step is not to build a generic payment engine for all courses.
@@ -612,14 +646,14 @@ The project should become a true modular monolith:
 
 7) Порядок работ (коротко)
   - создать `bak/app/consultations` (models/repos/services/api/facade/specs)
-  - сделать SQLAlchemy-модели и Alembic migration
+  - сделать SQLAlchemy-модели и bootstrap через `init_db.py`
   - реализовать `DayService`, `SlotService`, `BookingService` (транзакции)
   - реализовать `AvailabilityService` и базовые API-роуты
   - добавить permissions и тесты
 
 TODO (коротко):
 - [ ] scaffolding `bak/app/consultations`
-- [ ] models + alembic migration
+- [x] models + `init_db.py` bootstrap
 - [ ] repositories + services (day/slot/booking)
 - [ ] availability + student/admin API
 - [ ] tests (incl. concurrency)

@@ -13,5 +13,14 @@ class AccountsFacade:
     def add_student_by_teacher(self, db: Session, *, data, image_url: str):
         return auth_service.add_student_by_teacher(db, data=data, image_url=image_url)
 
+    def is_student(self, db: Session, *, user_id: int) -> bool:
+        return auth_service.is_student(db, user_id=user_id)
+
+    def delete_student(self, db: Session, *, student_id: int):
+        return auth_service.delete_student(db, student_id=student_id)
+
+    def update_student(self, db: Session, *, student_id: int, data):
+        return auth_service.update_student(db, student_id=student_id, data=data)
+
 
 accounts_facade = AccountsFacade()

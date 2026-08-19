@@ -52,6 +52,34 @@ class GroupManagementService:
 
             return group_repository.create_member(db, GroupMember(group_id=group_id, user_id=user_id, role=role))
 
+    def add_teacher_member(self, db: Session, *, ctx: AccessContext, group_id: int, user_id: int):
+        with UnitOfWork(db):
+            group = group_repository.get_by_id(db, group_id)
+            if not group:
+                raise PermissionDenied("Group not found")
+
+            try:
+                GroupPolicy.require_manage_group(ctx, group)
+            except PermissionError as exc:
+                raise PermissionDenied("Access denied to manage group") from exc
+
+            user = db.query(User).filter(User.id == user_id).first()
+            if not user:
+                raise PermissionDenied("User not found")
+
+            has_teacher_role = any(role_obj.role and role_obj.role.name == "teacher" for role_obj in user.roles)
+            if not has_teacher_role:
+                raise PermissionDenied("Only teacher users can be added to this group")
+
+            role = GroupRole.TEACHER.value
+            existing = group_repository.get_member(db, group_id=group_id, user_id=user_id)
+            if existing:
+                existing.role = role
+                db.flush()
+                return existing
+
+            return group_repository.create_member(db, GroupMember(group_id=group_id, user_id=user_id, role=role))
+
     def enroll_student(self, db: Session, *, ctx: AccessContext, group_id: int, student_id: int):
         with UnitOfWork(db, event_bus=event_bus) as uow:
             group = group_repository.get_by_id(db, group_id)

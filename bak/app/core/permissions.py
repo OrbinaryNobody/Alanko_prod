@@ -29,6 +29,9 @@ class Permission:
     MANAGE_ENROLLMENTS = "manage_enrollments"
     VIEW_ACHIEVEMENTS = "view_achievements"
     MANAGE_USERS = "manage_users"
+    VIEW_CONSULTATIONS = "view_consultations"
+    BOOK_CONSULTATIONS = "book_consultations"
+    MANAGE_CONSULTATIONS = "manage_consultations"
 
 
 def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
@@ -89,3 +92,6 @@ require_manage_enrollments = require_permission(Permission.MANAGE_ENROLLMENTS)
 require_view_achievements = require_permission(Permission.VIEW_ACHIEVEMENTS)
 require_publish_blocks = require_permission(Permission.CREATE_BLOCKS)
 require_manage_users = require_permission(Permission.MANAGE_USERS)
+require_view_consultations = require_permission(Permission.VIEW_CONSULTATIONS)
+require_book_consultations = require_permission(Permission.BOOK_CONSULTATIONS)
+require_manage_consultations = require_permission(Permission.MANAGE_CONSULTATIONS)

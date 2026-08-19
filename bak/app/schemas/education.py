@@ -30,6 +30,14 @@ class GroupMemberCreate(BaseModel):
     role: str = "teacher"
 
 
+class GroupTeacherCreate(BaseModel):
+    user_id: int
+
+
+class GroupStudentCreate(BaseModel):
+    student_id: int
+
+
 class EnrollmentCreate(BaseModel):
     student_id: int
 

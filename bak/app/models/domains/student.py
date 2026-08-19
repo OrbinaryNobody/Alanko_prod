@@ -10,6 +10,7 @@ class StudentProfile(Base):
 
     image_url = Column(Text, default="default.jpg")
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
+    birth_year = Column(Integer, nullable=True)
     rating_points = Column(Integer, default=0)
     last_rank = Column(Integer)
     level = Column(Text, default="beginner")

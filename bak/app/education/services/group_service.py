@@ -27,6 +27,9 @@ class GroupService:
     def add_member(self, db: Session, *, ctx: AccessContext, group_id: int, user_id: int, role: str):
         return group_management_service.add_member(db, ctx=ctx, group_id=group_id, user_id=user_id, role=role)
 
+    def add_teacher_member(self, db: Session, *, ctx: AccessContext, group_id: int, user_id: int):
+        return group_management_service.add_teacher_member(db, ctx=ctx, group_id=group_id, user_id=user_id)
+
     def enroll_student(self, db: Session, *, ctx: AccessContext, group_id: int, student_id: int):
         return group_management_service.enroll_student(db, ctx=ctx, group_id=group_id, student_id=student_id)
 

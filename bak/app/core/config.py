@@ -34,6 +34,12 @@ class Settings(BaseSettings):
     yookassa_shop_id: str = Field("", alias="YOOKASSA_SHOP_ID")
     yookassa_secret_key: str = Field("", alias="YOOKASSA_SECRET_KEY")
     yookassa_return_url: str = Field("", alias="YOOKASSA_RETURN_URL")
+    consultation_default_duration_minutes: int = Field(60, alias="PRIVATE_CONSULTATION_DEFAULT_DURATION_MINUTES")
+    consultation_max_capacity: int = Field(4, alias="PRIVATE_CONSULTATION_MAX_CAPACITY")
+    consultation_booking_open_days: int = Field(30, alias="PRIVATE_CONSULTATION_BOOKING_OPEN_DAYS")
+    consultation_cancel_cutoff_hours: int = Field(24, alias="PRIVATE_CONSULTATION_CANCEL_CUTOFF_HOURS")
+    consultations_allow_overlapping_slots: bool = Field(False, alias="PRIVATE_CONSULTATIONS_ALLOW_OVERLAPPING_SLOTS")
+    consultation_default_price: int = Field(0, alias="PRIVATE_CONSULTATION_DEFAULT_PRICE")
 
 
 settings = Settings()

@@ -3,7 +3,7 @@ import string
 
 from sqlalchemy.orm import Session
 
-from core.exceptions import ConflictError, PermissionDenied
+from core.exceptions import ConflictError, NotFoundError, PermissionDenied
 from core.permissions import Permission
 from core.security import create_access_token, hash_password, verify_password
 from models.domains.auth import Role, UserRole
@@ -42,7 +42,7 @@ class AuthService:
             db.add(UserRole(user_id=user.id, role_id=role.id))
 
             if data.role == "student":
-                db.add(StudentProfile(user_id=user.id))
+                db.add(StudentProfile(user_id=user.id, birth_year=getattr(data, "birth_year", None)))
 
             return user
 
@@ -69,9 +69,63 @@ class AuthService:
             })
 
             db.add(UserRole(user_id=user.id, role_id=role.id))
-            db.add(StudentProfile(user_id=user.id, image_url=image_url))
+            db.add(StudentProfile(user_id=user.id, image_url=image_url, birth_year=getattr(data, "birth_year", None)))
 
             return user, generated_password
+
+    def is_student(self, db: Session, *, user_id: int) -> bool:
+        user = user_repository.get_by_id(db, user_id)
+        return bool(user and any(user_role.role and user_role.role.name == "student" for user_role in user.roles))
+
+    def delete_student(self, db: Session, *, student_id: int):
+        user = user_repository.get_by_id(db, student_id)
+        if not user:
+            raise NotFoundError("Student not found")
+
+        has_student_role = any(role.role.name == "student" for role in user.roles)
+        if not has_student_role:
+            raise NotFoundError("Student not found")
+
+        with UnitOfWork(db):
+            db.delete(user)
+        return user
+
+    def update_student(self, db: Session, *, student_id: int, data):
+        user = user_repository.get_by_id(db, student_id)
+        if not user:
+            raise NotFoundError("Student not found")
+
+        has_student_role = any(role.role.name == "student" for role in user.roles)
+        if not has_student_role:
+            raise NotFoundError("Student not found")
+
+        if data.email is not None and data.email != user.email:
+            existing_user = user_repository.get_by_email(db, data.email)
+            if existing_user and existing_user.id != student_id:
+                raise ConflictError("Email already registered")
+            user.email = data.email
+
+        if data.first_name is not None:
+            user.first_name = data.first_name
+        if data.last_name is not None:
+            user.last_name = data.last_name
+        if data.middle_name is not None:
+            user.middle_name = data.middle_name
+
+        if user.student_profile is None:
+            user.student_profile = StudentProfile(user_id=user.id)
+            db.add(user.student_profile)
+
+        if data.birth_year is not None:
+            user.student_profile.birth_year = data.birth_year
+
+        with UnitOfWork(db):
+            db.flush()
+            db.refresh(user)
+            if user.student_profile is not None:
+                db.refresh(user.student_profile)
+
+        return user
 
     def login(self, db: Session, *, data) -> str:
         user = user_repository.get_by_email(db, data.email)
@@ -113,6 +167,9 @@ class AuthService:
                 Permission.MANAGE_ENROLLMENTS,
                 Permission.VIEW_ACHIEVEMENTS,
                 Permission.MANAGE_USERS,
+                Permission.VIEW_CONSULTATIONS,
+                Permission.BOOK_CONSULTATIONS,
+                Permission.MANAGE_CONSULTATIONS,
             ]
 
         if role == "teacher":
@@ -134,6 +191,8 @@ class AuthService:
                 Permission.VIEW_STUDENTS,
                 Permission.MANAGE_ENROLLMENTS,
                 Permission.VIEW_ACHIEVEMENTS,
+                Permission.VIEW_CONSULTATIONS,
+                Permission.MANAGE_CONSULTATIONS,
             ]
 
         if role == "student":
@@ -142,6 +201,8 @@ class AuthService:
                 Permission.VIEW_OWN_TASKS,
                 Permission.VIEW_OWN_ACHIEVEMENTS,
                 Permission.VIEW_ASSESSMENT,
+                Permission.VIEW_CONSULTATIONS,
+                Permission.BOOK_CONSULTATIONS,
             ]
 
         return []

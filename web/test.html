@@ -393,12 +393,329 @@
     }
 
     /* ================= PROGRAMS SECTION ================= */
-    .programs-section { margin-top: 40px; max-width: calc(60% - 12px); }
+.programs-section { margin-top: 40px; width: 100%; max-width: 100%; }
     .section-heading { margin-bottom: 24px; text-align: left; }
     .section-title { font-size: 1.75rem; font-weight: 800; margin-bottom: 8px; }
     .section-subtitle { color: var(--text-muted); font-size: 0.95rem; }
     
-    .programs-list { display: flex; flex-direction: column; gap: 16px; margin: 0; max-width: 100%; }
+.programs-list { 
+  display: grid; 
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 16px; 
+  margin: 0; 
+  width: 100%; 
+}
+
+/* --- ОБЩИЙ КОНТЕЙНЕР ДЛЯ ВКЛАДОК И КОНТЕНТА --- */
+.content-wrapper {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-xl);
+  padding: 32px;
+  margin-top: 32px;
+  backdrop-filter: blur(12px);
+}
+
+.tabs-container {
+  width: 100%;
+  margin: 0 0 32px 0; /* Изменили отступы, так как теперь есть внешний контейнер */
+  border-bottom: 1px solid var(--card-border);
+}
+
+/* --- ВКЛАДКА: УЧЕНИКИ (СПИСОК) --- */
+.students-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.sort-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--card-border);
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+}
+
+.sort-select {
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.9rem;
+  outline: none;
+  cursor: pointer;
+}
+
+.sort-select option {
+  background: var(--bg-dark);
+  color: var(--text-main);
+}
+
+.directory-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.directory-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.directory-row:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(176, 209, 130, 0.3);
+  transform: translateX(4px);
+}
+
+.dir-identity {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+}
+
+.dir-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+}
+
+.dir-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dir-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dir-name {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--text-main);
+}
+
+.dir-meta {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.dir-stats {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex: 1;
+  justify-content: flex-end;
+  margin-right: 32px;
+}
+
+.dir-stat-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  color: var(--pal-off-white);
+  font-weight: 600;
+}
+
+.dir-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* --- ДОСЬЕ УЧЕНИКА --- */
+.dossier-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 40px;
+}
+
+/* --- ИСПРАВЛЕНИЕ КОНТЕЙНЕРА МОДАЛЬНЫХ ОКОН (Пункт 4) --- */
+.modal-container { 
+  width: 100%; 
+  max-width: 1200px; 
+  height: auto; /* Заменено с 90vh, чтобы окно подстраивалось под контент */
+  max-height: 90vh; /* Ограничитель, чтобы не вылезало за экран */
+  background: var(--bg-dark); 
+  border: 1px solid var(--card-border); 
+  border-radius: var(--radius-xl); 
+  display: flex; 
+  flex-direction: column; 
+  overflow: hidden; 
+  transform: translateY(20px); 
+  transition: transform 0.3s ease; 
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4); 
+}
+
+/* --- УМЕНЬШЕНИЕ ФОТО УЧЕНИКА (Пункт 1) --- */
+.dossier-photo-large {
+  width: 140px; /* Уменьшенный фиксированный размер */
+  height: 140px;
+  aspect-ratio: 1;
+  border-radius: 50%; /* Делаем круглым для эстетики */
+  object-fit: cover;
+  border: 2px solid var(--card-border);
+  margin: 0 auto; /* Центрируем */
+  display: block;
+}
+
+/* Центрируем содержимое левой колонки досье */
+.dossier-sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  gap: 24px;
+}
+.dossier-bio {
+  width: 100%; /* Возвращаем ширину тексту */
+  background: rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--card-border);
+}
+
+.dossier-bio-title {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+/* --- СТИЛИ ДЛЯ АКТИВНЫХ ПОЛЕЙ РЕДАКТИРОВАНИЯ (Пункт 3) --- */
+.dossier-edit-input {
+  background: transparent;
+  border: 1px solid transparent;
+  color: inherit;
+  font-family: inherit;
+  outline: none;
+  width: 100%;
+  border-radius: var(--radius-md);
+  transition: all 0.3s ease;
+  pointer-events: none; /* Отключены по умолчанию */
+}
+
+/* Ярко выраженный контекстный стиль при активации редактирования */
+.dossier-edit-input.editing-active {
+  background: rgba(176, 209, 130, 0.08);
+  border: 1px dashed var(--pal-light-green);
+  padding: 6px 10px;
+  margin-left: -10px; /* Компенсация паддинга */
+  box-shadow: 0 0 15px rgba(176, 209, 130, 0.15);
+  pointer-events: auto; /* Включаем взаимодействие */
+  cursor: text;
+}
+.dossier-edit-input.editing-active:focus {
+  background: rgba(176, 209, 130, 0.15);
+  border-style: solid;
+}
+
+.dossier-main {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.achievement-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(176, 209, 130, 0.1);
+  border: 1px solid rgba(176, 209, 130, 0.2);
+  border-radius: var(--radius-pill);
+  color: var(--pal-light-green);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* --- СТИЛИ ДЛЯ ФОРМ И НОВОГО ОКНА ДОБАВЛЕНИЯ УЧЕНИКА --- */
+.form-group { margin-bottom: 20px; }
+.form-label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; }
+.custom-input { 
+  width: 100%; 
+  background: rgba(255, 255, 255, 0.04); 
+  border: 1px solid var(--card-border); 
+  border-radius: var(--radius-md); 
+  padding: 12px 16px; 
+  color: var(--text-main); 
+  font-family: inherit; 
+  font-size: 0.95rem; 
+  outline: none; 
+  transition: all 0.2s; 
+}
+.custom-input:focus { 
+  border-color: var(--pal-light-green); 
+  background: rgba(255, 255, 255, 0.07); 
+}
+.custom-input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}
+
+.file-drop-area { 
+  border: 2px dashed var(--card-border); 
+  border-radius: var(--radius-lg); 
+  padding: 32px; 
+  text-align: center; 
+  cursor: pointer; 
+  transition: all 0.2s; 
+  background: rgba(255, 255, 255, 0.02); 
+}
+.file-drop-area:hover { 
+  border-color: var(--pal-light-green); 
+  background: rgba(176, 209, 130, 0.05); 
+}
+
+/* --- СТИЛИ ДЛЯ ПОЧТЫ И ПАРОЛЯ В ДОСЬЕ --- */
+.auth-credentials { 
+  background: rgba(0, 0, 0, 0.2); 
+  border: 1px solid var(--card-border); 
+  border-radius: var(--radius-lg); 
+  padding: 16px; 
+  margin-top: 16px; 
+  display: flex; 
+  gap: 24px; 
+  flex-wrap: wrap; 
+}
+.cred-item { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 200px; }
+.cred-label { font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.05em; }
+.cred-value { font-size: 0.95rem; font-weight: 600; color: var(--pal-off-white); display: flex; align-items: center; gap: 8px; }
+.cred-value.password { color: var(--pal-light-green); font-family: monospace; font-size: 1.15rem; letter-spacing: 0.05em; }
+
+@media (max-width: 768px) {
+  .dossier-layout { grid-template-columns: 1fr; }
+  .directory-row { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .dir-stats { justify-content: flex-start; margin-right: 0; width: 100%; }
+}
+
+/* Адаптив: на экранах < 1024px возвращаем в одну колонку */
+@media (max-width: 1024px) {
+  .programs-list { 
+    grid-template-columns: 1fr; 
+  }
+}
     .program-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); backdrop-filter: blur(12px); overflow: hidden; transition: border-color 0.3s ease; }
     .program-card:hover { border-color: rgba(176, 209, 130, 0.2); }
     .program-header { padding: 24px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none; background: transparent; transition: background 0.3s ease; }
@@ -777,7 +1094,21 @@
     .modal-overlay { position: fixed; inset: 0; background: rgba(5, 6, 10, 0.85); backdrop-filter: blur(12px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 24px; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
     .modal-overlay.active { opacity: 1; visibility: visible; }
     
-    .modal-container { width: 100%; max-width: 1200px; height: 90vh; background: var(--bg-dark); border: 1px solid var(--card-border); border-radius: var(--radius-xl); display: flex; flex-direction: column; overflow: hidden; transform: translateY(20px); transition: transform 0.3s ease; box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4); }
+    .modal-container { 
+  width: 100%; 
+  max-width: 1200px; 
+  height: auto; /* Заменено с 90vh, чтобы окно подстраивалось под контент */
+  max-height: 90vh; /* Ограничитель, чтобы не вылезало за экран */
+  background: var(--bg-dark); 
+  border: 1px solid var(--card-border); 
+  border-radius: var(--radius-xl); 
+  display: flex; 
+  flex-direction: column; 
+  overflow: hidden; 
+  transform: translateY(20px); 
+  transition: transform 0.3s ease; 
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4); 
+}
     .modal-overlay.active .modal-container { transform: translateY(0); }
 
     .modal-header { padding: 32px; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: flex-start; background: var(--card-bg); z-index: 10;}
@@ -841,20 +1172,20 @@
     .student-item.expanded .student-hw-details { display: flex; gap: 8px; align-items: flex-start; animation: fadeIn 0.3s ease forwards; }
 
     /* СТИЛИ РЕДАКТИРОВАНИЯ ПРОГРАММЫ */
-    .modal-title-input {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-md);
-      color: var(--text-main);
-      font-family: var(--font-family);
-      font-size: 1.75rem;
-      font-weight: 800;
-      padding: 6px 14px;
-      outline: none;
-      transition: all 0.2s ease;
-      width: 100%;
-      max-width: 500px;
-    }
+.modal-title-input {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  font-family: var(--font-family);
+  font-size: 1.75rem;
+  font-weight: 800;
+  padding: 6px 14px;
+  outline: none;
+  transition: all 0.2s ease;
+  width: 100%;
+  max-width: 100%; /* Занимает всю ширину контейнера (ранее было 500px) */
+}
     .modal-title-input:focus {
       border-color: var(--pal-light-green);
       background: rgba(255, 255, 255, 0.07);
@@ -948,6 +1279,327 @@
       .stats-grid { grid-template-columns: 1fr; }
       .agenda-item { grid-template-columns: 50px 16px 1fr; gap: 16px; }
     }
+
+
+
+    /* --- СЕТКА ДЛЯ ОКНА УПРАВЛЕНИЯ ГРУППОЙ --- */
+.group-manage-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+.schedule-editor-sidebar {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 768px) {
+  .group-manage-layout {
+    grid-template-columns: 1fr;
+  }
+}
+.task-points-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  padding: 4px 10px;
+  height: fit-content;
+  margin-top: 6px;
+}
+.task-points-wrap span {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.task-points-input {
+  background: transparent;
+  border: none;
+  color: var(--pal-light-green);
+  font-size: 0.95rem;
+  font-weight: 700;
+  width: 32px;
+  text-align: center;
+  outline: none;
+  font-family: var(--font-family);
+}
+/* Скрытие стрелок у поля number */
+.task-points-input::-webkit-outer-spin-button, 
+.task-points-input::-webkit-inner-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+
+
+
+/* --- СТИЛИ ДЛЯ КОНТЕНТА ВКЛАДОК --- */
+.tab-content {
+  display: none;
+  opacity: 0;
+  animation: fadeIn 0.3s ease;
+}
+
+.tab-content.active {
+  display: block;
+  opacity: 1;
+}
+
+/* Корректируем отступ у расписания, чтобы он был таким же, как у программ */
+.schedule-section {
+  margin-top: 40px; 
+  width: 100%;
+}
+
+
+
+/* ================= CONSULTATIONS CALENDAR ================= */
+.consultations-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.weekly-calendar {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-xl);
+  backdrop-filter: blur(12px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.calendar-header-row {
+  display: grid;
+  grid-template-columns: 60px repeat(7, 1fr);
+  border-bottom: 1px solid var(--card-border);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.calendar-header-cell {
+  padding: 16px 8px;
+  text-align: center;
+  border-left: 1px solid rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.calendar-header-cell:hover {
+  background: rgba(176, 209, 130, 0.05);
+}
+
+.calendar-header-cell.active-day {
+  background: rgba(176, 209, 130, 0.1);
+  border-bottom: 2px solid var(--pal-light-green);
+}
+
+.day-name {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.day-date {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.active-day .day-date, .active-day .day-name {
+  color: var(--pal-light-green);
+}
+
+.calendar-body-grid {
+  display: grid;
+  grid-template-columns: 60px repeat(7, 1fr);
+  height: 600px;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* Кастомизация скроллбара для календаря */
+.calendar-body-grid::-webkit-scrollbar { width: 6px; }
+.calendar-body-grid::-webkit-scrollbar-track { background: transparent; }
+.calendar-body-grid::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+
+.time-scale {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--card-border);
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.time-label {
+  height: 60px; /* 1 час = 60px */
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-align: right;
+  padding-right: 12px;
+  position: relative;
+}
+
+.time-label span {
+  position: relative;
+  top: -8px; /* Выравнивание по линии сетки */
+}
+
+.day-grid-col {
+  border-right: 1px solid rgba(255, 255, 255, 0.03);
+  position: relative;
+  /* Линии сетки по часам */
+  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 100% 60px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.day-grid-col:hover {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.day-grid-col:last-child {
+  border-right: none;
+}
+/* --- 1. Динамическая подсветка рабочих часов --- */
+.work-time-bg {
+  position: absolute;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.03); /* Мягкое выделение свободных часов */
+  border-left: 1px solid rgba(176, 209, 130, 0.15); /* Едва заметные зеленые границы */
+  border-right: 1px solid rgba(176, 209, 130, 0.15);
+  z-index: 1; 
+  pointer-events: none; /* Не перекрывает клики по самой колонке */
+}
+
+/* --- 2. Отображение заблокированных (закрытых) дней --- */
+/* Заголовок заблокированного дня */
+.calendar-header-cell.blocked {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.calendar-header-cell.blocked:hover {
+  background: transparent;
+}
+
+/* Колонка заблокированного дня */
+.day-grid-col.blocked {
+  /* Комбинируем сетку часов и штриховку недоступности */
+  background-image: 
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    repeating-linear-gradient(
+      -45deg,
+      rgba(0, 0, 0, 0.3),
+      rgba(0, 0, 0, 0.3) 10px,
+      rgba(255, 255, 255, 0.01) 10px,
+      rgba(255, 255, 255, 0.01) 20px
+    );
+  background-color: rgba(5, 6, 10, 0.5); /* Затемнение фона */
+  cursor: not-allowed;
+}
+.day-grid-col.blocked:hover {
+  background-color: rgba(5, 6, 10, 0.5); /* Отключаем hover-эффект свободной ячейки */
+}
+
+/* --- 3. Карточки назначенных консультаций --- */
+.consultation-card {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  background: rgba(176, 209, 130, 0.15); /* Фирменный акцентный цвет с прозрачностью */
+  border-left: 3px solid var(--pal-light-green);
+  border-radius: 6px;
+  padding: 8px 10px;
+  z-index: 10; /* Карточка всегда поверх фона рабочих часов */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.consultation-card:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.2);
+  z-index: 11;
+}
+
+/* Имена внутри карточки (без лишнего текста) */
+.consultation-card span {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+/* ================= TOGGLE SWITCH (Открыт/Закрыт) ================= */
+.theme-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+}
+.theme-switch input { 
+  opacity: 0; 
+  width: 0; 
+  height: 0; 
+}
+.switch-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(255, 255, 255, 0.1);
+  transition: .3s;
+  border-radius: 34px;
+  border: 1px solid var(--card-border);
+}
+.switch-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: var(--text-muted);
+  transition: .3s;
+  border-radius: 50%;
+}
+.theme-switch input:checked + .switch-slider {
+  background-color: rgba(176, 209, 130, 0.15);
+  border-color: var(--pal-light-green);
+}
+.theme-switch input:checked + .switch-slider:before {
+  transform: translateX(24px);
+  background-color: var(--pal-light-green);
+}
+
+
   </style>
 </head>
 <body>
@@ -962,13 +1614,6 @@
         <div class="brand-dot"></div>
         <span>ALANKO</span>
       </div>
-
-      <nav class="nav-pills">
-        <a href="#" class="nav-item active">Дашборд</a>
-        <a href="#" class="nav-item">Группы</a>
-        <a href="#" class="nav-item">Расписание</a>
-        <a href="#" class="nav-item">Ученики</a>
-      </nav>
 
       <div class="user-profile">
         <div class="avatar">A</div>
@@ -1050,115 +1695,384 @@
       </div>
 
 
-      <!-- Блок навигации по вкладкам -->
-      <div class="tabs-container">
-          <nav class="tabs-wrapper">
-              <button class="tab-btn active">Ученики</button>
-              <button class="tab-btn">Учителя</button>
-              <button class="tab-btn">Программы</button>
-              <button class="tab-btn">Календарь</button>
-              <button class="tab-btn">Достижения</button>
-          </nav>
-      </div>
-
-      <!-- ПРОГРАММЫ -->
-      <div class="programs-section">
-        <div class="section-heading" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
-  <div>
-    <h2 class="section-title">Группы и программы</h2>
-    <p class="section-subtitle">Ваши активные классы</p>
-  </div>
-  <button class="btn btn-primary" onclick="openCreateProgramModal()">
-    <iconify-icon icon="solar:add-circle-bold" width="18"></iconify-icon> Создать программу
-  </button>
+<!-- Блок навигации по вкладкам -->
+<div class="tabs-container">
+    <nav class="tabs-wrapper">
+      <button class="tab-btn active" data-tab="tab-programs">Программы</button>
+      <button class="tab-btn" data-tab="tab-students">Ученики</button>
+      <button class="tab-btn" data-tab="tab-consultations">Консультации</button>
+      <button class="tab-btn" data-tab="tab-teachers">Учителя</button>
+      <button class="tab-btn" data-tab="tab-calendar">Календарь</button>
+      <button class="tab-btn" data-tab="tab-achievements">Достижения</button>
+    </nav>
 </div>
-        
-        <div class="programs-list">
-          <div class="program-card">
-            <div class="program-header" onclick="toggleProgram(this)">
-              <div class="program-title-wrap">
-                <div class="program-icon"><iconify-icon icon="solar:music-note-bold-duotone"></iconify-icon></div>
-                <div>
-                  <div class="program-name-container">
-                    <div class="program-name">Contemporary Dance</div>
-                    <!-- Кнопка с иконкой редактирования программы -->
-                    <div class="edit-program-btn-wrap">
-                      <button class="edit-program-btn" title="Изменить программу" onclick="event.stopPropagation(); openEditProgramModal('Contemporary Dance')">
-                        <iconify-icon icon="solar:pen-bold-duotone"></iconify-icon>
-                      </button>
-                      <span class="tooltip">Изменить программу</span>
-                    </div>
-                  </div>
-                  <div class="program-level">Средний уровень</div>
-                </div>
-              </div>
-              <div class="program-meta">
-                <span class="groups-count">1 группа</span>
-                <iconify-icon class="chevron" icon="solar:alt-arrow-down-bold"></iconify-icon>
-              </div>
-            </div>
-            
-            <div class="program-body">
-              <div class="groups-list">
-                <div class="group-row">
-                  <div class="group-info">
-                    <div class="group-name">Contemporary Mid</div>
-                    <div class="group-students">14 учеников</div>
-                  </div>
-                  <div class="group-schedule">
-                    <span class="day">Пн, Ср</span>
-                    <span class="time">18:00 - 19:30</span>
-                  </div>
-                  <button class="btn-sm primary" onclick="openJournalModal('Contemporary Mid', 14)">
-                    <iconify-icon icon="solar:notebook-bold"></iconify-icon> Журнал
+
+<!-- ================= КОНТЕНТ ВКЛАДОК ================= -->
+
+<!-- Вкладка: Программы (Активная по умолчанию) -->
+<div id="tab-programs" class="tab-content active">
+  <div class="programs-section">
+    <div class="section-heading" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+      <div>
+        <h2 class="section-title">Группы и программы</h2>
+        <p class="section-subtitle">Ваши активные классы</p>
+      </div>
+      <button class="btn btn-primary" onclick="openCreateProgramModal()">
+        <iconify-icon icon="solar:add-circle-bold" width="18"></iconify-icon> Создать программу
+      </button>
+    </div>
+
+    <div class="programs-list">
+      <div class="program-card">
+        <div class="program-header" onclick="toggleProgram(this)">
+          <div class="program-title-wrap">
+            <div class="program-icon"><iconify-icon icon="solar:music-note-bold-duotone"></iconify-icon></div>
+            <div>
+              <div class="program-name-container">
+                <div class="program-name">Contemporary Dance</div>
+                <div class="edit-program-btn-wrap">
+                  <button class="edit-program-btn" title="Изменить программу" onclick="event.stopPropagation(); openEditProgramModal('Contemporary Dance')">
+                    <iconify-icon icon="solar:pen-bold-duotone"></iconify-icon>
                   </button>
+                  <span class="tooltip">Изменить программу</span>
                 </div>
               </div>
+              <div class="program-level">Средний уровень</div>
             </div>
           </div>
-        </div>
-      </div>
-
-      <!-- РАСПИСАНИЕ -->
-      <div class="schedule-section">
-        <div class="schedule-header">
-          <div class="section-heading" style="margin-bottom: 0;">
-            <h2 class="section-title">Календарь преподавателя</h2>
-            <p class="section-subtitle">План занятий, постановки номеров и важные даты</p>
-          </div>
-          <div class="month-control">
-            <button class="btn-icon"><iconify-icon icon="solar:alt-arrow-left-line-duotone"></iconify-icon></button>
-            <span>Август 2026</span>
-            <button class="btn-icon"><iconify-icon icon="solar:alt-arrow-right-line-duotone"></iconify-icon></button>
+          <div class="program-meta">
+            <span class="groups-count">1 группа</span>
+            <iconify-icon class="chevron" icon="solar:alt-arrow-down-bold"></iconify-icon>
           </div>
         </div>
 
-        <div class="schedule-filters">
-          <button class="filter-btn active">Все задачи</button>
-          <button class="filter-btn">Занятия</button>
-          <button class="filter-btn">Мероприятия</button>
-          <button class="filter-btn">Дедлайны</button>
-        </div>
-
-        <div class="agenda-list">
-          <div class="agenda-item">
-            <div class="agenda-date">
-              <span class="agenda-day">12</span><span class="agenda-month">Авг</span>
-            </div>
-            <div class="agenda-timeline">
-              <div class="agenda-dot pulse"></div><div class="agenda-line"></div>
-            </div>
-            <div class="agenda-card">
-              <div class="agenda-card-header">
-                <span class="agenda-time"><iconify-icon icon="solar:clock-circle-bold-duotone"></iconify-icon> 16:00 - 17:30</span>
-                <span class="tag-sm tag-class">Занятие</span>
+        <div class="program-body">
+          <div class="groups-list">
+            <div class="group-row">
+              <div class="group-info">
+                <div class="group-name">Contemporary Mid</div>
+                <div class="group-students">14 учеников</div>
               </div>
-              <h4 class="agenda-title">Kids Choreo (9-12 лет)</h4>
-              <p class="agenda-desc">Отработка первой части новой связки. Уделить особое внимание синхронности в партере.</p>
+              <div class="group-schedule">
+                <span class="day">Пн, Ср</span>
+                <span class="time">18:00 - 19:30</span>
+              </div>
+              <button class="btn-sm primary" onclick="openJournalModal('Contemporary Mid', 14)">
+                <iconify-icon icon="solar:notebook-bold"></iconify-icon> Журнал
+              </button>
             </div>
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Вкладка: Календарь -->
+<div id="tab-calendar" class="tab-content">
+  <div class="schedule-section">
+    <div class="schedule-header">
+      <div class="section-heading" style="margin-bottom: 0;">
+        <h2 class="section-title">Календарь преподавателя</h2>
+        <p class="section-subtitle">План занятий, постановки номеров и важные даты</p>
+      </div>
+      <div class="month-control">
+        <button class="btn-icon"><iconify-icon icon="solar:alt-arrow-left-line-duotone"></iconify-icon></button>
+        <span>Август 2026</span>
+        <button class="btn-icon"><iconify-icon icon="solar:alt-arrow-right-line-duotone"></iconify-icon></button>
+      </div>
+    </div>
+
+    <div class="schedule-filters">
+      <button class="filter-btn active">Все задачи</button>
+      <button class="filter-btn">Занятия</button>
+      <button class="filter-btn">Мероприятия</button>
+      <button class="filter-btn">Дедлайны</button>
+    </div>
+
+    <!-- (Здесь остается весь ваш текущий код из .agenda-list ...) -->
+    <div class="agenda-list">
+      <div class="agenda-item">
+        <div class="agenda-date">
+          <span class="agenda-day">12</span><span class="agenda-month">Авг</span>
+        </div>
+        <div class="agenda-timeline">
+          <div class="agenda-dot pulse"></div><div class="agenda-line"></div>
+        </div>
+        <div class="agenda-card">
+          <div class="agenda-card-header">
+            <span class="agenda-time"><iconify-icon icon="solar:clock-circle-bold-duotone"></iconify-icon> 16:00 - 17:30</span>
+            <span class="tag-sm tag-class">Занятие</span>
+          </div>
+          <h4 class="agenda-title">Kids Choreo (9-12 лет)</h4>
+          <p class="agenda-desc">Отработка первой части новой связки. Уделить особое внимание синхронности в партере.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tab-students" class="tab-content">
+    <div class="students-toolbar">
+      <div class="section-heading" style="margin-bottom: 0;">
+        <h2 class="section-title">Список учеников</h2>
+        <p class="section-subtitle">Управление составом и просмотр досье</p>
+      </div>
+      
+      <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+        <!-- Сортировка -->
+        <div class="sort-control">
+          <span style="color: var(--text-muted); font-size: 0.85rem;"><iconify-icon icon="solar:sort-from-top-to-bottom-bold-duotone"></iconify-icon> Сортировка:</span>
+          <select class="sort-select" id="studentSortSelect">
+            <option value="alpha">По алфавиту</option>
+            <option value="age">По возрасту</option>
+            <option value="points">По баллам за задания</option>
+          </select>
+        </div>
+        
+        <button class="btn btn-primary" onclick="openModal('addNewStudentModal')">
+          <iconify-icon icon="solar:user-plus-bold"></iconify-icon> Добавить ученика
+        </button>
+      </div>
+    </div>
+
+    <!-- Список учеников -->
+    <div class="directory-list">
+      <!-- Ученик 1 -->
+      <div class="directory-row" onclick="openStudentDossier('Алексей Иванов', '14 лет', 'Contemporary Mid')">
+        <div class="dir-identity">
+          <div class="dir-avatar">
+            <img src="https://ui-avatars.com/api/?name=Алексей+Иванов&background=2C473E&color=B0D182" alt="Алексей Иванов">
+          </div>
+          <div class="dir-info">
+            <span class="dir-name">Алексей Иванов</span>
+            <span class="dir-meta">
+  Contemporary Mid • 14 лет • <span style="color: var(--pal-light-green); font-weight: 600;">1-е место в группе</span>
+</span>
+          </div>
+        </div>
+        
+        <div class="dir-stats">
+          <div class="dir-stat-item" title="Баллы за задания">
+            <iconify-icon icon="solar:star-circle-bold-duotone" style="color: var(--pal-light-green);"></iconify-icon> 120 баллов
+          </div>
+          <div class="dir-stat-item" title="Сдано заданий">
+            <iconify-icon icon="solar:check-read-bold-duotone" style="color: var(--text-muted);"></iconify-icon> 8/10
+          </div>
+        </div>
+        
+        <div class="dir-actions">
+          <button class="btn-icon" onclick="event.stopPropagation(); editStudentInfo()" title="Редактировать">
+            <iconify-icon icon="solar:pen-bold-duotone"></iconify-icon>
+          </button>
+          <button class="btn-icon-danger" onclick="event.stopPropagation(); deleteStudent()" title="Удалить" style="padding: 8px;">
+            <iconify-icon icon="solar:trash-bin-trash-bold"></iconify-icon>
+          </button>
+        </div>
+      </div>
+
+      <!-- Ученик 2 -->
+      <div class="directory-row" onclick="openStudentDossier('Анна Козлова', '12 лет', 'Kids Choreo')">
+        <div class="dir-identity">
+          <div class="dir-avatar">
+            <img src="https://ui-avatars.com/api/?name=Анна+Козлова&background=3d1a1a&color=EF6C6C" alt="Анна Козлова">
+          </div>
+          <div class="dir-info">
+            <span class="dir-name">Анна Козлова</span>
+            <span class="dir-meta">Kids Choreo • 12 лет</span>
+          </div>
+        </div>
+        
+        <div class="dir-stats">
+          <div class="dir-stat-item" title="Баллы за задания">
+            <iconify-icon icon="solar:star-circle-bold-duotone" style="color: var(--pal-light-green);"></iconify-icon> 85 баллов
+          </div>
+          <div class="dir-stat-item" title="Сдано заданий">
+            <iconify-icon icon="solar:check-read-bold-duotone" style="color: var(--text-muted);"></iconify-icon> 5/10
+          </div>
+        </div>
+        
+        <div class="dir-actions">
+          <button class="btn-icon" onclick="event.stopPropagation(); editStudentInfo()"><iconify-icon icon="solar:pen-bold-duotone"></iconify-icon></button>
+          <button class="btn-icon-danger" onclick="event.stopPropagation(); deleteStudent()" style="padding: 8px;"><iconify-icon icon="solar:trash-bin-trash-bold"></iconify-icon></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="tab-consultations" class="tab-content">
+  <div class="programs-section" style="margin-top: 0;">
+    
+    <!-- Панель управления -->
+    <div class="consultations-toolbar">
+      <div class="toolbar-left">
+        <!-- Кнопка создания -->
+<button class="btn btn-primary" onclick="openModal('createConsultationModal')">
+  <iconify-icon icon="solar:add-circle-bold" width="18"></iconify-icon> Создать консультацию
+</button>
+        
+        <!-- Переключатель недели -->
+        <div class="month-control">
+          <button class="btn-icon"><iconify-icon icon="solar:alt-arrow-left-line-duotone"></iconify-icon></button>
+          <span style="min-width: 140px;">1 неделя Августа</span>
+          <button class="btn-icon"><iconify-icon icon="solar:alt-arrow-right-line-duotone"></iconify-icon></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Сетка расписания -->
+    <div class="weekly-calendar">
+      
+      <!-- Заголовки дней недели -->
+      <!-- Заголовки дней недели -->
+<div class="calendar-header-row">
+  <div class="time-spacer" style="border-right: 1px solid rgba(255,255,255,0.03);"></div>
+  
+  <div class="calendar-header-cell active-day" onclick="openDayConfigModal('Понедельник', '03 Августа')">
+    <div class="day-name">Пн</div>
+    <div class="day-date">03</div>
+  </div>
+  
+  <!-- Заблокированный день (Добавлен класс blocked) -->
+  <div class="calendar-header-cell blocked">
+    <div class="day-name">Вт</div>
+    <div class="day-date">04</div>
+  </div>
+  
+  <div class="calendar-header-cell" onclick="openDayConfigModal('Среда', '05 Августа')">
+    <div class="day-name">Ср</div>
+    <div class="day-date">05</div>
+  </div>
+  
+  <!-- Остальные дни... -->
+  <div class="calendar-header-cell"><div class="day-name">Чт</div><div class="day-date">06</div></div>
+  <div class="calendar-header-cell"><div class="day-name">Пт</div><div class="day-date">07</div></div>
+  <div class="calendar-header-cell"><div class="day-name">Сб</div><div class="day-date">08</div></div>
+  <div class="calendar-header-cell"><div class="day-name">Вс</div><div class="day-date">09</div></div>
+</div>
+
+<!-- Тело календаря -->
+<div class="calendar-body-grid">
+  <!-- Шкала времени (09:00 - 20:00) -->
+  <div class="time-scale">
+    <div class="time-label"><span>09:00</span></div>
+    <div class="time-label"><span>10:00</span></div>
+    <div class="time-label"><span>11:00</span></div>
+    <div class="time-label"><span>12:00</span></div>
+    <div class="time-label"><span>13:00</span></div>
+    <div class="time-label"><span>14:00</span></div>
+    <div class="time-label"><span>15:00</span></div>
+    <div class="time-label"><span>16:00</span></div>
+    <div class="time-label"><span>17:00</span></div>
+    <div class="time-label"><span>18:00</span></div>
+    <div class="time-label"><span>19:00</span></div>
+    <div class="time-label"><span>20:00</span></div>
+  </div>
+
+  <!-- Понедельник: Рабочие часы с 16:00 до 20:00 -->
+  <div class="day-grid-col" onclick="openDayConfigModal('Понедельник', '03 Августа')">
+    <!-- Выделение рабочих часов: 16:00 (7 часов от 09:00 = 420px), длина 4 часа (240px) -->
+    <div class="work-time-bg" style="top: 420px; height: 240px;"></div>
+    
+    <!-- Карточка консультации: 16:00 - 17:30 (Высота 1.5 часа = 90px) -->
+    <div class="consultation-card" style="top: 420px; height: 90px;" onclick="event.stopPropagation();">
+      <span>Алексей Иванов</span>
+      <span>Мария Смирнова</span>
+    </div>
+    
+    <!-- Карточка консультации: 18:00 - 19:00 (top 9 часов от 9:00 = 540px) -->
+    <div class="consultation-card" style="top: 540px; height: 60px;" onclick="event.stopPropagation();">
+      <span>Анна Козлова</span>
+    </div>
+  </div>
+
+  <!-- Вторник: Заблокирован -->
+  <div class="day-grid-col blocked"></div>
+
+  <!-- Среда: Рабочие часы с 10:00 до 14:00 -->
+  <div class="day-grid-col" onclick="openDayConfigModal('Среда', '05 Августа')">
+    <!-- Выделение рабочих часов: 10:00 (60px), длина 4 часа (240px) -->
+    <div class="work-time-bg" style="top: 60px; height: 240px;"></div>
+    
+    <!-- Карточка консультации: 11:30 - 13:00 -->
+    <div class="consultation-card" style="top: 150px; height: 90px;" onclick="event.stopPropagation();">
+      <span>Дмитрий Соколов</span>
+    </div>
+  </div>
+
+  <!-- Пустые колонки для остальных дней -->
+  <div class="day-grid-col"></div>
+  <div class="day-grid-col"></div>
+  <div class="day-grid-col"></div>
+  <div class="day-grid-col"></div>
+</div>
+      
+    </div>
+  </div>
+</div>
+<!-- МОДАЛЬНОЕ ОКНО: НАСТРОЙКА ДНЯ -->
+<div class="modal-overlay" id="dayConfigModal">
+  <div class="modal-container" style="max-width: 480px;">
+    
+    <div class="modal-header">
+      <div>
+        <h2 class="modal-title" id="configDayTitle">Понедельник</h2>
+        <div class="modal-subtitle" id="configDayDate">03 Августа</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-primary btn-sm" onclick="closeModal('dayConfigModal')">
+          <iconify-icon icon="solar:diskette-bold"></iconify-icon> Сохранить
+        </button>
+        <button class="btn-close" onclick="closeModal('dayConfigModal')">
+          <iconify-icon icon="solar:close-circle-bold"></iconify-icon>
+        </button>
+      </div>
+    </div>
+    
+    <div class="modal-body" style="flex-direction: column; gap: 24px; overflow: visible;">
+      
+      <!-- Статус дня -->
+      <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); padding: 16px 20px; border-radius: var(--radius-lg); border: 1px solid var(--card-border);">
+        <div>
+          <div style="font-weight: 700; font-size: 1.05rem; color: var(--text-main); margin-bottom: 4px;">Запись открыта</div>
+          <div style="font-size: 0.85rem; color: var(--text-muted);">Разрешить бронирование консультаций в этот день</div>
+        </div>
+        <label class="theme-switch">
+          <input type="checkbox" checked id="dayStatusToggle">
+          <span class="switch-slider"></span>
+        </label>
+      </div>
+
+      <!-- Временные рамки -->
+      <div>
+        <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px;">Временные ограничения</h4>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          
+          <div class="form-group">
+            <label class="form-label"><iconify-icon icon="solar:clock-circle-bold-duotone"></iconify-icon> Начало приема</label>
+            <input type="time" class="custom-input" value="09:00">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label"><iconify-icon icon="solar:clock-circle-bold-duotone"></iconify-icon> Конец приема</label>
+            <input type="time" class="custom-input" value="18:00">
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<!-- Заглушки для остальных вкладок -->
+<div id="tab-teachers" class="tab-content">
+  <p style="color: var(--text-muted); padding: 40px 0;">Раздел «Учителя» в разработке...</p>
+</div>
+<div id="tab-achievements" class="tab-content">
+  <p style="color: var(--text-muted); padding: 40px 0;">Раздел «Достижения» в разработке...</p>
+</div>
+
     </div> 
   </main>
 
@@ -1208,10 +2122,19 @@
                 
                 <div class="topic-hw" style="margin-top: 12px;">
                   <strong style="display: block; margin-bottom: 8px; color: var(--text-main);">Задания и ДЗ:</strong>
-                  <div class="task-edit-row">
-                    <textarea class="ghost-textarea" rows="2">Самостоятельно составить связку на 2 восьмерки с использованием партера и прислать видео.</textarea>
-                    <button class="btn-icon-danger" title="Удалить задание"><iconify-icon icon="solar:trash-bin-trash-bold"></iconify-icon></button>
-                  </div>
+<div class="task-edit-row">
+  <textarea class="ghost-textarea" style="flex: 1;" rows="2">Самостоятельно составить связку на 2 восьмерки с использованием партера и прислать видео.</textarea>
+  
+  <!-- Новое поле для максимального балла -->
+  <div class="task-points-wrap">
+    <span>Max:</span>
+    <input type="number" class="task-points-input" value="10" min="1">
+  </div>
+  
+  <button class="btn-icon-danger" title="Удалить задание" style="margin-top: 6px;">
+    <iconify-icon icon="solar:trash-bin-trash-bold"></iconify-icon>
+  </button>
+</div>
                   <button class="add-action-link"><iconify-icon icon="solar:add-circle-bold"></iconify-icon> Добавить задание</button>
                 </div>
                 
@@ -1545,13 +2468,15 @@
   </div>
 
   <!-- МОДАЛЬНОЕ ОКНО УПРАВЛЕНИЯ ГРУППОЙ -->
+<!-- МОДАЛЬНОЕ ОКНО УПРАВЛЕНИЯ ГРУППОЙ -->
 <div class="modal-overlay" id="groupManageModal">
-  <div class="modal-container" style="max-width: 800px;">
+  <div class="modal-container" style="max-width: 960px;">
     <div class="modal-header">
       <div style="flex: 1;">
-        <!-- Редактирование названия группы -->
         <input type="text" class="modal-title-input" id="manageGroupName" value="Contemporary Mid" placeholder="Название группы" />
-        <div class="modal-subtitle" style="margin-top: 8px;">Управление составом группы</div>
+        <div class="modal-subtitle" style="margin-top: 8px;">
+          <span><iconify-icon icon="solar:users-group-two-rounded-bold-duotone"></iconify-icon> Управление составом и расписанием</span>
+        </div>
       </div>
       <div class="header-actions">
         <button class="btn btn-primary btn-sm" onclick="closeGroupManageModal()">
@@ -1562,45 +2487,107 @@
         </button>
       </div>
     </div>
-    <div class="modal-body" style="flex-direction: column;">
-      <div class="blocks-list">
-        <!-- Список текущих учеников -->
-        <div class="student-item" style="border: 1px solid var(--card-border); background: var(--card-bg); margin-bottom: 8px;">
-          <div class="student-main">
-            <div class="student-identity">
-              <div class="student-photo"><img src="https://ui-avatars.com/api/?name=Мария+Смирнова&background=2C473E&color=B0D182"></div>
-              <span class="student-name">Мария Смирнова</span>
+    
+    <div class="modal-body group-manage-layout">
+      <!-- Левая часть: Состав группы -->
+      <div class="blocks-container">
+        <h3 class="modal-section-title" style="margin-bottom: 16px; font-size: 1.1rem;">Текущий состав</h3>
+        <div class="blocks-list">
+          <div class="student-item" style="border: 1px solid var(--card-border); background: var(--card-bg); margin-bottom: 8px;">
+            <div class="student-main">
+              <div class="student-identity">
+                <div class="student-photo"><img src="https://ui-avatars.com/api/?name=Мария+Смирнова&background=2C473E&color=B0D182"></div>
+                <span class="student-name">Мария Смирнова</span>
+              </div>
+              <button class="btn-icon-danger" title="Удалить из группы"><iconify-icon icon="solar:user-cross-rounded-bold"></iconify-icon></button>
             </div>
-            <button class="btn-icon-danger" title="Удалить из группы"><iconify-icon icon="solar:user-cross-rounded-bold"></iconify-icon></button>
+          </div>
+          <div class="student-item" style="border: 1px solid var(--card-border); background: var(--card-bg); margin-bottom: 8px;">
+            <div class="student-main">
+              <div class="student-identity">
+                <div class="student-photo"><img src="https://ui-avatars.com/api/?name=Анна+Козлова&background=3d1a1a&color=EF6C6C"></div>
+                <span class="student-name">Анна Козлова</span>
+              </div>
+              <button class="btn-icon-danger"><iconify-icon icon="solar:user-cross-rounded-bold"></iconify-icon></button>
+            </div>
           </div>
         </div>
-        <div class="student-item" style="border: 1px solid var(--card-border); background: var(--card-bg); margin-bottom: 8px;">
-          <div class="student-main">
-            <div class="student-identity">
-              <div class="student-photo"><img src="https://ui-avatars.com/api/?name=Анна+Козлова&background=3d1a1a&color=EF6C6C"></div>
-              <span class="student-name">Анна Козлова</span>
-            </div>
-            <button class="btn-icon-danger"><iconify-icon icon="solar:user-cross-rounded-bold"></iconify-icon></button>
-          </div>
+        <button class="btn btn-secondary" style="width: 100%; justify-content: center; margin-top: 16px;" onclick="openAddStudentsModal()">
+          <iconify-icon icon="solar:user-plus-rounded-bold"></iconify-icon> Добавить учеников
+        </button>
+      </div>
+
+      <!-- Правая часть: Расписание -->
+      <div class="schedule-editor-sidebar">
+        <h4 style="font-size: 1.05rem; margin-bottom: 20px; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+          <iconify-icon icon="solar:calendar-date-bold-duotone"></iconify-icon> Расписание занятий
+        </h4>
+        
+        <div id="groupScheduleList" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+          <!-- Сюда добавляются строки расписания -->
+        </div>
+        
+        <button class="btn btn-secondary" style="width: 100%; justify-content: center;" onclick="addScheduleRow('groupScheduleList')">
+          <iconify-icon icon="solar:add-circle-bold"></iconify-icon> Добавить время
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+  </div>
+</div>
+
+<!-- МОДАЛЬНОЕ ОКНО: ДОБАВИТЬ НОВОГО УЧЕНИКА -->
+<div class="modal-overlay" id="addNewStudentModal">
+  <div class="modal-container" style="max-width: 700px;">
+    <div class="modal-header">
+      <div>
+        <h2 class="modal-title">Новый ученик</h2>
+        <div class="modal-subtitle">Создание карточки ученика и генерация доступов</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-primary btn-sm" onclick="closeModal('addNewStudentModal')">
+          <iconify-icon icon="solar:diskette-bold"></iconify-icon> Добавить
+        </button>
+        <button class="btn-close" onclick="closeModal('addNewStudentModal')">
+          <iconify-icon icon="solar:close-circle-bold"></iconify-icon>
+        </button>
+      </div>
+    </div>
+    
+    <div class="modal-body" style="flex-direction: column; gap: 24px;">
+      <div class="file-drop-area">
+        <iconify-icon icon="solar:gallery-add-bold-duotone" style="font-size: 48px; color: var(--pal-light-green); margin-bottom: 12px;"></iconify-icon>
+        <div style="font-weight: 600; margin-bottom: 4px;">Прикрепить изображение ученика</div>
+        <div style="font-size: 0.85rem; color: var(--text-muted);">Нажмите или перетащите файл (PNG, JPG)</div>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+        <div class="form-group">
+          <label class="form-label">Фамилия</label>
+          <input type="text" class="custom-input" placeholder="Иванов">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Имя</label>
+          <input type="text" class="custom-input" placeholder="Алексей">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Отчество</label>
+          <input type="text" class="custom-input" placeholder="Иванович">
         </div>
       </div>
-      <button class="btn btn-secondary" style="width: 100%; justify-content: center; margin-top: 16px;" onclick="openAddStudentsModal()">
-        <iconify-icon icon="solar:user-plus-rounded-bold"></iconify-icon> Добавить учеников
-      </button>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div class="form-group">
+          <label class="form-label">Дата рождения (Год)</label>
+          <input type="date" class="custom-input">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Прикрепить почту</label>
+          <input type="email" class="custom-input" placeholder="student@example.com">
+        </div>
+      </div>
     </div>
-    <div class="schedule-editor-section" style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-color);">
-  <h4 style="font-size: 0.95rem; margin-bottom: 12px; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
-    <iconify-icon icon="solar:calendar-date-bold-duotone"></iconify-icon> Расписание занятий
-  </h4>
-  
-  <div id="groupScheduleList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
-    <!-- Сюда будут добавляться строки расписания -->
-  </div>
-  
-  <button class="add-action-link" onclick="addScheduleRow('groupScheduleList')">
-    <iconify-icon icon="solar:add-circle-bold"></iconify-icon> Добавить время занятия
-  </button>
-</div>
   </div>
 </div>
 
@@ -1711,6 +2698,240 @@
     </div>
   </div>
 </div>
+
+<!-- МОДАЛЬНОЕ ОКНО: ДОСЬЕ УЧЕНИКА -->
+<div class="modal-overlay" id="studentDossierModal">
+  <div class="modal-container">
+    <div class="modal-header">
+      <div style="flex: 1;">
+        <input type="text" class="modal-title-input dossier-edit-input" id="dossierName" value="Алексей Иванов" readonly>
+        <div class="modal-subtitle" style="margin-top: 8px;">
+          <span><iconify-icon icon="solar:user-id-bold-duotone"></iconify-icon> Карточка ученика</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-secondary btn-sm" id="dossierEditBtn" onclick="toggleDossierEdit()">
+          <iconify-icon icon="solar:pen-bold-duotone"></iconify-icon> Редактировать
+        </button>
+        <button class="btn-close" onclick="closeModal('studentDossierModal')">
+          <iconify-icon icon="solar:close-circle-bold"></iconify-icon>
+        </button>
+      </div>
+    </div>
+    
+    <div class="modal-body dossier-layout">
+      <aside class="dossier-sidebar">
+        <img src="https://ui-avatars.com/api/?name=Алексей+Иванов&background=2C473E&color=B0D182" class="dossier-photo-large" alt="Алексей">
+        
+        <div class="dossier-bio">
+          <div class="dossier-bio-title">ОСНОВНАЯ ИНФОРМАЦИЯ</div>
+          
+          <div class="form-group" style="margin-bottom: 16px;">
+             <label class="form-label" id="ageLabel">Возраст</label>
+             <div id="dossierAgeView" style="font-size: 1.1rem; font-weight: 700; color: var(--text-main);">14 лет</div>
+             <input type="date" class="custom-input dossier-edit-input" id="dossierDobEdit" style="display: none;" value="2010-05-15" readonly>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Группа</label>
+            <input type="text" class="ghost-input dossier-edit-input" id="dossierGroup" style="font-weight: 600;" value="Contemporary Mid" readonly>
+          </div>
+        </div>
+      </aside>
+
+      <main class="dossier-main" style="flex: 1;">
+        <div>
+          <h3 class="modal-section-title">Данные для входа</h3>
+          
+          <div class="auth-credentials">
+            <div class="cred-item">
+              <span class="cred-label">Почта ученика</span>
+              <div class="cred-value">
+                <iconify-icon icon="solar:letter-bold-duotone" style="color: var(--text-muted);"></iconify-icon> 
+                <input type="email" class="ghost-input dossier-edit-input" style="font-size:inherit; font-weight:inherit; color:inherit; padding: 0;" value="alexey.ivanov@example.com" readonly>
+              </div>
+            </div>
+            
+            <div class="cred-item">
+              <span class="cred-label">Сгенерированный пароль</span>
+              <div class="cred-value password">
+                <iconify-icon icon="solar:key-minimalistic-square-3-bold-duotone" style="color: var(--pal-light-green);"></iconify-icon>
+                <span>alanko_X7p9Q</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 16px;">
+           <h3 class="modal-section-title">Академическая сводка</h3>
+           <div style="display: flex; gap: 8px;">
+             <span class="achievement-tag"><iconify-icon icon="solar:star-circle-bold"></iconify-icon> 120 баллов</span>
+             <span class="achievement-tag" style="background: rgba(255,255,255,0.05); color: var(--text-main); border-color: rgba(255,255,255,0.1);"><iconify-icon icon="solar:check-read-bold-duotone"></iconify-icon> Сдано: 8/10</span>
+           </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</div>
+<!-- МОДАЛЬНОЕ ОКНО СОЗДАНИЯ КОНСУЛЬТАЦИИ -->
+<div class="modal-overlay" id="createConsultationModal">
+  <div class="modal-container" style="max-width: 860px;">
+    
+    <div class="modal-header">
+      <div>
+        <h2 class="modal-title">Приглашение на консультацию</h2>
+        <div class="modal-subtitle">Запланируйте время и предложите ученикам посетить занятие</div>
+      </div>
+      <div class="header-actions">
+        <!-- Кнопка подчеркивает суть действия — мы только отправляем приглашение -->
+        <button class="btn btn-primary btn-sm" onclick="closeModal('createConsultationModal')">
+          <iconify-icon icon="solar:letter-bold"></iconify-icon> Отправить приглашения
+        </button>
+        <button class="btn-close" onclick="closeModal('createConsultationModal')">
+          <iconify-icon icon="solar:close-circle-bold"></iconify-icon>
+        </button>
+      </div>
+    </div>
+    
+    <div class="modal-body">
+      
+      <!-- Левая колонка: Настройки времени и темы -->
+      <div class="blocks-container" style="flex: 1.2;">
+        <h3 class="modal-section-title" style="font-size: 1.1rem; margin-bottom: 20px;">
+          <div class="title-left"><iconify-icon icon="solar:calendar-date-bold-duotone"></iconify-icon> Детали консультации</div>
+        </h3>
+        
+        <div class="form-group">
+          <label class="form-label">Дата проведения</label>
+          <input type="date" class="custom-input">
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="form-group">
+            <label class="form-label">Время начала</label>
+            <input type="time" class="custom-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Время окончания</label>
+            <input type="time" class="custom-input">
+          </div>
+        </div>
+        
+        <div class="form-group" style="margin-top: 8px;">
+          <label class="form-label">Тема и план занятия (увидят ученики)</label>
+          <textarea class="custom-input" rows="4" placeholder="Например: Индивидуальная отработка техники прыжков и разбор ошибок..."></textarea>
+        </div>
+      </div>
+
+      <!-- Правая колонка: Выбор и приглашение учеников -->
+      <div class="program-groups-sidebar" style="flex: 0.8; width: auto;">
+        <h3 class="modal-section-title" style="font-size: 1.1rem; margin-bottom: 12px;">
+          <div class="title-left"><iconify-icon icon="solar:users-group-two-rounded-bold-duotone"></iconify-icon> Кого пригласить?</div>
+        </h3>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 20px; line-height: 1.4;">
+          Выберите до 4 учеников. Им будет отправлено уведомление с предложением забронировать и оплатить это время.
+        </p>
+        
+        <!-- Поиск -->
+        <div class="form-group">
+          <div style="position: relative;">
+            <iconify-icon icon="solar:magnifer-linear" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 1.1rem;"></iconify-icon>
+          </div>
+        </div>
+
+        <!-- Список выбранных для приглашения -->
+        <div class="selected-list" style="margin-top: 16px; flex: 1;">
+          <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 12px; letter-spacing: 0.05em;">
+            Выбрано (1 / 4)
+          </div>
+          
+          <!-- Пример выбранного ученика -->
+          <div class="selected-item-mini">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div class="dir-avatar" style="width: 28px; height: 28px;">
+                <img src="https://ui-avatars.com/api/?name=Алексей+Иванов&background=2C473E&color=B0D182" alt="">
+              </div>
+              <span class="name">Алексей Иванов</span>
+            </div>
+            <button class="remove-mini-btn" title="Отменить приглашение"><iconify-icon icon="solar:close-circle-bold"></iconify-icon></button>
+          </div>
+          
+          <!-- Слот для добавления -->
+          <div style="text-align: center; padding: 16px; margin-top: 12px; border: 1px dashed var(--card-border); border-radius: var(--radius-md); color: var(--text-muted); font-size: 0.85rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='var(--pal-light-green)'; this.style.color='var(--pal-light-green)';" onmouseout="this.style.borderColor='var(--card-border)'; this.style.color='var(--text-muted)';">
+            <iconify-icon icon="solar:add-circle-bold" style="vertical-align: middle; margin-right: 4px;"></iconify-icon> Найти и добавить
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<!-- МОДАЛЬНОЕ ОКНО: ДОБАВЛЕНИЕ НОВОГО УЧЕНИКА -->
+<div class="modal-overlay" id="addNewStudentModal">
+  <div class="modal-container" style="max-width: 800px;">
+    
+    <!-- Шапка модального окна -->
+    <div class="modal-header">
+      <div>
+        <h2 class="modal-title">Новый ученик</h2>
+        <div class="modal-subtitle">Создание профиля и первичная настройка</div>
+      </div>
+      <div class="header-actions">
+        <!-- Кнопка сохранения закроет окно (сюда позже добавите JS логику сохранения) -->
+        <button class="btn btn-primary btn-sm" onclick="closeModal('addNewStudentModal')">
+          <iconify-icon icon="solar:diskette-bold"></iconify-icon> Сохранить
+        </button>
+        <button class="btn-close" onclick="closeModal('addNewStudentModal')">
+          <iconify-icon icon="solar:close-circle-bold"></iconify-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- Тело модального окна -->
+    <div class="modal-body" style="gap: 40px;">
+      
+      <!-- Левая часть: Фотография -->
+      <div class="dossier-sidebar" style="width: 220px;">
+        <div class="file-drop-area" style="padding: 40px 20px; width: 100%;">
+          <iconify-icon icon="solar:camera-add-bold-duotone" style="font-size: 2.5rem; color: var(--pal-light-green);"></iconify-icon>
+          <p style="font-size: 0.85rem; margin-top: 16px; color: var(--text-muted); font-weight: 600;">Загрузить фото</p>
+        </div>
+      </div>
+
+      <!-- Правая часть: Форма данных -->
+      <div style="flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        
+        <div class="form-group" style="grid-column: span 2; margin-bottom: 0;">
+          <label class="form-label">ФИО ученика</label>
+          <input type="text" class="custom-input" placeholder="Например: Иванов Алексей">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+          <label class="form-label">Дата рождения</label>
+          <input type="date" class="custom-input">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+          <label class="form-label">Телефон родителей</label>
+          <input type="tel" class="custom-input" placeholder="+7 (___) ___-__-__">
+        </div>
+
+        <div class="form-group" style="grid-column: span 2; margin-bottom: 0;">
+          <label class="form-label">Определить в программу (необязательно)</label>
+          <select class="custom-input sort-select" style="width: 100%; border: 1px solid var(--card-border); appearance: auto;">
+            <option value="">-- Выберите группу --</option>
+            <option value="contemporary">Contemporary Mid</option>
+            <option value="kids">Kids Choreo</option>
+          </select>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
 
   <script>
     function toggleProgram(headerElement) {
@@ -2061,68 +3282,289 @@ function addNewTopic(btnElement) {
   topicsList.insertAdjacentHTML('beforeend', topicHTML);
 }
 
-// Добавление Задания внутри темы
+// Добавление Задания внутри темы (с баллами)
 function addNewTask(btnElement) {
   const tasksContainer = btnElement.previousElementSibling;
   const taskHTML = `
     <div class="task-edit-row" style="animation: fadeIn 0.2s ease;">
-      <iconify-icon icon="solar:square-alt-arrow-right-bold-duotone" style="color: var(--pal-light-green); margin-top: 6px;"></iconify-icon>
-      <textarea class="ghost-textarea" rows="1" placeholder="Опишите суть задания (напр. Снять видео связки)"></textarea>
-      <button class="btn-icon-danger" onclick="this.closest('.task-edit-row').remove()"><iconify-icon icon="solar:close-circle-bold"></iconify-icon></button>
+      <iconify-icon icon="solar:square-alt-arrow-right-bold-duotone" style="color: var(--pal-light-green); margin-top: 12px;"></iconify-icon>
+      <textarea class="ghost-textarea" style="flex: 1;" rows="1" placeholder="Опишите суть задания..."></textarea>
+      
+      <div class="task-points-wrap" style="margin-top: 0;">
+        <span>Max:</span>
+        <input type="number" class="task-points-input" value="10" min="1" placeholder="0">
+      </div>
+      
+      <button class="btn-icon-danger" onclick="this.closest('.task-edit-row').remove()">
+        <iconify-icon icon="solar:close-circle-bold"></iconify-icon>
+      </button>
     </div>
   `;
   tasksContainer.insertAdjacentHTML('beforeend', taskHTML);
 }
 
 // Добавление Группы (работает и в режиме редактирования, и в режиме создания)
-function addNewGroupToProgram(containerId) {
-  const container = document.getElementById(containerId);
-  const placeholder = container.querySelector('#emptyGroupsPlaceholder');
-  if (placeholder) placeholder.remove();
-
-  const groupHTML = `
-    <div class="program-group-card" style="animation: fadeIn 0.3s ease; padding: 12px 16px;">
-      <div class="program-group-info" style="width: 100%; gap: 2px;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <input type="text" class="ghost-input" style="font-weight: 700; font-size: 0.95rem; color: var(--text-main); padding: 0;" placeholder="Введите название группы">
-          <button class="btn-icon-danger" onclick="this.closest('.program-group-card').remove()" style="padding: 4px;"><iconify-icon icon="solar:trash-bin-trash-bold"></iconify-icon></button>
-        </div>
-        <input type="text" class="ghost-input" style="font-size: 0.8rem; color: var(--text-muted); padding: 0;" placeholder="Укажите расписание (напр. Вт, Чт 19:00)">
-        <span style="font-size: 0.75rem; color: var(--pal-light-green); margin-top: 4px; display: inline-block;">0 учеников (Добавить можно после сохранения)</span>
-      </div>
-    </div>
-  `;
-  container.insertAdjacentHTML('beforeend', groupHTML);
-}
-
-// Добавление строки расписания в настройки группы
+// Восстановленная функция добавления строки расписания
 function addScheduleRow(containerId) {
   const container = document.getElementById(containerId);
   const rowHTML = `
-    <div class="schedule-row" style="display: flex; gap: 12px; align-items: center; animation: fadeIn 0.2s ease;">
-      <select class="ghost-input" style="width: 140px; padding: 4px 8px; background: rgba(0,0,0,0.02); border-radius: 6px;">
-        <option>Понедельник</option>
-        <option>Вторник</option>
-        <option>Среда</option>
-        <option>Четверг</option>
-        <option>Пятница</option>
-        <option>Суббота</option>
-        <option>Воскресенье</option>
+    <div class="schedule-row" style="display: flex; gap: 8px; align-items: center; animation: fadeIn 0.2s ease; background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); padding: 8px 12px; border-radius: var(--radius-md);">
+      <select class="ghost-input" style="flex: 1; padding: 4px; background: rgba(0,0,0,0.2); border-radius: 6px; font-size: 0.85rem; outline: none; border: 1px solid transparent;">
+        <option>Понедельник</option><option>Вторник</option><option>Среда</option>
+        <option>Четверг</option><option>Пятница</option><option>Суббота</option><option>Воскресенье</option>
       </select>
       
-      <div style="display: flex; align-items: center; gap: 4px; background: rgba(0,0,0,0.02); padding: 4px 8px; border-radius: 6px;">
-        <input type="time" class="ghost-input" style="width: auto; padding: 0;" value="18:00">
-        <span style="color: var(--text-muted); font-size: 0.8rem;">—</span>
-        <input type="time" class="ghost-input" style="width: auto; padding: 0;" value="19:30">
-      </div>
+      <input type="time" class="ghost-input" style="width: 80px; padding: 4px; background: rgba(0,0,0,0.2); border-radius: 6px; font-size: 0.85rem; outline: none; border: 1px solid transparent;" value="18:00">
       
-      <button class="btn-icon-danger" onclick="this.closest('.schedule-row').remove()" title="Удалить время">
+      <button class="btn-icon-danger" style="padding: 4px;" onclick="this.closest('.schedule-row').remove()" title="Удалить день">
         <iconify-icon icon="solar:trash-bin-trash-bold"></iconify-icon>
       </button>
     </div>
   `;
   container.insertAdjacentHTML('beforeend', rowHTML);
 }
-  </script>
+
+// Завершенная логика создания группы
+function addNewGroupToProgram(containerId) {
+  const container = document.getElementById(containerId);
+  
+  // Убираем плейсхолдер "Групп пока нет", если он присутствует
+  const placeholder = container.querySelector('#emptyGroupsPlaceholder');
+  if (placeholder) {
+    placeholder.remove();
+  }
+
+  // Считаем текущее количество групп для нумерации
+  const groupCount = container.children.length + 1;
+  const groupName = `Новая группа ${groupCount}`;
+  
+  const groupHTML = `
+    <div class="program-group-card" style="animation: fadeIn 0.3s ease;" onclick="openGroupManageModal('${groupName}')">
+      <div class="program-group-info">
+        <span class="program-group-name">${groupName}</span>
+        <span class="program-group-meta">0 учеников • Расписание не задано</span>
+      </div>
+      <button class="btn-sm primary"><iconify-icon icon="solar:pen-bold"></iconify-icon></button>
+    </div>
+  `;
+
+  if (container) {
+    container.insertAdjacentHTML('beforeend', groupHTML);
+  }
+}
+
+// Единая логика переключения вкладок
+function activateTab(tabId) {
+  const tabButtons = document.querySelectorAll('.tab-btn');
+  const tabContents = document.querySelectorAll('.tab-content');
+
+  tabButtons.forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-tab') === tabId);
+  });
+
+  tabContents.forEach(content => {
+    content.classList.toggle('active', content.id === tabId);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const tabButtons = document.querySelectorAll('.tab-btn');
+
+  tabButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const targetId = button.getAttribute('data-tab');
+      if (targetId) {
+        activateTab(targetId);
+      }
+    });
+  });
+
+  const activeTab = document.querySelector('.tab-btn.active');
+  if (activeTab) {
+    activateTab(activeTab.getAttribute('data-tab'));
+  }
+});
+
+/* --- ЛОГИКА ПЕРЕКЛЮЧЕНИЯ ВНЕШНИХ ВКЛАДОК --- */
+document.querySelectorAll('.tab-btn').forEach(button => {
+  button.addEventListener('click', () => {
+    // Убираем класс active у всех кнопок
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    // Убираем класс active у всех контент-блоков
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    
+    // Добавляем класс нажатой кнопке и её контенту
+    button.classList.add('active');
+    const targetTab = document.getElementById(button.getAttribute('data-tab'));
+    if (targetTab) {
+      targetTab.classList.add('active');
+    }
+  });
+});
+
+/* --- ЛОГИКА ДОСЬЕ УЧЕНИКА --- */
+const dossierModal = document.getElementById('studentDossierModal');
+
+function openStudentDossier(name, age, group) {
+  // Динамически подставляем данные
+  document.getElementById('dossierName').value = name;
+  document.getElementById('dossierAgeView').innerText = age;
+  document.getElementById('dossierGroup').value = group;
+  
+  // Генерируем аватарку (заглушка)
+  const encodedName = encodeURIComponent(name);
+  const dossierPhoto = document.querySelector('#studentDossierModal .dossier-photo-large');
+  if (dossierPhoto) {
+    dossierPhoto.src = `https://ui-avatars.com/api/?name=${encodedName}&background=2C473E&color=B0D182&size=300`;
+  }
+  
+  dossierModal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeStudentDossier() {
+  dossierModal.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+// Заглушки для кнопок редактирования и удаления
+function editStudentInfo() {
+  alert('Открытие формы редактирования ученика...');
+}
+
+function deleteStudent() {
+  if(confirm('Вы уверены, что хотите удалить ученика? Данное действие нельзя отменить.')) {
+    alert('Ученик удален.');
+  }
+}
+
+// Закрытие по клику вне области для окна досье
+dossierModal.addEventListener('click', (e) => {
+  if (e.target === dossierModal) {
+    closeStudentDossier();
+  }
+});
+  function toggleEditStudentInfo(btnElement) {
+    // Находим все поля, которые можно редактировать в досье
+    const editFields = document.querySelectorAll('.dossier-edit-input');
+    const btnText = btnElement.querySelector('.btn-text');
+    const icon = btnElement.querySelector('iconify-icon');
+    
+    // Проверяем статус (редактируем ли мы сейчас)
+    const isCurrentlyEditing = editFields[0].classList.contains('editing-active');
+    
+    if (!isCurrentlyEditing) {
+      // ВКЛЮЧАЕМ РЕДАКТИРОВАНИЕ
+      editFields.forEach(field => {
+        field.removeAttribute('readonly');
+        field.classList.add('editing-active');
+      });
+      
+      // Меняем внешний вид кнопки
+      btnText.textContent = "Сохранить";
+      icon.setAttribute('icon', 'solar:diskette-bold');
+      btnElement.classList.add('btn-primary');
+      btnElement.classList.remove('btn-secondary');
+      
+      // Фокус на первом поле для удобства
+      editFields[0].focus();
+    } else {
+      // ВЫКЛЮЧАЕМ РЕДАКТИРОВАНИЕ (СОХРАНЯЕМ)
+      editFields.forEach(field => {
+        field.setAttribute('readonly', 'true');
+        field.classList.remove('editing-active');
+      });
+      
+      // Возвращаем кнопку в исходное состояние
+      btnText.textContent = "Редактировать";
+      icon.setAttribute('icon', 'solar:pen-bold');
+      btnElement.classList.remove('btn-primary');
+      btnElement.classList.add('btn-secondary');
+    }
+  }
+
+  /* --- НОВЫЕ ФУНКЦИИ ДЛЯ РАБОТЫ С МОДАЛЯМИ --- */
+  
+  function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+      modal.classList.add('active');
+    }
+  }
+
+  function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+      modal.classList.remove('active');
+    }
+  }
+
+  function toggleDossierEdit() {
+    const dossierEditBtn = document.getElementById('dossierEditBtn');
+    const ageView = document.getElementById('dossierAgeView');
+    const dobEdit = document.getElementById('dossierDobEdit');
+    const editFields = document.querySelectorAll('.dossier-edit-input:not(#dossierGroup)');
+    
+    const isEditing = ageView.style.display === 'none';
+    
+    if (isEditing) {
+      // ВЫХОДИМ ИЗ РЕЖИМА РЕДАКТИРОВАНИЯ
+      ageView.style.display = 'block';
+      dobEdit.style.display = 'none';
+      dobEdit.classList.remove('editing-active');
+      dobEdit.setAttribute('readonly', 'true');
+      editFields.forEach(field => {
+        field.removeAttribute('data-editing');
+        field.classList.remove('editing-active');
+        field.setAttribute('readonly', 'true');
+      });
+      dossierEditBtn.innerHTML = '<iconify-icon icon="solar:pen-bold-duotone"></iconify-icon> Редактировать';
+    } else {
+      // ВХОДИМ В РЕЖИМ РЕДАКТИРОВАНИЯ
+      ageView.style.display = 'none';
+      dobEdit.style.display = 'block';
+      dobEdit.classList.add('editing-active');
+      dobEdit.removeAttribute('readonly');
+      dobEdit.removeAttribute('disabled');
+      editFields.forEach(field => {
+        field.setAttribute('data-editing', 'true');
+        field.classList.add('editing-active');
+        field.removeAttribute('readonly');
+        field.removeAttribute('disabled');
+      });
+      dossierEditBtn.innerHTML = '<iconify-icon icon="solar:diskette-bold"></iconify-icon> Сохранить';
+    }
+  }
+
+  /* --- ЗАКРЫТИЕ МОДАЛЕЙ ПО КЛИКУ НА ФОНЕ --- */
+  document.querySelectorAll('.modal-overlay').forEach(modal => {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.classList.remove('active');
+      }
+    });
+  });
+
+// Функция для открытия модального окна конкретного дня
+function openDayConfigModal(dayName, dateStr) {
+  // Меняем заголовок в модалке
+  document.getElementById('configDayTitle').innerText = dayName;
+  document.getElementById('configDayDate').innerText = dateStr;
+  
+  // Показываем окно
+  const modal = document.getElementById('dayConfigModal');
+  if (modal) {
+    modal.classList.add('active');
+  }
+}
+
+// Если у тебя еще нет базовой функции closeModal, добавь её:
+function closeModal(modalId) {
+  const modal = document.getElementById(modalId);
+  if (modal) {
+    modal.classList.remove('active');
+  }
+}
+</script>
 </body>
 </html>

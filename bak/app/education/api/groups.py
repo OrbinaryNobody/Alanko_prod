@@ -13,7 +13,7 @@ from db.database import get_db
 from education.dtos.program_dto import GroupPayload, GroupMemberPayload, StudentEnrollmentPayload
 from education.exceptions.domain_exceptions import EducationError
 from education.facade import education_facade
-from schemas.education import EnrollmentCreate, GroupCreate, GroupMemberCreate
+from schemas.education import EnrollmentCreate, GroupCreate, GroupMemberCreate, GroupStudentCreate, GroupTeacherCreate
 
 router = APIRouter(prefix="/groups", tags=["education-groups"])
 
@@ -70,6 +70,46 @@ def add_member(
         translate_domain_error(exc)
 
     return {"message": "Member added", "data": GroupMemberPayload(group_id=group_id, user_id=member.user_id, role=member.role).to_dict()}
+
+
+@router.post("/{group_id}/teachers", status_code=201)
+def add_teacher_to_group(
+    group_id: int,
+    data: GroupTeacherCreate,
+    ctx: AccessContext = Depends(require_manage_groups),
+    db: Session = Depends(get_db),
+):
+    try:
+        member = education_facade.add_teacher_member(
+            db,
+            ctx=ctx,
+            group_id=group_id,
+            user_id=data.user_id,
+        )
+    except EducationError as exc:
+        translate_domain_error(exc)
+
+    return {"message": "Teacher added to group", "data": GroupMemberPayload(group_id=group_id, user_id=member.user_id, role=member.role).to_dict()}
+
+
+@router.post("/{group_id}/students", status_code=201)
+def add_student_to_group(
+    group_id: int,
+    data: GroupStudentCreate,
+    ctx: AccessContext = Depends(require_manage_enrollments),
+    db: Session = Depends(get_db),
+):
+    try:
+        enrollment = education_facade.enroll_student(
+            db,
+            ctx=ctx,
+            group_id=group_id,
+            student_id=data.student_id,
+        )
+    except EducationError as exc:
+        translate_domain_error(exc)
+
+    return {"message": "Student enrolled", "data": StudentEnrollmentPayload(id=enrollment.id, student_id=enrollment.student_id).to_dict()}
 
 
 @router.get("/{group_id}/students")

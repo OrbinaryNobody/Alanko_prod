@@ -10,10 +10,53 @@ def init_db():
         Base.metadata.create_all(bind=engine)
         print("=== DATABASE TABLES CREATED ===")
     except Exception as e:
-        print(f"ERROR CREATING TABLES: {e}")
-        return
+        print(f"WARNING: create_all encountered a schema issue, continuing with idempotent init: {e}")
     
     with engine.connect() as conn:
+        # Consultation schema is bootstrapped through Base.metadata.create_all.
+        # Keep this index idempotent for databases created before the model update.
+        try:
+            conn.execute(text("""
+                CREATE INDEX IF NOT EXISTS ix_consultation_invitations_slot_student_status
+                ON consultation_invitations (slot_id, student_id, status)
+            """))
+            conn.commit()
+        except Exception as e:
+            print(f"Failed to ensure consultation invitation index: {e}")
+            conn.rollback()
+
+        for column_name, column_definition in (
+            ("price", "INTEGER NOT NULL DEFAULT 0"),
+            ("currency", "VARCHAR(8) NOT NULL DEFAULT 'RUB'"),
+        ):
+            result = conn.execute(text("""
+                SELECT column_name FROM information_schema.columns
+                WHERE table_name = 'consultation_slots' AND column_name = :column_name
+            """), {"column_name": column_name})
+            if not result.fetchone():
+                try:
+                    conn.execute(text(f"ALTER TABLE consultation_slots ADD COLUMN {column_name} {column_definition}"))
+                    conn.commit()
+                except Exception as e:
+                    print(f"Failed to add consultation_slots.{column_name}: {e}")
+                    conn.rollback()
+
+        for column_name, column_definition in (
+            ("payment_status", "VARCHAR(16) NOT NULL DEFAULT 'UNPAID'"),
+            ("paid_at", "TIMESTAMP WITH TIME ZONE"),
+        ):
+            result = conn.execute(text("""
+                SELECT column_name FROM information_schema.columns
+                WHERE table_name = 'consultation_participants' AND column_name = :column_name
+            """), {"column_name": column_name})
+            if not result.fetchone():
+                try:
+                    conn.execute(text(f"ALTER TABLE consultation_participants ADD COLUMN {column_name} {column_definition}"))
+                    conn.commit()
+                except Exception as e:
+                    print(f"Failed to add consultation_participants.{column_name}: {e}")
+                    conn.rollback()
+
         # Проверяем и добавляем уникальное ограничение для PENDING-платежей
         inspector_query = text("""
             SELECT constraint_name FROM information_schema.table_constraints
@@ -218,6 +261,23 @@ def init_db():
                 print("Added image_url column to student_profiles")
             except Exception as e:
                 print(f"Failed to add image_url column: {e}")
+                conn.rollback()
+
+        inspector_query = text("""
+            SELECT column_name FROM information_schema.columns
+            WHERE table_name = 'student_profiles' AND column_name = 'birth_year'
+        """)
+        result = conn.execute(inspector_query)
+        if not result.fetchone():
+            try:
+                conn.execute(text("""
+                    ALTER TABLE student_profiles
+                    ADD COLUMN birth_year INTEGER
+                """))
+                conn.commit()
+                print("Added birth_year column to student_profiles")
+            except Exception as e:
+                print(f"Failed to add birth_year column to student_profiles: {e}")
                 conn.rollback()
 
         inspector_query = text("""

@@ -1,3 +1,10 @@
+from consultations.models import (
+    ConsultationDay,
+    ConsultationInvitation,
+    ConsultationParticipant,
+    ConsultationSlot,
+    ConsultationNotification,
+)
 from models.base import Base
 from models.domains import (
     Achievement,
@@ -50,4 +57,9 @@ __all__ = [
     "Payment",
     "CourseEnrollment",
     "SpecialOffer",
+    "ConsultationDay",
+    "ConsultationSlot",
+    "ConsultationParticipant",
+    "ConsultationInvitation",
+    "ConsultationNotification",
 ]

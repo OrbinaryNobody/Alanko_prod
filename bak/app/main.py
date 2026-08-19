@@ -15,6 +15,8 @@ from assessment.api.routes import router as assessment_router_context
 from media.api.routes import router as media_router
 from catalog.api.routes import router as catalog_router
 from payments.api.routes import router as payments_router
+from consultations.api.student import router as consultations_student_router
+from consultations.api.admin import router as consultations_admin_router
 from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI(
     title="Alanko API",
@@ -69,5 +71,7 @@ app.include_router(profile_dashboard_router, prefix="/api/profile")
 app.include_router(profile_router, prefix="/api")
 app.include_router(public_router, prefix="/api")
 app.include_router(payments_router, prefix="/api", tags=["Payments"])
+app.include_router(consultations_student_router, prefix="/api")
+app.include_router(consultations_admin_router, prefix="/api")
 
 
