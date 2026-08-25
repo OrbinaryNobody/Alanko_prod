@@ -2891,14 +2891,11 @@ MODAL STUDENT PROFILE
     const password = document.getElementById('loginPassword').value;
 
     try {
-      const response = await fetch(`${API_URL}/accounts/login`, {
+      const data = await requestJson('/accounts/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
+        auth: false,
+        body: JSON.stringify({ email, password }),
       });
-
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.detail || 'Ошибка входа');
 
       setToken(data.access_token);
 
@@ -2915,7 +2912,7 @@ MODAL STUDENT PROFILE
         window.location.href = 'student_page.html' + redirectHash;
       }
     } catch (error) {
-      document.getElementById('loginError').textContent = error.message;
+      document.getElementById('loginError').textContent = error.message || 'Ошибка входа';
     }
   });
 
@@ -3066,8 +3063,7 @@ MODAL STUDENT PROFILE
     updateVideoModal();
 
     try {
-      const response = await fetch(`${API_URL}/public/achievements/videos`);
-      if (!response.ok) throw new Error('Failed to load achievement videos');
+      const response = await apiFetch('/public/achievements/videos', { auth: false });
       const data = await response.json();
       studentVideos = (data.items || []).map((item) => ({
         video_url: item.video_url,
@@ -3099,9 +3095,7 @@ MODAL STUDENT PROFILE
 
   async function loadLeaderboardData() {
     try {
-      const response = await fetch(`${API_URL}/public/leaderboard`);
-      if (!response.ok) throw new Error('Failed to load leaderboard');
-      
+      const response = await apiFetch('/public/leaderboard', { auth: false });
       const data = await response.json();
       
       // БЛОК 4: Заполняем ТОП-3 студентов

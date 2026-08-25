@@ -24,6 +24,8 @@ class Settings(BaseSettings):
 
     app_name: str = "Alanko App"
     secret_key: str = Field(..., alias="SECRET_KEY")
+    admin_email: str = Field("", alias="ADMIN_EMAIL")
+    admin_password: str = Field("", alias="ADMIN_PASSWORD")
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 30
     database_url: str = Field("postgresql://postgres:postgres@db:5432/alanko", alias="DATABASE_URL")

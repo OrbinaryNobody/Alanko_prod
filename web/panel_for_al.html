@@ -3643,6 +3643,8 @@ select.custom-input option {
 </div>
 
   <script>
+    requireAuth();
+
     function toggleTeacherDossierEdit() {
       const editFields = document.querySelectorAll('.teacher-dossier-edit-input');
       const btn = document.getElementById('teacherDossierEditBtn');
@@ -4447,10 +4449,9 @@ function openDayConfigModal(dayName, dateStr) {
   async function loadNews() {
     const list = document.getElementById('newsList');
     if (!list) return;
+    list.innerHTML = '<div style="padding: 32px; color: var(--text-muted);">Загрузка новостей...</div>';
     try {
-      const response = await fetchWithAuth('/admin/news');
-      if (!response.ok) throw new Error('Не удалось загрузить новости');
-      const payload = await response.json();
+      const payload = await requestJson('/admin/news');
       renderNews(payload.items || []);
     } catch (error) {
       list.innerHTML = `<div style="padding: 32px; color: var(--pal-accent-red);">${error.message}</div>`;
@@ -4502,11 +4503,7 @@ function openDayConfigModal(dayName, dateStr) {
       const image = document.getElementById('newsImage').files[0];
       if (image) formData.append('image', image);
       const path = editingNewsId ? `/admin/news/${editingNewsId}` : '/admin/news';
-      const response = await fetchWithAuth(path, { method: editingNewsId ? 'PATCH' : 'POST', body: formData });
-      if (!response.ok) {
-        const payload = await response.json().catch(() => ({}));
-        throw new Error(payload.detail || 'Не удалось сохранить новость');
-      }
+      await requestFormData(path, formData, { method: editingNewsId ? 'PATCH' : 'POST' });
       document.getElementById('newsModal').classList.remove('active');
       await loadNews();
     } catch (e) {
@@ -4517,9 +4514,12 @@ function openDayConfigModal(dayName, dateStr) {
 
   async function archiveNews(newsId) {
     if (!confirm('Удалить эту новость?')) return;
-    const response = await fetchWithAuth(`/admin/news/${newsId}`, { method: 'DELETE' });
-    if (!response.ok) throw new Error('Не удалось удалить новость');
-    await loadNews();
+    try {
+      await requestJson(`/admin/news/${newsId}`, { method: 'DELETE' });
+      await loadNews();
+    } catch (error) {
+      alert('Ошибка при удалении: ' + error.message);
+    }
   }
 
   function proposalSummary(proposal) {
@@ -4530,34 +4530,31 @@ function openDayConfigModal(dayName, dateStr) {
 
   async function loadProgramProposals() {
     const list = document.getElementById('programProposalsList');
-    const response = await fetchWithAuth('/education/admin/program-change-proposals');
-    if (!response.ok) throw new Error('Не удалось загрузить предложения');
-    const payload = await response.json();
-    list.innerHTML = '';
-    if (!payload.data.length) {
-      list.innerHTML = '<div style="text-align:center; padding:60px 0; color:var(--text-muted);">Новых предложений нет.</div>';
-      return;
+    try {
+      const payload = await requestJson('/education/admin/program-change-proposals');
+      list.innerHTML = '';
+      if (!payload.data.length) {
+        list.innerHTML = '<div style="text-align:center; padding:60px 0; color:var(--text-muted);">Новых предложений нет.</div>';
+        return;
+      }
+      payload.data.forEach((proposal) => {
+        const row = document.createElement('div');
+        row.className = 'directory-row';
+        row.innerHTML = `<div class="dir-info"><span class="dir-name">Программа #${proposal.program_id}</span><span class="dir-meta">Автор #${proposal.author_id} · ${proposalSummary(proposal)}</span></div><div class="dir-stats"><span class="status-badge">${proposal.status}</span></div><div class="dir-actions"><button class="btn btn-primary btn-sm" onclick="decideProgramProposal(${proposal.id}, true)">Утвердить</button><button class="btn-sm" onclick="decideProgramProposal(${proposal.id}, false)">Отклонить</button></div>`;
+        list.appendChild(row);
+      });
+    } catch (error) {
+      list.innerHTML = `<div style="padding: 32px; color: var(--pal-accent-red);">${error.message}</div>`;
     }
-    payload.data.forEach((proposal) => {
-      const row = document.createElement('div');
-      row.className = 'directory-row';
-      row.innerHTML = `<div class="dir-info"><span class="dir-name">Программа #${proposal.program_id}</span><span class="dir-meta">Автор #${proposal.author_id} · ${proposalSummary(proposal)}</span></div><div class="dir-stats"><span class="status-badge">${proposal.status}</span></div><div class="dir-actions"><button class="btn btn-primary btn-sm" onclick="decideProgramProposal(${proposal.id}, true)">Утвердить</button><button class="btn-sm" onclick="decideProgramProposal(${proposal.id}, false)">Отклонить</button></div>`;
-      list.appendChild(row);
-    });
   }
 
   async function decideProgramProposal(proposalId, approved) {
     const comment = prompt(approved ? 'Комментарий к утверждению (необязательно)' : 'Причина отклонения');
     if (!approved && comment === null) return;
-    const response = await fetchWithAuth(`/education/admin/program-change-proposals/${proposalId}/${approved ? 'approve' : 'reject'}`, {
+    await requestJson(`/education/admin/program-change-proposals/${proposalId}/${approved ? 'approve' : 'reject'}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ comment: comment || null }),
     });
-    if (!response.ok) {
-      const payload = await response.json().catch(() => ({}));
-      throw new Error(payload.detail || 'Не удалось обработать предложение');
-    }
     await loadProgramProposals();
   }
 
@@ -4566,7 +4563,6 @@ function openDayConfigModal(dayName, dateStr) {
     newsTab?.addEventListener('click', loadNews);
     const proposalsTab = document.querySelector('[data-tab="tab-program-proposals"]');
     proposalsTab?.addEventListener('click', loadProgramProposals);
-    
   });
 </script>
 
