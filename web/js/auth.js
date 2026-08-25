@@ -1,5 +1,16 @@
 const API_URL = window.ALANKO_API_URL || 'http://localhost:8000/api';
 const AUTH_TOKEN_KEY = 'authToken';
+const DEFAULT_TIMEOUT_MS = 15000;
+
+class ApiError extends Error {
+  constructor(message, { status = 0, detail = null, response = null } = {}) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+    this.detail = detail;
+    this.response = response;
+  }
+}
 
 function getTokenFromHash() {
   const rawHash = window.location.hash.replace(/^#/, '');
@@ -24,16 +35,14 @@ function importHashToken() {
 }
 
 function getToken() {
-  return localStorage.getItem(AUTH_TOKEN_KEY) || sessionStorage.getItem(AUTH_TOKEN_KEY);
+  return sessionStorage.getItem(AUTH_TOKEN_KEY);
 }
 
 function setToken(token) {
-  localStorage.setItem(AUTH_TOKEN_KEY, token);
   sessionStorage.setItem(AUTH_TOKEN_KEY, token);
 }
 
 function clearToken() {
-  localStorage.removeItem(AUTH_TOKEN_KEY);
   sessionStorage.removeItem(AUTH_TOKEN_KEY);
 }
 
@@ -46,26 +55,98 @@ function requireAuth(redirectUrl = 'index.html') {
   }
 }
 
-async function fetchWithAuth(path, options = {}) {
+function redirectToLogin(redirectUrl = 'index.html') {
+  clearToken();
+  if (!window.location.pathname.endsWith(redirectUrl)) {
+    window.location.href = redirectUrl;
+  }
+}
+
+async function apiFetch(path, options = {}) {
   const token = getToken();
-  if (!token) {
-    clearToken();
-    window.location.href = 'index.html';
-    throw new Error('Unauthorized');
+  const {
+    auth = true,
+    timeoutMs = DEFAULT_TIMEOUT_MS,
+    redirectUrl = 'index.html',
+    ...fetchOptions
+  } = options;
+
+  if (auth && !token) {
+    redirectToLogin(redirectUrl);
+    throw new ApiError('Unauthorized', { status: 401 });
   }
 
-  options.headers = {
-    ...options.headers,
-    Authorization: `Bearer ${token}`,
-  };
+  const headers = new Headers(fetchOptions.headers || {});
+  if (auth) headers.set('Authorization', `Bearer ${token}`);
+  if (!headers.has('Accept')) headers.set('Accept', 'application/json');
 
-  const response = await fetch(`${API_URL}${path}`, options);
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+  if (fetchOptions.signal) {
+    fetchOptions.signal.addEventListener('abort', () => controller.abort(), { once: true });
+  }
 
-  if (response.status === 401) {
-    clearToken();
-    window.location.href = 'index.html';
-    throw new Error('Unauthorized');
+  let response;
+  try {
+    response = await fetch(`${API_URL}${path}`, {
+      ...fetchOptions,
+      headers,
+      signal: controller.signal,
+    });
+  } catch (error) {
+    if (error.name === 'AbortError') {
+      throw new ApiError('Request timed out', { status: 408 });
+    }
+    throw new ApiError('Network request failed', { detail: error.message });
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
+
+  if (response.status === 401 && auth) {
+    redirectToLogin(redirectUrl);
+    throw new ApiError('Unauthorized', { status: 401, response });
+  }
+
+  if (!response.ok) {
+    let detail = null;
+    try {
+      const payload = await response.clone().json();
+      detail = payload.detail || payload.message || null;
+    } catch (_) {
+      detail = null;
+    }
+    throw new ApiError(detail || `Request failed with status ${response.status}`, {
+      status: response.status,
+      detail,
+      response,
+    });
   }
 
   return response;
+}
+
+async function requestJson(path, options = {}) {
+  const response = await apiFetch(path, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+  if (response.status === 204) return null;
+  return response.json();
+}
+
+async function requestFormData(path, formData, options = {}) {
+  const response = await apiFetch(path, { ...options, body: formData });
+  if (response.status === 204) return null;
+  return response.json();
+}
+
+async function requestFile(path, options = {}) {
+  return apiFetch(path, options);
+}
+
+async function fetchWithAuth(path, options = {}) {
+  return apiFetch(path, options);
 }
