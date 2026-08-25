@@ -28,6 +28,9 @@ class ProgramService:
     def create_block(self, db: Session, *, ctx: AccessContext, program_id: int, title: str, description: str | None, order: int):
         return program_creation_service.create_block(db, ctx=ctx, program_id=program_id, title=title, description=description, order=order)
 
+    def create_topic(self, db: Session, *, ctx: AccessContext, block_id: int, title: str, description: str | None, order: int):
+        return program_creation_service.create_topic(db, ctx=ctx, block_id=block_id, title=title, description=description, order=order)
+
     def publish_block(self, db: Session, *, ctx: AccessContext, block_id: int):
         with UnitOfWork(db):
             block = program_repository.get_block_by_id(db, block_id)

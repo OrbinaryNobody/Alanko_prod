@@ -32,7 +32,6 @@ class User(Base):
     last_name = Column(Text)
     middle_name = Column(Text, nullable=False)
     password_hash = Column(Text, nullable=False)
-    plain_password = Column(Text)
     created_at = Column(TIMESTAMP(timezone=True), server_default=func.now())
 
     roles = relationship("UserRole", back_populates="user")

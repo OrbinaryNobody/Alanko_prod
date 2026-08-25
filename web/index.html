@@ -2907,6 +2907,10 @@ MODAL STUDENT PROFILE
       const redirectHash = '#authToken=' + encodeURIComponent(data.access_token);
       if (payload.role === 'admin') {
         window.location.href = 'panel_for_al.html' + redirectHash;
+      } else if (payload.role === 'teacher') {
+        window.location.href = 'panel_for_taecher.html' + redirectHash;
+      } else if (payload.role === 'secretary') {
+        window.location.href = 'admin_attendance.html' + redirectHash;
       } else {
         window.location.href = 'student_page.html' + redirectHash;
       }
@@ -3056,16 +3060,19 @@ MODAL STUDENT PROFILE
     }
   }
 
-  async function loadStudentVideos(studentId) {
+  async function loadAchievementVideos() {
     studentVideos = [];
     currentVideoIndex = 0;
     updateVideoModal();
 
     try {
-      const response = await fetch(`${API_URL}/public/student/${studentId}/videos`);
-      if (!response.ok) throw new Error('Failed to load student videos');
+      const response = await fetch(`${API_URL}/public/achievements/videos`);
+      if (!response.ok) throw new Error('Failed to load achievement videos');
       const data = await response.json();
-      studentVideos = data.videos || [];
+      studentVideos = (data.items || []).map((item) => ({
+        video_url: item.video_url,
+        task_name: item.title || 'Достижение ученика',
+      }));
       currentVideoIndex = 0;
       updateVideoModal();
     } catch (error) {
@@ -3158,7 +3165,7 @@ MODAL STUDENT PROFILE
         document.getElementById('modalStat2').textContent = card.dataset.stat2;
         document.getElementById('modalStat3').textContent = card.dataset.stat3;
 
-        await loadStudentVideos(card.dataset.userId);
+        await loadAchievementVideos();
 
         modal.classList.add('active');
         document.body.classList.add('modal-open');

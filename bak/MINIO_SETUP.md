@@ -8,11 +8,15 @@
 
 ## Структура MinIO
 
-В MinIO создаются 4 отдельных bucket'а:
-- `alanko-videos` - видео от учителей
-- `alanko-certificates` - сертификаты достижений  
-- `alanko-student-photos` - фото студентов
-- `alanko-documents` - документы сайта
+В MinIO создаются 6 отдельных bucket'ов:
+- `alanko-news` - публичные изображения опубликованных новостей
+- `alanko-student-photos` - публичные фотографии студентов для главной страницы
+- `alanko-achievement-videos` - публичные видео достижений
+- `alanko-videos` - приватные видео ответов учеников на задания
+- `alanko-certificates` - приватные сертификаты и achievement-файлы
+- `alanko-documents` - приватные документы сайта
+
+Публичными являются только `alanko-news`, `alanko-student-photos` и `alanko-achievement-videos`. Нельзя делать `alanko-videos` публичным, потому что в нем находятся учебные видео учеников.
 
 ## Локальная разработка
 
@@ -58,10 +62,9 @@ ports:
 
 ## Как это работает
 
-1. Файл загружается в MinIO через backend
-2. FileService генерирует presigned URL с использованием внутреннего адреса (`minio:9000`)
-3. Адрес автоматически заменяется на публичный URL из переменной `MINIO_PUBLIC_URL`
-4. Клиент получает в ответе публичный URL, который работает в браузере
+1. Файл загружается в MinIO через backend.
+2. Для public bucket клиент получает URL через `MINIO_PUBLIC_URL`.
+3. Для private bucket backend выдает временный presigned URL.
 
 Пример ответа API:
 ```json
@@ -69,6 +72,22 @@ ports:
   "file": "http://localhost:9000/alanko-certificates/uuid-filename.pdf?token=..."
 }
 ```
+
+## Миграция старых achievement-видео
+
+Если achievement-видео раньше загружались в `alanko-videos`, сначала выполните проверку:
+
+```bash
+python scripts/migrate_achievement_videos.py --dry-run
+```
+
+После проверки выполните перенос:
+
+```bash
+python scripts/migrate_achievement_videos.py
+```
+
+После миграции проверьте, что achievement objects находятся в `alanko-achievement-videos`, а task videos остались в приватном `alanko-videos`.
 
 При развертывании на VPS эта ссылка будет:
 ```json

@@ -84,3 +84,20 @@ class PublicStudentVideosPayload:
             "full_name": self.full_name,
             "videos": [item.to_dict() for item in self.videos],
         }
+
+@dataclass(frozen=True)
+class PublicAchievementVideoItem:
+    id: int
+    title: str
+    description: str | None
+    video_url: str
+    event_date: str | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "id": self.id,
+            "title": self.title,
+            "description": self.description,
+            "video_url": self.video_url,
+            "event_date": self.event_date,
+        }

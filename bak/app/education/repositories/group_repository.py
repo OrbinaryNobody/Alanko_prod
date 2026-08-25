@@ -1,7 +1,9 @@
+from datetime import date
+
 from sqlalchemy.orm import Session
 
 from models.domains.auth import User
-from models.domains.education import Group, GroupEnrollment, GroupMember, GroupStudentTask, Program, ProgramBlock, ProgramTask
+from models.domains.education import Group, GroupEnrollment, GroupMember, GroupSchedule, GroupStudentTask, Program, ProgramBlock, ProgramTask
 
 
 class GroupRepository:
@@ -62,6 +64,37 @@ class GroupRepository:
             .order_by(GroupEnrollment.joined_at.desc())
             .all()
         )
+
+    def list_schedules(self, db: Session, *, group_id: int):
+        return db.query(GroupSchedule).filter(
+            GroupSchedule.group_id == group_id
+        ).order_by(GroupSchedule.weekday, GroupSchedule.start_time).all()
+
+    def list_active_schedules(self, db: Session, *, date_from: date, date_to: date):
+        return (
+            db.query(GroupSchedule)
+            .join(Group)
+            .filter(
+                GroupSchedule.status == "ACTIVE",
+                Group.status == "active",
+                GroupSchedule.valid_from <= date_to,
+                (GroupSchedule.valid_until.is_(None) | (GroupSchedule.valid_until >= date_from)),
+            )
+            .all()
+        )
+
+    def get_schedule(self, db: Session, *, schedule_id: int):
+        return db.query(GroupSchedule).filter(GroupSchedule.id == schedule_id).first()
+
+    def create_schedule(self, db: Session, schedule: GroupSchedule):
+        db.add(schedule)
+        db.flush()
+        db.refresh(schedule)
+        return schedule
+
+    def delete_schedule(self, db: Session, schedule: GroupSchedule):
+        db.delete(schedule)
+        db.flush()
 
 
 group_repository = GroupRepository()

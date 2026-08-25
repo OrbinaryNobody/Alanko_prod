@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:8000/api';
+const API_URL = window.ALANKO_API_URL || 'http://localhost:8000/api';
 const AUTH_TOKEN_KEY = 'authToken';
 
 function getTokenFromHash() {

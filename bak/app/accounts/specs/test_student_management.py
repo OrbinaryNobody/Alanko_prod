@@ -4,7 +4,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "app"))
 
 from accounts.services import auth_service as auth_service_module
-from schemas.auth import TeacherAddStudentSchema, StudentUpdateSchema
+from accounts.schemas.auth import TeacherAddStudentSchema, StudentUpdateSchema
 
 
 class FakeRoleQuery:

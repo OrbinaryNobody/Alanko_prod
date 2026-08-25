@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from models.domains.education import Program, ProgramBlock, ProgramTask
+from models.domains.education import Program, ProgramBlock, ProgramTask, ProgramTopic
 
 
 class ProgramRepository:
@@ -40,9 +40,17 @@ class ProgramRepository:
     def get_block_by_id(self, db: Session, block_id: int) -> ProgramBlock | None:
         return db.query(ProgramBlock).filter(ProgramBlock.id == block_id).first()
 
-    def create_task(self, db: Session, *, block_id: int, title: str, description: str | None, max_score: int, is_manual: bool) -> ProgramTask:
+    def create_topic(self, db: Session, *, block_id: int, title: str, description: str | None, order: int) -> ProgramTopic:
+        topic = ProgramTopic(block_id=block_id, title=title, description=description, order=order)
+        db.add(topic)
+        db.flush()
+        db.refresh(topic)
+        return topic
+
+    def create_task(self, db: Session, *, block_id: int, topic_id: int | None, title: str, description: str | None, max_score: int, is_manual: bool) -> ProgramTask:
         task = ProgramTask(
             block_id=block_id,
+            topic_id=topic_id,
             title=title,
             description=description,
             max_score=max_score,

@@ -1,6 +1,6 @@
 from datetime import date
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from sqlalchemy.orm import Session
 
@@ -12,7 +12,7 @@ from core.exceptions import DomainError
 from core.http import translate_domain_error
 from core.permissions import Permission, require_any_permission
 from db.database import get_db
-from schemas.consultations import ConsultationAttendanceUpdate, ConsultationDayCreate, ConsultationDayStatusUpdate, ConsultationInvitationCreate, ConsultationPaymentUpdate, ConsultationSlotCreate
+from consultations.schemas.consultations import ConsultationAttendanceUpdate, ConsultationDayCreate, ConsultationDayStatusUpdate, ConsultationInvitationCreate, ConsultationPaymentUpdate, ConsultationSlotCreate
 
 router = APIRouter(prefix="/consultations/admin", tags=["consultations-admin"])
 
@@ -75,10 +75,12 @@ def set_day_status(
 
 @router.get("/slots")
 def list_slots(
+    limit: int = Query(default=100, ge=1, le=200),
+    offset: int = Query(default=0, ge=0),
     ctx: AccessContext = Depends(require_any_permission(Permission.MANAGE_CONSULTATIONS, Permission.MANAGE_USERS)),
     db: Session = Depends(get_db),
 ):
-    slots = consultations_facade.list_slots(db)
+    slots = consultations_facade.list_slots(db, limit=limit, offset=offset)
     return {
         "items": [
             {

@@ -5,14 +5,32 @@ from assessment.policies.assessment_policy import AssessmentPolicy
 from assessment.repositories.assessment_repository import assessment_repository
 from core.access import AccessContext
 from core.exceptions import NotFoundError, PermissionDenied
+from models.domains.education import GroupEnrollment, GroupMember
 
 
 class AssessmentService:
+    def _can_view_student(self, db: Session, *, ctx: AccessContext, student_id: int) -> bool:
+        if ctx.is_admin or ctx.user_id == student_id or ctx.has_role("secretary"):
+            return True
+        return (
+            db.query(GroupEnrollment)
+            .join(GroupMember, GroupMember.group_id == GroupEnrollment.group_id)
+            .filter(
+                GroupEnrollment.student_id == student_id,
+                GroupEnrollment.status == "active",
+                GroupMember.user_id == ctx.user_id,
+            )
+            .first()
+            is not None
+        )
+
     def get_assessment_payload(self, db: Session, *, ctx: AccessContext, student_id: int, task_id: int):
         try:
             AssessmentPolicy.require_view_assessment(ctx)
         except PermissionError as exc:
             raise PermissionDenied("Access denied to assessment") from exc
+        if not self._can_view_student(db, ctx=ctx, student_id=student_id):
+            raise PermissionDenied("Access denied to this student's assessment")
 
         student = assessment_repository.get_student(db, student_id=student_id)
         if not student:
@@ -21,6 +39,12 @@ class AssessmentService:
         task = assessment_repository.get_task(db, task_id=task_id)
         if not task:
             raise NotFoundError("Task not found")
+        if ctx.user_id == student_id and not assessment_repository.get_current_student_task(
+            db,
+            student_id=student_id,
+            task_id=task_id,
+        ):
+            raise NotFoundError("Assessment is not assigned to this student")
 
         min_difficulty = max(1, task.difficulty - 1)
         max_difficulty = task.difficulty + 1

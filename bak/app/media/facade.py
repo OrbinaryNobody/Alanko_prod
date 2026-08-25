@@ -5,7 +5,7 @@ from media.services.media_service import media_service
 
 
 class MediaFacade:
-    async def upload_media(self, file: UploadFile, ctx: AccessContext | None = None):
+    async def upload_media(self, file: UploadFile, *, ctx: AccessContext):
         return await media_service.upload_media(file, ctx=ctx)
 
 

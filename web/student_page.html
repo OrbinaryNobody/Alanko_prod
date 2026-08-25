@@ -7,7 +7,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
 
   <style>
@@ -15,25 +15,35 @@
        0. ПЕРЕМЕННЫЕ И БАЗОВЫЕ СТИЛИ
        ============================================================ */
     :root {
-      --color-bg: #05060a;
-      --color-text: #ffffff;
-      --color-muted: rgba(255,255,255,0.6);
-      --overlay-gradient: linear-gradient(90deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.2) 100%);
+      --bg-dark: #05060a;
+      --card-bg: rgba(255, 255, 255, 0.025);
+      --card-border: rgba(255, 255, 255, 0.07);
       
       --pal-dark-green: #2C473E;
-      --pal-mid-green: #6A8E4E; 
+      --pal-mid-green: #6A8E4E;
       --pal-light-green: #B0D182;
-      
-      --font-primary: 'Inter', sans-serif;
+      --pal-off-white: #F4F1EA;
+
+      --text-main: #FFFFFF;
+      --text-muted: #8E95A5;
+      --pal-accent-red: #EF6C6C;
+
+      --overlay-gradient: linear-gradient(90deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.2) 100%);
+
+      --radius-xl: 32px;
+      --radius-lg: 20px;
+      --radius-md: 12px;
       --radius-pill: 999px;
+
+      --font-primary: 'Plus Jakarta Sans', sans-serif;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
       font-family: var(--font-primary);
-      background: var(--color-bg);
-      color: var(--color-text);
+      background: var(--bg-dark);
+      color: var(--text-main);
       overflow-x: hidden;
     }
 
@@ -48,18 +58,22 @@
       border-radius: var(--radius-pill);
       padding: 8px 16px;
       font-size: 0.75rem;
-      transition: 0.3s;
+      transition: all 0.3s ease;
       display: inline-flex;
       align-items: center;
       cursor: pointer;
-      font-weight: 500;
+      font-weight: 600;
       text-decoration: none;
       color: inherit;
+      background: rgba(255, 255, 255, 0.02);
     }
 
     .pill:hover {
-      background: var(--pal-mid-green);
-      border-color: var(--pal-mid-green);
+      background: var(--pal-light-green);
+      color: var(--bg-dark);
+      border-color: var(--pal-light-green);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(176, 209, 130, 0.3);
     }
 
     /* ============================================================
@@ -128,7 +142,7 @@
     
     .hero-sub {
       margin-top: 16px;
-      color: var(--color-muted);
+      color: var(--text-muted);
       font-size: 0.9rem;
       text-transform: uppercase;
       letter-spacing: 1px;
@@ -150,7 +164,7 @@
 
     .info-block p {
       font-size: 1rem;
-      color: var(--color-muted);
+      color: var(--text-muted);
       max-width: 450px;
       line-height: 1.6;
     }
@@ -159,8 +173,8 @@
        БЛОК №2: ДОСТИЖЕНИЯ + ЭФФЕКТ СВЕТЛЯЧКА
        ============================================================ */
     .achievements-section {
-      padding: 100px 0;
-      background: var(--color-bg);
+      padding: 60px 0;
+      background: transparent;
       position: relative;
     }
 
@@ -211,8 +225,11 @@
 
     .video-scroll-container::-webkit-scrollbar { height: 6px; }
     .video-scroll-container::-webkit-scrollbar-thumb {
-      background: var(--pal-mid-green);
+      background: rgba(176, 209, 130, 0.4);
       border-radius: 10px;
+    }
+    .video-scroll-container::-webkit-scrollbar-thumb:hover {
+      background: rgba(176, 209, 130, 0.8);
     }
 
     .video-card {
@@ -221,19 +238,31 @@
       display: flex;
       flex-direction: column;
       gap: 16px;
+      padding: 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      backdrop-filter: blur(12px);
+      transition: all 0.3s ease;
+    }
+
+    .video-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--pal-light-green);
+      background: rgba(255, 255, 255, 0.04);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.2);
     }
 
     .video-wrapper {
       width: 100%;
       aspect-ratio: 9 / 16;
       background: #111;
-      border-radius: 16px;
+      border-radius: var(--radius-md);
       overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.1);
     }
 
     .video-wrapper video { width: 100%; height: 100%; object-fit: cover; }
-    .video-title { font-size: 1rem; font-weight: 500; color: var(--color-muted); margin-bottom: 8px; }
+    .video-title { font-size: 1rem; font-weight: 500; color: var(--text-muted); margin-bottom: 8px; }
     .video-actions {
       display: flex;
       gap: 10px;
@@ -257,8 +286,8 @@
        БЛОК №3: НАГРАДЫ И РЕЗУЛЬТАТЫ
        ============================================================ */
     .awards-section {
-  padding: 100px 0;
-  background: #07080d;
+  padding: 60px 0;
+  background: transparent;
   position: relative;
   z-index: 1;
 }
@@ -291,14 +320,21 @@
   border-radius: 999px;
   background: rgba(255,255,255,0.04);
   color: #fff;
+  font-weight: 600;
   cursor: pointer;
-  transition: 0.2s ease;
+  transition: all 0.3s ease;
+}
+
+.achievement-tab:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.3);
 }
 
 .achievement-tab.active {
-  background: var(--pal-mid-green);
-  color: #07080d;
-  border-color: var(--pal-mid-green);
+  background: var(--pal-light-green);
+  color: var(--bg-dark);
+  border-color: var(--pal-light-green);
+  box-shadow: 0 4px 12px rgba(176, 209, 130, 0.25);
 }
 
 .awards-grid-hidden {
@@ -306,19 +342,22 @@
 }
 
 .award-card {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(12px);
   padding: 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  transition: 0.3s;
+  transition: all 0.3s ease;
 }
 
 .award-card:hover {
-  border-color: var(--pal-mid-green);
+  border-color: var(--pal-light-green);
   transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.2);
 }
 
 .award-content h3 {
@@ -336,7 +375,7 @@
 
 .award-content p {
   font-size: 0.85rem;
-  color: var(--color-muted);
+  color: var(--text-muted);
 }
 
 .download-btn {
@@ -356,8 +395,8 @@
        БЛОК №4: РЕЙТИНГ УЧЕНИКА
        ============================================================ */
     .rating-section {
-  padding: 100px 0;
-  background: var(--color-bg);
+  padding: 60px 0;
+  background: transparent;
   position: relative;
   z-index: 1;
 }
@@ -379,18 +418,27 @@
 
 .rating-card {
   flex: 1;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(12px);
   padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  transition: all 0.3s ease;
+}
+
+.rating-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--pal-light-green);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.2);
 }
 
 .rating-card span {
   font-size: 0.85rem;
-  color: var(--color-muted);
+  color: var(--text-muted);
 }
 
 .rating-card strong {
@@ -409,9 +457,17 @@
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  background: rgba(255,255,255,0.02);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 12px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+}
+
+.history-row:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateX(4px);
 }
 
 .history-info h4 {
@@ -421,7 +477,7 @@
 
 .history-info p {
   font-size: 0.85rem;
-  color: var(--color-muted);
+  color: var(--text-muted);
 }
 
 .history-total {
@@ -447,8 +503,8 @@
 ============================================================ */
 
 .leaderboard-section {
-  padding: 100px 0;
-  background: var(--color-bg);
+  padding: 60px 0;
+  background: transparent;
 }
 
 .leaderboard-header {
@@ -472,18 +528,21 @@
 }
 
 .leaderboard-row {
-  background: rgba(255, 255, 255, 0.03);
-  transition: transform 0.3s ease, background 0.3s ease;
-  border-radius: 15px;
+  background: var(--card-bg);
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+  border-radius: var(--radius-lg);
 }
 
 .leaderboard-row:hover {
-  background: rgba(255, 255, 255, 0.07);
-  transform: scale(1.01);
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
 }
 
 .leaderboard-row.current-user-row {
-  background: rgba(84, 215, 136, 0.14);
+  background: rgba(176, 209, 130, 0.1);
+  box-shadow: 0 0 0 1px var(--pal-light-green) inset;
 }
 
 .leaderboard-row td {
@@ -589,7 +648,7 @@
 .exams-section {
   position: relative;
   padding: 140px 0 120px;
-  background: var(--color-bg);
+  background: transparent;
   overflow: hidden;
 }
 
@@ -604,7 +663,7 @@
 }
 
 .exams-header p {
-  color: var(--color-muted);
+  color: var(--text-muted);
 }
 
 /* сетка */
@@ -617,16 +676,19 @@
 /* карточка */
 .exam-card {
   text-align: center;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(12px);
   padding: 30px 20px;
-  transition: 0.3s;
+  transition: all 0.3s ease;
 }
 
 .exam-card:hover {
   transform: translateY(-5px);
-  border-color: var(--pal-mid-green);
+  border-color: var(--pal-light-green);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.2);
 }
 
 /* круг */
@@ -709,18 +771,25 @@
 .category-modal-content h3 {
   margin-bottom: 16px;
   font-size: 1.4rem;
-  color: var(--color-text);
+  color: var(--text-main);
 }
 
 .category-modal-close {
-  background: none;
+  background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255,255,255,0.15);
-  color: var(--color-text);
+  color: var(--text-main);
   padding: 10px 16px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   font-size: 0.95rem;
   margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.category-modal-close:hover {
+  background: rgba(239, 108, 108, 0.1);
+  border-color: rgba(239, 108, 108, 0.3);
+  color: var(--pal-accent-red);
 }
 
 .category-task-list {
@@ -729,10 +798,17 @@
 }
 
 .category-task-item {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 18px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
   padding: 18px;
+  transition: all 0.3s ease;
+}
+
+.category-task-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
 }
 
 .category-task-item h4 {
@@ -741,7 +817,7 @@
 }
 
 .category-task-item p {
-  color: var(--color-muted);
+  color: var(--text-muted);
   margin-bottom: 8px;
 }
 
@@ -778,9 +854,10 @@
     grid-template-columns: 1fr;
   }
 }
-.global-glow {
-  display: none !important;
-}
+.glow-1 { position: absolute; top: 10%; left: 0%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(106, 142, 78, 0.15) 0%, rgba(5, 6, 10, 0) 70%); pointer-events: none; z-index: 0; }
+.glow-2 { position: absolute; top: 40%; right: 0%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(176, 209, 130, 0.1) 0%, rgba(5, 6, 10, 0) 70%); pointer-events: none; z-index: 0; }
+.glow-3 { position: absolute; bottom: 10%; left: 10%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(106, 142, 78, 0.12) 0%, rgba(5, 6, 10, 0) 70%); pointer-events: none; z-index: 0; }
+
 .awards-section,
 .rating-section,
 .leaderboard-section,
@@ -788,11 +865,145 @@
   position: relative;
   z-index: 1;
 }
+  
+    .section-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 800px;
+      margin: 40px auto;
+      opacity: 0.6;
+      position: relative;
+      z-index: 2;
+    }
+    .section-divider .line {
+      flex: 1;
+      height: 1px;
+    }
+    .section-divider .line.left {
+      background: linear-gradient(90deg, transparent, rgba(176,209,130,0.4));
+    }
+    .section-divider .line.right {
+      background: linear-gradient(90deg, rgba(176,209,130,0.4), transparent);
+    }
+    .section-divider .diamond {
+      width: 8px;
+      height: 8px;
+      background: var(--pal-light-green);
+      transform: rotate(45deg);
+      margin: 0 24px;
+      box-shadow: 0 0 16px 2px rgba(176,209,130,0.8);
+      border-radius: 1px;
+    }
+
+  
+    /* ============================================================
+       БЛОК: МОИ ЗАНЯТИЯ
+       ============================================================ */
+    .my-classes-section {
+      padding: 60px 0;
+      position: relative;
+      z-index: 1;
+    }
+    .classes-header {
+      margin-bottom: 40px;
+    }
+    .classes-header h2 {
+      font-size: 2rem;
+      font-weight: 700;
+    }
+    .classes-header p {
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+    .classes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+    .class-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 24px;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .class-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(176, 209, 130, 0.4);
+      box-shadow: 0 10px 30px rgba(176, 209, 130, 0.05);
+    }
+    .class-date {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--pal-light-green);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .class-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    .class-coach {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    .class-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    .status-badge {
+      font-size: 0.8rem;
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+    .status-badge.planned {
+      background: rgba(176, 209, 130, 0.1);
+      color: var(--pal-light-green);
+    }
+    .status-badge.cancelled {
+      background: rgba(255, 100, 100, 0.1);
+      color: #ff6b6b;
+    }
+    .cancel-btn {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: var(--text-muted);
+      padding: 6px 16px;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .cancel-btn:hover {
+      background: rgba(255, 100, 100, 0.1) !important;
+      border-color: #ff6b6b !important;
+      color: #ff6b6b !important;
+    }
+
+  
+    @keyframes bell-ring {
+      0%, 100% { transform: rotate(0deg); }
+      10% { transform: rotate(15deg); }
+      20% { transform: rotate(-10deg); }
+      30% { transform: rotate(5deg); }
+      40% { transform: rotate(-5deg); }
+      50% { transform: rotate(0deg); }
+    }
   </style>
 </head>
 <body>
 
-  <header>
+  <header style="position: relative; z-index: 10;">
     <div class="container header-content">
       <div class="logo-text">Studio Alanko</div>
       <nav>
@@ -805,7 +1016,7 @@
     </div>
   </header>
 
-  <main>
+  <main style="position: relative; z-index: 10;">
     <!-- ГЛАВНЫЙ ЭКРАН -->
     <section class="hero">
       <div class="container">
@@ -821,9 +1032,14 @@
         </div>
       </div>
     </section>
+  <div class="section-divider">
+    <div class="line left"></div>
+    <div class="diamond"></div>
+    <div class="line right"></div>
+  </div>
 
-    <!-- БЛОК ДОСТИЖЕНИЙ -->
-    <section class="achievements-section">
+<!-- БЛОК ДОСТИЖЕНИЙ -->
+<section class="achievements-section">
       <div class="glowworm-track">
         <div class="glowworm"></div>
       </div>
@@ -857,7 +1073,12 @@
         </div>
       </div>
     </section>
-    <section class="awards-section">
+  <div class="section-divider">
+    <div class="line left"></div>
+    <div class="diamond"></div>
+    <div class="line right"></div>
+  </div>
+<section class="awards-section">
       <div class="container">
         <div class="awards-header">
           <h2>Награды и результаты</h2>
@@ -889,6 +1110,11 @@
         </div>
       </div>
     </section>
+  <div class="section-divider">
+    <div class="line left"></div>
+    <div class="diamond"></div>
+    <div class="line right"></div>
+  </div>
 <section class="rating-section">
   <div class="container">
 
@@ -926,6 +1152,11 @@
 
   </div>
 </section>
+  <div class="section-divider">
+    <div class="line left"></div>
+    <div class="diamond"></div>
+    <div class="line right"></div>
+  </div>
 <section class="leaderboard-section">
   <div class="container">
     
@@ -957,6 +1188,11 @@
 
   </div>
 </section>
+  <div class="section-divider">
+    <div class="line left"></div>
+    <div class="diamond"></div>
+    <div class="line right"></div>
+  </div>
 <section class="exams-section">
   <div class="container">
     <div class="exams-header">
@@ -978,9 +1214,107 @@
     </div>
   </div>
 </section>
+  
+  <div class="section-divider">
+    <div class="line left"></div>
+    <div class="diamond"></div>
+    <div class="line right"></div>
+  </div>
+
+  <section class="my-classes-section">
+    <div class="container">
+      <div class="classes-header">
+        <h2>Мои занятия</h2>
+        <p>Ваши предстоящие индивидуальные тренировки</p>
+      </div>
+      
+      <div class="classes-grid">
+
+        <!-- Блок-приглашение на индивидуальное занятие -->
+        <div class="class-card offer-card" style="border: 2px dashed var(--pal-light-green); background: linear-gradient(135deg, rgba(176,209,130,0.15) 0%, rgba(5,6,10,0.8) 100%); position: relative; overflow: hidden; box-shadow: 0 8px 32px rgba(176,209,130,0.15);">
+          <!-- Декоративный бейдж/иконка -->
+          <div style="position: absolute; top: -15px; right: -15px; font-size: 7rem; opacity: 0.07; color: var(--pal-light-green); pointer-events: none;">
+            <iconify-icon icon="solar:star-magic-bold-duotone"></iconify-icon>
+          </div>
+          
+          <div class="class-date" style="color: var(--pal-light-green); font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 6px; border-bottom: none; padding-bottom: 0;">
+            <iconify-icon icon="solar:bell-bing-bold-duotone" style="font-size: 1.4rem; animation: bell-ring 3s infinite;"></iconify-icon> 
+            ПЕРСОНАЛЬНОЕ ПРЕДЛОЖЕНИЕ
+          </div>
+          
+          <div class="class-title" style="font-size: 1.3rem; margin-top: 16px; font-weight: 600;">Индивидуальное занятие</div>
+          
+          <div style="display: flex; flex-wrap: wrap; gap: 16px; margin-top: 16px; background: rgba(0,0,0,0.3); padding: 12px 16px; border-radius: 8px; border: 1px solid rgba(176,209,130,0.2);">
+            <div style="display: flex; align-items: center; gap: 8px; color: var(--pal-off-white); font-size: 0.95rem; font-weight: 500;">
+              <iconify-icon icon="solar:calendar-date-bold-duotone" style="color: var(--pal-light-green); font-size: 1.2rem;"></iconify-icon>
+              05 Сентября 2026
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; color: var(--pal-off-white); font-size: 0.95rem; font-weight: 500;">
+              <iconify-icon icon="solar:clock-circle-bold-duotone" style="color: var(--pal-light-green); font-size: 1.2rem;"></iconify-icon>
+              15:00 - 16:30
+            </div>
+          </div>
+          
+          <div class="class-coach" style="margin-top: 16px; margin-bottom: 20px; line-height: 1.5; color: var(--pal-off-white); font-size: 0.95rem;">
+            Преподаватель приглашает вас на индивидуальную консультацию.
+          </div>
+          
+          <div class="class-footer" style="display: flex; gap: 12px; margin-top: auto; border-top: 1px dashed rgba(176,209,130,0.3); padding-top: 16px;">
+            <button class="pill" style="background: var(--pal-light-green); color: var(--pal-bg-dark); font-weight: 600; border: none; flex: 1; padding: 12px 16px; display: flex; justify-content: center; align-items: center; gap: 8px; cursor: pointer; transition: 0.2s; text-transform: uppercase; font-size: 0.85rem;" onclick="this.closest('.class-card').style.display='none'; alert('Вы успешно согласились на индивидуальное занятие. Менеджер свяжется с вами для уточнения деталей оплаты и расписания.');">
+              <iconify-icon icon="solar:check-circle-bold" style="font-size: 1.2rem;"></iconify-icon> Согласиться
+            </button>
+            <button class="pill cancel-btn" style="flex: 1; padding: 12px 16px; display: flex; justify-content: center; align-items: center; gap: 8px; cursor: pointer; text-transform: uppercase; font-size: 0.85rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);" onclick="this.closest('.class-card').style.display='none';">
+              <iconify-icon icon="solar:close-circle-bold" style="font-size: 1.2rem;"></iconify-icon> Отказаться
+            </button>
+          </div>
+        </div>
+
+        <!-- Карточка 1 -->
+        <div class="class-card">
+          <div class="class-date">
+            28 Авг, 18:00
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+          </div>
+          <div class="class-title">Индивидуальная тренировка</div>
+          <div class="class-coach">Тренер: Анна Смирнова</div>
+          <div class="class-footer">
+            <span class="status-badge planned">Запланировано</span>
+            <button class="pill cancel-btn" onclick="cancelClass(this)">Отменить</button>
+          </div>
+        </div>
+
+        <!-- Карточка 2 -->
+        <div class="class-card">
+          <div class="class-date">
+            02 Сен, 16:30
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+          </div>
+          <div class="class-title">Хореография (соло)</div>
+          <div class="class-coach">Тренер: Мария Котова</div>
+          <div class="class-footer">
+            <span class="status-badge planned">Запланировано</span>
+            <button class="pill cancel-btn" onclick="cancelClass(this)">Отменить</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   </main>
 
-  <div class="global-glow"></div>
+  <div class="glow-1"></div>
+  <div class="glow-2"></div>
+  <div class="glow-3"></div>
 
   <div class="category-modal" id="categoryModal">
     <div class="category-modal-content">
@@ -992,7 +1326,7 @@
 
   <script src="js/auth.js"></script>
   <script>
-    requireAuth();
+    // requireAuth();
 
     const studentWelcome = document.getElementById('studentWelcome');
     const studentIntroText = document.getElementById('studentIntroText');
@@ -1432,37 +1766,136 @@
       }
     }
 
-    loadStudentDashboard();
+    // loadStudentDashboard();
   </script>
 
-  <script>
-    // Скрипт для запуска светлячка при скролле
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('animate-glow');
-          observer.unobserve(entry.target); // Запуск только один раз
-        }
-      });
-    }, { threshold: 0.15 });
-
-    observer.observe(document.querySelector('.achievements-section'));
-
-    const examSection = document.querySelector('.exams-section');
-
-const examObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      examSection.classList.add('visible');
-      animateExamCards();
-      examObserver.unobserve(entry.target);
+<canvas id="cinematicDust"></canvas>
+<style>
+#cinematicDust {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+}
+</style>
+<script>
+(function() {
+    const canvas = document.getElementById('cinematicDust');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    
+    let particles = [];
+    const particleCount = 80;
+    
+    let mouseX = 0;
+    let mouseY = 0;
+    let targetMouseX = 0;
+    let targetMouseY = 0;
+    
+    function resize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
     }
-  });
-}, { threshold: 0.3 });
+    
+    function initParticles() {
+        particles = [];
+        for (let i = 0; i < particleCount; i++) {
+            particles.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                radius: Math.random() * 3.5 + 1.0,
+                baseX: Math.random() * width,
+                baseY: Math.random() * height,
+                vx: (Math.random() - 0.5) * 0.2,
+                vy: -Math.random() * 0.3 - 0.1, // Float up slowly
+                blur: Math.random() * 3, // Depth of field
+                alpha: Math.random() * 0.8 + 0.4,
+                parallaxFactor: Math.random() * 0.05 + 0.01
+            });
+        }
+    }
+    
+    document.addEventListener('mousemove', (e) => {
+        targetMouseX = e.clientX - width / 2;
+        targetMouseY = e.clientY - height / 2;
+    });
+    
+    function animate() {
+        ctx.clearRect(0, 0, width, height);
+        
+        // Smooth mouse movement for parallax
+        mouseX += (targetMouseX - mouseX) * 0.05;
+        mouseY += (targetMouseY - mouseY) * 0.05;
+        
+        particles.forEach(p => {
+            // Move up
+            p.baseY += p.vy;
+            p.baseX += p.vx;
+            
+            // Wrap around
+            if (p.baseY < -50) p.baseY = height + 50;
+            if (p.baseX < -50) p.baseX = width + 50;
+            if (p.baseX > width + 50) p.baseX = -50;
+            
+            // Parallax offset
+            p.x = p.baseX - mouseX * p.parallaxFactor;
+            p.y = p.baseY - mouseY * p.parallaxFactor;
+            
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            
+            // Draw with blur
+            ctx.shadowBlur = p.blur * 5;
+            ctx.shadowColor = 'rgba(176, 209, 130, ' + p.alpha + ')';
+            ctx.fillStyle = 'rgba(176, 209, 130, ' + p.alpha + ')';
+            ctx.fill();
+            
+            // Reset shadow for next element to avoid compounding
+            ctx.shadowBlur = 0; 
+        });
+        
+        requestAnimationFrame(animate);
+    }
+    
+    window.addEventListener('resize', () => {
+        resize();
+    });
+    
+    resize();
+    initParticles();
+    animate();
+})();
+</script>
 
-examObserver.observe(examSection);
 
+<script>
+  function cancelClass(btn) {
+    if (confirm('Вы уверены, что хотите отменить эту запись на занятие?')) {
+      const card = btn.closest('.class-card');
+      const status = card.querySelector('.status-badge');
+      
+      // Анимация изменения статуса
+      status.style.opacity = '0';
+      
+      setTimeout(() => {
+        status.className = 'status-badge cancelled';
+        status.textContent = 'Отменено';
+        status.style.opacity = '1';
+        
+        btn.style.opacity = '0';
+        setTimeout(() => btn.remove(), 300);
+        
+        card.style.borderColor = 'rgba(255, 100, 100, 0.2)';
+        card.style.opacity = '0.7';
+      }, 300);
+    }
+  }
+</script>
 
-  </script>
 </body>
 </html>

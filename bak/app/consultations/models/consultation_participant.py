@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from enum import Enum
 
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.sql import func
 
 from models.base import Base
@@ -32,7 +32,7 @@ class ConsultationPaymentStatus(str, Enum):
 class ConsultationParticipant(Base):
     __tablename__ = "consultation_participants"
     __table_args__ = (
-        # Unique by slot + student; cancellation is status change, not record delete.
+        UniqueConstraint("slot_id", "student_id", name="uq_consultation_participant_slot_student"),
     )
 
     id = Column(Integer, primary_key=True, index=True)

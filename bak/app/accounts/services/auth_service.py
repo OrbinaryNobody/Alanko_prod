@@ -8,7 +8,8 @@ from core.permissions import Permission
 from core.security import create_access_token, hash_password, verify_password
 from models.domains.auth import Role, UserRole
 from models.domains.student import StudentProfile
-from repositories.user_repository import user_repository
+from models.domains.attendance import ParentGuardian, StudentParent
+from accounts.repositories.user_repository import user_repository
 from shared.unit_of_work import UnitOfWork
 
 
@@ -33,7 +34,6 @@ class AuthService:
             user = user_repository.create(db, {
                 "email": data.email,
                 "password_hash": hashed_password,
-                "plain_password": data.password,
                 "first_name": data.first_name,
                 "last_name": data.last_name,
                 "middle_name": data.middle_name,
@@ -46,7 +46,14 @@ class AuthService:
 
             return user
 
-    def add_student_by_teacher(self, db: Session, *, data, image_url: str):
+    def add_student_by_teacher(
+        self,
+        db: Session,
+        *,
+        data,
+        image_url: str,
+        parent: dict | None = None,
+    ):
         existing_user = user_repository.get_by_email(db, data.email)
         if existing_user:
             raise ConflictError("Email already registered")
@@ -62,7 +69,6 @@ class AuthService:
             user = user_repository.create(db, {
                 "email": data.email,
                 "password_hash": hashed_password,
-                "plain_password": generated_password,
                 "first_name": data.first_name,
                 "last_name": data.last_name,
                 "middle_name": data.middle_name,
@@ -70,8 +76,13 @@ class AuthService:
 
             db.add(UserRole(user_id=user.id, role_id=role.id))
             db.add(StudentProfile(user_id=user.id, image_url=image_url, birth_year=getattr(data, "birth_year", None)))
+            if parent:
+                parent_record = ParentGuardian(**parent)
+                db.add(parent_record)
+                db.flush()
+                db.add(StudentParent(student_id=user.id, parent_id=parent_record.id, is_primary=1))
 
-            return user, generated_password
+            return user
 
     def is_student(self, db: Session, *, user_id: int) -> bool:
         user = user_repository.get_by_id(db, user_id)
@@ -164,6 +175,8 @@ class AuthService:
                 Permission.GRADE_TASKS,
                 Permission.CREATE_MANUAL_TASKS,
                 Permission.VIEW_STUDENTS,
+                Permission.VIEW_ATTENDANCE,
+                Permission.MANAGE_ATTENDANCE,
                 Permission.MANAGE_ENROLLMENTS,
                 Permission.VIEW_ACHIEVEMENTS,
                 Permission.MANAGE_USERS,
@@ -189,6 +202,8 @@ class AuthService:
                 Permission.GRADE_TASKS,
                 Permission.CREATE_MANUAL_TASKS,
                 Permission.VIEW_STUDENTS,
+                Permission.VIEW_ATTENDANCE,
+                Permission.MANAGE_ATTENDANCE,
                 Permission.MANAGE_ENROLLMENTS,
                 Permission.VIEW_ACHIEVEMENTS,
                 Permission.VIEW_CONSULTATIONS,
@@ -203,6 +218,12 @@ class AuthService:
                 Permission.VIEW_ASSESSMENT,
                 Permission.VIEW_CONSULTATIONS,
                 Permission.BOOK_CONSULTATIONS,
+            ]
+
+        if role == "secretary":
+            return [
+                Permission.VIEW_ATTENDANCE,
+                Permission.MANAGE_ATTENDANCE,
             ]
 
         return []

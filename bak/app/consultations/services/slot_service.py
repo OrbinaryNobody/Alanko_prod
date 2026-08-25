@@ -1,11 +1,11 @@
-from datetime import datetime
+from datetime import date, datetime
 
 from sqlalchemy.orm import Session
 
 from consultations.models.consultation_slot import ConsultationSlot
 from consultations.repositories.slot_repository import consultation_slot_repository
 from core.config import settings
-from core.exceptions import NotFoundError
+from core.exceptions import NotFoundError, ValidationError
 from shared.unit_of_work import UnitOfWork
 
 
@@ -25,9 +25,9 @@ class SlotService:
         created_by: int | None = None,
     ):
         if start_at >= end_at:
-            raise ValueError("slot start time must be before end time")
+            raise ValidationError("slot start time must be before end time")
         if capacity < 1 or capacity > settings.consultation_max_capacity:
-            raise ValueError(f"slot capacity must be between 1 and {settings.consultation_max_capacity}")
+            raise ValidationError(f"slot capacity must be between 1 and {settings.consultation_max_capacity}")
 
         if not settings.consultations_allow_overlapping_slots:
             for existing in consultation_slot_repository.list_for_day(db, day_id=day_id):
@@ -35,7 +35,7 @@ class SlotService:
                     continue
                 overlap = existing.start_at < end_at and existing.end_at > start_at
                 if overlap:
-                    raise ValueError("slot overlaps with an existing active consultation")
+                    raise ValidationError("slot overlaps with an existing active consultation")
 
         slot = ConsultationSlot(
             day_id=day_id,
@@ -54,8 +54,8 @@ class SlotService:
     def get_slot(self, db: Session, *, slot_id: int):
         return consultation_slot_repository.get_by_id(db, slot_id=slot_id)
     
-    def list_slots(self, db: Session):
-        return consultation_slot_repository.get_all(db)
+    def list_slots(self, db: Session, *, date_from: date | None = None, date_to: date | None = None, limit: int = 100, offset: int = 0):
+        return consultation_slot_repository.get_all(db, date_from=date_from, date_to=date_to, limit=limit, offset=offset)
 
     def get_price_quote(self, db: Session, *, slot_id: int) -> dict:
         slot = consultation_slot_repository.get_by_id(db, slot_id=slot_id)
@@ -71,7 +71,7 @@ class SlotService:
     def cancel_slot(self, db: Session, *, slot_id: int):
         slot = consultation_slot_repository.get_by_id(db, slot_id=slot_id)
         if not slot:
-            raise ValueError("consultation slot not found")
+            raise NotFoundError("consultation slot not found")
         slot.status = "CANCELLED"
         db.flush()
         return slot

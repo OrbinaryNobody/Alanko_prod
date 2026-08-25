@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 
 from consultations.models.consultation_participant import ConsultationParticipant, ConsultationParticipantSource, ConsultationBookingStatus
 from consultations.models.consultation_slot import ConsultationAccessMode, ConsultationSlotStatus
@@ -66,7 +67,10 @@ class BookingService:
                 source=ConsultationParticipantSource.SELF.value,
                 booking_status=ConsultationBookingStatus.CONFIRMED.value,
             )
-            return consultation_participant_repository.create(db, participant=participant)
+            try:
+                return consultation_participant_repository.create(db, participant=participant)
+            except IntegrityError as exc:
+                raise ConflictError("Student already booked this slot") from exc
 
     def cancel_booking(self, db: Session, *, student_id: int, participant_id: int):
         participant = consultation_participant_repository.get_by_id(db, participant_id=participant_id)

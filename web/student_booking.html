@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Запись на занятие — Studio Alanko</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+
+  <style>
+    :root {
+      --bg-dark: #05060a;
+      --card-bg: rgba(255, 255, 255, 0.025);
+      --card-border: rgba(255, 255, 255, 0.07);
+      
+      --pal-dark-green: #2C473E;
+      --pal-mid-green: #6A8E4E;
+      --pal-light-green: #B0D182;
+      --pal-off-white: #F4F1EA;
+
+      --text-main: #FFFFFF;
+      --text-muted: #8E95A5;
+      --pal-accent-red: #EF6C6C;
+
+      --radius-xl: 32px;
+      --radius-lg: 20px;
+      --radius-md: 12px;
+      --radius-pill: 999px;
+
+      --font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Фоновые градиентные свечения */
+    .glow-1 { position: absolute; top: -100px; left: 10%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(106, 142, 78, 0.15) 0%, rgba(5, 6, 10, 0) 70%); pointer-events: none; z-index: -1; }
+    .glow-2 { position: absolute; top: 200px; right: 5%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(176, 209, 130, 0.1) 0%, rgba(5, 6, 10, 0) 70%); pointer-events: none; z-index: -1; }
+
+    .container { max-width: 1400px; width: 100%; margin: 0 auto; padding: 0 32px; }
+
+    /* ================= HEADER ================= */
+    header { padding: 24px 0; border-bottom: 1px solid var(--card-border); background: rgba(5, 6, 10, 0.6); backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 100;}
+    .header-inner { display: flex; align-items: center; justify-content: space-between; }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 1.25rem; letter-spacing: 0.05em; text-decoration: none; color: inherit;}
+    .brand-dot { width: 10px; height: 10px; background: var(--pal-light-green); border-radius: 50%; box-shadow: 0 0 12px var(--pal-light-green); }
+    .user-profile { display: flex; align-items: center; gap: 12px; background: var(--card-bg); border: 1px solid var(--card-border); padding: 6px 16px 6px 8px; border-radius: var(--radius-pill); }
+    .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--pal-mid-green); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; }
+    .user-info { font-size: 0.85rem; font-weight: 600; }
+
+    /* ================= MAIN ================= */
+    main { padding: 48px 0; flex: 1; }
+
+    .btn { padding: 14px 28px; border-radius: var(--radius-pill); font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.25s ease; display: inline-flex; align-items: center; gap: 8px; border: none; }
+    .btn-primary { background: var(--pal-light-green); color: #05060a; }
+    .btn-primary:hover { background: #c2e396; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(176, 209, 130, 0.25); }
+    .btn-secondary { background: rgba(255, 255, 255, 0.05); color: var(--text-main); border: 1px solid var(--card-border); }
+    .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-2px); }
+    .btn-icon { background: transparent; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; transition: color 0.2s ease; }
+    .btn-icon:hover { color: var(--pal-light-green); }
+
+    .custom-input { width: 100%; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 12px 16px; color: var(--text-main); font-family: inherit; font-size: 0.95rem; outline: none; transition: all 0.2s; }
+    .custom-input:focus { border-color: var(--pal-light-green); background: rgba(255, 255, 255, 0.07); }
+    select.custom-input { appearance: none; -webkit-appearance: none; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="%238E95A5" d="M12 16L6 10H18L12 16Z"/></svg>'); background-repeat: no-repeat; background-position: right 16px center; padding-right: 40px; cursor: pointer; }
+    select.custom-input:focus { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="%23B0D182" d="M12 16L6 10H18L12 16Z"/></svg>'); }
+    select.custom-input option { background-color: var(--bg-dark); color: var(--text-main); padding: 12px; }
+    .form-group { margin-bottom: 20px; }
+    .form-label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; }
+
+    /* ================= BOOKING SPECIFIC ================= */
+    .booking-header {
+      margin-bottom: 40px;
+    }
+    .hero-title { font-size: 2.5rem; font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 12px; }
+    .hero-subtitle { color: var(--text-muted); font-size: 1rem; line-height: 1.6; max-width: 600px; }
+
+    .booking-toolbar {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;
+      background: var(--card-bg); border: 1px solid var(--card-border); padding: 20px 24px; border-radius: var(--radius-lg); backdrop-filter: blur(12px);
+    }
+    .teacher-selector { display: flex; gap: 16px; align-items: center; }
+    .teacher-avatar-display { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 1px solid var(--card-border); }
+
+    .month-control { background: rgba(0,0,0,0.2); border: 1px solid var(--card-border); padding: 8px 16px; border-radius: var(--radius-pill); display: flex; align-items: center; gap: 16px; }
+    .month-control span { font-weight: 700; font-size: 0.95rem; min-width: 150px; text-align: center; }
+
+    /* ================= WEEKLY CALENDAR ================= */
+    .weekly-calendar {
+      background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-xl); backdrop-filter: blur(12px); overflow: hidden; display: flex; flex-direction: column;
+    }
+    .calendar-header-row { display: grid; grid-template-columns: 60px repeat(7, 1fr); border-bottom: 1px solid var(--card-border); background: rgba(0, 0, 0, 0.2); }
+    .calendar-header-cell { padding: 16px 8px; text-align: center; border-left: 1px solid rgba(255, 255, 255, 0.03); transition: background 0.2s ease; }
+    .calendar-header-cell.active-day { background: rgba(176, 209, 130, 0.05); border-bottom: 2px solid var(--pal-light-green); }
+    .day-name { font-size: 0.8rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+    .day-date { font-size: 1.5rem; font-weight: 800; color: var(--text-main); }
+    .active-day .day-date, .active-day .day-name { color: var(--pal-light-green); }
+    .calendar-header-cell.blocked { opacity: 0.4; }
+
+    .calendar-body-grid { display: grid; grid-template-columns: 60px repeat(7, 1fr); height: 600px; overflow-y: auto; position: relative; }
+    .calendar-body-grid::-webkit-scrollbar { width: 6px; }
+    .calendar-body-grid::-webkit-scrollbar-track { background: transparent; }
+    .calendar-body-grid::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+    
+    .time-scale { display: flex; flex-direction: column; border-right: 1px solid var(--card-border); background: rgba(0, 0, 0, 0.2); }
+    .time-label { height: 60px; font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-align: right; padding-right: 12px; position: relative; }
+    .time-label span { position: relative; top: -8px; }
+
+    .day-grid-col { border-right: 1px solid rgba(255, 255, 255, 0.03); position: relative; background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px); background-size: 100% 60px; transition: background 0.2s ease; }
+    .day-grid-col:hover { background-color: rgba(255, 255, 255, 0.015); }
+    .day-grid-col:last-child { border-right: none; }
+    .day-grid-col.blocked { background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px), repeating-linear-gradient(-45deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3) 10px, rgba(255, 255, 255, 0.01) 10px, rgba(255, 255, 255, 0.01) 20px); background-color: rgba(5, 6, 10, 0.5); }
+
+    /* Booking Slots */
+    .available-slot {
+      position: absolute; left: 4px; right: 4px;
+      background: rgba(176, 209, 130, 0.1); border: 1px dashed var(--pal-light-green); border-radius: 6px;
+      cursor: pointer; transition: all 0.2s ease;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      color: var(--pal-light-green); z-index: 10;
+    }
+    .available-slot:hover {
+      background: rgba(176, 209, 130, 0.25); border-style: solid;
+      transform: translateY(-2px); box-shadow: 0 4px 12px rgba(176, 209, 130, 0.2); z-index: 11;
+    }
+    .available-slot .time-text { font-size: 0.8rem; font-weight: 700; margin-bottom: 2px; }
+    .available-slot .action-text { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; display: none; font-weight: 800; align-items: center; gap: 4px; }
+    .available-slot:hover .action-text { display: flex; }
+    .available-slot:hover .time-text { display: none; }
+
+    .booked-slot {
+      position: absolute; left: 4px; right: 4px;
+      background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 6px;
+      cursor: not-allowed; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      color: var(--text-muted); z-index: 5;
+    }
+    .booked-slot span { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;}
+
+    /* ================= MODALS ================= */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(5, 6, 10, 0.85); backdrop-filter: blur(12px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 24px; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+    .modal-overlay.active { opacity: 1; visibility: visible; }
+    .modal-container { width: 100%; max-width: 500px; background: var(--bg-dark); border: 1px solid var(--card-border); border-radius: var(--radius-xl); display: flex; flex-direction: column; overflow: hidden; transform: translateY(20px); transition: transform 0.3s ease; box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4); }
+    .modal-overlay.active .modal-container { transform: translateY(0); }
+    .modal-header { padding: 32px 32px 24px; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: flex-start; background: var(--card-bg); z-index: 10;}
+    .modal-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 8px; }
+    .modal-subtitle { color: var(--text-muted); font-size: 0.9rem; }
+    .btn-close { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); color: var(--text-main); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; font-size: 1.2rem; }
+    .btn-close:hover { background: rgba(239, 108, 108, 0.1); color: #EF6C6C; border-color: rgba(239, 108, 108, 0.3); }
+    .modal-body { padding: 24px 32px 32px; overflow-y: auto; display: flex; }
+
+    /* Success Toast */
+    .toast { position: fixed; bottom: 32px; right: 32px; background: var(--pal-light-green); color: #000; padding: 16px 24px; border-radius: var(--radius-lg); font-weight: 700; display: flex; align-items: center; gap: 12px; box-shadow: 0 12px 32px rgba(176, 209, 130, 0.3); transform: translateY(100px); opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 2000; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    @media (max-width: 768px) {
+      .booking-toolbar { flex-direction: column; align-items: stretch; }
+      .teacher-selector, .month-control { width: 100%; justify-content: space-between; }
+      .month-control span { min-width: auto; }
+      .calendar-header-cell { padding: 12px 4px; }
+      .day-name { font-size: 0.7rem; }
+      .day-date { font-size: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow-1"></div>
+  <div class="glow-2"></div>
+
+  <!-- HEADER -->
+  <header>
+    <div class="container header-inner">
+      <a href="#" class="brand">
+        <div class="brand-dot"></div>
+        <span>ALANKO</span>
+      </a>
+
+      <div class="user-profile">
+        <div class="avatar" style="background: rgba(255,255,255,0.1); color: #fff;">ПИ</div>
+        <span class="user-info">Петр Иванов (Ученик)</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main>
+    <div class="container">
+      
+      <div class="booking-header">
+        <h1 class="hero-title">Запись на индивидуальное занятие</h1>
+        <p class="hero-subtitle">Выберите преподавателя, сверьтесь с его расписанием и выберите удобное свободное время для консультации.</p>
+      </div>
+
+      <div class="booking-toolbar">
+        <div class="teacher-selector">
+          <img src="https://ui-avatars.com/api/?name=Александр+Иванов&background=6A8E4E&color=fff" class="teacher-avatar-display" id="currentTeacherAvatar" alt="Teacher">
+          <div>
+            <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.05em; margin-bottom: 4px;">Преподаватель</div>
+            <select class="custom-input" id="teacherSelect" style="width: 280px; font-weight: 700; padding: 8px 40px 8px 12px; background-color: rgba(255,255,255,0.02);" onchange="updateTeacherAvatar()">
+              <option value="Александр Иванов" data-bg="6A8E4E" data-color="fff">Александр Иванов (Contemporary)</option>
+              <option value="Мария Смирнова" data-bg="2C473E" data-color="B0D182">Мария Смирнова (Kids Choreo)</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="month-control">
+          <button class="btn-icon" onclick="changeWeek(-1)"><iconify-icon icon="solar:alt-arrow-left-line-duotone"></iconify-icon></button>
+          <span id="currentWeekDisplay">03 Авг – 09 Авг 2026</span>
+          <button class="btn-icon" onclick="changeWeek(1)"><iconify-icon icon="solar:alt-arrow-right-line-duotone"></iconify-icon></button>
+        </div>
+      </div>
+
+      <!-- Сетка расписания -->
+      <div class="weekly-calendar">
+        <!-- Заголовки дней недели -->
+        <div class="calendar-header-row">
+          <div style="border-right: 1px solid rgba(255,255,255,0.03);"></div>
+          
+          <div class="calendar-header-cell active-day">
+            <div class="day-name">Пн</div>
+            <div class="day-date" id="day-1">03</div>
+          </div>
+          <div class="calendar-header-cell blocked">
+            <div class="day-name">Вт</div>
+            <div class="day-date" id="day-2">04</div>
+          </div>
+          <div class="calendar-header-cell">
+            <div class="day-name">Ср</div>
+            <div class="day-date" id="day-3">05</div>
+          </div>
+          <div class="calendar-header-cell">
+            <div class="day-name">Чт</div>
+            <div class="day-date" id="day-4">06</div>
+          </div>
+          <div class="calendar-header-cell">
+            <div class="day-name">Пт</div>
+            <div class="day-date" id="day-5">07</div>
+          </div>
+          <div class="calendar-header-cell">
+            <div class="day-name">Сб</div>
+            <div class="day-date" id="day-6">08</div>
+          </div>
+          <div class="calendar-header-cell">
+            <div class="day-name">Вс</div>
+            <div class="day-date" id="day-7">09</div>
+          </div>
+        </div>
+
+        <!-- Тело календаря -->
+        <div class="calendar-body-grid" id="calendarBody">
+          <!-- Шкала времени (09:00 - 20:00) -->
+          <div class="time-scale">
+            <div class="time-label"><span>09:00</span></div>
+            <div class="time-label"><span>10:00</span></div>
+            <div class="time-label"><span>11:00</span></div>
+            <div class="time-label"><span>12:00</span></div>
+            <div class="time-label"><span>13:00</span></div>
+            <div class="time-label"><span>14:00</span></div>
+            <div class="time-label"><span>15:00</span></div>
+            <div class="time-label"><span>16:00</span></div>
+            <div class="time-label"><span>17:00</span></div>
+            <div class="time-label"><span>18:00</span></div>
+            <div class="time-label"><span>19:00</span></div>
+            <div class="time-label"><span>20:00</span></div>
+          </div>
+
+          <!-- Понедельник -->
+          <div class="day-grid-col day-col" data-day="Пн">
+            <!-- Свободное время: 14:00 - 15:30 -->
+            <div class="available-slot" style="top: 300px; height: 90px;" onclick="openBookingModal('Понедельник, 03 Августа', '14:00 - 15:30', 0)">
+              <span class="time-text">14:00 - 15:30</span>
+              <span style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; font-weight: 600;">0/4 мест</span>
+              <span class="action-text"><iconify-icon icon="solar:check-circle-bold" style="font-size: 1.1rem;"></iconify-icon> Записаться</span>
+            </div>
+            
+            <!-- Занятое время: 16:00 - 17:30 (420px) -->
+            <div class="booked-slot" style="top: 420px; height: 90px;">
+              <span>Группа заполнена</span>
+            </div>
+          </div>
+
+          <!-- Вторник (Выходной / Заблокирован) -->
+          <div class="day-grid-col blocked"></div>
+
+          <!-- Среда -->
+          <div class="day-grid-col day-col" data-day="Ср">
+            <!-- Свободное время: 10:00 - 11:00 (60px) - 1 человек записан -->
+            <div class="available-slot" style="top: 60px; height: 60px;" onclick="openBookingModal('Среда, 05 Августа', '10:00 - 11:00', 1)">
+              <span class="time-text">10:00 - 11:00</span>
+              <span style="font-size: 0.7rem; color: var(--pal-light-green); margin-top: 2px; font-weight: 600;">1/4 мест</span>
+              <span class="action-text"><iconify-icon icon="solar:check-circle-bold" style="font-size: 1.1rem;"></iconify-icon> Присоединиться</span>
+            </div>
+            <!-- Свободное время: 11:30 - 13:00 (150px) - 2 человека записаны -->
+            <div class="available-slot" style="top: 150px; height: 90px;" onclick="openBookingModal('Среда, 05 Августа', '11:30 - 13:00', 2)">
+              <span class="time-text">11:30 - 13:00</span>
+              <span style="font-size: 0.7rem; color: var(--pal-light-green); margin-top: 4px; font-weight: 600;">2/4 мест</span>
+              <span class="action-text"><iconify-icon icon="solar:check-circle-bold" style="font-size: 1.1rem;"></iconify-icon> Присоединиться</span>
+            </div>
+          </div>
+
+          <!-- Четверг -->
+          <div class="day-grid-col day-col" data-day="Чт">
+             <!-- Занято: 12:00 - 14:00 (180px, height 120px) -->
+             <div class="booked-slot" style="top: 180px; height: 120px;">
+              <span>Группа заполнена</span>
+            </div>
+          </div>
+
+          <!-- Пятница -->
+          <div class="day-grid-col day-col" data-day="Пт">
+            <!-- Свободное время: 15:00 - 16:00 (360px) -->
+            <div class="available-slot" style="top: 360px; height: 60px;" onclick="openBookingModal('Пятница, 07 Августа', '15:00 - 16:00', 0)">
+              <span class="time-text">15:00 - 16:00</span>
+              <span style="font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; font-weight: 600;">0/4 мест</span>
+              <span class="action-text"><iconify-icon icon="solar:check-circle-bold" style="font-size: 1.1rem;"></iconify-icon> Записаться</span>
+            </div>
+          </div>
+
+          <!-- Суббота -->
+          <div class="day-grid-col day-col" data-day="Сб"></div>
+          <!-- Воскресенье -->
+          <div class="day-grid-col day-col" data-day="Вс"></div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- МОДАЛЬНОЕ ОКНО: БРОНИРОВАНИЕ -->
+  <div class="modal-overlay" id="bookingModal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title" style="font-size: 1.5rem;">Подтверждение записи</h2>
+          <div class="modal-subtitle">Проверьте данные перед бронированием</div>
+        </div>
+        <button class="btn-close" onclick="closeModal('bookingModal')">
+          <iconify-icon icon="solar:close-circle-bold"></iconify-icon>
+        </button>
+      </div>
+      
+      <div class="modal-body" style="flex-direction: column; gap: 24px;">
+        
+        <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: 20px;">
+          <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+            <img src="" id="modalTeacherAvatar" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;">
+            <div>
+              <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 2px;">Преподаватель</div>
+              <div style="font-size: 1.1rem; font-weight: 700; color: var(--text-main);" id="modalTeacherName">Александр Иванов</div>
+            </div>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 16px;">
+            <div>
+              <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; margin-bottom: 4px;">Дата</div>
+              <div style="font-weight: 700; color: var(--pal-light-green); display: flex; align-items: center; gap: 6px;">
+                <iconify-icon icon="solar:calendar-date-bold-duotone" style="font-size: 1.2rem;"></iconify-icon> <span id="modalDateStr">03 Августа</span>
+              </div>
+            </div>
+            <div>
+              <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; margin-bottom: 4px;">Время</div>
+              <div style="font-weight: 700; color: var(--pal-light-green); display: flex; align-items: center; gap: 6px;">
+                <iconify-icon icon="solar:clock-circle-bold-duotone" style="font-size: 1.2rem;"></iconify-icon> <span id="modalTimeStr">16:00 - 17:30</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); padding: 16px; border-radius: var(--radius-lg); margin-bottom: 16px;">
+          <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px;">Заполненность группы</div>
+          <div style="display: flex; gap: 6px; margin-bottom: 8px;" id="modalOccupancyDots">
+            <!-- Сюда вставляются точки (JS) -->
+          </div>
+          <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-main);" id="modalOccupancyText">Записано: 0 человек (осталось 4 места)</div>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; background: rgba(176, 209, 130, 0.05); border: 1px dashed var(--pal-light-green); padding: 16px 20px; border-radius: var(--radius-lg); margin-bottom: 8px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <span style="font-weight: 600; color: var(--text-main);">К оплате наличными:</span>
+            <span style="font-size: 1.5rem; font-weight: 800; color: var(--pal-light-green);" id="bookingPriceDisplay">900 руб.</span>
+          </div>
+          <div style="font-size: 0.75rem; color: rgba(176, 209, 130, 0.8); line-height: 1.4; display: flex; gap: 6px; align-items: flex-start;">
+            <iconify-icon icon="solar:info-circle-bold" style="font-size: 1rem; flex-shrink: 0;"></iconify-icon>
+            Сумма к оплате может уменьшиться. Чем больше учеников запишется на это время (максимум 4), тем ниже будет итоговая стоимость для каждого.
+          </div>
+        </div>
+        
+        <button class="btn btn-primary" style="width: 100%; justify-content: center; padding: 16px; font-size: 1.05rem;" onclick="confirmBooking()">
+          <iconify-icon icon="solar:check-circle-bold" style="font-size: 1.2rem;"></iconify-icon> Подтвердить запись
+        </button>
+        
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST УВЕДОМЛЕНИЕ -->
+  <div class="toast" id="successToast">
+    <iconify-icon icon="solar:check-circle-bold" style="font-size: 1.5rem;"></iconify-icon> 
+    Вы успешно записаны на занятие!
+  </div>
+
+  <script>
+    /* --- АВАТАР И ДАННЫЕ УЧИТЕЛЯ --- */
+    const teacherSelect = document.getElementById('teacherSelect');
+    const teacherAvatar = document.getElementById('currentTeacherAvatar');
+    const modalTeacherAvatar = document.getElementById('modalTeacherAvatar');
+    const modalTeacherName = document.getElementById('modalTeacherName');
+
+    function updateTeacherAvatar() {
+      const selectedOption = teacherSelect.options[teacherSelect.selectedIndex];
+      const name = encodeURIComponent(selectedOption.value);
+      const bg = selectedOption.getAttribute('data-bg');
+      const color = selectedOption.getAttribute('data-color');
+      
+      const avatarUrl = `https://ui-avatars.com/api/?name=${name}&background=${bg}&color=${color}`;
+      teacherAvatar.src = avatarUrl;
+      
+      // Имитация загрузки другого расписания
+      reshuffleSlots();
+    }
+    // Вызов при загрузке
+    updateTeacherAvatar();
+
+    /* --- ЛОГИКА КАЛЕНДАРЯ (Переключение недель) --- */
+    let weekOffset = 0;
+    const weekDisplay = document.getElementById('currentWeekDisplay');
+    
+    function changeWeek(dir) {
+      weekOffset += dir;
+      
+      if (weekOffset === 0) {
+        weekDisplay.innerText = "03 Авг – 09 Авг 2026";
+        updateDays([3, 4, 5, 6, 7, 8, 9]);
+      } else if (weekOffset === 1) {
+        weekDisplay.innerText = "10 Авг – 16 Авг 2026";
+        updateDays([10, 11, 12, 13, 14, 15, 16]);
+      } else if (weekOffset === -1) {
+        weekDisplay.innerText = "27 Июл – 02 Авг 2026";
+        updateDays([27, 28, 29, 30, 31, 1, 2]);
+      } else {
+        weekDisplay.innerText = `Неделя ${weekOffset > 0 ? '+' : ''}${weekOffset}`;
+      }
+      
+      reshuffleSlots();
+    }
+
+    function updateDays(daysArr) {
+      for(let i = 1; i <= 7; i++) {
+        const el = document.getElementById('day-' + i);
+        if(el) {
+          // Добавляем 0 в начало если число меньше 10
+          el.innerText = daysArr[i-1] < 10 ? '0' + daysArr[i-1] : daysArr[i-1];
+        }
+      }
+    }
+
+    // Случайное скрытие/показ слотов для имитации смены расписания
+    function reshuffleSlots() {
+      const slots = document.querySelectorAll('.available-slot, .booked-slot');
+      slots.forEach(slot => {
+        // С вероятностью 30% слот исчезает на другой неделе
+        if (Math.random() > 0.7) {
+          slot.style.display = 'none';
+        } else {
+          slot.style.display = 'flex';
+        }
+      });
+    }
+
+    /* --- МОДАЛЬНОЕ ОКНО --- */
+    const bookingModal = document.getElementById('bookingModal');
+
+    function openBookingModal(dateStr, timeStr, currentEnrolled = 0) {
+      const teacherValue = teacherSelect.options[teacherSelect.selectedIndex].value;
+      
+      document.getElementById('modalDateStr').innerText = dateStr;
+      document.getElementById('modalTimeStr').innerText = timeStr;
+      
+      modalTeacherName.innerText = teacherValue;
+      modalTeacherAvatar.src = teacherAvatar.src;
+      
+      // Генерация точек для визуализации заполненности
+      const maxCapacity = 4;
+      const dotsContainer = document.getElementById('modalOccupancyDots');
+      dotsContainer.innerHTML = '';
+      
+      for (let i = 0; i < maxCapacity; i++) {
+        const dot = document.createElement('div');
+        dot.style.width = '12px';
+        dot.style.height = '12px';
+        dot.style.borderRadius = '50%';
+        
+        if (i < currentEnrolled) {
+          // Уже занятые места
+          dot.style.background = 'rgba(255,255,255,0.4)';
+          dot.title = 'Место занято';
+        } else if (i === currentEnrolled) {
+          // Вы бронируете это место
+          dot.style.background = 'var(--pal-light-green)';
+          dot.style.boxShadow = '0 0 8px rgba(176, 209, 130, 0.6)';
+          dot.title = 'Ваше место';
+        } else {
+          // Свободные места
+          dot.style.background = 'rgba(255,255,255,0.05)';
+          dot.style.border = '1px solid rgba(255,255,255,0.1)';
+          dot.title = 'Свободное место';
+        }
+        dotsContainer.appendChild(dot);
+      }
+      
+      // Текст заполненности
+      const emptySpots = maxCapacity - currentEnrolled - 1; 
+      let spotsText = 'мест';
+      if (emptySpots === 1) spotsText = 'место';
+      else if (emptySpots > 1 && emptySpots < 5) spotsText = 'места';
+      
+      document.getElementById('modalOccupancyText').innerText = `Записано: ${currentEnrolled} человек (осталось ${emptySpots} ${spotsText})`;
+      
+      // Расчет цены для вас (текущие + вы = итого человек в группе)
+      const groupSize = currentEnrolled + 1;
+      let price = 900;
+      if (groupSize === 1) price = 900;
+      else if (groupSize === 2) price = 600;
+      else if (groupSize === 3) price = 500;
+      else if (groupSize === 4) price = 450;
+      
+      document.getElementById('bookingPriceDisplay').innerText = price + ' руб.';
+      
+      bookingModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.classList.remove('active');
+      }
+      document.body.style.overflow = '';
+    }
+
+    bookingModal.addEventListener('click', (e) => {
+      if (e.target === bookingModal) {
+        closeModal('bookingModal');
+      }
+    });
+
+    /* --- БРОНИРОВАНИЕ --- */
+    function confirmBooking() {
+      closeModal('bookingModal');
+      
+      // Показываем Toast
+      const toast = document.getElementById('successToast');
+      toast.classList.add('show');
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3500);
+      
+      // Убираем забронированный слот (имитация)
+      reshuffleSlots(); 
+    }
+
+
+  </script>
+</body>
+</html>

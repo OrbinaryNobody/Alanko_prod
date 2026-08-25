@@ -23,14 +23,14 @@ class Settings(BaseSettings):
             env_file_encoding = "utf-8"
 
     app_name: str = "Alanko App"
-    secret_key: str = Field("dev-secret-key", alias="SECRET_KEY")
+    secret_key: str = Field(..., alias="SECRET_KEY")
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 30
     database_url: str = Field("postgresql://postgres:postgres@db:5432/alanko", alias="DATABASE_URL")
     minio_internal_url: str = Field("minio:9000", alias="MINIO_INTERNAL_URL")
     minio_public_url: str = Field("http://localhost:9000", alias="MINIO_PUBLIC_URL")
-    minio_access_key: str = Field("minioadmin", alias="MINIO_ACCESS_KEY")
-    minio_secret_key: str = Field("minioadmin", alias="MINIO_SECRET_KEY")
+    minio_access_key: str = Field(..., alias="MINIO_ACCESS_KEY")
+    minio_secret_key: str = Field(..., alias="MINIO_SECRET_KEY")
     yookassa_shop_id: str = Field("", alias="YOOKASSA_SHOP_ID")
     yookassa_secret_key: str = Field("", alias="YOOKASSA_SECRET_KEY")
     yookassa_return_url: str = Field("", alias="YOOKASSA_RETURN_URL")

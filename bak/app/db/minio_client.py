@@ -11,29 +11,29 @@ MINIO_PUBLIC_HOST = MINIO_PUBLIC_URL.replace("http://", "").replace("https://", 
 
 minio_client = Minio(
     MINIO_INTERNAL_URL,
-    access_key=settings.minio_access_key or "minioadmin",
-    secret_key=settings.minio_secret_key or "minioadmin",
+    access_key=settings.minio_access_key,
+    secret_key=settings.minio_secret_key,
     secure=False,
 )
 
 # Bucket names for different file types
 BUCKET_NAMES = {
     "videos": "alanko-videos",
+    "achievement_videos": "alanko-achievement-videos",
     "certificates": "alanko-certificates",
     "student_photos": "alanko-student-photos",
-    "documents": "alanko-documents"
+    "documents": "alanko-documents",
+    "news": "alanko-news",
 }
 
-# Currently videos and student photos are exposed through public buckets.
-# This is a known security gap: student media should ideally be protected
-# behind authentication or served through a secure proxy instead of
-# directly public MinIO storage.
 PUBLIC_BUCKETS = {
-    BUCKET_NAMES["videos"],
+    BUCKET_NAMES["news"],
     BUCKET_NAMES["student_photos"],
+    BUCKET_NAMES["achievement_videos"],
 }
 
 PRIVATE_BUCKETS = {
     BUCKET_NAMES["certificates"],
     BUCKET_NAMES["documents"],
+    BUCKET_NAMES["videos"],
 }

@@ -1,17 +1,20 @@
 from sqlalchemy.orm import Session, joinedload
 
-from core.exceptions import NotFoundError
+from core.exceptions import NotFoundError, PermissionDenied
 from db.minio_client import BUCKET_NAMES
+from models.domains.achievements import Achievement
 from models.domains.auth import User
+from models.domains.education import GroupEnrollment, GroupMember
 from models.domains.student import RatingsHistory, StudentProfile, StudentTask, Task, TaskMedia
 from public.dtos.public_dto import (
     PublicLeaderboardItem,
     PublicLeaderboardPlace,
     PublicLeaderboardPayload,
+    PublicAchievementVideoItem,
     PublicStudentVideoItem,
     PublicStudentVideosPayload,
 )
-from services.file_service import file_service
+from infrastructure.storage.file_service import file_service
 
 
 class PublicService:
@@ -21,6 +24,7 @@ class PublicService:
             .join(User)
             .options(joinedload(StudentProfile.user))
             .order_by(StudentProfile.rating_points.desc())
+            .limit(5)
             .all()
         )
 
@@ -40,11 +44,22 @@ class PublicService:
                 )
             )
 
+        profile_ids = [profile.user_id for profile in all_profiles[:5]]
+        history_rows = (
+            db.query(RatingsHistory)
+            .filter(RatingsHistory.student_id.in_(profile_ids))
+            .order_by(RatingsHistory.student_id, RatingsHistory.created_at.desc(), RatingsHistory.id.desc())
+            .all()
+        )
+        latest_history = {}
+        for history in history_rows:
+            latest_history.setdefault(history.student_id, history)
+
         top_5_leaderboard = []
         place = 1
         for profile in all_profiles[:5]:
             user = profile.user
-            last_history = db.query(RatingsHistory).filter(RatingsHistory.student_id == user.id).order_by(RatingsHistory.created_at.desc()).first()
+            last_history = latest_history.get(user.id)
 
             movement = "same"
             if last_history:
@@ -70,7 +85,21 @@ class PublicService:
             timestamp=None,
         ).to_dict()
 
-    def get_student_videos(self, db: Session, student_id: int):
+    def get_student_videos(self, db: Session, student_id: int, *, ctx):
+        if not ctx.is_admin and ctx.user_id != student_id:
+            has_group_access = (
+                db.query(GroupEnrollment)
+                .join(GroupMember, GroupMember.group_id == GroupEnrollment.group_id)
+                .filter(
+                    GroupEnrollment.student_id == student_id,
+                    GroupEnrollment.status == "active",
+                    GroupMember.user_id == ctx.user_id,
+                )
+                .first()
+            )
+            if not has_group_access and not ctx.has_role("secretary"):
+                raise PermissionDenied("Access denied to student videos")
+
         student = db.query(User).filter(User.id == student_id).first()
         if not student:
             raise NotFoundError("Студент не найден")
@@ -114,6 +143,31 @@ class PublicService:
             full_name=f"{student.first_name} {student.last_name}".strip(),
             videos=result_videos,
         ).to_dict()
+
+    def get_public_achievement_videos(self, db: Session, *, limit: int = 20, offset: int = 0):
+        achievements = (
+            db.query(Achievement)
+            .filter(Achievement.video_url.is_not(None), Achievement.is_public.is_(True))
+            .order_by(Achievement.event_date.desc().nullslast(), Achievement.id.desc())
+            .offset(offset)
+            .limit(limit)
+            .all()
+        )
+        return {
+            "items": [
+                PublicAchievementVideoItem(
+                    id=achievement.id,
+                    title=achievement.title,
+                    description=achievement.description,
+                    video_url=file_service.get_file_url(
+                        achievement.video_url,
+                        BUCKET_NAMES["achievement_videos"],
+                    ),
+                    event_date=achievement.event_date.isoformat() if achievement.event_date else None,
+                ).to_dict()
+                for achievement in achievements
+            ]
+        }
 
 
 public_service = PublicService()

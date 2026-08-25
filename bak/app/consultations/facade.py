@@ -27,8 +27,8 @@ class ConsultationsFacade:
     def get_day(self, db: Session, *, day_id: int):
         return self.day_service.get_day(db, day_id=day_id)
     
-    def list_days(self, db: Session):
-        return self.day_service.list_days(db)
+    def list_days(self, db: Session, *, date_from=None, date_to=None):
+        return self.day_service.list_days(db, date_from=date_from, date_to=date_to)
 
     def set_day_status(self, db: Session, *, day_id: int, status: str):
         return self.day_service.set_status(db, day_id=day_id, status=status)
@@ -47,8 +47,8 @@ class ConsultationsFacade:
             created_by=created_by,
         )
     
-    def list_slots(self, db: Session):
-        return self.slot_service.list_slots(db)
+    def list_slots(self, db: Session, *, date_from=None, date_to=None, limit: int = 100, offset: int = 0):
+        return self.slot_service.list_slots(db, date_from=date_from, date_to=date_to, limit=limit, offset=offset)
 
     def get_price_quote(self, db: Session, *, slot_id: int):
         return self.slot_service.get_price_quote(db, slot_id=slot_id)

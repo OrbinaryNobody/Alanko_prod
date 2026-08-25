@@ -13,7 +13,7 @@ from db.database import get_db
 from education.dtos.program_dto import GroupPayload, GroupMemberPayload, StudentEnrollmentPayload
 from education.exceptions.domain_exceptions import EducationError
 from education.facade import education_facade
-from schemas.education import EnrollmentCreate, GroupCreate, GroupMemberCreate, GroupStudentCreate, GroupTeacherCreate
+from education.schemas.education import EnrollmentCreate, GroupCreate, GroupMemberCreate, GroupScheduleCreate, GroupStudentCreate, GroupTeacherCreate
 
 router = APIRouter(prefix="/groups", tags=["education-groups"])
 
@@ -120,6 +120,60 @@ def get_group_students(
 ):
     students = education_facade.get_group_students(db, ctx=ctx, group_id=group_id)
     return {"data": students}
+
+
+@router.get("/{group_id}/schedule")
+def list_group_schedule(
+    group_id: int,
+    ctx: AccessContext = Depends(require_view_groups),
+    db: Session = Depends(get_db),
+):
+    schedules = education_facade.list_group_schedules(db, ctx=ctx, group_id=group_id)
+    return {"data": [_schedule_payload(schedule) for schedule in schedules]}
+
+
+@router.post("/{group_id}/schedule", status_code=201)
+def create_group_schedule(
+    group_id: int,
+    data: GroupScheduleCreate,
+    ctx: AccessContext = Depends(require_manage_groups),
+    db: Session = Depends(get_db),
+):
+    schedule = education_facade.create_group_schedule(
+        db,
+        ctx=ctx,
+        group_id=group_id,
+        teacher_id=data.teacher_id,
+        weekday=data.weekday,
+        start_time=data.start_time,
+        end_time=data.end_time,
+        valid_from=data.valid_from,
+        valid_until=data.valid_until,
+    )
+    return {"data": _schedule_payload(schedule)}
+
+
+@router.delete("/schedule/{schedule_id}", status_code=204)
+def delete_group_schedule(
+    schedule_id: int,
+    ctx: AccessContext = Depends(require_manage_groups),
+    db: Session = Depends(get_db),
+):
+    education_facade.delete_group_schedule(db, ctx=ctx, schedule_id=schedule_id)
+
+
+def _schedule_payload(schedule):
+    return {
+        "id": schedule.id,
+        "group_id": schedule.group_id,
+        "teacher_id": schedule.teacher_id,
+        "weekday": schedule.weekday,
+        "start_time": schedule.start_time.isoformat(),
+        "end_time": schedule.end_time.isoformat(),
+        "valid_from": schedule.valid_from.isoformat(),
+        "valid_until": schedule.valid_until.isoformat() if schedule.valid_until else None,
+        "status": schedule.status,
+    }
 
 
 @router.post("/{group_id}/enrollments", status_code=201)

@@ -8,7 +8,7 @@ from db.database import get_db
 from education.dtos.program_dto import TaskPayload
 from education.exceptions.domain_exceptions import EducationError
 from education.facade import education_facade
-from schemas.task import CategoryCreate, TaskCreate, TaskUpdate
+from education.schemas.task import CategoryCreate, TaskCreate, TaskUpdate
 
 router = APIRouter(prefix="/tasks", tags=["education-tasks"])
 

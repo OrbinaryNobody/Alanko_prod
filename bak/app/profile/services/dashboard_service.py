@@ -6,7 +6,7 @@ from db.minio_client import BUCKET_NAMES
 from profile.dtos.dashboard_dto import DashboardPayload, StudentTaskPayload
 from profile.policies.dashboard_policy import DashboardPolicy
 from profile.repositories.dashboard_repository import dashboard_repository
-from services.file_service import file_service
+from infrastructure.storage.file_service import file_service
 from models.domains.student import RatingsHistory, StudentProfile, StudentTask, Task, TaskMedia
 from models.domains.auth import User
 
@@ -24,7 +24,7 @@ class DashboardService:
         tasks = dashboard_repository.get_tasks(db, user_id=user_id)
         videos = dashboard_repository.get_videos(db, user_id=user_id)
 
-        user_achievements = dashboard_repository.get_user_achievements(db, user_id=user_id)
+        user_achievements = dashboard_repository.get_user_achievements(db, user_id=user_id, limit=50)
 
         individual_achievements = []
         collective_awarded_at = {}
@@ -45,11 +45,11 @@ class DashboardService:
                 "place": achievement.place,
                 "is_collective": False,
                 "file_url": file_service.get_file_url(achievement.certificate_url, BUCKET_NAMES["certificates"]) if achievement.certificate_url else None,
-                "video_url": file_service.get_file_url(achievement.video_url, BUCKET_NAMES["videos"]) if achievement.video_url else None,
+                "video_url": file_service.get_file_url(achievement.video_url, BUCKET_NAMES["achievement_videos"]) if achievement.video_url and achievement.is_public else None,
                 "awarded_at": ua.awarded_at.isoformat() if ua.awarded_at else None,
             })
 
-        collective_achievements = dashboard_repository.get_collective_achievements(db)
+        collective_achievements = dashboard_repository.get_collective_achievements(db, limit=50)
         collective_achievements_result = []
 
         for achievement in collective_achievements:
@@ -61,7 +61,7 @@ class DashboardService:
                 "place": achievement.place,
                 "is_collective": True,
                 "file_url": file_service.get_file_url(achievement.certificate_url, BUCKET_NAMES["certificates"]) if achievement.certificate_url else None,
-                "video_url": file_service.get_file_url(achievement.video_url, BUCKET_NAMES["videos"]) if achievement.video_url else None,
+                "video_url": file_service.get_file_url(achievement.video_url, BUCKET_NAMES["achievement_videos"]) if achievement.video_url and achievement.is_public else None,
                 "awarded_at": collective_awarded_at.get(achievement.id),
             })
 
@@ -99,7 +99,7 @@ class DashboardService:
         total_students = db.query(StudentProfile).count()
         user_place = higher_rank_count + 1 if profile else None
 
-        history_records = dashboard_repository.get_history(db, user_id=user_id)
+        history_records = dashboard_repository.get_history(db, user_id=user_id, limit=20)
 
         history = []
         current_points = user_rating
@@ -115,7 +115,7 @@ class DashboardService:
             current_points -= record.points_change
         history.reverse()
 
-        leaderboard_profiles = dashboard_repository.get_leaderboard_profiles(db)
+        leaderboard_profiles = dashboard_repository.get_leaderboard_profiles(db, limit=10)
         leaderboard = []
         previous_rating = None
         current_place = 0
@@ -184,7 +184,7 @@ class DashboardService:
                 score=st.score,
                 max_score=st.task.max_score if st.task else None,
                 has_video=len(st.media) > 0,
-                videos=[{"media_id": media.id, "video_url": file_service.get_file_url(media.video_url, BUCKET_NAMES["videos"])} for media in st.media],
+                videos=[{"media_id": media.id, "video_url": file_service.get_file_url(media.video_url, BUCKET_NAMES["videos"])} for media in st.media[:20]],
             ).to_dict()
             for st in student_tasks
         ]

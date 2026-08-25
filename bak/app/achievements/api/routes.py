@@ -7,7 +7,7 @@ from core.access import AccessContext
 from core.exceptions import DomainError, to_http_exception
 from core.permissions import require_manage_achievements, require_upload_media, require_view_achievements
 from db.database import get_db
-from schemas.achievment import AssignAchievement
+from achievements.schemas.achievment import AssignAchievement
 
 router = APIRouter(prefix="/achievements", tags=["achievements"])
 
@@ -17,7 +17,7 @@ def get_achievements(
     ctx: AccessContext = Depends(require_view_achievements),
     db: Session = Depends(get_db),
 ):
-    return {"data": achievements_facade.get_achievements_payload(db)}
+    return {"data": achievements_facade.get_achievements_payload(db, ctx=ctx)}
 
 
 @router.get("/student/{student_id}")
@@ -26,7 +26,7 @@ def get_student_achievements(
     ctx: AccessContext = Depends(require_view_achievements),
     db: Session = Depends(get_db),
 ):
-    return {"data": achievements_facade.get_student_achievements_payload(db, student_id)}
+    return {"data": achievements_facade.get_student_achievements_payload(db, student_id, ctx=ctx)}
 
 
 @router.post("/{achievement_id}/upload-media")
@@ -75,6 +75,7 @@ async def create_achievement(
 ):
     payload = await achievements_facade.create_achievement_from_form(
         db,
+        ctx=ctx,
         title=title,
         description=description,
         event_date=event_date,
@@ -96,6 +97,7 @@ def assign_achievement(
     try:
         assignment = achievements_facade.assign_achievement(
             db,
+            ctx=ctx,
             achievement_id=data.achievement_id,
             user_id=data.user_id,
         )

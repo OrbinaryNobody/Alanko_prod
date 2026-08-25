@@ -3,12 +3,14 @@ from sqlalchemy.orm import Session
 
 from accounts.facade import accounts_facade
 from accounts.services.auth_service import auth_service
+from attendance.facade import attendance_facade
 from core.access import AccessContext
 from core.exceptions import DomainError, to_http_exception
 from core.permissions import require_manage_users
 from db.database import get_db
-from schemas.auth import LoginSchema, StudentUpdateSchema, TeacherAddStudentSchema
-from services.file_service import file_service
+from accounts.schemas.auth import AdminAddUserSchema, LoginSchema, StudentUpdateSchema, TeacherAddStudentSchema
+from infrastructure.storage.file_service import file_service
+from db.minio_client import BUCKET_NAMES
 
 router = APIRouter(prefix="/accounts", tags=["accounts"])
 
@@ -28,6 +30,26 @@ def login(data: LoginSchema, db: Session = Depends(get_db)):
     return {"access_token": token, "token_type": "bearer"}
 
 
+@router.post("/users", status_code=201)
+def add_user(
+    data: AdminAddUserSchema,
+    ctx: AccessContext = Depends(require_manage_users),
+    db: Session = Depends(get_db),
+):
+    try:
+        user = accounts_facade.add_user_by_admin(db, data=data)
+    except DomainError as exc:
+        to_http_exception(exc)
+
+    return {
+        "message": f"User added successfully with role '{data.role}'",
+        "data": {
+            "user_id": user.id,
+            "email": user.email,
+        },
+    }
+
+
 @router.post("/students", status_code=201)
 async def add_student(
     email: str = Form(...),
@@ -35,6 +57,12 @@ async def add_student(
     last_name: str | None = Form(None),
     middle_name: str = Form(...),
     birth_year: int | None = Form(None),
+    parent_name: str | None = Form(None),
+    parent_first_name: str | None = Form(None),
+    parent_last_name: str | None = Form(None),
+    parent_middle_name: str | None = Form(None),
+    parent_phone: str | None = Form(None),
+    parent_email: str | None = Form(None),
     image: UploadFile = File(...),
     ctx: AccessContext = Depends(require_manage_users),
     db: Session = Depends(get_db),
@@ -47,15 +75,39 @@ async def add_student(
         birth_year=birth_year,
     )
 
+    image_key = None
     try:
-        image_url = await file_service.upload_image(image)
-        user, generated_password = accounts_facade.add_student_by_teacher(db, data=data, image_url=image_url)
+        image_key = await file_service.upload_image(image)
+        parent = None
+        if parent_phone and (parent_first_name or parent_name):
+            if parent_first_name:
+                resolved_first_name = parent_first_name
+                resolved_last_name = parent_last_name or "Не указана"
+                resolved_middle_name = parent_middle_name
+            else:
+                parent_parts = parent_name.split()
+                resolved_first_name = parent_parts[0]
+                resolved_last_name = parent_parts[1] if len(parent_parts) > 1 else "Не указана"
+                resolved_middle_name = " ".join(parent_parts[2:]) or None
+            parent = {
+                "first_name": resolved_first_name,
+                "last_name": resolved_last_name,
+                "middle_name": resolved_middle_name,
+                "phone": parent_phone,
+                "email": parent_email,
+            }
+        user = accounts_facade.add_student_by_teacher(db, data=data, image_url=image_key, parent=parent)
     except DomainError as exc:
+        if image_key:
+            file_service.delete_file(image_key, BUCKET_NAMES["student_photos"])
         to_http_exception(exc)
+    except Exception:
+        if image_key:
+            file_service.delete_file(image_key, BUCKET_NAMES["student_photos"])
+        raise
 
     return {
         "user_id": user.id,
-        "password": generated_password,
         "email": user.email,
     }
 

@@ -14,6 +14,7 @@ class Achievement(Base):
     event_date = Column(TIMESTAMP(timezone=True))
     place = Column(Text)
     is_collective = Column(Boolean, default=False)
+    is_public = Column(Boolean, nullable=False, default=True, server_default="true")
     certificate_url = Column(Text)
     video_url = Column(Text)
 

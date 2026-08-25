@@ -19,6 +19,10 @@ class ConflictError(DomainError):
     pass
 
 
+class ValidationError(DomainError):
+    pass
+
+
 class InvalidWebhookError(DomainError):
     pass
 
@@ -30,4 +34,6 @@ def to_http_exception(exc: DomainError) -> HTTPException:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
     if isinstance(exc, ConflictError):
         raise HTTPException(status_code=409, detail=str(exc)) from exc
+    if isinstance(exc, ValidationError):
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
     raise HTTPException(status_code=400, detail=str(exc)) from exc

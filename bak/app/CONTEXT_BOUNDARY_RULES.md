@@ -10,15 +10,38 @@ Current top-level contexts:
 - profile
 - achievements
 - media
-- admin
 - catalog
 - payments
 - consultations
+- attendance
+
+## Domain ownership map
+
+Each business object has one owning context. Other contexts access it only through the owner's facade.
+
+| Object or capability | Owner |
+|---|---|
+| Users and roles | `accounts` |
+| Programs, groups, and tasks | `education` |
+| Group schedules | `education` |
+| Ordinary attendance | `attendance` |
+| Subscriptions | `attendance` |
+| Consultations and slots | `consultations` |
+| Payments | `payments` |
+| Achievements | `achievements` |
+| User dashboard | `profile` |
+| Unified calendar read model | `schedule` |
+
+The `schedule` context is a read model and API composition layer. It does not own groups, consultations, attendance, or payments. It reads group schedules through `education.facade` and consultation slots through `consultations.facade`. Ordinary attendance is intentionally excluded from the calendar.
+
+The former `admin` module has been removed. Administrative actions for programs, groups, blocks, tasks, and enrollments are owned and exposed by `education`; account creation is owned and exposed by `accounts`.
 
 Current state of the implementation:
-- the project remains a modular monolith, and the `consultations` bounded context has moved from pure scaffold to an operational vertical slice;
-- the consultations context now includes model/service/repository code, student/admin API routes, schema DTOs, permission constants, and an init_db bootstrap;
+- the project remains a modular monolith with separate `accounts`, `education`, `attendance`, `consultations`, and payments boundaries;
+- the `consultations` bounded context has an operational vertical slice with student and management routes;
+- the `attendance` context owns ordinary class attendance, subscriptions, parent/guardian data, and related administrative read/write operations;
 - the consultations router is registered in the app startup layer; the current empty-database workflow uses `Base.metadata.create_all()` and `app/db/init_db.py`, not Alembic;
+- attendance tables and indexes are bootstrapped through `app/db/init_db.py`, not Alembic;
 - payments and education remain separated by facades and service boundaries, as defined in the architecture rules.
 
 The architecture is implemented around:
@@ -32,13 +55,14 @@ The architecture is implemented around:
 ## Current implementation status
 The project is currently in the middle of two parallel evolutions:
 1. the existing temporary offer/payment flow still needs the final production-grade hardening;
-2. a new private-consultations bounded context is being introduced to model teacher/student slots, participant history, invitations, and attendance.
+2. the private-consultations bounded context is being completed around teacher/student slots, participant history, invitations, and consultation attendance.
 
 This is the current target shape:
 - offers are still treated as a temporary commercial/business domain for collaboration-style registration flows;
 - payments remain a separate bounded context and should not own education registration logic directly;
 - education remains the owner of learning/program enrollment logic;
-- private consultations are a new bounded context, intentionally separated from payments and education;
+- private consultations are a bounded context, intentionally separated from payments, education, and ordinary attendance;
+- ordinary attendance and subscriptions are owned by `attendance`, not by `consultations` or `education`;
 - payments do not own the educational registration flow directly;
 - consultation booking is modeled as slot-based resource allocation, not as direct teacher calendar logic.
 
@@ -49,7 +73,12 @@ This is the current target shape:
 - webhook handling and payment confirmation are implemented with signature verification and idempotency protections;
 - database initialization uses `app/db/init_db.py` for fresh DB setup, including payment uniqueness constraints for pending payments;
 - tests cover payment creation, duplicate pending payment reuse, duplicate webhook handling, and basic webhook status transitions;
-- the consultations bounded context has moved beyond skeleton: it includes `facade.py`, models, repositories, services, routes, and a DTO schema layer under `bak/app/consultations`.
+- the consultations bounded context includes `facade.py`, models, repositories, services, routes, and a DTO/schema layer under `bak/app/consultations`;
+- the accounts context exposes `/api/accounts/users` for creating users with roles `student`, `teacher`, or `admin`; the former `/api/admin/users` endpoint was removed;
+- the education context is the only public owner of program, block, task, group, and enrollment API operations;
+- the existing `GET /api/education/students` contract is extended with group, parent, subscription, attendance, search, and subscription filters;
+- the attendance context includes parent/guardian, student-parent, subscription, and ordinary attendance models, services, facade, DTOs, and routes;
+- attendance exposes summary, check-in, cancellation, history, subscription creation, and subscription renewal routes under `/api/attendance`.
 
 ### What is implemented in the consultations context
 - `ConsultationDay` model with date/status and working window (`available_from`, `available_to`);
@@ -57,9 +86,9 @@ This is the current target shape:
 - `ConsultationParticipant` model with booking + attendance state separated from deletion logic;
 - `ConsultationInvitation` model with `PENDING/ACCEPTED/DECLINED` flow;
 - repositories for day, slot, participant, and invitation persistence;
-- initial `DayService`, `SlotService`, `AvailabilityService`, and `BookingService` skeletons;
+- `DayService`, `SlotService`, `AvailabilityService`, and `BookingService` implementations;
 - student route layer for availability, booking, and cancellation;
-- admin route layer for day and slot creation;
+- management route layer for day and slot creation;
 - schema DTOs for consultation create/update payloads;
 - `init_db.py`/`Base.metadata.create_all()` bootstrap for consultation days, slots, participants, invitations, notifications, pricing, and cash-payment status;
 - permission constants and app registration hooks for consultation access.
@@ -69,16 +98,18 @@ This is the current target shape:
 - end-to-end verification that the consultation flow works through the actual FastAPI app startup;
 - deeper business logic validation for invitation flow, attendance flow, policy enforcement, and cancellation edge cases;
 - full concurrency tests for multi-user booking under full capacity and overlapping time windows;
+- contract tests for the new attendance and account routes;
+- one atomic create-student workflow that creates the student, parent link, group enrollment, and initial subscription together;
 - production hardening for payments/offers and final integration between the temporary flow and registration logic.
 
-### Current architecture position
-The project is no longer at the "empty design" stage: the consultation context is intentionally taking shape as a proper bounded context in the same modular pattern as payments, education, and achievements.
-The next priority is to complete the vertical slice for consultations:
-- DB schema bootstrap via `init_db.py`
-- API routes
-- permissions
-- booking transaction
-- tests
+## Current architecture position
+The project is no longer at the "empty design" stage: education, accounts, attendance, payments, and consultations have explicit ownership boundaries and registered API routes.
+The next priority is validation and hardening:
+- verify database bootstrap against the live PostgreSQL schema;
+- complete consultation booking and concurrency tests;
+- add attendance/account contract tests;
+- finish the atomic student onboarding workflow;
+- connect the attendance frontend to the API instead of `localStorage`.
 
 Only after that should the module be considered production-ready for the first operational release.
 
@@ -234,9 +265,10 @@ Top-level areas:
 - profile — dashboard and personal views
 - achievements — achievements and award logic
 - media — upload and media handling
-- admin — internal administration flows
+- admin — removed; administrative actions belong to their owning contexts
 - catalog — public listings and read-only catalog
 - payments — payment flow, providers, webhooks, status handling
+- attendance — parents, subscriptions, ordinary attendance, and attendance summaries
 - core — shared access, security, config
 - db — database wiring and persistence setup
 - shared — common utilities
@@ -633,7 +665,7 @@ The project should become a true modular monolith:
   - `POST /api/consultations/slots/{slot_id}/book` — записаться (текущий user -> student_id).
   - `POST /api/consultations/participants/{id}/cancel` — отменить свою запись.
   - `GET /api/consultations/my`, `GET /api/consultations/invitations` и endpoints для accept/decline.
-  - Admin: days/slots/invitations/attendance endpoints (см. TODO ниже).
+  - Management: days/slots/invitations/attendance endpoints under `/api/consultations/admin/...`.
 
 5) Конфигурация
   - добавить в `core/config.py` ключи: `PRIVATE_CONSULTATION_DEFAULT_DURATION_MINUTES`, `PRIVATE_CONSULTATION_MAX_CAPACITY`, `PRIVATE_CONSULTATION_BOOKING_OPEN_DAYS`, `PRIVATE_CONSULTATION_CANCEL_CUTOFF_HOURS`, `PRIVATE_CONSULTATIONS_ALLOW_OVERLAPPING_SLOTS`.
@@ -645,20 +677,40 @@ The project should become a true modular monolith:
   - concurrency test: 5 конкурентных booking при capacity=4 -> 4 success, 1 fail
 
 7) Порядок работ (коротко)
-  - создать `bak/app/consultations` (models/repos/services/api/facade/specs)
-  - сделать SQLAlchemy-модели и bootstrap через `init_db.py`
-  - реализовать `DayService`, `SlotService`, `BookingService` (транзакции)
-  - реализовать `AvailabilityService` и базовые API-роуты
-  - добавить permissions и тесты
+  - консультационный контекст уже создан в `bak/app/consultations`;
+  - модели и bootstrap через `init_db.py` уже подключены;
+  - базовые `DayService`, `SlotService`, `BookingService` и `AvailabilityService` уже присутствуют;
+  - student и management API-роуты уже зарегистрированы;
+  - завершить policy validation, конфигурацию и обязательные тесты.
 
 TODO (коротко):
-- [ ] scaffolding `bak/app/consultations`
+- [x] scaffolding `bak/app/consultations`
 - [x] models + `init_db.py` bootstrap
-- [ ] repositories + services (day/slot/booking)
-- [ ] availability + student/admin API
+- [x] repositories + services (day/slot/booking)
+- [x] availability + student/management API
 - [ ] tests (incl. concurrency)
 - [ ] config keys + permissions
 
-Не включать сейчас: онлайн-платежи, родительские аккаунты, глобальную проверку конфликтов с другими занятиями, брокеры/Redis, автоматическую генерацию часовых слотов.
+Не включать сейчас: онлайн-платежи внутри consultations, QR-пропуск, глобальную проверку конфликтов с другими занятиями, брокеры/Redis, автоматическую генерацию часовых слотов.
+
+## Attendance context — текущее состояние
+
+`attendance` владеет обычными посещениями групповых занятий, абонементами и контактами родителей; эти объекты не принадлежат `consultations`, `education` или `payments`.
+
+Модели:
+- `ParentGuardian` — имя, телефон и email родителя/опекуна;
+- `StudentParent` — связь ученика с родителем;
+- `Subscription` — тариф, срок действия, стоимость, статус оплаты и остаток занятий;
+- `AttendanceRecord` — дата, время, статус, группа, абонемент и отметивший сотрудник.
+
+Основные маршруты:
+- `GET /api/attendance/summary` — сводные показатели посещаемости и абонементов;
+- `POST /api/attendance/check-in` — отметить обычное посещение и списать занятие;
+- `POST /api/attendance/{attendance_id}/cancel` — отменить отметку и вернуть занятие;
+- `GET /api/attendance/students/{student_id}/attendance` — история обычных посещений;
+- `POST /api/attendance/students/{student_id}/subscriptions` — создать абонемент;
+- `POST /api/attendance/students/{student_id}/subscriptions/renew` — продлить абонемент.
+
+Существующий `GET /api/education/students` расширен данными групп, родителя, активного абонемента и посещения за дату; поиск и фильтры также проходят через этот education endpoint.
 
 ---

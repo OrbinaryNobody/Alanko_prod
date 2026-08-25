@@ -1,0 +1,2471 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Studio Alanko — Контроль посещений и оплаты</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Iconify for Solar Linear Icons -->
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+
+  <style>
+    /* ============================================================
+       0. CSS ПЕРЕМЕННЫЕ И БАЗОВЫЕ НАСТРОЙКИ (:root)
+       ============================================================ */
+    :root {
+      /* Цветовая палитра Studio Alanko */
+      --bg-dark: #05060a;
+      --bg-darker: #020305;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --card-bg-hover: rgba(255, 255, 255, 0.05);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --card-border-active: rgba(176, 209, 130, 0.4);
+
+      --pal-dark-green: #2C473E;
+      --pal-mid-green: #6A8E4E;
+      --pal-light-green: #B0D182;
+      --pal-off-white: #F4F1EA;
+      --pal-accent-amber: #E5A93B;
+      --pal-accent-red: #E05353;
+
+      --text-main: #FFFFFF;
+      --text-muted: #8E95A5;
+      --text-secondary: rgba(255, 255, 255, 0.75);
+
+      /* Типографика и скругления */
+      --font-display: 'Plus Jakarta Sans', sans-serif;
+      --font-body: 'Inter', sans-serif;
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+      --radius-pill: 999px;
+
+      /* Отступы и сетка */
+      --container-max-width: 1440px;
+      --spacing-xs: 4px;
+      --spacing-sm: 8px;
+      --spacing-md: 16px;
+      --spacing-lg: 24px;
+      --spacing-xl: 36px;
+      --spacing-2xl: 48px;
+
+      --shadow-subtle: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+      --shadow-glow-green: 0 0 24px rgba(176, 209, 130, 0.2);
+    }
+
+    /* Сброс стилей */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Фоновые градиентные свечения в стиле Alanko */
+    .ambient-glow-1 {
+      position: absolute;
+      top: -120px;
+      left: 5%;
+      width: 460px;
+      height: 460px;
+      background: radial-gradient(circle, rgba(106, 142, 78, 0.16) 0%, rgba(5, 6, 10, 0) 70%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .ambient-glow-2 {
+      position: absolute;
+      top: 250px;
+      right: 3%;
+      width: 520px;
+      height: 520px;
+      background: radial-gradient(circle, rgba(176, 209, 130, 0.12) 0%, rgba(5, 6, 10, 0) 70%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Общий контейнер */
+    .container {
+      max-width: var(--container-max-width);
+      width: 100%;
+      margin: 0 auto;
+      padding: 0 var(--spacing-lg);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+
+    input, select, textarea {
+      font-family: inherit;
+      color: var(--text-main);
+    }
+
+    /* ============================================================
+       1. ШАПКА САЙТА (HEADER)
+       ============================================================ */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(5, 6, 10, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--card-border);
+      padding: var(--spacing-md) 0;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--spacing-md);
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, var(--pal-dark-green), #14211C);
+      border: 1px solid var(--pal-mid-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--pal-light-green);
+      font-size: 20px;
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-title {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--pal-light-green);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--pal-light-green);
+    }
+
+    .brand-subtitle {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+
+    /* Навигационные пилюли */
+    nav.nav-pills {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 4px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--card-border);
+    }
+
+    .nav-item {
+      padding: 8px 18px;
+      border-radius: var(--radius-pill);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-item:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .nav-item.active {
+      background: var(--pal-dark-green);
+      color: var(--pal-light-green);
+      border: 1px solid rgba(176, 209, 130, 0.3);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .admin-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 6px 14px 6px 8px;
+      border-radius: var(--radius-pill);
+    }
+
+    .admin-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--pal-mid-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+
+    .admin-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .admin-name {
+      font-size: 0.82rem;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .admin-role {
+      font-size: 0.68rem;
+      color: var(--pal-light-green);
+    }
+
+    /* ============================================================
+       2. ОСНОВНОЙ КОНТЕНТ (MAIN)
+       ============================================================ */
+    main {
+      flex: 1;
+      padding: var(--spacing-xl) 0 var(--spacing-2xl);
+    }
+
+    /* ============================================================
+       3. ГЕРОЙ-СЕКЦИЯ (HERO SECTION)
+       ============================================================ */
+    .hero-section {
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .hero-glass-card {
+      background: linear-gradient(135deg, rgba(44, 71, 62, 0.35) 0%, rgba(20, 33, 28, 0.25) 50%, rgba(5, 6, 10, 0.6) 100%);
+      border: 1px solid rgba(176, 209, 130, 0.18);
+      border-radius: var(--radius-xl);
+      padding: var(--spacing-xl);
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-subtle);
+    }
+
+    .hero-glass-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, rgba(176, 209, 130, 0.15), transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .hero-top-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .hero-title-area {
+      max-width: 650px;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(176, 209, 130, 0.12);
+      border: 1px solid rgba(176, 209, 130, 0.3);
+      color: var(--pal-light-green);
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .hero-heading {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+
+    .hero-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .hero-date-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--card-border);
+      padding: 10px 18px;
+      border-radius: var(--radius-lg);
+    }
+
+    .date-icon-wrap {
+      color: var(--pal-light-green);
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+    }
+
+    .date-details {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .date-day {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .date-current {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.98rem;
+      color: var(--pal-off-white);
+    }
+
+    /* Статистические показатели Hero */
+    .hero-metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: var(--spacing-md);
+    }
+
+    .metric-card {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-md) var(--spacing-lg);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: all 0.25s ease;
+    }
+
+    .metric-card:hover {
+      border-color: rgba(176, 209, 130, 0.3);
+      background: rgba(0, 0, 0, 0.45);
+      transform: translateY(-2px);
+    }
+
+    .metric-icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .metric-icon-box.green {
+      background: rgba(176, 209, 130, 0.12);
+      color: var(--pal-light-green);
+      border: 1px solid rgba(176, 209, 130, 0.25);
+    }
+
+    .metric-icon-box.blue {
+      background: rgba(110, 168, 254, 0.12);
+      color: #8bb9fe;
+      border: 1px solid rgba(110, 168, 254, 0.25);
+    }
+
+    .metric-icon-box.amber {
+      background: rgba(229, 169, 59, 0.12);
+      color: var(--pal-accent-amber);
+      border: 1px solid rgba(229, 169, 59, 0.25);
+    }
+
+    .metric-icon-box.red {
+      background: rgba(224, 83, 83, 0.12);
+      color: var(--pal-accent-red);
+      border: 1px solid rgba(224, 83, 83, 0.25);
+    }
+
+    .metric-data {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .metric-number {
+      font-family: var(--font-display);
+      font-size: 1.45rem;
+      font-weight: 800;
+      line-height: 1.1;
+      color: var(--text-main);
+    }
+
+    .metric-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    /* ============================================================
+       4. ПАНЕЛЬ ФИЛЬТРАЦИИ И ПОИСКА (CONTROLS SECTION)
+       ============================================================ */
+    .controls-section {
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .controls-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-xl);
+      padding: var(--spacing-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+    }
+
+    .search-action-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--spacing-md);
+      flex-wrap: wrap;
+    }
+
+    .search-input-wrap {
+      position: relative;
+      flex: 1;
+      min-width: 280px;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 20px;
+      pointer-events: none;
+    }
+
+    .search-input {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-pill);
+      padding: 12px 18px 12px 46px;
+      font-size: 0.92rem;
+      color: var(--text-main);
+      transition: all 0.2s ease;
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: var(--pal-light-green);
+      box-shadow: 0 0 0 3px rgba(176, 209, 130, 0.15);
+      background: rgba(0, 0, 0, 0.6);
+    }
+
+    .search-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .quick-tools {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: var(--radius-pill);
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--pal-mid-green);
+      color: #fff;
+      border: 1px solid var(--pal-light-green);
+    }
+
+    .btn-primary:hover {
+      background: #7ca85b;
+      box-shadow: var(--shadow-glow-green);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      border: 1px solid var(--card-border);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .filter-tags-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--spacing-sm);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: var(--spacing-md);
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter-label {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-right: 4px;
+    }
+
+    .filter-chip {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .filter-chip:hover {
+      color: var(--text-main);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .filter-chip.active {
+      background: var(--pal-dark-green);
+      color: var(--pal-light-green);
+      border-color: var(--pal-mid-green);
+      font-weight: 600;
+    }
+
+    .view-toggle {
+      display: flex;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-pill);
+      padding: 3px;
+    }
+
+    .view-toggle-btn {
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      color: var(--text-muted);
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      transition: all 0.2s;
+    }
+
+    .view-toggle-btn.active {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-main);
+    }
+
+    /* ============================================================
+       5. СПИСОК / КАРТОЧКИ УЧЕНИКОВ (STUDENTS ATTENDANCE SECTION)
+       ============================================================ */
+    .attendance-section {
+      margin-bottom: var(--spacing-2xl);
+    }
+
+    .section-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .count-badge {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--pal-light-green);
+      font-size: 0.78rem;
+      padding: 2px 10px;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-body);
+      font-weight: 600;
+    }
+
+    /* Grid карточек учеников */
+    .students-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: var(--spacing-lg);
+    }
+
+    .student-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-xl);
+      padding: var(--spacing-lg);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .student-card:hover {
+      border-color: rgba(176, 209, 130, 0.3);
+      background: var(--card-bg-hover);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Статусные световые акценты на карточке */
+    .student-card.status-paid {
+      border-left: 4px solid var(--pal-light-green);
+    }
+
+    .student-card.status-warning {
+      border-left: 4px solid var(--pal-accent-amber);
+    }
+
+    .student-card.status-debt {
+      border-left: 4px solid var(--pal-accent-red);
+    }
+
+    .student-card.status-checked-today {
+      background: linear-gradient(180deg, rgba(44, 71, 62, 0.25) 0%, rgba(255, 255, 255, 0.02) 100%);
+    }
+
+    /* Верхняя часть карточки: Аватарка + Инфо */
+    .student-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .avatar-wrapper {
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .student-photo {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--card-border);
+      background: #11151c;
+    }
+
+    .avatar-status-badge {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid var(--bg-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: #fff;
+    }
+
+    .status-ok { background: var(--pal-light-green); }
+    .status-warn { background: var(--pal-accent-amber); }
+    .status-alert { background: var(--pal-accent-red); }
+
+    .student-meta {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .student-name {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .student-subinfo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 3px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .group-pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--pal-off-white);
+      font-size: 0.72rem;
+      font-weight: 500;
+      margin-top: 4px;
+    }
+
+    /* Блок абонемента и статуса оплаты */
+    .subscription-block {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .sub-top-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .sub-name {
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--pal-off-white);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .payment-tag {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: var(--radius-pill);
+    }
+
+    .tag-paid {
+      background: rgba(176, 209, 130, 0.15);
+      color: var(--pal-light-green);
+      border: 1px solid rgba(176, 209, 130, 0.3);
+    }
+
+    .tag-warning {
+      background: rgba(229, 169, 59, 0.15);
+      color: var(--pal-accent-amber);
+      border: 1px solid rgba(229, 169, 59, 0.3);
+    }
+
+    .tag-debt {
+      background: rgba(224, 83, 83, 0.15);
+      color: var(--pal-accent-red);
+      border: 1px solid rgba(224, 83, 83, 0.3);
+    }
+
+    /* Прогресс-бар посещений */
+    .visits-progress-area {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .visits-labels {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.78rem;
+    }
+
+    .visits-left {
+      font-weight: 600;
+    }
+
+    .visits-left.safe { color: var(--pal-light-green); }
+    .visits-left.warn { color: var(--pal-accent-amber); }
+    .visits-left.critical { color: var(--pal-accent-red); }
+
+    .visits-total {
+      color: var(--text-muted);
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-pill);
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: var(--radius-pill);
+      transition: width 0.4s ease;
+    }
+
+    .fill-green { background: linear-gradient(90deg, var(--pal-mid-green), var(--pal-light-green)); }
+    .fill-amber { background: linear-gradient(90deg, #d48b28, var(--pal-accent-amber)); }
+    .fill-red { background: linear-gradient(90deg, #b93737, var(--pal-accent-red)); }
+
+    .sub-valid-date {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Нижняя часть карточки: Действия и отметка */
+    .student-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .action-row-main {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+    }
+
+    .btn-checkin {
+      background: var(--pal-dark-green);
+      color: var(--pal-light-green);
+      border: 1px solid rgba(176, 209, 130, 0.3);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-checkin:hover:not(:disabled) {
+      background: var(--pal-mid-green);
+      color: #fff;
+      border-color: var(--pal-light-green);
+      box-shadow: 0 0 16px rgba(176, 209, 130, 0.25);
+    }
+
+    .btn-checkin.checked-state {
+      background: rgba(176, 209, 130, 0.15);
+      border-color: var(--pal-light-green);
+      color: var(--pal-light-green);
+    }
+
+    .btn-icon-more {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      transition: all 0.2s;
+    }
+
+    .btn-icon-more:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-main);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .parent-contact-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      padding-top: 4px;
+    }
+
+    .parent-phone-link {
+      color: var(--pal-light-green);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: color 0.2s;
+    }
+
+    .parent-phone-link:hover {
+      text-decoration: underline;
+      color: #d1efa3;
+    }
+
+    /* Вид таблицы (List view) */
+    .students-table-container {
+      display: none;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-xl);
+      overflow-x: auto;
+    }
+
+    .students-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.88rem;
+    }
+
+    .students-table th {
+      background: rgba(0, 0, 0, 0.4);
+      color: var(--text-muted);
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .students-table td {
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      vertical-align: middle;
+    }
+
+    .students-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Состояние пустого поиска */
+    .empty-search-state {
+      display: none;
+      text-align: center;
+      padding: 60px 20px;
+      background: var(--card-bg);
+      border: 1px dashed var(--card-border);
+      border-radius: var(--radius-xl);
+    }
+
+    .empty-icon {
+      font-size: 48px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    /* ============================================================
+       6. МОДАЛЬНЫЕ ОКНА (MODALS)
+       ============================================================ */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+      opacity: 1;
+    }
+
+    .modal-box {
+      background: #0d1017;
+      border: 1px solid rgba(176, 209, 130, 0.25);
+      border-radius: var(--radius-xl);
+      max-width: 600px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+      position: relative;
+      transform: translateY(20px);
+      transition: transform 0.25s ease;
+    }
+
+    .modal-backdrop.show .modal-box {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      padding: 24px 28px;
+      border-bottom: 1px solid var(--card-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .btn-close-modal {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      transition: all 0.2s;
+    }
+
+    .btn-close-modal:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+
+    .modal-body {
+      padding: 24px 28px;
+    }
+
+    .modal-footer {
+      padding: 20px 28px;
+      border-top: 1px solid var(--card-border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    /* Стили для карточки деталей ученика в модалке */
+    .detail-hero {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .detail-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--pal-mid-green);
+    }
+
+    .detail-info h3 {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      margin-bottom: 4px;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .detail-field {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+    }
+
+    .field-title {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+    }
+
+    .field-val {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--pal-off-white);
+    }
+
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 180px;
+      overflow-y: auto;
+    }
+
+    .history-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.84rem;
+    }
+
+    /* Всплывающие уведомления (Toast) */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .toast-msg {
+      background: #14211C;
+      border: 1px solid var(--pal-light-green);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: var(--radius-pill);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      animation: slideIn 0.3s ease forwards;
+      pointer-events: auto;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* ============================================================
+       7. ПОДВАЛ САЙТА (FOOTER)
+       ============================================================ */
+    footer {
+      border-top: 1px solid var(--card-border);
+      background: var(--bg-darker);
+      padding: var(--spacing-xl) 0;
+      margin-top: auto;
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--spacing-md);
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: var(--spacing-lg);
+    }
+
+    .footer-link:hover {
+      color: var(--pal-light-green);
+    }
+
+    /* ============================================================
+       8. АДАПТИВНОСТЬ (RESPONSIVE MEDIA QUERIES)
+       ============================================================ */
+    @media (max-width: 1024px) {
+      .hero-heading {
+        font-size: 1.7rem;
+      }
+      nav.nav-pills {
+        display: none;
+      }
+      .students-grid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 0 var(--spacing-md);
+      }
+      .hero-glass-card {
+        padding: var(--spacing-lg);
+      }
+      .hero-heading {
+        font-size: 1.45rem;
+      }
+      .search-action-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .quick-tools {
+        justify-content: stretch;
+      }
+      .quick-tools .btn-pill {
+        flex: 1;
+        justify-content: center;
+      }
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Фоновые градиентные свечения в стиле Studio Alanko -->
+  <div class="ambient-glow-1"></div>
+  <div class="ambient-glow-2"></div>
+
+  <!-- ============================================================
+       HEADER (ШАПКА САЙТА)
+       ============================================================ -->
+  <header>
+    <div class="container">
+      <div class="header-inner">
+        <!-- Логотип бренда -->
+        <div class="brand-group">
+          <div class="brand-logo">
+            <iconify-icon icon="solar:shield-check-linear"></iconify-icon>
+          </div>
+          <div class="brand-text">
+            <div class="brand-title">
+              Studio Alanko
+              <span class="brand-dot"></span>
+            </div>
+            <div class="brand-subtitle">Учёт и посещаемость</div>
+          </div>
+        </div>
+
+        <!-- Навигационные вкладки -->
+        <nav class="nav-pills">
+          <a href="/admin_attendance.html" class="nav-item active">
+            <iconify-icon icon="solar:users-group-rounded-linear"></iconify-icon>
+            Отметка детей
+          </a>
+          <a href="/panel_for_taecher.html" class="nav-item">
+            <iconify-icon icon="solar:calendar-linear"></iconify-icon>
+            Расписание
+          </a>
+        </nav>
+
+        <!-- Профиль администратора -->
+        <div class="header-actions">
+          <div class="admin-badge">
+            <div class="admin-avatar">АД</div>
+            <div class="admin-info">
+              <span class="admin-name">Анна Дмитриева</span>
+              <span class="admin-role">Администратор</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       MAIN CONTENT (ОСНОВНОЙ КОНТЕНТ)
+       ============================================================ -->
+  <main>
+    <div class="container">
+
+      <!-- ============================================================
+           HERO SECTION (ГЕРОЙ-СЕКЦИЯ С ТЕКУЩЕЙ СТАТИСТИКОЙ)
+           ============================================================ -->
+      <section class="hero-section">
+        <div class="hero-glass-card">
+          
+          <div class="hero-top-row">
+            <div class="hero-title-area">
+              <div class="hero-tag">
+                <iconify-icon icon="solar:calendar-check-linear"></iconify-icon>
+                Журнал приёма и оплат
+              </div>
+              <h1 class="hero-heading">Контроль посещений и абонементов</h1>
+              <p class="hero-desc">
+                Проверяйте статус оплаты, остаток занятий по абонементам и отмечайте прибытие детей в один клик.
+              </p>
+            </div>
+
+            <!-- Виджет сегодняшней даты -->
+            <div class="hero-date-box">
+              <div class="date-icon-wrap">
+                <iconify-icon icon="solar:calendar-date-bold-duotone"></iconify-icon>
+              </div>
+              <div class="date-details">
+                <span class="date-day" id="currentDayOfWeek">Пятница</span>
+                <span class="date-current" id="currentDateFormatted">21 августа 2026</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Метрики дня -->
+          <div class="hero-metrics-grid">
+            
+            <div class="metric-card">
+              <div class="metric-icon-box green">
+                <iconify-icon icon="solar:user-check-rounded-linear"></iconify-icon>
+              </div>
+              <div class="metric-data">
+                <span class="metric-number" id="statCheckedCount">0 / 0</span>
+                <span class="metric-label">Отмечено на занятиях</span>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon-box blue">
+                <iconify-icon icon="solar:card-check-linear"></iconify-icon>
+              </div>
+              <div class="metric-data">
+                <span class="metric-number" id="statActiveSubs">0</span>
+                <span class="metric-label">Активных абонементов</span>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon-box amber">
+                <iconify-icon icon="solar:bell-bing-linear"></iconify-icon>
+              </div>
+              <div class="metric-data">
+                <span class="metric-number" id="statWarningSubs">0</span>
+                <span class="metric-label">Осталось ≤ 2 занятий</span>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon-box red">
+                <iconify-icon icon="solar:danger-circle-linear"></iconify-icon>
+              </div>
+              <div class="metric-data">
+                <span class="metric-number" id="statDebtCount">0</span>
+                <span class="metric-label">Требуется оплата</span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============================================================
+           CONTROLS SECTION (ПОИСК, БЫСТРЫЕ ФИЛЬТРЫ И QR)
+           ============================================================ -->
+      <section class="controls-section">
+        <div class="controls-panel">
+          
+          <!-- Верхний ряд: Поиск и кнопки быстрых действий -->
+          <div class="search-action-bar">
+            
+            <div class="search-input-wrap">
+              <iconify-icon icon="solar:magnifer-linear" class="search-icon"></iconify-icon>
+              <input 
+                type="text" 
+                id="searchInput" 
+                class="search-input" 
+                placeholder="Поиск по имени ребёнка, родителю или телефону..."
+                autocomplete="off"
+              />
+            </div>
+
+            <div class="quick-tools">
+              <button class="btn-pill btn-primary" id="btnQrScannerModal">
+                <iconify-icon icon="solar:qr-code-linear"></iconify-icon>
+                Сканер пропуска (QR)
+              </button>
+
+              <button class="btn-pill btn-secondary" id="btnAddNewChild">
+                <iconify-icon icon="solar:user-plus-linear"></iconify-icon>
+                Добавить ребёнка
+              </button>
+
+              <!-- Переключатель Вид сетки / Таблица -->
+              <div class="view-toggle">
+                <button class="view-toggle-btn active" id="btnViewGrid" title="Сетка">
+                  <iconify-icon icon="solar:widget-2-linear"></iconify-icon>
+                </button>
+                <button class="view-toggle-btn" id="btnViewTable" title="Таблица">
+                  <iconify-icon icon="solar:list-linear"></iconify-icon>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Нижний ряд: Фильтры по группам и статусам -->
+          <div class="filter-tags-row">
+            
+            <div class="filter-group">
+              <span class="filter-label">Группа:</span>
+              <button class="filter-chip active" data-group="all">Все группы</button>
+              <button class="filter-chip" data-group="Акробатика Junior">Акробатика Junior</button>
+              <button class="filter-chip" data-group="Современный танец (Kids)">Современный танец (Kids)</button>
+              <button class="filter-chip" data-group="Воздушная гимнастика">Воздушная гимнастика</button>
+              <button class="filter-chip" data-group="Растяжка и гибкость">Растяжка и гибкость</button>
+            </div>
+
+            <div class="filter-group">
+              <span class="filter-label">Статус:</span>
+              <button class="filter-chip active" data-status="all">Все</button>
+              <button class="filter-chip" data-status="paid">Оплачено</button>
+              <button class="filter-chip" data-status="warning">Мало занятий</button>
+              <button class="filter-chip" data-status="debt">Долг / Закончился</button>
+              <button class="filter-chip" data-status="checked">Отмечены сегодня</button>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============================================================
+           STUDENTS ATTENDANCE SECTION (СПИСОК И КАРТОЧКИ УЧЕНИКОВ)
+           ============================================================ -->
+      <section class="attendance-section">
+        
+        <div class="section-header-row">
+          <h2 class="section-title">
+            Список детей
+            <span class="count-badge" id="visibleStudentsCount">6 детей</span>
+          </h2>
+          <div class="legend-note" style="font-size: 0.78rem; color: var(--text-muted); display: flex; gap: 14px; align-items: center;">
+            <span style="display: flex; align-items: center; gap: 5px;"><span style="width: 8px; height: 8px; border-radius: 50%; background: var(--pal-light-green);"></span> Оплачено</span>
+            <span style="display: flex; align-items: center; gap: 5px;"><span style="width: 8px; height: 8px; border-radius: 50%; background: var(--pal-accent-amber);"></span> Мало занятий</span>
+            <span style="display: flex; align-items: center; gap: 5px;"><span style="width: 8px; height: 8px; border-radius: 50%; background: var(--pal-accent-red);"></span> Требует оплаты</span>
+          </div>
+        </div>
+
+        <!-- Вид 1: Сетка карточек -->
+        <div class="students-grid" id="studentsGrid">
+          <!-- Карточки генерируются скриптом dynamically -->
+        </div>
+
+        <!-- Вид 2: Таблица -->
+        <div class="students-table-container" id="studentsTableContainer">
+          <table class="students-table">
+            <thead>
+              <tr>
+                <th>Ребёнок</th>
+                <th>Группа / Направление</th>
+                <th>Абонемент</th>
+                <th>Остаток занятий</th>
+                <th>Статус оплаты</th>
+                <th>Родитель</th>
+                <th style="text-align: right;">Действие</th>
+              </tr>
+            </thead>
+            <tbody id="studentsTableBody">
+              <!-- Строки генерируются скриптом -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Состояние, если ничего не найдено -->
+        <div class="empty-search-state" id="emptyState">
+          <div class="empty-icon">
+            <iconify-icon icon="solar:user-cross-linear"></iconify-icon>
+          </div>
+          <h3 style="font-family: var(--font-display); font-size: 1.1rem; margin-bottom: 6px;">Дети не найдены</h3>
+          <p style="color: var(--text-muted); font-size: 0.85rem;">Попробуйте изменить поисковый запрос или сбросить фильтры</p>
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ============================================================
+       MODAL 1: КАРТОЧКА РЕБЁНКА И ИСТОРИЯ ПОСЕЩЕНИЙ
+       ============================================================ -->
+  <div class="modal-backdrop" id="studentDetailModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">Карточка ученика</h3>
+        <button class="btn-close-modal" id="btnCloseDetailModal">
+          <iconify-icon icon="solar:close-circle-linear"></iconify-icon>
+        </button>
+      </div>
+
+      <div class="modal-body" id="modalDetailContent">
+        <!-- Контент вставляется через JS -->
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-pill btn-secondary" id="btnRenewSubInModal">
+          <iconify-icon icon="solar:card-recive-linear"></iconify-icon>
+          Продлить абонемент
+        </button>
+        <button class="btn-pill btn-primary" id="btnQuickCheckinInModal">
+          <iconify-icon icon="solar:check-circle-linear"></iconify-icon>
+          Отметить посещение
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL 2: QR СИМУЛЯТОР СКАНИРОВАНИЯ
+       ============================================================ -->
+  <div class="modal-backdrop" id="qrScannerModal">
+    <div class="modal-box" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Быстрая отметка по QR</h3>
+        <button class="btn-close-modal" id="btnCloseQrModal">
+          <iconify-icon icon="solar:close-circle-linear"></iconify-icon>
+        </button>
+      </div>
+
+      <div class="modal-body" style="text-align: center;">
+        <div style="background: rgba(0,0,0,0.5); border: 2px dashed var(--pal-light-green); border-radius: var(--radius-lg); padding: 36px 20px; margin-bottom: 20px; position: relative;">
+          <iconify-icon icon="solar:qr-code-linear" style="font-size: 80px; color: var(--pal-light-green);"></iconify-icon>
+          <div style="margin-top: 14px; font-size: 0.88rem; color: var(--text-muted);">
+            Наведите камеру или выберите карточку ребёнка для симуляции прохода:
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px; text-align: left;">
+          <label style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase;">Симуляция считывания QR карты:</label>
+          <select id="selectStudentQrSim" style="background: rgba(255,255,255,0.06); border: 1px solid var(--card-border); padding: 10px 14px; border-radius: var(--radius-md);">
+            <!-- Опции генерируются через JS -->
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-pill btn-primary" id="btnSimulateScan" style="width: 100%; justify-content: center;">
+          <iconify-icon icon="solar:check-circle-linear"></iconify-icon>
+          Зарегистрировать вход
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL 3: ДОБАВЛЕНИЕ РЕБЁНКА / НОВОГО АБОНЕМЕНТА
+       ============================================================ -->
+  <div class="modal-backdrop" id="addStudentModal">
+    <div class="modal-box" style="max-width: 520px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Новый ученик</h3>
+        <button class="btn-close-modal" id="btnCloseAddStudentModal">
+          <iconify-icon icon="solar:close-circle-linear"></iconify-icon>
+        </button>
+      </div>
+
+      <form id="newStudentForm">
+        <div class="modal-body" style="display: flex; flex-direction: column; gap: 14px;">
+          <div>
+            <label style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-bottom: 4px;">ФИО Ребёнка *</label>
+            <input type="text" id="addName" required placeholder="Например: София Морозова" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); padding: 10px 14px; border-radius: var(--radius-md);" />
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div>
+              <label style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Возраст / Дата *</label>
+              <input type="text" id="addAge" required placeholder="7 лет" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); padding: 10px 14px; border-radius: var(--radius-md);" />
+            </div>
+            <div>
+              <label style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Группа *</label>
+              <select id="addGroup" style="width: 100%; background: #11151c; border: 1px solid var(--card-border); padding: 10px 14px; border-radius: var(--radius-md);">
+                <option value="Акробатика Junior">Акробатика Junior</option>
+                <option value="Современный танец (Kids)">Современный танец (Kids)</option>
+                <option value="Воздушная гимнастика">Воздушная гимнастика</option>
+                <option value="Растяжка и гибкость">Растяжка и гибкость</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div>
+              <label style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Имя родителя</label>
+              <input type="text" id="addParentName" placeholder="Елена (мама)" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); padding: 10px 14px; border-radius: var(--radius-md);" />
+            </div>
+            <div>
+              <label style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Телефон родителя *</label>
+              <input type="tel" id="addParentPhone" required placeholder="+7 (999) 000-00-00" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); padding: 10px 14px; border-radius: var(--radius-md);" />
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div>
+              <label style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Абонемент</label>
+              <select id="addSubPlan" style="width: 100%; background: #11151c; border: 1px solid var(--card-border); padding: 10px 14px; border-radius: var(--radius-md);">
+                <option value="Стандарт (8 занятий)">Стандарт (8 занятий)</option>
+                <option value="Интенсив (12 занятий)">Интенсив (12 занятий)</option>
+                <option value="Индивидуальный (4 занятия)">Индивидуальный (4 занятия)</option>
+                <option value="Разовое посещение">Разовое посещение</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Статус оплаты</label>
+              <select id="addPayStatus" style="width: 100%; background: #11151c; border: 1px solid var(--card-border); padding: 10px 14px; border-radius: var(--radius-md);">
+                <option value="paid">Оплачено онлайн</option>
+                <option value="cash">Оплачено наличными</option>
+                <option value="unpaid">Не оплачено (Долг)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-pill btn-secondary" id="btnCancelAdd">Отмена</button>
+          <button type="submit" class="btn-pill btn-primary">Сохранить ученика</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Контейнер для всплывающих уведомлений -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- ============================================================
+       FOOTER (ПОДВАЛ САЙТА)
+       ============================================================ */
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div>
+          © 2026 Studio Alanko. Платформа управления студией и контроля посещений.
+        </div>
+        <div class="footer-links">
+          <a href="/admin_attendance.html" class="footer-link">Отметка посещений</a>
+          <a href="/panel_for_al.html" class="footer-link">Панель управления</a>
+          <a href="/panel_for_taecher.html" class="footer-link">Панель тренера</a>
+          <a href="/index.html" class="footer-link">Главный сайт</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================================================
+       JAVASCRIPT: ИНТЕРАКТИВНОСТЬ, УЧЁТ И ОТМЕТКА ПОСЕЩЕНИЙ
+       ============================================================ -->
+  <script src="js/auth.js"></script>
+  <script>
+    requireAuth();
+
+    // Первоначальный набор данных учеников Studio Alanko с фотографиями и абонементами
+    const DEFAULT_STUDENTS = [
+      {
+        id: "st-101",
+        name: "Алиса Морозова",
+        age: "7 лет",
+        photo: "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?w=150&auto=format&fit=crop&q=80",
+        group: "Акробатика Junior",
+        subName: "Абонемент «Стандарт 8»",
+        visitsTotal: 8,
+        visitsLeft: 6,
+        validUntil: "15.09.2026",
+        payStatus: "paid", // paid | warning | debt
+        payAmount: "4 800 ₽",
+        lastPaymentDate: "15.08.2026",
+        parentName: "Ольга (мама)",
+        parentPhone: "+7 (912) 345-67-89",
+        medicalNote: "Без ограничений, хорошая гибкость",
+        checkedToday: false,
+        checkinTime: null,
+        history: [
+          { date: "19.08.2026", time: "16:00", trainer: "Екатерина В.", note: "Присутствовала, разминка на 5+" },
+          { date: "16.08.2026", time: "16:00", trainer: "Екатерина В.", note: "Присутствовала" }
+        ]
+      },
+      {
+        id: "st-102",
+        name: "Матвей Смирнов",
+        age: "9 лет",
+        photo: "https://images.unsplash.com/photo-1543610892-0b1f7e6d8ac1?w=150&auto=format&fit=crop&q=80",
+        group: "Воздушная гимнастика",
+        subName: "Абонемент «Интенсив 12»",
+        visitsTotal: 12,
+        visitsLeft: 2, // мало занятий!
+        validUntil: "28.08.2026",
+        payStatus: "warning",
+        payAmount: "6 500 ₽",
+        lastPaymentDate: "28.07.2026",
+        parentName: "Дмитрий (папа)",
+        parentPhone: "+7 (921) 987-65-43",
+        medicalNote: "Разминка голеностопа",
+        checkedToday: false,
+        checkinTime: null,
+        history: [
+          { date: "20.08.2026", time: "17:30", trainer: "Михаил С.", note: "Полотна, уровень 2" },
+          { date: "18.08.2026", time: "17:30", trainer: "Михаил С.", note: "Кольцо" }
+        ]
+      },
+      {
+        id: "st-103",
+        name: "Варвара Кузнецова",
+        age: "6 лет",
+        photo: "https://images.unsplash.com/photo-1544717305-2782549b5136?w=150&auto=format&fit=crop&q=80",
+        group: "Современный танец (Kids)",
+        subName: "Абонемент «Стандарт 8»",
+        visitsTotal: 8,
+        visitsLeft: 0, // закончился / долг
+        validUntil: "20.08.2026 (Истёк)",
+        payStatus: "debt",
+        payAmount: "0 ₽ (Не оплачен)",
+        lastPaymentDate: "20.07.2026",
+        parentName: "Анна (мама)",
+        parentPhone: "+7 (905) 555-12-34",
+        medicalNote: "Нет противопоказаний",
+        checkedToday: false,
+        checkinTime: null,
+        history: [
+          { date: "17.08.2026", time: "15:00", trainer: "Светлана Р.", note: "Последнее занятие по старому абонементу" }
+        ]
+      },
+      {
+        id: "st-104",
+        name: "Артём Васильев",
+        age: "11 лет",
+        photo: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150&auto=format&fit=crop&q=80",
+        group: "Акробатика Junior",
+        subName: "Абонемент «Интенсив 12»",
+        visitsTotal: 12,
+        visitsLeft: 8,
+        validUntil: "22.09.2026",
+        payStatus: "paid",
+        payAmount: "6 500 ₽",
+        lastPaymentDate: "10.08.2026",
+        parentName: "Сергей (папа)",
+        parentPhone: "+7 (911) 444-55-66",
+        medicalNote: "Отличная физподготовка",
+        checkedToday: true,
+        checkinTime: "14:15",
+        history: [
+          { date: "21.08.2026", time: "14:15", trainer: "Екатерина В.", note: "Отмечен администратором" },
+          { date: "19.08.2026", time: "16:00", trainer: "Екатерина В.", note: "Сальто назад" }
+        ]
+      },
+      {
+        id: "st-105",
+        name: "София Новикова",
+        age: "8 лет",
+        photo: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=150&auto=format&fit=crop&q=80",
+        group: "Растяжка и гибкость",
+        subName: "Индивидуальный (4 занятия)",
+        visitsTotal: 4,
+        visitsLeft: 3,
+        validUntil: "10.09.2026",
+        payStatus: "paid",
+        payAmount: "5 200 ₽",
+        lastPaymentDate: "12.08.2026",
+        parentName: "Марина (мама)",
+        parentPhone: "+7 (999) 777-88-99",
+        medicalNote: "Шпагаты, мягкая растяжка",
+        checkedToday: false,
+        checkinTime: null,
+        history: [
+          { date: "15.08.2026", time: "18:00", trainer: "Анастасия П.", note: "Продольный шпагат" }
+        ]
+      },
+      {
+        id: "st-106",
+        name: "Даниил Ковалёв",
+        age: "10 лет",
+        photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+        group: "Воздушная гимнастика",
+        subName: "Абонемент «Стандарт 8»",
+        visitsTotal: 8,
+        visitsLeft: 1, // мало занятий!
+        validUntil: "30.08.2026",
+        payStatus: "warning",
+        payAmount: "4 800 ₽",
+        lastPaymentDate: "01.08.2026",
+        parentName: "Виктория (мама)",
+        parentPhone: "+7 (931) 222-33-44",
+        medicalNote: "Справка предоставлена",
+        checkedToday: false,
+        checkinTime: null,
+        history: [
+          { date: "18.08.2026", time: "17:30", trainer: "Михаил С.", note: "Отработка связок" }
+        ]
+      }
+    ];
+
+    // Инициализация данных в localStorage
+    let students = [];
+    try {
+      const stored = localStorage.getItem("alanko_students_db");
+      if (stored) {
+        students = JSON.parse(stored);
+      } else {
+        students = DEFAULT_STUDENTS;
+        localStorage.setItem("alanko_students_db", JSON.stringify(students));
+      }
+    } catch (e) {
+      students = DEFAULT_STUDENTS;
+    }
+
+    function saveStudents() {
+      try {
+        localStorage.setItem("alanko_students_db", JSON.stringify(students));
+      } catch (e) {}
+      updateMetrics();
+    }
+
+    // Состояние фильтрации и отображения
+    let activeGroupFilter = "all";
+    let activeStatusFilter = "all";
+    let searchQuery = "";
+    let currentView = "grid"; // 'grid' | 'table'
+    let selectedStudentForModal = null;
+
+    // DOM Элементы
+    const studentsGrid = document.getElementById("studentsGrid");
+    const studentsTableContainer = document.getElementById("studentsTableContainer");
+    const studentsTableBody = document.getElementById("studentsTableBody");
+    const emptyState = document.getElementById("emptyState");
+    const searchInput = document.getElementById("searchInput");
+    const visibleStudentsCount = document.getElementById("visibleStudentsCount");
+
+    // Метрики
+    const statCheckedCount = document.getElementById("statCheckedCount");
+    const statActiveSubs = document.getElementById("statActiveSubs");
+    const statWarningSubs = document.getElementById("statWarningSubs");
+    const statDebtCount = document.getElementById("statDebtCount");
+
+    // Модалки
+    const studentDetailModal = document.getElementById("studentDetailModal");
+    const modalDetailContent = document.getElementById("modalDetailContent");
+    const btnCloseDetailModal = document.getElementById("btnCloseDetailModal");
+    const btnQuickCheckinInModal = document.getElementById("btnQuickCheckinInModal");
+    const btnRenewSubInModal = document.getElementById("btnRenewSubInModal");
+
+    const qrScannerModal = document.getElementById("qrScannerModal");
+    const btnQrScannerModal = document.getElementById("btnQrScannerModal");
+    const btnCloseQrModal = document.getElementById("btnCloseQrModal");
+    const selectStudentQrSim = document.getElementById("selectStudentQrSim");
+    const btnSimulateScan = document.getElementById("btnSimulateScan");
+
+    const addStudentModal = document.getElementById("addStudentModal");
+    const btnAddNewChild = document.getElementById("btnAddNewChild");
+    const btnCloseAddStudentModal = document.getElementById("btnCloseAddStudentModal");
+    const btnCancelAdd = document.getElementById("btnCancelAdd");
+    const newStudentForm = document.getElementById("newStudentForm");
+
+    const btnViewGrid = document.getElementById("btnViewGrid");
+    const btnViewTable = document.getElementById("btnViewTable");
+
+    // Обновление метрик Hero
+    function updateMetrics() {
+      const total = students.length;
+      const checked = students.filter(s => s.checkedToday).length;
+      const active = students.filter(s => s.payStatus === "paid" || s.payStatus === "warning").length;
+      const warning = students.filter(s => s.visitsLeft <= 2 && s.visitsLeft > 0).length;
+      const debts = students.filter(s => s.payStatus === "debt" || s.visitsLeft === 0).length;
+
+      statCheckedCount.textContent = `${checked} / ${total}`;
+      statActiveSubs.textContent = `${active}`;
+      statWarningSubs.textContent = `${warning}`;
+      statDebtCount.textContent = `${debts}`;
+    }
+
+    // Рендер карточек и таблицы
+    function renderStudents() {
+      const filtered = students.filter(s => {
+        // Фильтр по группе
+        if (activeGroupFilter !== "all" && s.group !== activeGroupFilter) {
+          return false;
+        }
+
+        // Фильтр по статусу
+        if (activeStatusFilter === "paid" && s.payStatus !== "paid") return false;
+        if (activeStatusFilter === "warning" && (s.visitsLeft > 2 || s.visitsLeft === 0)) return false;
+        if (activeStatusFilter === "debt" && (s.payStatus !== "debt" && s.visitsLeft > 0)) return false;
+        if (activeStatusFilter === "checked" && !s.checkedToday) return false;
+
+        // Поиск по тексту
+        if (searchQuery.trim() !== "") {
+          const q = searchQuery.toLowerCase().trim();
+          const matchName = s.name.toLowerCase().includes(q);
+          const matchGroup = s.group.toLowerCase().includes(q);
+          const matchParent = s.parentName.toLowerCase().includes(q);
+          const matchPhone = s.parentPhone.toLowerCase().includes(q);
+          if (!matchName && !matchGroup && !matchParent && !matchPhone) {
+            return false;
+          }
+        }
+
+        return true;
+      });
+
+      visibleStudentsCount.textContent = `${filtered.length} ${getNoun(filtered.length, 'ребёнок', 'ребёнка', 'детей')}`;
+
+      if (filtered.length === 0) {
+        studentsGrid.style.display = "none";
+        studentsTableContainer.style.display = "none";
+        emptyState.style.display = "block";
+        return;
+      }
+
+      emptyState.style.display = "none";
+
+      if (currentView === "grid") {
+        studentsGrid.style.display = "grid";
+        studentsTableContainer.style.display = "none";
+        renderGrid(filtered);
+      } else {
+        studentsGrid.style.display = "none";
+        studentsTableContainer.style.display = "block";
+        renderTable(filtered);
+      }
+    }
+
+    // Рендер карточек
+    function renderGrid(list) {
+      studentsGrid.innerHTML = "";
+
+      list.forEach(student => {
+        const card = document.createElement("div");
+        card.className = `student-card status-${student.payStatus} ${student.checkedToday ? 'status-checked-today' : ''}`;
+
+        // Расчет процентов прогресса
+        const pct = student.visitsTotal > 0 ? Math.round((student.visitsLeft / student.visitsTotal) * 100) : 0;
+        let fillClass = "fill-green";
+        let statusBadgeClass = "status-ok";
+        let tagClass = "tag-paid";
+        let tagText = "Оплачено";
+
+        if (student.payStatus === "debt" || student.visitsLeft === 0) {
+          fillClass = "fill-red";
+          statusBadgeClass = "status-alert";
+          tagClass = "tag-debt";
+          tagText = "Требуется оплата";
+        } else if (student.visitsLeft <= 2) {
+          fillClass = "fill-amber";
+          statusBadgeClass = "status-warn";
+          tagClass = "tag-warning";
+          tagText = "Заканчивается";
+        }
+
+        const visitsLeftColorClass = student.visitsLeft === 0 ? 'critical' : (student.visitsLeft <= 2 ? 'warn' : 'safe');
+
+        card.innerHTML = `
+          <div>
+            <div class="student-header">
+              <div class="avatar-wrapper">
+                <img src="${student.photo}" alt="${student.name}" class="student-photo" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'" />
+                <div class="avatar-status-badge ${statusBadgeClass}">
+                  <iconify-icon icon="${student.payStatus === 'debt' ? 'solar:close-linear' : 'solar:check-linear'}"></iconify-icon>
+                </div>
+              </div>
+              <div class="student-meta">
+                <div class="student-name" title="${student.name}">${student.name}</div>
+                <div class="student-subinfo">
+                  <span>${student.age}</span>
+                  <span>•</span>
+                  <span>ID: ${student.id}</span>
+                </div>
+                <span class="group-pill">${student.group}</span>
+              </div>
+            </div>
+
+            <div class="subscription-block">
+              <div class="sub-top-info">
+                <span class="sub-name">
+                  <iconify-icon icon="solar:ticket-linear" style="color: var(--pal-light-green);"></iconify-icon>
+                  ${student.subName}
+                </span>
+                <span class="payment-tag ${tagClass}">${tagText}</span>
+              </div>
+
+              <div class="visits-progress-area">
+                <div class="visits-labels">
+                  <span class="visits-left ${visitsLeftColorClass}">
+                    Осталось: ${student.visitsLeft} из ${student.visitsTotal}
+                  </span>
+                  <span class="visits-total">${pct}%</span>
+                </div>
+                <div class="progress-track">
+                  <div class="progress-bar-fill ${fillClass}" style="width: ${pct}%;"></div>
+                </div>
+              </div>
+
+              <div class="sub-valid-date">
+                <iconify-icon icon="solar:clock-circle-linear"></iconify-icon>
+                Действует до: ${student.validUntil}
+              </div>
+            </div>
+          </div>
+
+          <div class="student-actions">
+            <div class="action-row-main">
+              <button 
+                class="btn-checkin ${student.checkedToday ? 'checked-state' : ''}" 
+                onclick="handleCheckinToggle('${student.id}')"
+              >
+                <iconify-icon icon="${student.checkedToday ? 'solar:check-circle-bold' : 'solar:check-circle-linear'}" style="font-size: 18px;"></iconify-icon>
+                <span>${student.checkedToday ? `Отмечен (${student.checkinTime || 'сегодня'})` : 'Отметить визит'}</span>
+              </button>
+
+              <button class="btn-icon-more" title="Подробная карточка и история" onclick="openStudentModal('${student.id}')">
+                <iconify-icon icon="solar:notes-linear"></iconify-icon>
+              </button>
+            </div>
+
+            <div class="parent-contact-strip">
+              <span>${student.parentName}</span>
+              <a href="tel:${student.parentPhone}" class="parent-phone-link">
+                <iconify-icon icon="solar:phone-calling-linear"></iconify-icon>
+                ${student.parentPhone}
+              </a>
+            </div>
+          </div>
+        `;
+
+        studentsGrid.appendChild(card);
+      });
+    }
+
+    // Рендер таблицы
+    function renderTable(list) {
+      studentsTableBody.innerHTML = "";
+
+      list.forEach(student => {
+        const tr = document.createElement("tr");
+
+        let tagClass = "tag-paid";
+        let tagText = "Оплачено";
+        if (student.payStatus === "debt" || student.visitsLeft === 0) {
+          tagClass = "tag-debt";
+          tagText = "Требуется оплата";
+        } else if (student.visitsLeft <= 2) {
+          tagClass = "tag-warning";
+          tagText = "Заканчивается";
+        }
+
+        tr.innerHTML = `
+          <td>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <img src="${student.photo}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'" />
+              <div>
+                <div style="font-weight: 600;">${student.name}</div>
+                <div style="font-size: 0.74rem; color: var(--text-muted);">${student.age}</div>
+              </div>
+            </div>
+          </td>
+          <td><span class="group-pill">${student.group}</span></td>
+          <td>${student.subName}</td>
+          <td>
+            <span style="font-weight: 700; color: ${student.visitsLeft === 0 ? 'var(--pal-accent-red)' : (student.visitsLeft <= 2 ? 'var(--pal-accent-amber)' : 'var(--pal-light-green)')};">
+              ${student.visitsLeft} / ${student.visitsTotal}
+            </span>
+          </td>
+          <td><span class="payment-tag ${tagClass}">${tagText}</span></td>
+          <td>
+            <div style="font-size: 0.8rem;">${student.parentName}</div>
+            <a href="tel:${student.parentPhone}" class="parent-phone-link" style="font-size: 0.75rem;">${student.parentPhone}</a>
+          </td>
+          <td style="text-align: right;">
+            <div style="display: flex; justify-content: flex-end; gap: 6px;">
+              <button 
+                class="btn-checkin ${student.checkedToday ? 'checked-state' : ''}" 
+                style="padding: 6px 12px; font-size: 0.78rem;" 
+                onclick="handleCheckinToggle('${student.id}')"
+              >
+                <iconify-icon icon="${student.checkedToday ? 'solar:check-circle-bold' : 'solar:check-circle-linear'}"></iconify-icon>
+                ${student.checkedToday ? 'Отмечен' : 'Отметить'}
+              </button>
+              <button class="btn-icon-more" style="width: 32px; height: 32px;" onclick="openStudentModal('${student.id}')">
+                <iconify-icon icon="solar:eye-linear"></iconify-icon>
+              </button>
+            </div>
+          </td>
+        `;
+
+        studentsTableBody.appendChild(tr);
+      });
+    }
+
+    // Обработка отметки посещения (Check-in)
+    window.handleCheckinToggle = function(studentId) {
+      const student = students.find(s => s.id === studentId);
+      if (!student) return;
+
+      if (!student.checkedToday) {
+        // Проверка: есть ли доступные занятия или оплата
+        if (student.visitsLeft <= 0 && student.payStatus === "debt") {
+          showToast(`⚠️ Внимание: У ${student.name} закончился абонемент! Посещение отмечено с предупреждением.`);
+        }
+
+        const now = new Date();
+        const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+        
+        student.checkedToday = true;
+        student.checkinTime = timeStr;
+        if (student.visitsLeft > 0) {
+          student.visitsLeft -= 1;
+        }
+
+        student.history.unshift({
+          date: "21.08.2026",
+          time: timeStr,
+          trainer: "Дежурный администратор",
+          note: "Посещение отмечено на ресепшн"
+        });
+
+        showToast(`✓ Посещение отмечено: ${student.name} (${timeStr})`);
+      } else {
+        // Отмена отметки
+        student.checkedToday = false;
+        student.checkinTime = null;
+        if (student.visitsLeft < student.visitsTotal) {
+          student.visitsLeft += 1;
+        }
+        showToast(`↩ Отметка отменена для ${student.name}`);
+      }
+
+      saveStudents();
+      renderStudents();
+    };
+
+    // Открытие модального окна подробной карточки
+    window.openStudentModal = function(studentId) {
+      const student = students.find(s => s.id === studentId);
+      if (!student) return;
+
+      selectedStudentForModal = student;
+
+      let tagClass = "tag-paid";
+      let tagText = "Оплачено онлайн";
+      if (student.payStatus === "debt") {
+        tagClass = "tag-debt";
+        tagText = "Требуется оплата";
+      } else if (student.visitsLeft <= 2) {
+        tagClass = "tag-warning";
+        tagText = "Мало занятий";
+      }
+
+      modalDetailContent.innerHTML = `
+        <div class="detail-hero">
+          <img src="${student.photo}" alt="${student.name}" class="detail-avatar" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'" />
+          <div class="detail-info">
+            <h3>${student.name}</h3>
+            <div style="display: flex; gap: 8px; align-items: center; font-size: 0.84rem; color: var(--text-muted); margin-bottom: 6px;">
+              <span>${student.age}</span>
+              <span>•</span>
+              <span class="group-pill">${student.group}</span>
+            </div>
+            <span class="payment-tag ${tagClass}">${tagText} (${student.payAmount})</span>
+          </div>
+        </div>
+
+        <div class="detail-grid">
+          <div class="detail-field">
+            <div class="field-title">Текущий абонемент</div>
+            <div class="field-val">${student.subName}</div>
+          </div>
+          <div class="detail-field">
+            <div class="field-title">Остаток занятий</div>
+            <div class="field-val" style="color: var(--pal-light-green);">${student.visitsLeft} из ${student.visitsTotal} занятий</div>
+          </div>
+          <div class="detail-field">
+            <div class="field-title">Срок действия</div>
+            <div class="field-val">${student.validUntil}</div>
+          </div>
+          <div class="detail-field">
+            <div class="field-title">Контакты родителя</div>
+            <div class="field-val">${student.parentName} (${student.parentPhone})</div>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 18px;">
+          <div class="field-title">Особенности и примечания</div>
+          <div style="font-size: 0.85rem; color: var(--text-secondary); background: rgba(255,255,255,0.03); padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--card-border);">
+            ${student.medicalNote || 'Особых пометок нет'}
+          </div>
+        </div>
+
+        <div>
+          <div class="field-title" style="margin-bottom: 8px;">История недавних посещений</div>
+          <div class="history-list">
+            ${student.history && student.history.length > 0 ? student.history.map(h => `
+              <div class="history-item">
+                <div>
+                  <strong>${h.date} (${h.time})</strong>
+                  <div style="font-size: 0.74rem; color: var(--text-muted);">${h.note || ''}</div>
+                </div>
+                <div style="font-size: 0.78rem; color: var(--pal-light-green);">${h.trainer}</div>
+              </div>
+            `).join('') : '<div style="color: var(--text-muted); font-size: 0.8rem;">Посещений пока нет</div>'}
+          </div>
+        </div>
+      `;
+
+      btnQuickCheckinInModal.innerHTML = student.checkedToday ? 
+        `<iconify-icon icon="solar:restart-linear"></iconify-icon> Отменить отметку` : 
+        `<iconify-icon icon="solar:check-circle-linear"></iconify-icon> Отметить посещение`;
+
+      studentDetailModal.classList.add("show");
+    };
+
+    // Продление абонемента в модалке
+    btnRenewSubInModal.addEventListener("click", () => {
+      if (!selectedStudentForModal) return;
+      selectedStudentForModal.visitsTotal = 8;
+      selectedStudentForModal.visitsLeft = 8;
+      selectedStudentForModal.payStatus = "paid";
+      selectedStudentForModal.payAmount = "4 800 ₽";
+      selectedStudentForModal.validUntil = "21.09.2026";
+      
+      saveStudents();
+      renderStudents();
+      openStudentModal(selectedStudentForModal.id);
+      showToast(`✓ Абонемент успешно продлён для ${selectedStudentForModal.name}`);
+    });
+
+    // Быстрая отметка из модалки
+    btnQuickCheckinInModal.addEventListener("click", () => {
+      if (!selectedStudentForModal) return;
+      handleCheckinToggle(selectedStudentForModal.id);
+      openStudentModal(selectedStudentForModal.id);
+    });
+
+    btnCloseDetailModal.addEventListener("click", () => {
+      studentDetailModal.classList.remove("show");
+    });
+
+    // QR Сканер симуляция
+    btnQrScannerModal.addEventListener("click", () => {
+      selectStudentQrSim.innerHTML = students.map(s => `
+        <option value="${s.id}">${s.name} (${s.group}) — ${s.checkedToday ? 'Уже отмечен' : 'Не отмечен'}</option>
+      `).join('');
+      qrScannerModal.classList.add("show");
+    });
+
+    btnCloseQrModal.addEventListener("click", () => {
+      qrScannerModal.classList.remove("show");
+    });
+
+    btnSimulateScan.addEventListener("click", () => {
+      const sId = selectStudentQrSim.value;
+      qrScannerModal.classList.remove("show");
+      handleCheckinToggle(sId);
+    });
+
+    // Добавление нового ребёнка
+    btnAddNewChild.addEventListener("click", () => {
+      addStudentModal.classList.add("show");
+    });
+
+    btnCloseAddStudentModal.addEventListener("click", () => {
+      addStudentModal.classList.remove("show");
+    });
+
+    btnCancelAdd.addEventListener("click", () => {
+      addStudentModal.classList.remove("show");
+    });
+
+    newStudentForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById("addName").value.trim();
+      const age = document.getElementById("addAge").value.trim();
+      const group = document.getElementById("addGroup").value;
+      const parentName = document.getElementById("addParentName").value.trim() || "Родитель";
+      const parentPhone = document.getElementById("addParentPhone").value.trim();
+      const subPlan = document.getElementById("addSubPlan").value;
+      const payStatus = document.getElementById("addPayStatus").value;
+
+      const newId = `st-${100 + students.length + 1}`;
+      const newKid = {
+        id: newId,
+        name: name,
+        age: age,
+        photo: "https://images.unsplash.com/photo-1543610892-0b1f7e6d8ac1?w=150&auto=format&fit=crop&q=80",
+        group: group,
+        subName: subPlan,
+        visitsTotal: subPlan.includes("12") ? 12 : (subPlan.includes("4") ? 4 : 8),
+        visitsLeft: subPlan.includes("12") ? 12 : (subPlan.includes("4") ? 4 : 8),
+        validUntil: "21.09.2026",
+        payStatus: payStatus === "unpaid" ? "debt" : "paid",
+        payAmount: payStatus === "unpaid" ? "0 ₽" : "4 800 ₽",
+        lastPaymentDate: "21.08.2026",
+        parentName: parentName,
+        parentPhone: parentPhone,
+        medicalNote: "Новый ученик",
+        checkedToday: false,
+        checkinTime: null,
+        history: []
+      };
+
+      students.unshift(newKid);
+      saveStudents();
+      renderStudents();
+      addStudentModal.classList.remove("show");
+      newStudentForm.reset();
+      showToast(`✓ Ребёнок ${name} успешно добавлен в систему!`);
+    });
+
+    // Обработка кликов по бэкдропам для закрытия
+    window.addEventListener("click", (e) => {
+      if (e.target === studentDetailModal) studentDetailModal.classList.remove("show");
+      if (e.target === qrScannerModal) qrScannerModal.classList.remove("show");
+      if (e.target === addStudentModal) addStudentModal.classList.remove("show");
+    });
+
+    // Поиск
+    searchInput.addEventListener("input", (e) => {
+      searchQuery = e.target.value;
+      renderStudents();
+    });
+
+    // Фильтры по группам
+    document.querySelectorAll(".filter-chip[data-group]").forEach(chip => {
+      chip.addEventListener("click", () => {
+        document.querySelectorAll(".filter-chip[data-group]").forEach(c => c.classList.remove("active"));
+        chip.classList.add("active");
+        activeGroupFilter = chip.getAttribute("data-group");
+        renderStudents();
+      });
+    });
+
+    // Фильтры по статусам
+    document.querySelectorAll(".filter-chip[data-status]").forEach(chip => {
+      chip.addEventListener("click", () => {
+        document.querySelectorAll(".filter-chip[data-status]").forEach(c => c.classList.remove("active"));
+        chip.classList.add("active");
+        activeStatusFilter = chip.getAttribute("data-status");
+        renderStudents();
+      });
+    });
+
+    // Переключение вида (Сетка / Таблица)
+    btnViewGrid.addEventListener("click", () => {
+      btnViewGrid.classList.add("active");
+      btnViewTable.classList.remove("active");
+      currentView = "grid";
+      renderStudents();
+    });
+
+    btnViewTable.addEventListener("click", () => {
+      btnViewTable.classList.add("active");
+      btnViewGrid.classList.remove("active");
+      currentView = "table";
+      renderStudents();
+    });
+
+    // Всплывающие подсказки (Toast)
+    function showToast(text) {
+      const container = document.getElementById("toastContainer");
+      const toast = document.createElement("div");
+      toast.className = "toast-msg";
+      toast.innerHTML = `<span>${text}</span>`;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        toast.style.transform = "translateX(100%)";
+        toast.style.transition = "all 0.3s ease";
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    function getNoun(number, one, two, five) {
+      let n = Math.abs(number);
+      n %= 100;
+      if (n >= 5 && n <= 20) return five;
+      n %= 10;
+      if (n === 1) return one;
+      if (n >= 2 && n <= 4) return two;
+      return five;
+    }
+
+    // Инициализация при загрузке
+    updateMetrics();
+    renderStudents();
+  </script>
+</body>
+</html>

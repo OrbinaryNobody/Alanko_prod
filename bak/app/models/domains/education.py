@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, Integer, Text, TIMESTAMP, String, ForeignKey
+from sqlalchemy import Boolean, Column, Date, Integer, Text, TIMESTAMP, String, ForeignKey, Time, JSON
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -17,6 +17,25 @@ class Program(Base):
 
     blocks = relationship("ProgramBlock", back_populates="program", cascade="all, delete-orphan")
     groups = relationship("Group", back_populates="program")
+    change_proposals = relationship("ProgramChangeProposal", back_populates="program", cascade="all, delete-orphan")
+
+
+class ProgramChangeProposal(Base):
+    __tablename__ = "program_change_proposals"
+
+    id = Column(Integer, primary_key=True, index=True)
+    program_id = Column(Integer, ForeignKey("programs.id", ondelete="CASCADE"), nullable=False, index=True)
+    author_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
+    status = Column(String(16), nullable=False, default="PENDING", index=True)
+    base_snapshot = Column(JSON, nullable=False)
+    proposed_snapshot = Column(JSON, nullable=False)
+    author_comment = Column(Text)
+    reviewer_comment = Column(Text)
+    reviewed_by = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    created_at = Column(TIMESTAMP(timezone=True), server_default=func.now())
+    reviewed_at = Column(TIMESTAMP(timezone=True))
+
+    program = relationship("Program", back_populates="change_proposals")
 
 
 class ProgramBlock(Base):
@@ -31,7 +50,23 @@ class ProgramBlock(Base):
     created_at = Column(TIMESTAMP(timezone=True), server_default=func.now())
 
     program = relationship("Program", back_populates="blocks")
+    topics = relationship("ProgramTopic", back_populates="block", cascade="all, delete-orphan", order_by="ProgramTopic.order")
     tasks = relationship("ProgramTask", back_populates="block", cascade="all, delete-orphan")
+
+
+class ProgramTopic(Base):
+    __tablename__ = "program_topics"
+
+    id = Column(Integer, primary_key=True, index=True)
+    block_id = Column(Integer, ForeignKey("program_blocks.id", ondelete="CASCADE"), nullable=False, index=True)
+    title = Column(Text, nullable=False)
+    description = Column(Text)
+    order = Column(Integer, default=0)
+    status = Column(Text, default="draft")
+    created_at = Column(TIMESTAMP(timezone=True), server_default=func.now())
+
+    block = relationship("ProgramBlock", back_populates="topics")
+    tasks = relationship("ProgramTask", back_populates="topic", cascade="all, delete-orphan", order_by="ProgramTask.order")
 
 
 class ProgramTask(Base):
@@ -39,13 +74,16 @@ class ProgramTask(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     block_id = Column(Integer, ForeignKey("program_blocks.id", ondelete="CASCADE"), nullable=False)
+    topic_id = Column(Integer, ForeignKey("program_topics.id", ondelete="CASCADE"), nullable=True, index=True)
     title = Column(Text, nullable=False)
     description = Column(Text)
     max_score = Column(Integer, default=100)
+    order = Column(Integer, default=0)
     is_manual = Column(Boolean, default=False)
     created_at = Column(TIMESTAMP(timezone=True), server_default=func.now())
 
     block = relationship("ProgramBlock", back_populates="tasks")
+    topic = relationship("ProgramTopic", back_populates="tasks")
 
 
 class Group(Base):
@@ -64,6 +102,25 @@ class Group(Base):
     current_block = relationship("ProgramBlock", foreign_keys=[current_block_id])
     members = relationship("GroupMember", back_populates="group", cascade="all, delete-orphan")
     enrollments = relationship("GroupEnrollment", back_populates="group", cascade="all, delete-orphan")
+    schedules = relationship("GroupSchedule", back_populates="group", cascade="all, delete-orphan")
+
+
+class GroupSchedule(Base):
+    __tablename__ = "group_schedules"
+
+    id = Column(Integer, primary_key=True, index=True)
+    group_id = Column(Integer, ForeignKey("groups.id", ondelete="CASCADE"), nullable=False, index=True)
+    teacher_id = Column(Integer, ForeignKey("users.id", ondelete="RESTRICT"), nullable=False, index=True)
+    weekday = Column(Integer, nullable=False)
+    start_time = Column(Time, nullable=False)
+    end_time = Column(Time, nullable=False)
+    valid_from = Column(Date, nullable=False)
+    valid_until = Column(Date, nullable=True)
+    status = Column(String(16), nullable=False, default="ACTIVE")
+    created_at = Column(TIMESTAMP(timezone=True), server_default=func.now())
+
+    group = relationship("Group", back_populates="schedules")
+    teacher = relationship("User", foreign_keys=[teacher_id])
 
 
 class GroupMember(Base):
