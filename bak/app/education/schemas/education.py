@@ -61,6 +61,26 @@ class ProgramTaskCreate(BaseModel):
     is_manual: bool = False
 
 
+class ProgramBlockUpdate(BaseModel):
+    title: str
+    description: str | None = None
+    order: int = 0
+
+
+class ProgramTopicUpdate(BaseModel):
+    title: str
+    description: str | None = None
+    order: int = 0
+
+
+class ProgramTaskUpdate(BaseModel):
+    title: str
+    description: str | None = None
+    max_score: int = Field(ge=0, le=100000)
+    is_manual: bool = False
+    order: int = 0
+
+
 class GroupCreate(BaseModel):
     title: str
     description: str | None = None

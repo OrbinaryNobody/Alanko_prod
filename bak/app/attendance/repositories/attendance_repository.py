@@ -4,7 +4,7 @@ from sqlalchemy import and_, or_
 from sqlalchemy.orm import Session, joinedload
 
 from models.domains.attendance import AttendanceRecord, ParentGuardian, StudentParent, Subscription
-from models.domains.auth import Role, User
+from models.domains.auth import Role, User, UserRole
 from models.domains.education import Group, GroupEnrollment
 
 
@@ -14,6 +14,7 @@ class AttendanceRepository:
             db.query(User)
             .join(User.roles)
             .filter(Role.name == "student")
+            .filter(~User.roles.any(UserRole.role.has(Role.name.in_(("admin", "teacher", "secretary")))))
             .options(joinedload(User.student_profile))
             .distinct()
         )

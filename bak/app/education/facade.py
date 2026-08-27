@@ -71,6 +71,24 @@ class EducationFacade:
             is_manual=is_manual,
         )
 
+    def update_block(self, db: Session, *, ctx: AccessContext, block_id: int, title: str, description: str | None, order: int):
+        return education_program_service.update_block(db, ctx=ctx, block_id=block_id, title=title, description=description, order=order)
+
+    def update_topic(self, db: Session, *, ctx: AccessContext, block_id: int, topic_id: int, title: str, description: str | None, order: int):
+        return education_program_service.update_topic(db, ctx=ctx, block_id=block_id, topic_id=topic_id, title=title, description=description, order=order)
+
+    def update_program_task(self, db: Session, *, ctx: AccessContext, block_id: int, topic_id: int, task_id: int, title: str, description: str | None, max_score: int, is_manual: bool, order: int):
+        return education_program_service.update_task(db, ctx=ctx, block_id=block_id, topic_id=topic_id, task_id=task_id, title=title, description=description, max_score=max_score, is_manual=is_manual, order=order)
+
+    def delete_block(self, db: Session, *, ctx: AccessContext, block_id: int):
+        return education_program_service.delete_block(db, ctx=ctx, block_id=block_id)
+
+    def delete_topic(self, db: Session, *, ctx: AccessContext, block_id: int, topic_id: int):
+        return education_program_service.delete_topic(db, ctx=ctx, block_id=block_id, topic_id=topic_id)
+
+    def delete_program_task(self, db: Session, *, ctx: AccessContext, block_id: int, topic_id: int, task_id: int):
+        return education_program_service.delete_task(db, ctx=ctx, block_id=block_id, topic_id=topic_id, task_id=task_id)
+
     def get_programs_for_user(self, db: Session, *, ctx: AccessContext):
         return education_program_service.get_programs_for_user(db, ctx=ctx)
 

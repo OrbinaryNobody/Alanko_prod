@@ -36,5 +36,11 @@ class UserRepository:
             .all()
         )
 
+    def list_users(self, db: Session, *, role: str | None = None):
+        query = db.query(User).options(joinedload(User.roles).joinedload(UserRole.role))
+        if role:
+            query = query.join(User.roles).join(Role).filter(Role.name == role)
+        return query.order_by(User.last_name, User.first_name, User.id).all()
+
 
 user_repository = UserRepository()

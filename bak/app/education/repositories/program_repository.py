@@ -40,6 +40,12 @@ class ProgramRepository:
     def get_block_by_id(self, db: Session, block_id: int) -> ProgramBlock | None:
         return db.query(ProgramBlock).filter(ProgramBlock.id == block_id).first()
 
+    def get_topic_by_id(self, db: Session, topic_id: int) -> ProgramTopic | None:
+        return db.query(ProgramTopic).filter(ProgramTopic.id == topic_id).first()
+
+    def get_task_by_id(self, db: Session, task_id: int) -> ProgramTask | None:
+        return db.query(ProgramTask).filter(ProgramTask.id == task_id).first()
+
     def create_topic(self, db: Session, *, block_id: int, title: str, description: str | None, order: int) -> ProgramTopic:
         topic = ProgramTopic(block_id=block_id, title=title, description=description, order=order)
         db.add(topic)
@@ -60,6 +66,18 @@ class ProgramRepository:
         db.flush()
         db.refresh(task)
         return task
+
+    def delete_block(self, db: Session, block: ProgramBlock) -> None:
+        db.delete(block)
+        db.flush()
+
+    def delete_topic(self, db: Session, topic: ProgramTopic) -> None:
+        db.delete(topic)
+        db.flush()
+
+    def delete_task(self, db: Session, task: ProgramTask) -> None:
+        db.delete(task)
+        db.flush()
 
     def list_blocks(self, db: Session, *, program_id: int) -> list[ProgramBlock]:
         return (

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, File, Form, UploadFile
+from fastapi import APIRouter, Depends, File, Form, Query, UploadFile
 from sqlalchemy.orm import Session
 
 from accounts.facade import accounts_facade
@@ -48,6 +48,15 @@ def add_user(
             "email": user.email,
         },
     }
+
+
+@router.get("/users")
+def list_users(
+    role: str | None = Query(default=None),
+    ctx: AccessContext = Depends(require_manage_users),
+    db: Session = Depends(get_db),
+):
+    return {"data": accounts_facade.list_users(db, role=role)}
 
 
 @router.post("/students", status_code=201)

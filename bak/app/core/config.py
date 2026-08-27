@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     admin_email: str = Field("", alias="ADMIN_EMAIL")
     admin_password: str = Field("", alias="ADMIN_PASSWORD")
     algorithm: str = "HS256"
-    access_token_expire_minutes: int = 30
+    access_token_expire_minutes: int = 1440
     database_url: str = Field("postgresql://postgres:postgres@db:5432/alanko", alias="DATABASE_URL")
     minio_internal_url: str = Field("minio:9000", alias="MINIO_INTERNAL_URL")
     minio_public_url: str = Field("http://localhost:9000", alias="MINIO_PUBLIC_URL")

@@ -46,6 +46,21 @@ class AuthService:
 
             return user
 
+    def list_users(self, db: Session, *, role: str | None = None) -> list[dict]:
+        users = user_repository.list_users(db, role=role)
+        return [
+            {
+                "id": user.id,
+                "email": user.email,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "middle_name": user.middle_name,
+                "full_name": " ".join(part for part in (user.first_name, user.last_name) if part),
+                "roles": [user_role.role.name for user_role in user.roles if user_role.role],
+            }
+            for user in users
+        ]
+
     def add_student_by_teacher(
         self,
         db: Session,

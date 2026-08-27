@@ -58,5 +58,92 @@ class ProgramCreationService:
                 raise PermissionDenied("Topic does not belong to block")
             return program_repository.create_task(db, block_id=block.id, topic_id=topic_id, title=title, description=description, max_score=max_score, is_manual=is_manual)
 
+    def update_block(self, db: Session, *, ctx: AccessContext, block_id: int, title: str, description: str | None, order: int):
+        with UnitOfWork(db):
+            block = program_repository.get_block_by_id(db, block_id)
+            if not block:
+                raise PermissionDenied("Block not found")
+            try:
+                ProgramPolicy.require_edit_program(ctx, block.program)
+            except PermissionError as exc:
+                raise PermissionDenied("Access denied to edit program") from exc
+            block.title = title
+            block.description = description
+            block.order = order
+            db.flush()
+            db.refresh(block)
+            return block
+
+    def update_topic(self, db: Session, *, ctx: AccessContext, block_id: int, topic_id: int, title: str, description: str | None, order: int):
+        with UnitOfWork(db):
+            block = program_repository.get_block_by_id(db, block_id)
+            topic = program_repository.get_topic_by_id(db, topic_id)
+            if not block or not topic or topic.block_id != block_id:
+                raise PermissionDenied("Topic not found")
+            try:
+                ProgramPolicy.require_edit_program(ctx, block.program)
+            except PermissionError as exc:
+                raise PermissionDenied("Access denied to edit program") from exc
+            topic.title = title
+            topic.description = description
+            topic.order = order
+            db.flush()
+            db.refresh(topic)
+            return topic
+
+    def update_task(self, db: Session, *, ctx: AccessContext, block_id: int, topic_id: int, task_id: int, title: str, description: str | None, max_score: int, is_manual: bool, order: int):
+        with UnitOfWork(db):
+            block = program_repository.get_block_by_id(db, block_id)
+            task = program_repository.get_task_by_id(db, task_id)
+            if not block or not task or task.block_id != block_id or task.topic_id != topic_id:
+                raise PermissionDenied("Task not found")
+            try:
+                ProgramPolicy.require_edit_program(ctx, block.program)
+            except PermissionError as exc:
+                raise PermissionDenied("Access denied to edit program") from exc
+            task.title = title
+            task.description = description
+            task.max_score = max_score
+            task.is_manual = is_manual
+            task.order = order
+            db.flush()
+            db.refresh(task)
+            return task
+
+    def delete_block(self, db: Session, *, ctx: AccessContext, block_id: int) -> None:
+        with UnitOfWork(db):
+            block = program_repository.get_block_by_id(db, block_id)
+            if not block:
+                raise PermissionDenied("Block not found")
+            try:
+                ProgramPolicy.require_edit_program(ctx, block.program)
+            except PermissionError as exc:
+                raise PermissionDenied("Access denied to edit program") from exc
+            program_repository.delete_block(db, block)
+
+    def delete_topic(self, db: Session, *, ctx: AccessContext, block_id: int, topic_id: int) -> None:
+        with UnitOfWork(db):
+            block = program_repository.get_block_by_id(db, block_id)
+            topic = program_repository.get_topic_by_id(db, topic_id)
+            if not block or not topic or topic.block_id != block_id:
+                raise PermissionDenied("Topic not found")
+            try:
+                ProgramPolicy.require_edit_program(ctx, block.program)
+            except PermissionError as exc:
+                raise PermissionDenied("Access denied to edit program") from exc
+            program_repository.delete_topic(db, topic)
+
+    def delete_task(self, db: Session, *, ctx: AccessContext, block_id: int, topic_id: int, task_id: int) -> None:
+        with UnitOfWork(db):
+            block = program_repository.get_block_by_id(db, block_id)
+            task = program_repository.get_task_by_id(db, task_id)
+            if not block or not task or task.block_id != block_id or task.topic_id != topic_id:
+                raise PermissionDenied("Task not found")
+            try:
+                ProgramPolicy.require_edit_program(ctx, block.program)
+            except PermissionError as exc:
+                raise PermissionDenied("Access denied to edit program") from exc
+            program_repository.delete_task(db, task)
+
 
 program_creation_service = ProgramCreationService()

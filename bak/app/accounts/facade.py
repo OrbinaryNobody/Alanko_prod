@@ -7,6 +7,9 @@ from accounts.services.auth_service import auth_service
 
 
 class AccountsFacade:
+    def list_users(self, db: Session, *, role: str | None = None):
+        return auth_service.list_users(db, role=role)
+
     def add_user_by_admin(self, db: Session, *, data):
         return auth_service.add_user_by_admin(db, data=data)
 

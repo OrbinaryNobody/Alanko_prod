@@ -31,7 +31,7 @@ class NewsService:
 
     def list_admin(self, db: Session, ctx: AccessContext) -> list[NewsResponse]:
         self._require_manage(ctx)
-        return [self._to_response(item) for item in news_repository.list_all(db)]
+        return [self._to_response(item) for item in news_repository.list_active(db)]
 
     def list_public(self, db: Session, *, limit: int = 20, offset: int = 0) -> list[NewsResponse]:
         return [self._to_response(item) for item in news_repository.list_published(db, limit=limit, offset=offset)]

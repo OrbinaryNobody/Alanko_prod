@@ -4,8 +4,15 @@ from models.domains.news import News
 
 
 class NewsRepository:
-    def list_all(self, db: Session, *, limit: int = 50, offset: int = 0) -> list[News]:
-        return db.query(News).order_by(News.created_at.desc(), News.id.desc()).offset(offset).limit(limit).all()
+    def list_active(self, db: Session, *, limit: int = 50, offset: int = 0) -> list[News]:
+        return (
+            db.query(News)
+            .filter(News.status != "archived")
+            .order_by(News.created_at.desc(), News.id.desc())
+            .offset(offset)
+            .limit(limit)
+            .all()
+        )
 
     def list_published(self, db: Session, *, limit: int = 20, offset: int = 0) -> list[News]:
         return (

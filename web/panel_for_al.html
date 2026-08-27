@@ -2961,7 +2961,7 @@ select.custom-input option {
           Далее <iconify-icon icon="solar:arrow-right-bold"></iconify-icon>
         </button>
         <!-- Кнопка финального сохранения (скрыта на Шаге 1) -->
-        <button class="btn btn-primary btn-sm" id="btnFinishCreate" style="display: none;" onclick="closeCreateProgramModal()">
+        <button class="btn btn-primary btn-sm" id="btnFinishCreate" style="display: none;" onclick="saveNewProgram(event)">
           <iconify-icon icon="solar:diskette-bold"></iconify-icon> Сохранить программу
         </button>
         <button class="btn-close" onclick="closeCreateProgramModal()">
@@ -3186,7 +3186,7 @@ select.custom-input option {
       </div>
       <div class="header-actions">
         <!-- Кнопка сохранения закроет окно (сюда позже добавите JS логику сохранения) -->
-        <button class="btn btn-primary btn-sm" onclick="closeModal('addNewStudentModal')">
+        <button class="btn btn-primary btn-sm" onclick="saveNewStudent(event)">
           <iconify-icon icon="solar:diskette-bold"></iconify-icon> Создать профиль
         </button>
         <button class="btn-close" onclick="closeModal('addNewStudentModal')">
@@ -3495,7 +3495,7 @@ select.custom-input option {
         <div class="modal-subtitle">Создание административного профиля с ролью 'teacher'</div>
       </div>
       <div class="header-actions">
-        <button class="btn btn-primary btn-sm" onclick="closeModal('addNewTeacherModal')">
+        <button class="btn btn-primary btn-sm" onclick="saveNewTeacher(event)">
           <iconify-icon icon="solar:diskette-bold"></iconify-icon> Создать профиль
         </button>
         <button class="btn-close" onclick="closeModal('addNewTeacherModal')">
@@ -3708,11 +3708,35 @@ select.custom-input option {
     /* --- ЛОГИКА РЕДАКТИРОВАНИЯ ПРОГРАММЫ --- */
     const editProgramModal = document.getElementById('editProgramModal');
     const editProgramTitleInput = document.getElementById('editProgramTitleInput');
+    let editingProgramId = null;
+    let editingProgramDescription = null;
 
-    function openEditProgramModal(programName) {
-      editProgramTitleInput.value = programName;
+    function escapeProgramHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    async function openEditProgramModal(programId) {
+      editingProgramId = Number(programId);
+      editProgramTitleInput.value = '';
+      document.getElementById('editProgramBlocksList').innerHTML = '<div style="padding: 24px; color: var(--text-muted);">Загрузка учебного плана...</div>';
       editProgramModal.classList.add('active');
       document.body.style.overflow = 'hidden';
+
+      try {
+        const response = await requestJson(`/education/programs/${editingProgramId}/structure`);
+        const program = response?.data;
+        if (!program) throw new Error('Backend не вернул программу');
+        editProgramTitleInput.value = program.title || '';
+        editingProgramDescription = program.description || null;
+        renderProgramStructure(program.blocks || []);
+      } catch (error) {
+        document.getElementById('editProgramBlocksList').innerHTML = `<div style="padding: 24px; color: var(--pal-accent-red);">Ошибка: ${escapeProgramHtml(error.message)}</div>`;
+      }
     }
 
     function closeEditProgramModal() {
@@ -3720,13 +3744,107 @@ select.custom-input option {
       document.body.style.overflow = '';
     }
 
-    function saveProgramName() {
-      const newName = editProgramTitleInput.value;
-      const mainProgramNameEl = document.querySelector('.program-name');
-      if (mainProgramNameEl && newName.trim() !== '') {
-        mainProgramNameEl.innerText = newName;
+    function renderProgramStructure(blocks) {
+      const container = document.getElementById('editProgramBlocksList');
+      container.innerHTML = '';
+      if (!blocks.length) {
+        container.innerHTML = '<div style="padding: 24px; color: var(--text-muted);">В программе пока нет блоков.</div>';
+        return;
       }
-      closeEditProgramModal();
+
+      container.innerHTML = blocks.map(block => `
+        <div class="course-block current" data-block-id="${block.id}" data-block-order="${block.order ?? 0}">
+          <div class="block-header-info">
+            <span class="status-badge status-current">Блок</span>
+            <span class="block-dates">Порядок: ${block.order ?? 0}</span>
+          </div>
+          <input class="ghost-input title-large program-block-title" value="${escapeProgramHtml(block.title)}" aria-label="Название блока">
+          <textarea class="ghost-textarea desc-text program-block-description" rows="2" aria-label="Описание блока">${escapeProgramHtml(block.description || '')}</textarea>
+          <div class="topics-list">
+            ${(block.topics || []).map(topic => `
+              <div class="topic-item" data-topic-id="${topic.id}" data-topic-order="${topic.order ?? 0}">
+                <input class="ghost-input title-medium program-topic-title" value="${escapeProgramHtml(topic.title)}" aria-label="Название темы">
+                <textarea class="ghost-textarea desc-text program-topic-description" rows="2" aria-label="Описание темы">${escapeProgramHtml(topic.description || '')}</textarea>
+                <div class="topic-hw">
+                  <strong>Задания:</strong>
+                  ${(topic.tasks || []).length ? topic.tasks.map(task => `
+                    <div class="task-edit-row" data-task-id="${task.id}" data-task-order="${task.order ?? 0}">
+                      <textarea class="ghost-textarea program-task-title" rows="1" aria-label="Название задания">${escapeProgramHtml(task.title)}</textarea>
+                      <label class="task-points-wrap"><span>Max:</span><input class="task-points-input program-task-score" type="number" min="0" value="${task.max_score ?? 0}" aria-label="Максимальный балл"></label>
+                    </div>
+                  `).join('') : '<div style="margin-top: 8px; color: var(--text-muted);">Заданий нет.</div>'}
+                </div>
+              </div>
+            `).join('') || '<div style="color: var(--text-muted);">Тем пока нет.</div>'}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function saveProgramName() {
+      const newName = editProgramTitleInput.value.trim();
+      if (!editingProgramId || !newName) {
+        editProgramTitleInput.focus();
+        return;
+      }
+
+      const saveButton = editProgramModal.querySelector('.modal-header .btn-primary');
+      const originalContent = saveButton.innerHTML;
+      saveButton.disabled = true;
+      saveButton.textContent = 'Сохранение...';
+      try {
+        await requestJson(`/education/programs/${editingProgramId}`, {
+          method: 'PUT',
+          body: JSON.stringify({ title: newName, description: editingProgramDescription }),
+        });
+
+        const blocks = [...document.querySelectorAll('#editProgramBlocksList > .course-block')];
+        for (const blockElement of blocks) {
+          const blockId = blockElement.dataset.blockId;
+          await requestJson(`/education/programs/${editingProgramId}/blocks/${blockId}`, {
+            method: 'PUT',
+            body: JSON.stringify({
+              title: blockElement.querySelector('.program-block-title').value.trim(),
+              description: blockElement.querySelector('.program-block-description').value.trim() || null,
+              order: Number(blockElement.dataset.blockOrder || 0),
+            }),
+          });
+
+          const topics = [...blockElement.querySelectorAll('.topic-item')];
+          for (const topicElement of topics) {
+            const topicId = topicElement.dataset.topicId;
+            await requestJson(`/education/programs/${editingProgramId}/blocks/${blockId}/topics/${topicId}`, {
+              method: 'PUT',
+              body: JSON.stringify({
+                title: topicElement.querySelector('.program-topic-title').value.trim(),
+                description: topicElement.querySelector('.program-topic-description').value.trim() || null,
+                order: Number(topicElement.dataset.topicOrder || 0),
+              }),
+            });
+
+            const tasks = [...topicElement.querySelectorAll('.task-edit-row')];
+            for (const taskElement of tasks) {
+              await requestJson(`/education/programs/${editingProgramId}/blocks/${blockId}/topics/${topicId}/tasks/${taskElement.dataset.taskId}`, {
+                method: 'PUT',
+                body: JSON.stringify({
+                  title: taskElement.querySelector('.program-task-title').value.trim(),
+                  description: null,
+                  max_score: Number(taskElement.querySelector('.program-task-score').value || 0),
+                  is_manual: false,
+                  order: Number(taskElement.dataset.taskOrder || 0),
+                }),
+              });
+            }
+          }
+        }
+        closeEditProgramModal();
+        if (typeof loadAdminPrograms === 'function') await loadAdminPrograms();
+      } catch (error) {
+        alert(`Не удалось сохранить программу: ${error.message}`);
+      } finally {
+        saveButton.disabled = false;
+        saveButton.innerHTML = originalContent;
+      }
     }
 
     function navigateToGroupJournal(groupName, studentsCount) {
@@ -3968,6 +4086,101 @@ function goToCreateStep2() {
   
   // Автоматически добавляем первый пустой блок для удобства
   addNewBlock('newProgramBlocksList');
+}
+
+async function saveNewProgram(event) {
+  event?.preventDefault();
+
+  const saveButton = document.getElementById('btnFinishCreate');
+  const titleInput = document.getElementById('createProgramTitleInput');
+  const blocks = [...document.querySelectorAll('#newProgramBlocksList > .course-block')];
+  const title = titleInput.value.trim();
+
+  if (!title) {
+    titleInput.focus();
+    return;
+  }
+
+  if (!blocks.length) {
+    alert('Добавьте хотя бы один блок программы.');
+    return;
+  }
+
+  saveButton.disabled = true;
+  const originalButtonContent = saveButton.innerHTML;
+  saveButton.textContent = 'Сохранение...';
+
+  try {
+    const programResponse = await requestJson('/education/programs', {
+      method: 'POST',
+      body: JSON.stringify({ title, description: null }),
+    });
+    const programId = programResponse?.data?.id;
+    if (!programId) throw new Error('Backend не вернул ID программы');
+
+    for (const [blockIndex, blockElement] of blocks.entries()) {
+      const blockTitle = blockElement.querySelector('.title-large')?.value.trim();
+      const blockDescription = blockElement.querySelector('.desc-text')?.value.trim() || null;
+      if (!blockTitle) throw new Error(`Укажите название блока №${blockIndex + 1}`);
+
+      const blockResponse = await requestJson(`/education/programs/${programId}/blocks`, {
+        method: 'POST',
+        body: JSON.stringify({
+          title: blockTitle,
+          description: blockDescription,
+          order: blockIndex,
+        }),
+      });
+      const blockId = blockResponse?.data?.id;
+      if (!blockId) throw new Error('Backend не вернул ID блока');
+
+      const topics = [...blockElement.querySelectorAll('.topics-list > .topic-item')];
+      for (const [topicIndex, topicElement] of topics.entries()) {
+        const topicTitle = topicElement.querySelector('.title-medium')?.value.trim();
+        const topicDescription = topicElement.querySelector('.desc-text')?.value.trim() || null;
+        if (!topicTitle) throw new Error(`Укажите название темы в блоке №${blockIndex + 1}`);
+
+        const topicResponse = await requestJson(`/education/programs/blocks/${blockId}/topics`, {
+          method: 'POST',
+          body: JSON.stringify({
+            title: topicTitle,
+            description: topicDescription,
+            order: topicIndex,
+          }),
+        });
+        const topicId = topicResponse?.data?.id;
+        if (!topicId) throw new Error('Backend не вернул ID темы');
+
+        const tasks = [...topicElement.querySelectorAll('.tasks-container > .task-edit-row')];
+        for (const taskElement of tasks) {
+          const taskDescription = taskElement.querySelector('textarea')?.value.trim();
+          const maxScore = Number(taskElement.querySelector('.task-points-input')?.value || 0);
+          if (!taskDescription) throw new Error(`Заполните задание в теме «${topicTitle}»`);
+
+          await requestJson(`/education/programs/blocks/${blockId}/topics/${topicId}/tasks`, {
+            method: 'POST',
+            body: JSON.stringify({
+              title: taskDescription,
+              description: null,
+              max_score: maxScore,
+              is_manual: false,
+            }),
+          });
+        }
+      }
+    }
+
+    closeCreateProgramModal();
+    activateTab('tab-programs');
+    if (typeof loadAdminPrograms === 'function') await loadAdminPrograms();
+    alert('Программа успешно создана.');
+  } catch (error) {
+    console.error('Program creation failed:', error);
+    alert(`Не удалось создать программу: ${error.message}`);
+  } finally {
+    saveButton.disabled = false;
+    saveButton.innerHTML = originalButtonContent;
+  }
 }
 
 // Закрытие по клику на фон
@@ -4872,5 +5085,5 @@ function openDayConfigModal(dayName, dateStr) {
   });
 </script>
 
-</body>
+<script src="js/admin_integration.js"></script></body>
 </html>
