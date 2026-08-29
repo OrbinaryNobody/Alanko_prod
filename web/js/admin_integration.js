@@ -844,7 +844,6 @@ window.loadAdminConsultations = async function() {
     }
 
     const slots = slotsResponse.items || [];
-    allConsultationSlots = slots;
 
     // Подгружаем участников для каждого слота, чтобы сразу вывести на карточках в расписании
     const participantsResults = await Promise.all(slots.map(async slot => {
@@ -856,9 +855,11 @@ window.loadAdminConsultations = async function() {
       }
     }));
 
-    const slotParticipantsMap = new Map(participantsResults.map(r => [r.slotId, r.participants]));
+    const slotParticipantsMap = new Map(participantsResults.map(r => [r.slotId, r.participants.filter(participant => participant.booking_status === 'CONFIRMED')]));
+    const occupiedSlots = slots.filter(slot => (slotParticipantsMap.get(slot.id) || []).length > 0);
+    allConsultationSlots = occupiedSlots;
 
-    renderConsultationCalendar(daysResponse.items || [], slots, slotParticipantsMap);
+    renderConsultationCalendar(daysResponse.items || [], occupiedSlots, slotParticipantsMap);
   } catch (error) {
     body.innerHTML = `<div style="grid-column: 1 / -1; padding: 32px; color: var(--pal-accent-red);">Не удалось загрузить консультации: ${error.message}</div>`;
   }
@@ -924,10 +925,7 @@ function renderConsultationCalendar(days, slots, slotParticipantsMap = new Map()
       const timeStr = `${start.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })} - ${end.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}`;
       
       const participants = slotParticipantsMap.get(slot.id) || [];
-      
-      let namesHtml = '';
-      if (participants.length > 0) {
-        namesHtml = participants.map(p => {
+      const namesHtml = participants.map(p => {
           const student = studentMap.get(p.student_id);
           const name = student?.full_name || (student ? `${student.first_name || ''} ${student.last_name || ''}`.trim() : '') || student?.email || `Ученик #${p.student_id}`;
           const isPresent = p.attendance_status === 'PRESENT';
@@ -942,9 +940,6 @@ function renderConsultationCalendar(days, slots, slotParticipantsMap = new Map()
             <div style="display:flex; gap:2px; flex-shrink:0;">${badges}</div>
           </div>`;
         }).join('');
-      } else {
-        namesHtml = `<span style="font-size:0.72rem; color:var(--text-muted); font-weight:500;">Свободная запись (0/4)</span>`;
-      }
 
       return `
         <div class="consultation-card ${slot.access_mode === 'INVITED' ? 'admin-scheduled' : ''}" 

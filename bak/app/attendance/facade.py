@@ -3,6 +3,7 @@ from datetime import date
 from sqlalchemy.orm import Session
 
 from attendance.repositories.attendance_repository import attendance_repository
+from attendance.services.attendance_service import attendance_service
 from attendance.services.subscription_service import subscription_service
 from attendance.services.summary_service import attendance_summary_service
 from attendance.services.parent_service import parent_service
@@ -47,6 +48,9 @@ class AttendanceFacade:
 
     def cancel_subscription(self, db: Session, *, subscription_id: int):
         return subscription_service.cancel(db, subscription_id=subscription_id)
+
+    def renew_subscription(self, db: Session, *, subscription_id: int, **kwargs):
+        return subscription_service.renew(db, subscription_id=subscription_id, **kwargs)
 
     def attach_parent(self, db: Session, *, student_id: int, **kwargs):
         return parent_service.attach_parent(db, student_id=student_id, **kwargs)

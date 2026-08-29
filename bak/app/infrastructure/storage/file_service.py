@@ -120,6 +120,35 @@ class FileService:
     async def upload_document(self, file: UploadFile) -> str:
         return await self._upload_file(file, allowed_types=["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"], extension="pdf", bucket_name=BUCKET_NAMES["documents"])
 
+    async def upload_material(self, file: UploadFile) -> str:
+        content_type = file.content_type or "application/octet-stream"
+        extensions = {
+            "application/pdf": "pdf",
+            "application/msword": "doc",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
+            "application/vnd.ms-excel": "xls",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "xlsx",
+            "application/vnd.ms-powerpoint": "ppt",
+            "application/vnd.openxmlformats-officedocument.presentationml.presentation": "pptx",
+            "text/plain": "txt",
+            "audio/mpeg": "mp3",
+            "audio/wav": "wav",
+            "video/mp4": "mp4",
+            "image/jpeg": "jpg",
+            "image/png": "png",
+            "image/webp": "webp",
+        }
+        extension = extensions.get(content_type)
+        if not extension:
+            raise ConflictError(f"Invalid material type: {content_type}")
+        return await self._upload_file(
+            file,
+            allowed_types=[content_type],
+            extension=extension,
+            bucket_name=BUCKET_NAMES["documents"],
+            content_type=content_type,
+        )
+
     async def upload_achievement_media(self, file: UploadFile) -> str:
         content_type = file.content_type
         if content_type == "application/pdf":

@@ -23,8 +23,9 @@ class GroupManagementService:
             group = Group(title=title, description=description, program_id=program.id if program else None, created_by=ctx.user_id)
             group = group_repository.create(db, group)
 
-            member = GroupMember(group_id=group.id, user_id=ctx.user_id, role=GroupRole.TEACHER.value)
-            group_repository.create_member(db, member)
+            if "teacher" in ctx.roles:
+                member = GroupMember(group_id=group.id, user_id=ctx.user_id, role=GroupRole.TEACHER.value)
+                group_repository.create_member(db, member)
 
             uow.events.append(GroupCreatedEvent(group_id=group.id, created_by=ctx.user_id))
             return group

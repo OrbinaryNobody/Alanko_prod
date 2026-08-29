@@ -1967,13 +1967,9 @@
           <!-- Нижний ряд: Фильтры по группам и статусам -->
           <div class="filter-tags-row">
             
-            <div class="filter-group">
+            <div class="filter-group" id="attendanceGroupFilters">
               <span class="filter-label">Группа:</span>
               <button class="filter-chip active" data-group="all">Все группы</button>
-              <button class="filter-chip" data-group="Акробатика Junior">Акробатика Junior</button>
-              <button class="filter-chip" data-group="Современный танец (Kids)">Современный танец (Kids)</button>
-              <button class="filter-chip" data-group="Воздушная гимнастика">Воздушная гимнастика</button>
-              <button class="filter-chip" data-group="Растяжка и гибкость">Растяжка и гибкость</button>
             </div>
 
             <div class="filter-group">
@@ -2171,12 +2167,8 @@
             <!-- Фильтры по группам для абонементов -->
             <div class="filters-row">
               <span class="filter-label">Группа:</span>
-              <div class="filter-chips-scroll">
+              <div class="filter-chips-scroll" id="subscriptionGroupFilters">
                 <button class="filter-chip active" data-sub-group="all">Все направления</button>
-                <button class="filter-chip" data-sub-group="Акробатика Junior">Акробатика Junior</button>
-                <button class="filter-chip" data-sub-group="Воздушная гимнастика">Воздушная гимнастика</button>
-                <button class="filter-chip" data-sub-group="Современный танец (Kids)">Современный танец (Kids)</button>
-                <button class="filter-chip" data-sub-group="Растяжка и гибкость">Растяжка и гибкость</button>
               </div>
             </div>
 
@@ -2984,6 +2976,24 @@
       return `${num.toLocaleString('ru-RU')} ₽`;
     }
 
+    function normalizeApiCollection(payload) {
+      if (Array.isArray(payload)) return payload;
+      if (payload && Array.isArray(payload.data)) return payload.data;
+      if (payload && Array.isArray(payload.items)) return payload.items;
+      return [];
+    }
+
+    function normalizeSummaryPayload(payload) {
+      const source = payload && typeof payload === 'object' && 'data' in payload && payload.data && typeof payload.data === 'object' ? payload.data : payload || {};
+      return {
+        checked_count: Number(source.checked_count ?? source.checkedCount ?? 0),
+        total_students: Number(source.total_students ?? source.totalStudents ?? 0),
+        active_subscriptions: Number(source.active_subscriptions ?? source.activeSubscriptions ?? 0),
+        warning_subscriptions: Number(source.warning_subscriptions ?? source.warningSubscriptions ?? 0),
+        debt_count: Number(source.debt_count ?? source.debtCount ?? 0),
+      };
+    }
+
     function normalizePaymentValue(value) {
       const normalized = String(value || 'UNPAID').toUpperCase();
       if (['PAID', 'PARTIAL', 'REFUNDED'].includes(normalized)) return normalized;
@@ -2996,6 +3006,7 @@
       const parent = student.parent || {};
       const totalVisits = Number(subscription?.total_visits || 0);
       const remainingVisits = Number(subscription?.remaining_visits ?? totalVisits);
+      const usedVisits = Math.max(0, totalVisits - remainingVisits);
       const paymentStatus = normalizePaymentValue(subscription?.payment_status || student.payment_status);
       const statusFromApi = String(subscription?.status || 'ACTIVE').toUpperCase();
 
@@ -3014,12 +3025,25 @@
         photo: student.image_url || 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?w=150&auto=format&fit=crop&q=80',
         group: groupName,
         subName: subscription?.plan_name || 'Без абонемента',
+        subscriptionId: subscription?.id || null,
+        subscriptionRaw: subscription ? {
+          id: subscription.id,
+          plan_name: subscription.plan_name,
+          total_visits: Number(subscription.total_visits || 0),
+          remaining_visits: Number(subscription.remaining_visits ?? 0),
+          valid_from: subscription.valid_from,
+          valid_until: subscription.valid_until,
+          payment_status: paymentStatus,
+          amount: Number(subscription.amount || 0),
+          currency: subscription.currency || 'RUB',
+        } : null,
         subPriceNum: Number(subscription?.amount || 0),
         subStartDate: subscription?.valid_from ? formatDateRu(new Date(subscription.valid_from)) : formatDateRu(new Date()),
         validUntil: subscription?.valid_until ? formatDateRu(new Date(subscription.valid_until)) : formatDateRu(new Date()),
         subStatus,
         visitsTotal: totalVisits || 0,
         visitsLeft: remainingVisits || 0,
+        visitsUsed: usedVisits,
         payStatus: paymentStatus === 'PAID' ? 'paid' : 'debt',
         payAmount: subscription?.amount ? formatMoney(subscription.amount) : '0 ₽',
         lastPaymentDate: subscription?.paid_at ? formatDateRu(new Date(subscription.paid_at)) : formatDateRu(new Date()),
@@ -3047,9 +3071,15 @@
           requestJson(`/attendance/summary?date=${date}`),
         ]);
 
-        const liveStudents = Array.isArray(studentsResponse?.data) ? studentsResponse.data : [];
+        const liveStudents = normalizeApiCollection(studentsResponse);
+        const liveSummary = normalizeSummaryPayload(summaryResponse);
         students = liveStudents.map(buildStudentFromApi);
-        attendanceSummary = summaryResponse || attendanceSummary;
+        attendanceSummary = {
+          ...attendanceSummary,
+          ...liveSummary,
+          total_students: liveSummary.total_students || students.length,
+        };
+        rebuildGroupFilters();
         saveStudents();
         updateMetrics();
         updateSubMetrics();
@@ -3202,11 +3232,19 @@
 
     // 6. Обновление метрик
     function updateMetrics() {
-      const total = students.length;
-      const checked = students.filter(s => s.checkedToday).length;
-      const active = students.filter(s => s.subStatus !== "debt" && s.subStatus !== "early_terminated" && s.visitsLeft > 0).length;
-      const warning = students.filter(s => s.visitsLeft <= 2 && s.visitsLeft > 0 && s.subStatus !== "early_terminated").length;
-      const debts = students.filter(s => s.subStatus === "debt" || s.visitsLeft === 0 || s.payStatus === "debt").length;
+      const total = attendanceSummary.total_students > 0 ? attendanceSummary.total_students : students.length;
+      const checked = attendanceSummary.checked_count > 0 || attendanceSummary.total_students > 0
+        ? attendanceSummary.checked_count
+        : students.filter(s => s.checkedToday).length;
+      const active = attendanceSummary.active_subscriptions > 0 || attendanceSummary.total_students > 0
+        ? attendanceSummary.active_subscriptions
+        : students.filter(s => s.subStatus !== "debt" && s.subStatus !== "early_terminated" && s.visitsLeft > 0).length;
+      const warning = attendanceSummary.warning_subscriptions > 0 || attendanceSummary.total_students > 0
+        ? attendanceSummary.warning_subscriptions
+        : students.filter(s => s.visitsLeft <= 2 && s.visitsLeft > 0 && s.subStatus !== "early_terminated").length;
+      const debts = attendanceSummary.debt_count > 0 || attendanceSummary.total_students > 0
+        ? attendanceSummary.debt_count
+        : students.filter(s => s.subStatus === "debt" || s.visitsLeft === 0 || s.payStatus === "debt").length;
 
       const statCheckedCount = document.getElementById("statCheckedCount");
       const statActiveSubs = document.getElementById("statActiveSubs");
@@ -3239,6 +3277,57 @@
     }
 
     // 7. Рендер вкладки Отметки Детей
+    function getActualGroupNames() {
+      const groups = new Set();
+      students.forEach(student => {
+        const name = String(student.group || '').trim();
+        if (name) groups.add(name);
+      });
+      return [...groups].sort((a, b) => a.localeCompare(b, 'ru'));
+    }
+
+    function rebuildGroupFilters() {
+      const attendanceContainer = document.getElementById("attendanceGroupFilters");
+      const subscriptionContainer = document.getElementById("subscriptionGroupFilters");
+      const attendanceGroups = getActualGroupNames();
+      const subscriptionGroups = [...attendanceGroups];
+
+      if (attendanceContainer) {
+        const allButton = '<button class="filter-chip active" data-group="all">Все группы</button>';
+        const customButtons = attendanceGroups
+          .map(group => `<button class="filter-chip" data-group="${group}">${group}</button>`)
+          .join('');
+        attendanceContainer.innerHTML = `<span class="filter-label">Группа:</span>${allButton}${customButtons}`;
+      }
+
+      if (subscriptionContainer) {
+        const allButton = '<button class="filter-chip active" data-sub-group="all">Все направления</button>';
+        const customButtons = subscriptionGroups
+          .map(group => `<button class="filter-chip" data-sub-group="${group}">${group}</button>`)
+          .join('');
+        subscriptionContainer.innerHTML = `${allButton}${customButtons}`;
+      }
+
+      const allAttendanceButtons = document.querySelectorAll(".filter-chip[data-group]");
+      allAttendanceButtons.forEach(chip => {
+        const chipValue = chip.getAttribute("data-group");
+        chip.classList.toggle("active", chipValue === activeGroupFilter);
+      });
+
+      const allSubscriptionButtons = document.querySelectorAll(".filter-chip[data-sub-group]");
+      allSubscriptionButtons.forEach(chip => {
+        const chipValue = chip.getAttribute("data-sub-group");
+        chip.classList.toggle("active", chipValue === subGroupFilter);
+      });
+
+      if (activeGroupFilter !== "all" && !attendanceGroups.includes(activeGroupFilter)) {
+        activeGroupFilter = "all";
+      }
+      if (subGroupFilter !== "all" && !subscriptionGroups.includes(subGroupFilter)) {
+        subGroupFilter = "all";
+      }
+    }
+
     function renderStudents() {
       const studentsGrid = document.getElementById("studentsGrid");
       const studentsTableContainer = document.getElementById("studentsTableContainer");
@@ -3298,7 +3387,8 @@
         const card = document.createElement("div");
         card.className = `student-card status-${student.payStatus} ${student.checkedToday ? 'status-checked-today' : ''}`;
 
-        const pct = student.visitsTotal > 0 ? Math.round((student.visitsLeft / student.visitsTotal) * 100) : 0;
+        const usedVisits = Number(student.visitsUsed ?? Math.max(0, (student.visitsTotal || 0) - (student.visitsLeft || 0)));
+        const pct = student.visitsTotal > 0 ? Math.round((usedVisits / student.visitsTotal) * 100) : 0;
         let fillClass = "fill-green";
         let statusBadgeClass = "status-ok";
         let tagClass = "tag-paid";
@@ -3361,7 +3451,7 @@
               <div class="visits-progress-area">
                 <div class="visits-labels">
                   <span class="visits-left ${visitsLeftColorClass}">
-                    Осталось: ${student.visitsLeft} из ${student.visitsTotal}
+                    Посещено: ${usedVisits} из ${student.visitsTotal}
                   </span>
                   <span class="visits-total">${pct}%</span>
                 </div>
@@ -3639,6 +3729,11 @@
                 Продлить
               </button>
 
+              <button class="btn-action-prolong" onclick="toggleSubscriptionPaymentStatus('${student.id}')" title="Переключить статус оплаты абонемента">
+                <iconify-icon icon="solar:wallet-money-bold-duotone"></iconify-icon>
+                ${student.payStatus === 'paid' ? 'Отметить не оплачено' : 'Отметить оплачено'}
+              </button>
+
               <button class="btn-action-term" onclick="openEarlyTermModal('${student.id}')" title="Досрочно завершить абонемент">
                 <iconify-icon icon="solar:stop-circle-linear"></iconify-icon>
                 Завершить
@@ -3800,7 +3895,7 @@
       previewVisitsElem.textContent = `${newTotalVisitsLeft} посещений (+${extraVisits} доп.)`;
     };
 
-    window.handleProlongSubmit = function(e) {
+    window.handleProlongSubmit = async function(e) {
       e.preventDefault();
       const select = document.getElementById("prolongStudentSelect");
       const student = students.find(s => s.id === select.value);
@@ -3812,6 +3907,11 @@
         return;
       }
 
+      if (!student.subscriptionId || !student.subscriptionRaw) {
+        showToast('У ученика нет активного абонемента для продления', 'warning');
+        return;
+      }
+
       const newEndDate = formatDateRu(new Date(dateVal));
       const extraVisits = parseInt(document.getElementById("prolongExtraVisits").value, 10) || 0;
       const reason = document.getElementById("prolongReasonSelect").value;
@@ -3820,24 +3920,57 @@
 
       const oldDate = student.subStatus === 'prolonged' && student.prolongedUntil ? student.prolongedUntil : student.validUntil;
 
-      // Обновляем студента
-      student.subStatus = "prolonged";
-      student.prolongedUntil = newEndDate;
-      student.prolongReason = reason;
-      student.prolongDocNum = docNum;
-      student.visitsLeft += extraVisits;
-      if (extraVisits > 0) student.visitsTotal += extraVisits;
+      try {
+        const payload = {
+          plan_name: student.subscriptionRaw.plan_name,
+          valid_from: student.subscriptionRaw.valid_from,
+          valid_until: dateVal,
+          extra_visits: extraVisits,
+          payment_status: student.subscriptionRaw.payment_status || 'UNPAID',
+          amount: Number(student.subscriptionRaw.amount || 0),
+          currency: student.subscriptionRaw.currency || 'RUB',
+        };
 
-      // Запись в аудит
-      const details = `Срок продлен с ${oldDate} до ${newEndDate}.${extraVisits > 0 ? ` Добавлено ${extraVisits} занятий.` : ''}${comment ? ` Примечание: ${comment}` : ''}`;
-      addAuditRecord("prolong", student, reason, docNum, details);
+        const response = await requestJson(`/attendance/admin/subscriptions/${student.subscriptionId}/renew`, {
+          method: 'POST',
+          body: JSON.stringify(payload),
+        });
 
-      saveStudents();
-      renderStudents();
-      renderSubscriptions();
-      closeModal('prolongSubModal');
+        const renewed = response && response.data ? response.data : null;
+        if (renewed) {
+          student.subscriptionRaw = {
+            ...student.subscriptionRaw,
+            valid_from: renewed.valid_from,
+            valid_until: renewed.valid_until,
+            payment_status: renewed.payment_status,
+            total_visits: renewed.total_visits,
+            remaining_visits: renewed.remaining_visits,
+            plan_name: renewed.plan_name,
+            amount: renewed.amount,
+            currency: renewed.currency,
+          };
+        }
 
-      showToast(`✓ Абонемент для ${student.name} успешно продлён до ${newEndDate}!`);
+        student.subStatus = "prolonged";
+        student.prolongedUntil = newEndDate;
+        student.prolongReason = reason;
+        student.prolongDocNum = docNum;
+        student.visitsLeft = renewed ? Number(renewed.remaining_visits ?? student.visitsLeft) : student.visitsLeft + extraVisits;
+        student.visitsTotal = renewed ? Number(renewed.total_visits ?? student.visitsTotal) : student.visitsTotal + extraVisits;
+        student.visitsUsed = Math.max(0, student.visitsTotal - student.visitsLeft);
+
+        const details = `Срок продлен с ${oldDate} до ${newEndDate}.${extraVisits > 0 ? ` Добавлено ${extraVisits} занятий.` : ''}${comment ? ` Примечание: ${comment}` : ''}`;
+        addAuditRecord("prolong", student, reason, docNum, details);
+
+        saveStudents();
+        renderStudents();
+        renderSubscriptions();
+        closeModal('prolongSubModal');
+
+        showToast(`✓ Абонемент для ${student.name} успешно продлён до ${newEndDate}!`);
+      } catch (error) {
+        showToast(`Не удалось продлить абонемент: ${error.message}`, 'error');
+      }
     };
 
     // 10. МОДАЛКА: ДОСРОЧНОЕ ЗАВЕРШЕНИЕ АБОНЕМЕНТА
@@ -3957,6 +4090,49 @@
     };
 
     // 12. МОДАЛКА: ЖУРНАЛ ОПЕРАЦИЙ (АУДИТ)
+    window.toggleSubscriptionPaymentStatus = async function(studentId) {
+      const student = students.find(s => String(s.id) === String(studentId));
+      if (!student) return;
+      if (!student.subscriptionId || !student.subscriptionRaw) {
+        showToast('У ученика нет активного абонемента для смены статуса оплаты');
+        return;
+      }
+
+      const nextPaymentStatus = student.payStatus === 'paid' ? 'UNPAID' : 'PAID';
+      const payload = {
+        plan_name: student.subscriptionRaw.plan_name,
+        total_visits: Number(student.subscriptionRaw.total_visits || 0),
+        remaining_visits: Number(student.subscriptionRaw.remaining_visits ?? student.visitsLeft ?? 0),
+        valid_from: student.subscriptionRaw.valid_from,
+        valid_until: student.subscriptionRaw.valid_until,
+        payment_status: nextPaymentStatus,
+        amount: Number(student.subscriptionRaw.amount || 0),
+        currency: student.subscriptionRaw.currency || 'RUB',
+      };
+
+      try {
+        await requestJson(`/attendance/admin/subscriptions/${student.subscriptionId}`, {
+          method: 'PATCH',
+          body: JSON.stringify(payload),
+        });
+
+        student.subscriptionRaw.payment_status = nextPaymentStatus;
+        student.payStatus = nextPaymentStatus === 'PAID' ? 'paid' : 'debt';
+        if (nextPaymentStatus === 'PAID') {
+          student.subStatus = student.visitsLeft > 0 ? 'active' : 'debt';
+        } else {
+          student.subStatus = 'debt';
+        }
+
+        saveStudents();
+        renderStudents();
+        renderSubscriptions();
+        showToast(nextPaymentStatus === 'PAID' ? `✓ Абонемент для ${student.name} отмечен как оплаченный` : `✓ Абонемент для ${student.name} отмечен как не оплаченный`);
+      } catch (error) {
+        showToast(`Не удалось изменить статус оплаты: ${error.message}`, 'error');
+      }
+    };
+
     window.openSubHistoryModal = function(filterStudentId) {
       const modal = document.getElementById("subHistoryModal");
       const searchInput = document.getElementById("auditSearchInput");
@@ -4136,6 +4312,7 @@
       }
 
       const displayValidDate = student.subStatus === 'prolonged' ? `${student.prolongedUntil || student.validUntil} (Продлён)` : student.validUntil;
+      const usedVisits = Number(student.visitsUsed ?? Math.max(0, (student.visitsTotal || 0) - (student.visitsLeft || 0)));
 
       modalDetailContent.innerHTML = `
         <div class="detail-hero">
@@ -4157,8 +4334,8 @@
             <div class="field-val">${student.subName}</div>
           </div>
           <div class="detail-field">
-            <div class="field-title">Остаток занятий</div>
-            <div class="field-val" style="color: var(--pal-light-green);">${student.visitsLeft} из ${student.visitsTotal} занятий</div>
+            <div class="field-title">Посещено занятий</div>
+            <div class="field-val" style="color: var(--pal-light-green);">${usedVisits} из ${student.visitsTotal} занятий</div>
           </div>
           <div class="detail-field">
             <div class="field-title">Срок действия</div>
@@ -4227,44 +4404,41 @@
         });
       }
 
-      // Фильтры групп (Отметка)
-      document.querySelectorAll(".filter-chip[data-group]").forEach(chip => {
-        chip.addEventListener("click", () => {
+      document.addEventListener("click", (event) => {
+        const groupChip = event.target.closest(".filter-chip[data-group]");
+        if (groupChip) {
           document.querySelectorAll(".filter-chip[data-group]").forEach(c => c.classList.remove("active"));
-          chip.classList.add("active");
-          activeGroupFilter = chip.getAttribute("data-group");
+          groupChip.classList.add("active");
+          activeGroupFilter = groupChip.getAttribute("data-group");
           renderStudents();
-        });
-      });
+          return;
+        }
 
-      // Фильтры статусов (Отметка)
-      document.querySelectorAll(".filter-chip[data-status]").forEach(chip => {
-        chip.addEventListener("click", () => {
+        const statusChip = event.target.closest(".filter-chip[data-status]");
+        if (statusChip) {
           document.querySelectorAll(".filter-chip[data-status]").forEach(c => c.classList.remove("active"));
-          chip.classList.add("active");
-          activeStatusFilter = chip.getAttribute("data-status");
+          statusChip.classList.add("active");
+          activeStatusFilter = statusChip.getAttribute("data-status");
           renderStudents();
-        });
-      });
+          return;
+        }
 
-      // Фильтры групп (Абонементы)
-      document.querySelectorAll(".filter-chip[data-sub-group]").forEach(chip => {
-        chip.addEventListener("click", () => {
+        const subGroupChip = event.target.closest(".filter-chip[data-sub-group]");
+        if (subGroupChip) {
           document.querySelectorAll(".filter-chip[data-sub-group]").forEach(c => c.classList.remove("active"));
-          chip.classList.add("active");
-          subGroupFilter = chip.getAttribute("data-sub-group");
+          subGroupChip.classList.add("active");
+          subGroupFilter = subGroupChip.getAttribute("data-sub-group");
           renderSubscriptions();
-        });
-      });
+          return;
+        }
 
-      // Фильтры статусов (Абонементы)
-      document.querySelectorAll(".filter-chip[data-sub-status]").forEach(chip => {
-        chip.addEventListener("click", () => {
+        const subStatusChip = event.target.closest(".filter-chip[data-sub-status]");
+        if (subStatusChip) {
           document.querySelectorAll(".filter-chip[data-sub-status]").forEach(c => c.classList.remove("active"));
-          chip.classList.add("active");
-          subStatusFilter = chip.getAttribute("data-sub-status");
+          subStatusChip.classList.add("active");
+          subStatusFilter = subStatusChip.getAttribute("data-sub-status");
           renderSubscriptions();
-        });
+        }
       });
 
       // Переключатель вида (Отметка)

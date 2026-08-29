@@ -92,17 +92,8 @@ class GroupService:
                 "email": student.email if student else None,
                 "image_url": None,
                 "status": enrollment.status,
-                "tasks": [{
-                    "student_task_id": task.id,
-                    "task_id": task.program_task_id,
-                    "title": task.program_task.title,
-                    "description": task.program_task.description,
-                    "max_score": task.program_task.max_score,
-                    "grade": task.grade,
-                    "feedback": task.feedback,
-                    "status": task.status,
                     "videos": [{"media_id": media.id, "video_url": file_service.get_file_url(media.video_url, BUCKET_NAMES["videos"])} for media in task.media],
-                } for task in enrollment.tasks if task.program_task],
+                    "tasks": [{"id": task.id, "title": task.title, "description": task.description, "max_score": task.max_score, "order": task.order, "materials": [self._material_payload(material) for material in task.materials]} for task in enrollment.tasks if task.program_task],
             })
         return {
             "group": {"id": group.id, "title": group.title, "description": group.description, "program_id": group.program_id},
@@ -126,6 +117,38 @@ class GroupService:
             },
             "students": students,
         }
+
+        @staticmethod
+        def _material_payload(material):
+            return {
+                "id": material.id,
+                "file_name": material.file_name,
+                "content_type": material.content_type,
+                "file_url": file_service.get_file_url(material.file_url, BUCKET_NAMES["documents"]),
+                "created_at": material.created_at.isoformat() if material.created_at else None,
+            }
+
+        def add_group_material(self, db: Session, *, ctx: AccessContext, group_id: int, topic_id: int | None, task_id: int | None, file_url: str, file_name: str, content_type: str | None):
+            group = self.ensure_group_access(db, ctx=ctx, group_id=group_id)
+            if (topic_id is None) == (task_id is None):
+                raise PermissionDenied("Specify exactly one topic or task")
+            topic = db.query(ProgramTopic).join(ProgramTopic.block).filter(ProgramTopic.id == topic_id, ProgramTopic.block.has(program_id=group.program_id)).first() if topic_id else None
+            task = db.query(ProgramTask).filter(ProgramTask.id == task_id, ProgramTask.topic.has(ProgramTask.topic.property.mapper.class_.block.has(program_id=group.program_id))).first() if task_id else None
+            if topic_id and not topic or task_id and not task:
+                raise PermissionDenied("Material target does not belong to this group program")
+            material = ProgramMaterial(topic_id=topic_id, task_id=task_id, file_url=file_url, file_name=file_name, content_type=content_type, uploaded_by=ctx.user_id)
+            db.add(material)
+            db.flush()
+            db.refresh(material)
+            return material
+
+        def delete_group_material(self, db: Session, *, ctx: AccessContext, group_id: int, material_id: int):
+            self.ensure_group_access(db, ctx=ctx, group_id=group_id)
+            material = db.query(ProgramMaterial).filter(ProgramMaterial.id == material_id).first()
+            if not material:
+                raise PermissionDenied("Material not found")
+            db.delete(material)
+            db.flush()
 
     def grade_group_task(self, db: Session, *, ctx: AccessContext, group_id: int, student_task_id: int, grade: int, feedback: str | None):
         with UnitOfWork(db):
@@ -214,9 +237,10 @@ class GroupService:
         weekday: int,
         start_time: time,
         end_time: time,
-        valid_from: date,
+        valid_from: date | None,
         valid_until: date | None,
     ):
+        valid_from = valid_from or date.today()
         group = self.ensure_group_access(db, ctx=ctx, group_id=group_id)
         teacher = db.query(User).join(User.roles).join(Role).filter(
             User.id == teacher_id,

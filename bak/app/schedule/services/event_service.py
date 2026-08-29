@@ -1,6 +1,7 @@
 from datetime import date, datetime, timedelta
 
 from consultations.facade import consultations_facade
+from consultations.timezone import CONSULTATION_TIMEZONE
 from schedule.dtos import CalendarEventPayload
 from education.facade import education_facade
 
@@ -27,7 +28,13 @@ class CalendarEventService:
             date_from=date_from,
             date_to=date_to + timedelta(days=1),
         )
+        occupied_slot_ids = consultations_facade.list_occupied_slot_ids(
+            db,
+            slot_ids=[slot.id for slot in slots],
+        )
         for slot in slots:
+            if slot.id not in occupied_slot_ids:
+                continue
             if event_type and event_type != "consultation":
                 continue
             if teacher_id is not None and slot.teacher_id != teacher_id:
@@ -62,8 +69,8 @@ class CalendarEventService:
                 if current_date >= schedule.valid_from and (
                     schedule.valid_until is None or current_date <= schedule.valid_until
                 ):
-                    start_at = datetime.combine(current_date, schedule.start_time)
-                    end_at = datetime.combine(current_date, schedule.end_time)
+                    start_at = datetime.combine(current_date, schedule.start_time).replace(tzinfo=CONSULTATION_TIMEZONE)
+                    end_at = datetime.combine(current_date, schedule.end_time).replace(tzinfo=CONSULTATION_TIMEZONE)
                     events.append(CalendarEventPayload(
                         id=f"group-schedule-{schedule.id}-{current_date.isoformat()}",
                         type="class",

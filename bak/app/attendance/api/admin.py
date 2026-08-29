@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from attendance.dtos.attendance_dto import AttendancePayload
 from attendance.facade import attendance_facade
-from attendance.schemas import AttendanceCheckInCreate, SubscriptionCreate, SubscriptionUpdate
+from attendance.schemas import AttendanceCheckInCreate, SubscriptionCreate, SubscriptionRenew, SubscriptionUpdate
 from attendance.schemas_response import AttendanceHistoryResponse
 from core.access import AccessContext
 from core.exceptions import DomainError
@@ -47,13 +47,27 @@ def _subscription_payload(subscription, student=None):
 @router.get("/admin/subscriptions")
 def list_admin_subscriptions(ctx: AccessContext = Depends(require_manage_attendance), db: Session = Depends(get_db)):
     subscriptions = attendance_facade.list_subscriptions(db)
-    return {"data": [_subscription_payload(item, item.student) for item in subscriptions]}
+    visible = [item for item in subscriptions if getattr(item, "status", "ACTIVE") != "CANCELLED"]
+    return {"data": [_subscription_payload(item, item.student) for item in visible]}
 
 
 @router.patch("/admin/subscriptions/{subscription_id}")
 def update_admin_subscription(subscription_id: int, data: SubscriptionUpdate, ctx: AccessContext = Depends(require_manage_attendance), db: Session = Depends(get_db)):
     try:
         subscription = attendance_facade.update_subscription(db, subscription_id=subscription_id, **data.model_dump())
+    except DomainError as exc:
+        translate_domain_error(exc)
+    return {"data": _subscription_payload(subscription, subscription.student)}
+
+
+@router.post("/admin/subscriptions/{subscription_id}/renew")
+def renew_admin_subscription(subscription_id: int, data: SubscriptionRenew, ctx: AccessContext = Depends(require_manage_attendance), db: Session = Depends(get_db)):
+    try:
+        subscription = attendance_facade.renew_subscription(
+            db,
+            subscription_id=subscription_id,
+            **data.model_dump(exclude_none=True),
+        )
     except DomainError as exc:
         translate_domain_error(exc)
     return {"data": _subscription_payload(subscription, subscription.student)}

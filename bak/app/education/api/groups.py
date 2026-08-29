@@ -14,7 +14,7 @@ from education.dtos.program_dto import GroupPayload, GroupMemberPayload, Student
 from education.exceptions.domain_exceptions import EducationError
 from education.facade import education_facade
 from education.schemas.education import EnrollmentCreate, GroupCreate, GroupMemberCreate, GroupScheduleCreate, GroupStudentCreate, GroupTeacherCreate, GroupUpdate, GroupTaskGradeUpdate
-from models.domains.auth import User
+from models.domains.auth import Role, User
 from db.minio_client import BUCKET_NAMES
 from infrastructure.storage.file_service import file_service
 
@@ -49,7 +49,15 @@ def get_group(group_id: int, ctx: AccessContext = Depends(require_view_groups), 
         translate_domain_error(exc)
     payload = GroupPayload(id=group.id, title=group.title, program_id=group.program_id, status=group.status, leaderboard_enabled=group.leaderboard_enabled).to_dict()
     teacher_ids = [member.user_id for member in group.members if member.role == "teacher"]
-    teachers = db.query(User).filter(User.id.in_(teacher_ids)).all() if teacher_ids else []
+    teachers = (
+        db.query(User)
+        .join(User.roles)
+        .join(Role)
+        .filter(User.id.in_(teacher_ids), Role.name == "teacher")
+        .all()
+        if teacher_ids
+        else []
+    )
     payload["teachers"] = [
         {
             "id": teacher.id,

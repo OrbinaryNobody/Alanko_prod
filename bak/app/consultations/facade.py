@@ -59,6 +59,18 @@ class ConsultationsFacade:
     def list_slots(self, db: Session, *, date_from=None, date_to=None, limit: int = 100, offset: int = 0):
         return self.slot_service.list_slots(db, date_from=date_from, date_to=date_to, limit=limit, offset=offset)
 
+    def list_occupied_slot_ids(self, db: Session, *, slot_ids: list[int]) -> set[int]:
+        if not slot_ids:
+            return set()
+        rows = (
+            db.query(ConsultationParticipant.slot_id)
+            .filter(ConsultationParticipant.slot_id.in_(slot_ids))
+            .filter(ConsultationParticipant.booking_status == "CONFIRMED")
+            .distinct()
+            .all()
+        )
+        return {slot_id for (slot_id,) in rows}
+
     def get_price_quote(self, db: Session, *, slot_id: int):
         return self.slot_service.get_price_quote(db, slot_id=slot_id)
 

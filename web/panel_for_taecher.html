@@ -350,15 +350,26 @@
     /* --- Обновленные стили для блока вкладок (Tabs) --- */
     .tabs-container {
       width: 100%;
-      margin: 32px 0;
-      border-bottom: 1px solid var(--card-border);
+      margin: 8px 0 32px 0;
+      position: relative;
     }
 
     .tabs-wrapper {
-      display: flex;
-      gap: 32px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px;
+      background: rgba(18, 22, 28, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-pill);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06);
       overflow-x: auto;
+      max-width: 100%;
       scrollbar-width: none;
+      -ms-overflow-style: none;
+      -webkit-overflow-scrolling: touch;
     }
 
     .tabs-wrapper::-webkit-scrollbar {
@@ -366,35 +377,72 @@
     }
 
     .tab-btn {
-      background: none;
-      border: none;
-      padding: 12px 0;
-      font-size: 0.95rem;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: var(--radius-pill);
+      padding: 9px 18px;
+      font-size: 0.86rem;
+      font-weight: 600;
       font-family: inherit;
-      color: var(--text-muted);
+      color: rgba(255, 255, 255, 0.65);
       cursor: pointer;
       position: relative;
-      transition: color 0.2s ease-in-out;
+      transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      user-select: none;
+      outline: none;
+    }
+
+    .tab-btn * {
+      pointer-events: none;
+    }
+
+    .tab-btn iconify-icon {
+      font-size: 1.15rem;
+      opacity: 0.7;
+      color: currentColor;
+      transition: all 0.22s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .tab-btn:hover {
-      color: var(--text-main);
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.09);
+      transform: translateY(-1px);
+    }
+
+    .tab-btn:hover iconify-icon {
+      opacity: 1;
+      color: var(--pal-light-green);
+      transform: scale(1.08);
+    }
+
+    .tab-btn:active {
+      transform: translateY(0);
     }
 
     .tab-btn.active {
+      background: linear-gradient(135deg, rgba(44, 71, 62, 0.95) 0%, rgba(30, 52, 45, 0.95) 100%);
       color: var(--pal-light-green);
-      font-weight: 600;
+      border-color: rgba(176, 209, 130, 0.4);
+      font-weight: 700;
+      box-shadow: 0 4px 18px rgba(44, 71, 62, 0.55), 0 0 14px rgba(176, 209, 130, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+
+    .tab-btn.active iconify-icon {
+      opacity: 1;
+      color: var(--pal-light-green);
+      filter: drop-shadow(0 0 8px rgba(176, 209, 130, 0.45));
     }
 
     .tab-btn.active::after {
-      content: '';
-      position: absolute;
-      bottom: -1px;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background-color: var(--pal-light-green);
-      box-shadow: 0 0 10px rgba(176, 209, 130, 0.5);
+      display: none;
     }
 
     /* ================= PROGRAMS SECTION ================= */
@@ -419,12 +467,6 @@
   padding: 32px;
   margin-top: 32px;
   backdrop-filter: blur(12px);
-}
-
-.tabs-container {
-  width: 100%;
-  margin: 0 0 32px 0; /* Изменили отступы, так как теперь есть внешний контейнер */
-  border-bottom: 1px solid var(--card-border);
 }
 
 /* --- ВКЛАДКА: УЧЕНИКИ (СПИСОК) --- */
@@ -1118,8 +1160,28 @@ select.custom-input option {
     }
 
     /* ================= MODALS ================= */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(5, 6, 10, 0.85); backdrop-filter: blur(12px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 24px; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
-    .modal-overlay.active { opacity: 1; visibility: visible; }
+    .modal-overlay { 
+      position: fixed; 
+      inset: 0; 
+      background: rgba(5, 6, 10, 0.88); 
+      backdrop-filter: blur(12px); 
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 9999; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      padding: 24px; 
+      opacity: 0; 
+      visibility: hidden; 
+      pointer-events: none;
+      transition: opacity 0.25s ease, visibility 0.25s ease; 
+    }
+    .modal-overlay.active { 
+      opacity: 1 !important; 
+      visibility: visible !important; 
+      pointer-events: auto !important;
+      display: flex !important;
+    }
     
     .modal-container { 
   width: 100%; 
@@ -1718,6 +1780,460 @@ select.custom-input option {
   .consultation-manage-grid { grid-template-columns: 1fr; gap: 24px; }
 }
 
+/* ================= СТИЛИ ДЛЯ СОГЛАСОВАНИЯ ПРОГРАММ ================= */
+.proposals-filter-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.filter-chips-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-chip-btn {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--card-border);
+  color: var(--text-muted);
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.filter-chip-btn:hover {
+  color: var(--text-main);
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.filter-chip-btn.active {
+  background: var(--pal-forest-green);
+  border-color: var(--pal-light-green);
+  color: var(--pal-light-green);
+  box-shadow: 0 0 12px rgba(176, 209, 130, 0.2);
+}
+
+.filter-chip-btn .chip-counter {
+  background: rgba(255, 255, 255, 0.1);
+  color: inherit;
+  padding: 2px 7px;
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.proposals-grid-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.proposal-item-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  backdrop-filter: blur(12px);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.proposal-item-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(176, 209, 130, 0.3);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+.proposal-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.proposal-author-box {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.proposal-author-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2C473E, #1E342D);
+  border: 1px solid var(--pal-light-green);
+  color: var(--pal-light-green);
+  font-weight: 700;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+}
+
+.proposal-info-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.proposal-program-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.proposal-author-meta {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.proposal-badges-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.proposal-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.proposal-status-badge.badge-pending {
+  background: rgba(242, 201, 76, 0.12);
+  border: 1px solid rgba(242, 201, 76, 0.3);
+  color: #F2C94C;
+}
+
+.proposal-status-badge.badge-approved {
+  background: rgba(106, 142, 78, 0.15);
+  border: 1px solid rgba(176, 209, 130, 0.35);
+  color: #B0D182;
+}
+
+.proposal-status-badge.badge-rejected {
+  background: rgba(239, 108, 108, 0.12);
+  border: 1px solid rgba(239, 108, 108, 0.3);
+  color: #EF6C6C;
+}
+
+.proposal-comment-quote {
+  background: rgba(255, 255, 255, 0.02);
+  border-left: 3px solid var(--pal-light-green);
+  padding: 12px 16px;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  font-size: 0.9rem;
+  color: var(--pal-off-white);
+  line-height: 1.5;
+  display: flex;
+  gap: 10px;
+}
+
+.proposal-review-feedback {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.proposal-metrics-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.proposal-metric-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.84rem;
+  color: var(--text-muted);
+}
+
+.proposal-metric-pill strong {
+  color: var(--text-main);
+  font-weight: 700;
+}
+
+.proposal-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  flex-wrap: wrap;
+}
+
+/* Стили модального окна деталей предложения */
+.proposal-modal-container {
+  max-width: 960px;
+  width: 95%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+  background: #0d1117 !important;
+  border: 1px solid var(--card-border);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+}
+
+.proposal-view-nav {
+  display: flex;
+  gap: 12px;
+  border-bottom: 1px solid var(--card-border);
+  padding: 0 32px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.proposal-nav-tab-btn {
+  background: none;
+  border: none;
+  padding: 14px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.proposal-nav-tab-btn:hover {
+  color: var(--text-main);
+}
+
+.proposal-nav-tab-btn.active {
+  color: var(--pal-light-green);
+  border-bottom-color: var(--pal-light-green);
+  background: rgba(176, 209, 130, 0.04);
+}
+
+.proposal-diff-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.proposal-stat-card {
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.proposal-stat-card .stat-title {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.proposal-stat-card .stat-diff-val {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.diff-tag-pill {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+}
+
+.diff-tag-pill.plus {
+  background: rgba(106, 142, 78, 0.2);
+  color: #B0D182;
+}
+
+.diff-tag-pill.neutral {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
+}
+
+.diff-block-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.diff-block-item {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: all 0.2s ease;
+}
+
+.diff-block-item.is-new {
+  border-color: rgba(176, 209, 130, 0.35);
+  background: rgba(106, 142, 78, 0.05);
+}
+
+.diff-block-item.is-modified {
+  border-color: rgba(242, 201, 76, 0.35);
+  background: rgba(242, 201, 76, 0.03);
+}
+
+.diff-block-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.diff-block-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.diff-block-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.diff-block-desc {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.diff-topics-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-left: 16px;
+  border-left: 2px solid rgba(255, 255, 255, 0.07);
+}
+
+.diff-topic-item {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.diff-topic-item.is-new {
+  border-color: rgba(176, 209, 130, 0.3);
+  background: rgba(106, 142, 78, 0.08);
+}
+
+.diff-topic-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--pal-off-white);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.diff-tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.diff-task-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+}
+
+.diff-task-row.is-new {
+  border-color: rgba(176, 209, 130, 0.25);
+  background: rgba(106, 142, 78, 0.1);
+}
+
+.diff-task-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-main);
+  flex: 1;
+}
+
+.diff-task-score {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--pal-light-green);
+  background: rgba(176, 209, 130, 0.12);
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+
   </style>
 </head>
 <body>
@@ -1786,148 +2302,98 @@ select.custom-input option {
   <!-- MAIN CONTENT -->
   <main>
     <div class="container">
-      <div class="dashboard-grid">
-        <!-- Hero Блок -->
-        <div class="hero-banner">
-          <div>
-            <div class="tag">
-              <iconify-icon icon="solar:sparkles-bold-duotone"></iconify-icon>
-              Панель управления
+
+      <!-- Блок навигации по вкладкам -->
+      <div class="tabs-container">
+        <nav class="tabs-wrapper">
+          <button class="tab-btn active" data-tab="tab-programs" type="button">
+            <iconify-icon icon="solar:book-bookmark-bold-duotone"></iconify-icon>
+            <span>Программы</span>
+          </button>
+          <button class="tab-btn" data-tab="tab-program-proposals" type="button" onclick="loadTeacherProposals()">
+            <iconify-icon icon="solar:checklist-minimalistic-bold-duotone"></iconify-icon>
+            <span>Согласование программ</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- ================= КОНТЕНТ ВКЛАДОК ================= -->
+
+      <!-- Вкладка: Программы (Активная по умолчанию) -->
+      <div id="tab-programs" class="tab-content active">
+        <div class="programs-section" style="margin-top: 0;">
+          <div class="section-heading" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+            <div>
+              <h2 class="section-title">Группы и программы</h2>
+              <p class="section-subtitle">Ваши активные классы и учебные планы</p>
             </div>
-            <h1 class="hero-title">С возвращением,<br>Studio Alanko</h1>
-            <p class="hero-subtitle">
-              Отслеживайте посещаемость групп, управляйте расписанием частных уроков и добавляйте новые хореографические связки в едином окне.
-            </p>
-          </div>
-          <div class="actions-group">
-            <button class="btn btn-primary" onclick="openConsultationModal()">
-              <iconify-icon icon="solar:add-circle-bold" width="18"></iconify-icon> Добавить занятие
+            <button class="btn btn-primary" onclick="openCreateProgramModal()">
+              <iconify-icon icon="solar:add-circle-bold" width="18"></iconify-icon> Предложить программу
             </button>
-            <button class="btn btn-secondary">
-              <iconify-icon icon="solar:document-text-bold" width="18"></iconify-icon> Отчеты
+          </div>
+
+          <div class="programs-list" id="teacherProgramsList">
+            <div style="padding: 32px; color: var(--text-muted);">Загрузка программ...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Вкладка: Согласование программ -->
+      <div id="tab-program-proposals" class="tab-content">
+        <div class="students-toolbar">
+          <div class="section-heading" style="margin-bottom: 0;">
+            <h2 class="section-title">Согласование программ</h2>
+            <p class="section-subtitle">История ваших предложений и статус их рассмотрения администрацией</p>
+          </div>
+          <button class="btn btn-secondary" onclick="loadTeacherProposals(true)" id="refreshProposalsBtn">
+            <iconify-icon icon="solar:refresh-bold"></iconify-icon> Обновить список
+          </button>
+        </div>
+
+        <!-- Панель фильтров и поиска -->
+        <div class="proposals-filter-bar">
+          <div class="filter-chips-group">
+            <button type="button" class="filter-chip-btn active" data-filter="all" onclick="setProposalFilter('all')">
+              <span>Все</span>
+              <span class="chip-counter" id="countAllProposals">0</span>
+            </button>
+            <button type="button" class="filter-chip-btn" data-filter="pending" onclick="setProposalFilter('pending')">
+              <iconify-icon icon="solar:clock-circle-bold" style="color: #F2C94C;"></iconify-icon>
+              <span>Ожидают решения</span>
+              <span class="chip-counter" id="countPendingProposals" style="background: rgba(242, 201, 76, 0.2); color: #F2C94C;">0</span>
+            </button>
+            <button type="button" class="filter-chip-btn" data-filter="approved" onclick="setProposalFilter('approved')">
+              <iconify-icon icon="solar:check-circle-bold" style="color: #6A8E4E;"></iconify-icon>
+              <span>Утверждённые</span>
+              <span class="chip-counter" id="countApprovedProposals">0</span>
+            </button>
+            <button type="button" class="filter-chip-btn" data-filter="rejected" onclick="setProposalFilter('rejected')">
+              <iconify-icon icon="solar:close-circle-bold" style="color: #EF6C6C;"></iconify-icon>
+              <span>Отклонённые</span>
+              <span class="chip-counter" id="countRejectedProposals">0</span>
             </button>
           </div>
+
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <div style="position: relative; width: 260px;">
+              <iconify-icon icon="solar:magnifer-linear" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 1.1rem; pointer-events: none;"></iconify-icon>
+              <input type="text" id="proposalsSearchInput" placeholder="Поиск по программе..." 
+                     class="sort-select" style="width: 100%; padding-left: 38px; font-size: 0.85rem; border-radius: var(--radius-pill);"
+                     oninput="handleProposalSearch(event)">
+            </div>
+          </div>
         </div>
 
-        <!-- Статистика -->
-        <div class="stats-grid">
-          <div class="stat-box">
-            <div class="stat-header">
-              <div class="stat-icon-wrapper"><iconify-icon icon="solar:users-group-two-rounded-bold"></iconify-icon></div>
-              <span class="stat-trend">+12%</span>
-            </div>
-            <div>
-              <div class="stat-value">132</div>
-              <div class="stat-label">Активных учеников</div>
-            </div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-header">
-              <div class="stat-icon-wrapper"><iconify-icon icon="solar:calendar-mark-bold"></iconify-icon></div>
-              <span class="stat-trend">План</span>
-            </div>
-            <div>
-              <div class="stat-value">18</div>
-              <div class="stat-label">Классов на неделе</div>
-            </div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-header">
-              <div class="stat-icon-wrapper"><iconify-icon icon="solar:videocamera-record-bold"></iconify-icon></div>
-              <span class="stat-trend">База</span>
-            </div>
-            <div>
-              <div class="stat-value">24</div>
-              <div class="stat-label">Видео связок</div>
-            </div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-header">
-              <div class="stat-icon-wrapper"><iconify-icon icon="solar:cup-star-bold"></iconify-icon></div>
-              <span class="stat-trend">2026</span>
-            </div>
-            <div>
-              <div class="stat-value">12</div>
-              <div class="stat-label">Наград и побед</div>
-            </div>
+        <!-- Список предложений -->
+        <div class="proposals-grid-list" id="programProposalsList">
+          <div style="text-align: center; padding: 60px 0; color: var(--text-muted);">
+            <iconify-icon icon="solar:refresh-bold" style="font-size: 2.5rem; animation: spin 1s linear infinite; color: var(--pal-light-green);"></iconify-icon>
+            <p style="margin-top: 12px;">Загрузка предложений изменений...</p>
           </div>
         </div>
       </div>
 
-
-<!-- Блок навигации по вкладкам -->
-<div class="tabs-container">
-    <nav class="tabs-wrapper">
-      <button class="tab-btn active" data-tab="tab-programs">Программы</button>
-      <button class="tab-btn" data-tab="tab-calendar">Календарь</button>
-      </nav>
-</div>
-
-<!-- ================= КОНТЕНТ ВКЛАДОК ================= -->
-
-<!-- Вкладка: Программы (Активная по умолчанию) -->
-<div id="tab-programs" class="tab-content active">
-  <div class="programs-section">
-    <div class="section-heading" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
-      <div>
-        <h2 class="section-title">Группы и программы</h2>
-        <p class="section-subtitle">Ваши активные классы</p>
-      </div>
-      <button class="btn btn-primary" onclick="openCreateProgramModal()">
-        <iconify-icon icon="solar:add-circle-bold" width="18"></iconify-icon> Предложить программу
-      </button>
     </div>
-
-    <div class="programs-list" id="teacherProgramsList">
-      <div style="padding: 32px; color: var(--text-muted);">Загрузка программ...</div>
-    </div>
-  </div>
-</div>
-
-<!-- Вкладка: Календарь -->
-<div id="tab-calendar" class="tab-content">
-  <div class="schedule-section">
-    <div class="schedule-header">
-      <div class="section-heading" style="margin-bottom: 0;">
-        <h2 class="section-title">Календарь преподавателя</h2>
-        <p class="section-subtitle">План занятий, постановки номеров и важные даты</p>
-      </div>
-      <div class="month-control">
-        <button class="btn-icon"><iconify-icon icon="solar:alt-arrow-left-line-duotone"></iconify-icon></button>
-        <span>Август 2026</span>
-        <button class="btn-icon"><iconify-icon icon="solar:alt-arrow-right-line-duotone"></iconify-icon></button>
-      </div>
-    </div>
-
-    <div class="schedule-filters">
-      <button class="filter-btn active">Все задачи</button>
-      <button class="filter-btn">Занятия</button>
-      <button class="filter-btn">Мероприятия</button>
-      <button class="filter-btn">Дедлайны</button>
-    </div>
-
-    <!-- (Здесь остается весь ваш текущий код из .agenda-list ...) -->
-    <div class="agenda-list">
-      <div class="agenda-item">
-        <div class="agenda-date">
-          <span class="agenda-day">12</span><span class="agenda-month">Авг</span>
-        </div>
-        <div class="agenda-timeline">
-          <div class="agenda-dot pulse"></div><div class="agenda-line"></div>
-        </div>
-        <div class="agenda-card">
-          <div class="agenda-card-header">
-            <span class="agenda-time"><iconify-icon icon="solar:clock-circle-bold-duotone"></iconify-icon> 16:00 - 17:30</span>
-            <span class="tag-sm tag-class">Занятие</span>
-          </div>
-          <h4 class="agenda-title">Kids Choreo (9-12 лет)</h4>
-          <p class="agenda-desc">Отработка первой части новой связки. Уделить особое внимание синхронности в партере.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
   </main>
 
   <!-- МОДАЛЬНОЕ ОКНО РЕДАКТИРОВАНИЯ ПРОГРАММЫ -->
@@ -2031,7 +2497,6 @@ select.custom-input option {
             </div>
           </div>
         </div>
-      </div>
       </div>
     </div>
   </div>
@@ -2350,7 +2815,7 @@ select.custom-input option {
         </div>
       </div>
       <div class="header-actions">
-        <button class="btn btn-primary btn-sm" onclick="openJournalModal(document.getElementById('manageGroupName').textContent || 'Группа', 0); closeGroupManageModal();">
+        <button class="btn btn-primary btn-sm" onclick="openJournalModal(activeTeacherGroupId, document.getElementById('manageGroupName').textContent || 'Группа', 0); closeGroupManageModal();">
           <iconify-icon icon="solar:notebook-bookmark-bold"></iconify-icon> Открыть журнал
         </button>
         <button class="btn-close" onclick="closeGroupManageModal()">
@@ -2945,6 +3410,7 @@ select.custom-input option {
       </div>
     </div>
   </div>
+</div>
 <!-- МОДАЛЬНОЕ ОКНО: ДОБАВЛЕНИЕ НОВОГО ПРЕПОДАВАТЕЛЯ -->
 <div class="modal-overlay" id="addNewTeacherModal">
   <div class="modal-container" style="max-width: 900px;">
@@ -3147,11 +3613,120 @@ select.custom-input option {
     const modalTitle = document.getElementById('modalGroupName');
     const modalCount = document.getElementById('modalGroupCount');
 
-    function openJournalModal(groupName, studentsCount) {
-      modalTitle.innerText = groupName;
-      modalCount.innerHTML = `<iconify-icon icon="solar:users-group-rounded-bold"></iconify-icon> ${studentsCount} учеников`;
+    async function openJournalModal(groupId, groupName, studentsCount = 0) {
+      if (!Number(groupId)) return;
+      modalTitle.innerText = groupName || 'Группа';
+      modalCount.innerHTML = '<iconify-icon icon="solar:refresh-bold"></iconify-icon> Загрузка...';
       journalModal.classList.add('active');
-      document.body.style.overflow = 'hidden'; 
+      document.body.style.overflow = 'hidden';
+
+      try {
+        const response = await fetchWithAuth(`/education/groups/${Number(groupId)}/journal`);
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(payload.detail || 'Не удалось загрузить журнал группы');
+        renderTeacherJournal(payload.data || {});
+      } catch (error) {
+        modalCount.textContent = 'Ошибка загрузки';
+        journalModal.querySelector('.blocks-list').innerHTML = `<div style="padding:24px; color:var(--pal-accent-red);">${escapeTeacherHtml(error.message)}</div>`;
+      }
+    }
+
+    function escapeTeacherHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function renderTeacherJournal(journal) {
+      const group = journal.group || {};
+      const program = journal.program || {};
+      const students = journal.students || [];
+      const blocksList = journalModal.querySelector('.blocks-container .blocks-list');
+      const studentsList = journalModal.querySelector('#studentsSidebar .students-list');
+
+      modalTitle.textContent = group.title || 'Группа';
+      modalCount.innerHTML = `<iconify-icon icon="solar:users-group-rounded-bold"></iconify-icon> ${students.length} учеников`;
+
+      blocksList.innerHTML = program.blocks?.length ? program.blocks.map(block => `
+        <div class="course-block current">
+          <div class="block-header-info"><span class="status-badge status-current">Блок</span><span class="block-dates">Порядок: ${block.order ?? 0}</span></div>
+          <h4>${escapeTeacherHtml(block.title)}</h4>
+          <p class="topic-desc">${escapeTeacherHtml(block.description || '')}</p>
+          <div class="topics-list">${(block.topics || []).map(topic => `
+            <div class="topic-item">
+              <h5 class="topic-title">${escapeTeacherHtml(topic.title)}</h5>
+              <p class="topic-desc">${escapeTeacherHtml(topic.description || '')}</p>
+              <div class="topic-hw"><strong>Задания:</strong><ul style="margin:8px 0 0 18px;">${(topic.tasks || []).map(task => `<li>${escapeTeacherHtml(task.title)} <span style="color:var(--text-muted);">(${task.max_score} баллов)</span></li>`).join('')}</ul></div>
+            </div>`).join('')}</div>
+        </div>`).join('') : '<div style="padding:24px; color:var(--text-muted);">В программе пока нет учебного плана.</div>';
+
+      studentsList.innerHTML = students.length ? students.map(student => `
+        <div class="student-item" data-student-id="${student.student_id}" onclick="openTeacherStudentTasks(${group.id}, ${student.student_id})">
+          <div class="student-main">
+            <div class="student-identity">
+              <div class="student-photo"><img src="https://ui-avatars.com/api/?name=${encodeURIComponent(student.name || 'Ученик')}&background=2C473E&color=B0D182" alt=""></div>
+              <span class="student-name">${escapeTeacherHtml(student.name || `Ученик #${student.student_id}`)}</span>
+            </div>
+            <span class="student-status status-ok">${student.tasks?.filter(task => task.grade !== null).length || 0}/${student.tasks?.length || 0}</span>
+          </div>
+        </div>`).join('') : '<div style="padding:16px; color:var(--text-muted);">В группе пока нет учеников.</div>';
+    }
+
+    async function openTeacherStudentTasks(groupId, studentId) {
+      try {
+        const response = await fetchWithAuth(`/education/groups/${Number(groupId)}/journal`);
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.detail || 'Не удалось загрузить задания ученика');
+        const journal = payload.data || {};
+        const student = (journal.students || []).find(item => Number(item.student_id) === Number(studentId));
+        if (!student) throw new Error('Ученик не найден в журнале');
+        openTeacherGradingModal(groupId, student, journal.program?.blocks || []);
+      } catch (error) {
+        alert(error.message);
+      }
+    }
+
+    function openTeacherGradingModal(groupId, student, blocks) {
+      const sidebar = document.querySelector('#gradingModal .grading-sidebar');
+      const content = document.querySelector('#gradingModal .grading-content');
+      document.getElementById('gradingModalTitle').textContent = `Задания: ${student.name}`;
+      sidebar.innerHTML = blocks.length ? blocks.map((block, index) => `<button type="button" class="btn-sm ${index === 0 ? 'primary' : ''}" style="width:100%; justify-content:flex-start; margin-bottom:8px;" onclick="renderTeacherGradingBlock(${groupId}, ${student.student_id}, ${index})">${escapeTeacherHtml(block.title)}</button>`).join('') : '<div style="color:var(--text-muted);">Блоков нет.</div>';
+      window._teacherJournalGrading = { groupId, student, blocks };
+      renderTeacherGradingBlock(groupId, student.student_id, 0);
+      gradingModal.classList.add('active');
+    }
+
+    function renderTeacherGradingBlock(groupId, studentId, blockIndex) {
+      const state = window._teacherJournalGrading;
+      const block = state?.blocks?.[blockIndex];
+      if (!block) return;
+      const taskMap = new Map((state.student.tasks || []).map(task => [Number(task.task_id), task]));
+      const tasks = (block.topics || []).flatMap(topic => topic.tasks || []);
+      document.querySelector('#gradingModal .grading-content').innerHTML = `<h3 class="modal-section-title">${escapeTeacherHtml(block.title)}</h3><div class="tasks-list">${tasks.map(task => {
+        const studentTask = taskMap.get(Number(task.id));
+        return `<div class="task-card"><div class="task-info"><h5 class="task-title">${escapeTeacherHtml(task.title)}</h5><p class="task-desc">${escapeTeacherHtml(task.description || '')}</p></div><div class="task-actions"><div class="score-input-group"><input class="score-input teacher-grade" type="number" min="0" max="${task.max_score}" value="${studentTask?.grade ?? ''}" data-student-task-id="${studentTask?.student_task_id || ''}"><span class="score-divider">/ ${task.max_score}</span></div>${studentTask ? `<input class="custom-input teacher-feedback" placeholder="Комментарий" value="${escapeTeacherHtml(studentTask.feedback || '')}"><button class="btn-sm primary" onclick="saveTeacherGrade(${groupId}, ${studentTask.student_task_id}, this)"><iconify-icon icon="solar:diskette-bold"></iconify-icon> Сохранить</button>` : '<span class="task-desc">Задание не назначено ученику.</span>'}</div></div>`;
+      }).join('') || '<div style="color:var(--text-muted);">В этом блоке заданий нет.</div>'}</div>`;
+    }
+
+    async function saveTeacherGrade(groupId, studentTaskId, button) {
+      const card = button.closest('.task-card');
+      const grade = Number(card.querySelector('.teacher-grade').value);
+      if (!Number.isFinite(grade)) return;
+      button.disabled = true;
+      try {
+        await fetchWithAuth(`/education/groups/${Number(groupId)}/journal/tasks/${Number(studentTaskId)}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ grade, feedback: card.querySelector('.teacher-feedback').value.trim() || null }),
+        });
+        button.textContent = 'Сохранено';
+      } catch (error) {
+        button.disabled = false;
+        alert(error.message);
+      }
     }
 
     function closeJournalModal() {
@@ -3372,6 +3947,9 @@ select.custom-input option {
         }
 
         closeEditProgramModal();
+        if (typeof loadTeacherProposals === 'function') {
+          loadTeacherProposals(true);
+        }
         if (window.showToast) {
           window.showToast('Изменения отправлены на согласование администратору', 'success');
         } else {
@@ -3401,9 +3979,9 @@ select.custom-input option {
       closeEditProgramModal();
     }
 
-    function navigateToGroupJournal(groupName, studentsCount) {
+    function navigateToGroupJournal(groupId, groupName, studentsCount) {
       closeEditProgramModal();
-      openJournalModal(groupName, studentsCount);
+      openJournalModal(groupId, groupName, studentsCount);
     }
 
     editProgramModal.addEventListener('click', (e) => {
@@ -3418,7 +3996,7 @@ select.custom-input option {
       
       sidebar.classList.toggle('hidden');
       if (sidebar.classList.contains('hidden')) {
-        btn.innerHTML = '<iconify-icon icon="solar:eye-bold"></iconify-icon> Показать состав';
+        btn.innerHTML = '<iconify-icon icon="solar:eye-bold-duotone"></iconify-icon> Показать состав';
       } else {
         btn.innerHTML = '<iconify-icon icon="solar:eye-closed-bold"></iconify-icon> Скрыть состав';
       }
@@ -3463,13 +4041,15 @@ select.custom-input option {
     /* --- ЛОГИКА УПРАВЛЕНИЯ ГРУППОЙ --- */
 const groupManageModal = document.getElementById('groupManageModal');
 const manageGroupNameInput = document.getElementById('manageGroupName');
+let activeTeacherGroupId = null;
 
-function openGroupManageModal(groupName) {
+function openGroupManageModal(groupId, groupName) {
   closeEditProgramModal();
+  activeTeacherGroupId = Number(groupId) || null;
   const normalizedName = (groupName || 'Группа').trim();
   const groupNameEl = document.getElementById('manageGroupName');
   if (groupNameEl) groupNameEl.textContent = normalizedName;
-  openJournalModal(normalizedName, 0);
+  openJournalModal(groupId, normalizedName, 0);
   groupManageModal.classList.remove('active');
 }
 
@@ -3714,6 +4294,9 @@ async function submitNewProgramProposal() {
     }
 
     closeCreateProgramModal();
+    if (typeof loadTeacherProposals === 'function') {
+      loadTeacherProposals(true);
+    }
     if (window.showToast) {
       window.showToast('Предложение по новой программе отправлено на согласование администратору', 'success');
     } else {
@@ -3873,6 +4456,822 @@ function addNewGroupToProgram(containerId) {
   }
 }
 
+// ================= УПРАВЛЕНИЕ ПРЕДЛОЖЕНИЯМИ ИЗМЕНЕНИЙ ПРОГРАММ (ДЛЯ УЧИТЕЛЯ) =================
+let _allProgramProposals = [];
+let _proposalsProgramsMap = {};
+let _currentProposalFilter = 'all';
+let _proposalsSearchQuery = '';
+let _activeProposalDetail = null;
+let _activeProposalCurrentProgram = null;
+let _activeProposalModalView = 'diff';
+
+function safeParseSnapshot(snapshot) {
+  if (!snapshot) return { blocks: [] };
+  if (typeof snapshot === 'string') {
+    try {
+      const parsed = JSON.parse(snapshot);
+      if (Array.isArray(parsed)) return { blocks: parsed };
+      return (typeof parsed === 'object' && parsed !== null) ? (Array.isArray(parsed.blocks) ? parsed : { ...parsed, blocks: [] }) : { blocks: [] };
+    } catch (e) {
+      return { blocks: [] };
+    }
+  }
+  if (Array.isArray(snapshot)) return { blocks: snapshot };
+  if (typeof snapshot === 'object' && snapshot !== null) {
+    return Array.isArray(snapshot.blocks) ? snapshot : { ...snapshot, blocks: [] };
+  }
+  return { blocks: [] };
+}
+
+function calculateSnapshotStats(rawSnapshot) {
+  const snapshot = safeParseSnapshot(rawSnapshot);
+  const blocks = Array.isArray(snapshot?.blocks) ? snapshot.blocks : [];
+  let topicsCount = 0;
+  let tasksCount = 0;
+  let totalScore = 0;
+
+  blocks.forEach(b => {
+    if (!b) return;
+    const topics = Array.isArray(b.topics) ? b.topics : [];
+    topicsCount += topics.length;
+    topics.forEach(t => {
+      if (!t) return;
+      const tasks = Array.isArray(t.tasks) ? t.tasks : [];
+      tasksCount += tasks.length;
+      tasks.forEach(tsk => {
+        if (!tsk) return;
+        totalScore += (Number(tsk.max_score) || 0);
+      });
+    });
+    if (Array.isArray(b.tasks)) {
+      tasksCount += b.tasks.length;
+      b.tasks.forEach(tsk => {
+        if (!tsk) return;
+        totalScore += (Number(tsk.max_score) || 0);
+      });
+    }
+  });
+
+  return {
+    blocksCount: blocks.length,
+    topicsCount,
+    tasksCount,
+    totalScore
+  };
+}
+
+function setProposalFilter(filterStatus) {
+  _currentProposalFilter = filterStatus;
+  
+  document.querySelectorAll('.filter-chip-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.filter === filterStatus);
+  });
+
+  renderTeacherProposalsList();
+}
+
+function handleProposalSearch(event) {
+  _proposalsSearchQuery = (event.target.value || '').trim().toLowerCase();
+  renderTeacherProposalsList();
+}
+
+function normalizeProposalStatus(status) {
+  return String(status || '').trim().toLowerCase();
+}
+
+function updateProposalCounters() {
+  const total = _allProgramProposals.length;
+  const pending = _allProgramProposals.filter(p => normalizeProposalStatus(p.status) === 'pending').length;
+  const approved = _allProgramProposals.filter(p => normalizeProposalStatus(p.status) === 'approved').length;
+  const rejected = _allProgramProposals.filter(p => normalizeProposalStatus(p.status) === 'rejected').length;
+
+  const elTotal = document.getElementById('countAllProposals');
+  const elPending = document.getElementById('countPendingProposals');
+  const elApproved = document.getElementById('countApprovedProposals');
+  const elRejected = document.getElementById('countRejectedProposals');
+
+  if (elTotal) elTotal.textContent = total;
+  if (elPending) elPending.textContent = pending;
+  if (elApproved) elApproved.textContent = approved;
+  if (elRejected) elRejected.textContent = rejected;
+}
+
+async function loadTeacherProposals(forceReload = false) {
+  const list = document.getElementById('programProposalsList');
+  const refreshBtn = document.getElementById('refreshProposalsBtn');
+  
+  if (refreshBtn) {
+    refreshBtn.disabled = true;
+    refreshBtn.innerHTML = '<iconify-icon icon="solar:refresh-bold" style="animation: spin 1s linear infinite;"></iconify-icon> Загрузка...';
+  }
+
+  if (!list) return;
+
+  if (!forceReload && _allProgramProposals.length === 0) {
+    list.innerHTML = `
+      <div style="text-align: center; padding: 60px 0; color: var(--text-muted);">
+        <iconify-icon icon="solar:refresh-bold" style="font-size: 2.5rem; animation: spin 1s linear infinite; color: var(--pal-light-green);"></iconify-icon>
+        <p style="margin-top: 12px;">Загрузка предложений изменений...</p>
+      </div>
+    `;
+  }
+
+  try {
+    let proposals = [];
+    try {
+      const pRes = await fetchWithAuth('/education/program-change-proposals/my');
+      if (pRes.ok) {
+        const payload = await pRes.json();
+        proposals = Array.isArray(payload) ? payload : (payload.data || payload.items || []);
+      } else {
+        throw new Error('Fallback to general proposals endpoint');
+      }
+    } catch (err) {
+      try {
+        const pRes2 = await fetchWithAuth('/education/admin/program-change-proposals');
+        if (pRes2.ok) {
+          const payload2 = await pRes2.json();
+          proposals = Array.isArray(payload2) ? payload2 : (payload2.data || payload2.items || []);
+        }
+      } catch (err2) {
+        console.warn('Could not load proposals', err2);
+      }
+    }
+    _allProgramProposals = proposals;
+
+    try {
+      const progRes = await fetchWithAuth('/education/programs');
+      if (progRes.ok) {
+        const progPayload = await progRes.json();
+        const pList = Array.isArray(progPayload) ? progPayload : (progPayload.data || []);
+        _proposalsProgramsMap = pList.reduce((acc, p) => {
+          if (p && p.id) acc[p.id] = p;
+          return acc;
+        }, {});
+      }
+    } catch (err) {
+      _proposalsProgramsMap = {};
+    }
+
+    updateProposalCounters();
+    renderTeacherProposalsList();
+  } catch (error) {
+    list.innerHTML = `
+      <div style="text-align: center; padding: 48px 24px; color: var(--pal-accent-red); background: rgba(239, 108, 108, 0.05); border: 1px solid rgba(239, 108, 108, 0.2); border-radius: var(--radius-lg);">
+        <iconify-icon icon="solar:danger-triangle-bold-duotone" style="font-size: 3rem; margin-bottom: 12px;"></iconify-icon>
+        <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 6px;">Не удалось загрузить предложения</div>
+        <div style="color: var(--text-muted); font-size: 0.9rem;">${error.message || 'Ошибка соединения с сервером'}</div>
+        <button class="btn btn-secondary btn-sm" style="margin-top: 16px;" onclick="loadTeacherProposals(true)">Повторить попытку</button>
+      </div>
+    `;
+  } finally {
+    if (refreshBtn) {
+      refreshBtn.disabled = false;
+      refreshBtn.innerHTML = '<iconify-icon icon="solar:refresh-bold"></iconify-icon> Обновить список';
+    }
+  }
+}
+
+function renderTeacherProposalsList() {
+  const list = document.getElementById('programProposalsList');
+  if (!list) return;
+
+  let filtered = _allProgramProposals;
+  if (_currentProposalFilter !== 'all') {
+    filtered = filtered.filter(p => normalizeProposalStatus(p.status) === _currentProposalFilter);
+  }
+
+  if (_proposalsSearchQuery) {
+    filtered = filtered.filter(p => {
+      const program = _proposalsProgramsMap[p.program_id];
+      const programTitle = (program?.title || p.title || '').toLowerCase();
+      const comment = (p.author_comment || '').toLowerCase();
+      return programTitle.includes(_proposalsSearchQuery) || 
+             comment.includes(_proposalsSearchQuery);
+    });
+  }
+
+  if (!filtered.length) {
+    const emptyMessages = {
+      all: 'У вас пока нет предложенных изменений программ.',
+      pending: 'Нет предложений, ожидающих решения администрации.',
+      approved: 'Нет утверждённых предложений.',
+      rejected: 'Нет отклонённых предложений.'
+    };
+    
+    list.innerHTML = `
+      <div style="text-align: center; padding: 60px 24px; color: var(--text-muted); background: var(--card-bg); border: 1px dashed var(--card-border); border-radius: var(--radius-lg);">
+        <iconify-icon icon="solar:notes-minimalistic-bold-duotone" style="font-size: 3.5rem; margin-bottom: 16px; color: var(--pal-light-green); opacity: 0.6;"></iconify-icon>
+        <div style="font-size: 1.15rem; font-weight: 600; color: var(--text-main); margin-bottom: 6px;">
+          ${_proposalsSearchQuery ? 'Ничего не найдено по запросу' : (emptyMessages[_currentProposalFilter] || 'Предложений нет')}
+        </div>
+        <div style="font-size: 0.9rem;">
+          ${_proposalsSearchQuery ? 'Попробуйте изменить поисковую фразу' : 'Когда вы предложите изменения к программам через вкладку «Программы», они отобразятся здесь со статусом рассмотрения.'}
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  list.innerHTML = '';
+
+  filtered.forEach(proposal => {
+    const program = proposal.program_id ? _proposalsProgramsMap[proposal.program_id] : null;
+    const programTitle = proposal.title || proposal.proposed_snapshot?.title || proposal.base_snapshot?.title || program?.title || (proposal.program_id ? `Программа #${proposal.program_id}` : 'Новая программа');
+    
+    const baseStats = calculateSnapshotStats(proposal.base_snapshot);
+    const propStats = calculateSnapshotStats(proposal.proposed_snapshot);
+
+    const statusKey = normalizeProposalStatus(proposal.status);
+    const statusMap = {
+      pending: { label: 'Ожидает решения', class: 'badge-pending', icon: 'solar:clock-circle-bold' },
+      approved: { label: 'Утверждено', class: 'badge-approved', icon: 'solar:check-circle-bold' },
+      rejected: { label: 'Отклонено', class: 'badge-rejected', icon: 'solar:close-circle-bold' }
+    };
+    const statusInfo = statusMap[statusKey] || { label: proposal.status, class: '', icon: 'solar:info-circle-bold' };
+
+    const formattedDate = proposal.created_at ? new Date(proposal.created_at).toLocaleDateString('ru-RU', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }) : '—';
+
+    const blocksDiff = propStats.blocksCount - baseStats.blocksCount;
+    const blocksDiffText = blocksDiff > 0 ? `+${blocksDiff}` : blocksDiff === 0 ? '±0' : `${blocksDiff}`;
+
+    const card = document.createElement('div');
+    card.className = `proposal-item-card status-${statusKey}`;
+    card.innerHTML = `
+      <div class="proposal-card-top">
+        <div class="proposal-author-box">
+          <div class="proposal-author-avatar">
+            <iconify-icon icon="solar:document-add-bold-duotone"></iconify-icon>
+          </div>
+          <div class="proposal-info-col">
+            <div class="proposal-program-title">
+              <iconify-icon icon="solar:book-bookmark-bold-duotone" style="color: var(--pal-light-green);"></iconify-icon>
+              <span>${programTitle}</span>
+            </div>
+            <div class="proposal-author-meta">
+              <span><iconify-icon icon="solar:calendar-date-bold-duotone" style="vertical-align: middle;"></iconify-icon> Дата подачи: ${formattedDate}</span>
+              <span>•</span>
+              <span>ID #${proposal.id}</span>
+            </div>
+          </div>
+        </div>
+        <div class="proposal-badges-box">
+          <span class="proposal-status-badge ${statusInfo.class}">
+            <iconify-icon icon="${statusInfo.icon}"></iconify-icon>
+            ${statusInfo.label}
+          </span>
+        </div>
+      </div>
+
+      ${proposal.author_comment ? `
+        <div class="proposal-comment-quote">
+          <iconify-icon icon="solar:chat-round-dots-bold-duotone" style="font-size: 1.3rem; color: var(--pal-light-green); flex-shrink: 0; margin-top: 2px;"></iconify-icon>
+          <div>
+            <strong style="color: var(--pal-light-green); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 2px;">Ваш комментарий к предложению:</strong>
+            <span>${proposal.author_comment}</span>
+          </div>
+        </div>
+      ` : ''}
+
+      ${proposal.reviewer_comment ? `
+        <div class="proposal-review-feedback">
+          <iconify-icon icon="solar:shield-check-bold" style="font-size: 1.2rem; color: var(--text-muted); flex-shrink: 0;"></iconify-icon>
+          <div>
+            <strong>Решение администратора:</strong> ${proposal.reviewer_comment}
+          </div>
+        </div>
+      ` : ''}
+
+      <div class="proposal-metrics-row">
+        <div class="proposal-metric-pill" title="Изменение количества тематических блоков">
+          <iconify-icon icon="solar:folder-with-files-bold-duotone" style="color: var(--pal-light-green);"></iconify-icon>
+          <span>Блоков: <strong>${baseStats.blocksCount} → ${propStats.blocksCount}</strong> (${blocksDiffText})</span>
+        </div>
+        <div class="proposal-metric-pill" title="Количество тем в предлагаемом плане">
+          <iconify-icon icon="solar:document-text-bold" style="color: #6A8E4E;"></iconify-icon>
+          <span>Темы: <strong>${propStats.topicsCount}</strong></span>
+        </div>
+        <div class="proposal-metric-pill" title="Количество практических заданий">
+          <iconify-icon icon="solar:checklist-minimalistic-bold-duotone" style="color: #F2C94C;"></iconify-icon>
+          <span>Заданий: <strong>${propStats.tasksCount}</strong></span>
+        </div>
+        <div class="proposal-metric-pill" title="Суммарный балл по всем заданиям плана">
+          <iconify-icon icon="solar:cup-star-bold" style="color: #B0D182;"></iconify-icon>
+          <span>Всего баллов: <strong>${propStats.totalScore}</strong></span>
+        </div>
+      </div>
+
+      <div class="proposal-card-actions">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="viewProposalDetails('${proposal.id}')" data-proposal-id="${proposal.id}">
+          <iconify-icon icon="solar:eye-bold-duotone"></iconify-icon> Просмотреть изменения
+        </button>
+      </div>
+    `;
+    list.appendChild(card);
+  });
+}
+
+// ================= ОКНО ПРОСМОТРА И ДЕТАЛЕЙ ПРЕДЛОЖЕНИЯ =================
+async function viewProposalDetails(proposalId) {
+  try {
+    if (proposalId === undefined || proposalId === null || proposalId === '') {
+      throw new Error('Идентификатор предложения не указан');
+    }
+
+    let proposal = null;
+
+    if (typeof proposalId === 'object' && proposalId !== null) {
+      proposal = proposalId;
+    } else {
+      proposal = _allProgramProposals.find(p => String(p?.id || p?._id || p?.proposal_id) === String(proposalId));
+    }
+    
+    if (!proposal && typeof proposalId !== 'object') {
+      try {
+        const res = await fetchWithAuth(`/education/program-change-proposals/${proposalId}`);
+        const payload = await res.json();
+        proposal = payload?.data || payload;
+      } catch (e1) {
+        console.warn('Could not fetch proposal details from teacher endpoint', e1);
+      }
+    }
+    
+    if (!proposal && typeof proposalId !== 'object') {
+      try {
+        const res2 = await fetchWithAuth(`/education/admin/program-change-proposals/${proposalId}`);
+        const payload2 = await res2.json();
+        proposal = payload2?.data || payload2;
+      } catch (e2) {
+        console.warn('Could not fetch proposal details from admin endpoint', e2);
+      }
+    }
+    
+    if (!proposal) throw new Error('Данные предложения не найдены');
+
+    // Клонируем и парсим снапшоты безопасно
+    proposal = JSON.parse(JSON.stringify(proposal));
+    proposal.base_snapshot = safeParseSnapshot(proposal.base_snapshot);
+    proposal.proposed_snapshot = safeParseSnapshot(proposal.proposed_snapshot);
+
+    _activeProposalDetail = proposal;
+
+    openProposalDetailsModal(proposal);
+  } catch (error) {
+    console.error('Error opening proposal details:', error);
+    if (window.showToast) {
+      window.showToast(`Ошибка открытия предложения: ${error.message}`, 'error');
+    } else {
+      alert(`Ошибка: ${error.message}`);
+    }
+  }
+}
+
+function openProposalDetailsModal(proposal) {
+  const modal = document.getElementById('proposalDetailsModal');
+  if (!modal) {
+    console.error('Modal #proposalDetailsModal not found');
+    return;
+  }
+
+  const program = proposal.program_id ? _proposalsProgramsMap[proposal.program_id] : null;
+  const programTitle = proposal.title || proposal.proposed_snapshot?.title || proposal.base_snapshot?.title || program?.title || (proposal.program_id ? `Программа #${proposal.program_id}` : 'Новая программа');
+
+  // Заголовок и метаданные
+  const titleEl = document.getElementById('proposalModalProgramTitle');
+  if (titleEl) titleEl.textContent = programTitle;
+
+  const metaEl = document.getElementById('proposalModalMeta');
+  if (metaEl) {
+    metaEl.innerHTML = `
+      Дата подачи: ${proposal.created_at ? new Date(proposal.created_at).toLocaleString('ru-RU') : ''} • ID #${proposal.id || ''}
+    `;
+  }
+
+  // Бейдж статуса
+  const statusKey = normalizeProposalStatus(proposal.status);
+  const statusBadge = document.getElementById('proposalModalStatusBadge');
+  if (statusBadge) {
+    statusBadge.className = `proposal-status-badge badge-${statusKey}`;
+    const statusMap = {
+      pending: 'Ожидает решения',
+      approved: 'Утверждено',
+      rejected: 'Отклонено'
+    };
+    statusBadge.innerHTML = `<iconify-icon icon="${statusKey === 'approved' ? 'solar:check-circle-bold' : statusKey === 'rejected' ? 'solar:close-circle-bold' : 'solar:clock-circle-bold'}"></iconify-icon> ${statusMap[statusKey] || proposal.status}`;
+  }
+
+  // Комментарий автора
+  const commentBox = document.getElementById('proposalModalAuthorCommentBox');
+  const commentText = document.getElementById('proposalModalAuthorCommentText');
+  if (commentBox && commentText) {
+    if (proposal.author_comment) {
+      commentBox.style.display = 'flex';
+      commentText.textContent = proposal.author_comment;
+    } else {
+      commentBox.style.display = 'none';
+    }
+  }
+
+  // Резолюция администратора
+  const reviewBox = document.getElementById('proposalModalReviewerCommentBox');
+  const reviewText = document.getElementById('proposalModalReviewerText');
+  if (reviewBox && reviewText) {
+    if (proposal.reviewer_comment || proposal.reviewed_at) {
+      reviewBox.style.display = 'flex';
+      const reviewDate = proposal.reviewed_at ? new Date(proposal.reviewed_at).toLocaleDateString('ru-RU') : '';
+      reviewText.textContent = `${proposal.reviewer_comment || (proposal.status === 'approved' ? 'Изменения приняты администрацией' : 'Отклонено администрацией')} ${reviewDate ? `(${reviewDate})` : ''}`;
+    } else {
+      reviewBox.style.display = 'none';
+    }
+  }
+
+  // Сетка статистики
+  const baseStats = calculateSnapshotStats(proposal.base_snapshot);
+  const propStats = calculateSnapshotStats(proposal.proposed_snapshot);
+
+  const statsGrid = document.getElementById('proposalModalStatsGrid');
+  if (statsGrid) {
+    statsGrid.innerHTML = `
+      <div class="proposal-stat-card">
+        <div class="stat-title">Тематические блоки</div>
+        <div class="stat-diff-val">
+          <span>${baseStats.blocksCount} → ${propStats.blocksCount}</span>
+          <span class="diff-tag-pill ${propStats.blocksCount > baseStats.blocksCount ? 'plus' : 'neutral'}">
+            ${propStats.blocksCount >= baseStats.blocksCount ? `+${propStats.blocksCount - baseStats.blocksCount}` : `${propStats.blocksCount - baseStats.blocksCount}`}
+          </span>
+        </div>
+      </div>
+      <div class="proposal-stat-card">
+        <div class="stat-title">Учебные темы</div>
+        <div class="stat-diff-val">
+          <span>${baseStats.topicsCount} → ${propStats.topicsCount}</span>
+          <span class="diff-tag-pill ${propStats.topicsCount > baseStats.topicsCount ? 'plus' : 'neutral'}">
+            ${propStats.topicsCount >= baseStats.topicsCount ? `+${propStats.topicsCount - baseStats.topicsCount}` : `${propStats.topicsCount - baseStats.topicsCount}`}
+          </span>
+        </div>
+      </div>
+      <div class="proposal-stat-card">
+        <div class="stat-title">Практические задания</div>
+        <div class="stat-diff-val">
+          <span>${baseStats.tasksCount} → ${propStats.tasksCount}</span>
+          <span class="diff-tag-pill ${propStats.tasksCount > baseStats.tasksCount ? 'plus' : 'neutral'}">
+            ${propStats.tasksCount >= baseStats.tasksCount ? `+${propStats.tasksCount - baseStats.tasksCount}` : `${propStats.tasksCount - baseStats.tasksCount}`}
+          </span>
+        </div>
+      </div>
+      <div class="proposal-stat-card">
+        <div class="stat-title">Сумма баллов программы</div>
+        <div class="stat-diff-val">
+          <span>${baseStats.totalScore} → ${propStats.totalScore}</span>
+          <span class="diff-tag-pill ${propStats.totalScore >= baseStats.totalScore ? 'plus' : 'neutral'}">
+            ${propStats.totalScore >= baseStats.totalScore ? `+${propStats.totalScore - baseStats.totalScore}` : `${propStats.totalScore - baseStats.totalScore}`}
+          </span>
+        </div>
+      </div>
+    `;
+  }
+
+  // Информация о статусе в футере модалки (для преподавателя - только статус)
+  const decisionInfo = document.getElementById('proposalModalDecisionInfo');
+  if (decisionInfo) {
+    if (statusKey === 'pending') {
+      decisionInfo.innerHTML = '<iconify-icon icon="solar:clock-circle-bold" style="color: #F2C94C; font-size: 1.1rem;"></iconify-icon> <span>Предложение находится на рассмотрении у администрации школы.</span>';
+    } else if (statusKey === 'approved') {
+      decisionInfo.innerHTML = '<iconify-icon icon="solar:check-circle-bold" style="color: #6A8E4E; font-size: 1.1rem;"></iconify-icon> <span>Предложение <strong style="color: #6A8E4E;">утверждено</strong> администрацией. Программа обновлена.</span>';
+    } else {
+      decisionInfo.innerHTML = '<iconify-icon icon="solar:close-circle-bold" style="color: #EF6C6C; font-size: 1.1rem;"></iconify-icon> <span>Предложение <strong style="color: #EF6C6C;">отклонено</strong> администрацией.</span>';
+    }
+  }
+
+  switchProposalModalView('diff');
+  modal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeProposalDetailsModal() {
+  const modal = document.getElementById('proposalDetailsModal');
+  if (modal) {
+    modal.classList.remove('active');
+  }
+  document.body.style.overflow = '';
+}
+
+function switchProposalModalView(viewName) {
+  _activeProposalModalView = viewName;
+
+  document.querySelectorAll('.proposal-nav-tab-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.view === viewName);
+  });
+
+  const container = document.getElementById('proposalModalContentContainer');
+  if (!container || !_activeProposalDetail) return;
+
+  const baseSnapshot = safeParseSnapshot(_activeProposalDetail.base_snapshot);
+  const proposedSnapshot = safeParseSnapshot(_activeProposalDetail.proposed_snapshot);
+
+  if (viewName === 'diff') {
+    renderProposalDiffView(_activeProposalDetail, container);
+  } else if (viewName === 'proposed') {
+    renderProposalSnapshotTreeView(proposedSnapshot, container, 'Предлагаемый учебный план');
+  } else if (viewName === 'base') {
+    renderProposalSnapshotTreeView(baseSnapshot, container, 'Исходный учебный план');
+  }
+}
+
+// Экспорт функций в глобальную область видимости
+window.viewProposalDetails = viewProposalDetails;
+window.openProposalDetailsModal = openProposalDetailsModal;
+window.closeProposalDetailsModal = closeProposalDetailsModal;
+window.switchProposalModalView = switchProposalModalView;
+window.setProposalFilter = setProposalFilter;
+window.handleProposalSearch = handleProposalSearch;
+window.loadTeacherProposals = loadTeacherProposals;
+
+function renderProposalDiffView(proposal, container) {
+  const baseSnapshot = safeParseSnapshot(proposal.base_snapshot);
+  const proposedSnapshot = safeParseSnapshot(proposal.proposed_snapshot);
+
+  const baseBlocks = Array.isArray(baseSnapshot.blocks) ? baseSnapshot.blocks : [];
+  const proposedBlocks = Array.isArray(proposedSnapshot.blocks) ? proposedSnapshot.blocks : [];
+
+  if (!proposedBlocks.length) {
+    container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-muted);">В предложении нет блоков.</div>';
+    return;
+  }
+
+  const baseBlocksMap = new Map();
+  baseBlocks.forEach(b => {
+    if (!b) return;
+    if (b.id) baseBlocksMap.set(`id_${b.id}`, b);
+    const titleKey = typeof b.title === 'string' ? b.title.trim().toLowerCase() : '';
+    if (titleKey) baseBlocksMap.set(`title_${titleKey}`, b);
+  });
+
+  let html = '<div class="diff-block-accordion">';
+
+  proposedBlocks.forEach((block, bIdx) => {
+    if (!block) return;
+    const blockTitleKey = typeof block.title === 'string' ? block.title.trim().toLowerCase() : '';
+    const matchedBaseBlock = (block.id && baseBlocksMap.get(`id_${block.id}`)) || 
+                             (blockTitleKey && baseBlocksMap.get(`title_${blockTitleKey}`));
+    
+    const isNewBlock = !matchedBaseBlock;
+    const blockTopics = Array.isArray(block.topics) ? block.topics : [];
+    const baseTopics = Array.isArray(matchedBaseBlock?.topics) ? matchedBaseBlock.topics : [];
+    const isModifiedBlock = !isNewBlock && (
+      block.title !== matchedBaseBlock.title || 
+      block.description !== matchedBaseBlock.description || 
+      blockTopics.length !== baseTopics.length
+    );
+
+    const blockStatusTag = isNewBlock 
+      ? '<span class="diff-tag-pill plus">+ Новый блок</span>' 
+      : isModifiedBlock 
+        ? '<span class="diff-tag-pill" style="background: rgba(242, 201, 76, 0.15); color: #F2C94C;">Изменённый блок</span>' 
+        : '<span class="diff-tag-pill neutral">Без изменений</span>';
+
+    html += `
+      <div class="diff-block-item ${isNewBlock ? 'is-new' : isModifiedBlock ? 'is-modified' : ''}">
+        <div class="diff-block-header">
+          <div class="diff-block-title-row">
+            <span style="font-weight: 700; color: var(--pal-light-green); font-size: 0.9rem;">Блок ${bIdx + 1}</span>
+            <span class="diff-block-title">${block.title || 'Без названия'}</span>
+            ${blockStatusTag}
+          </div>
+          <div style="font-size: 0.8rem; color: var(--text-muted);">
+            ${blockTopics.length} тем
+          </div>
+        </div>
+        ${block.description ? `<div class="diff-block-desc">${block.description}</div>` : ''}
+
+        <div class="diff-topics-container">
+    `;
+
+    if (!blockTopics.length) {
+      const blockDirectTasks = Array.isArray(block.tasks) ? block.tasks : [];
+      if (blockDirectTasks.length) {
+        html += '<div class="diff-tasks-list" style="margin-top: 8px;">';
+        blockDirectTasks.forEach((task) => {
+          if (!task) return;
+          html += `
+            <div class="diff-task-row is-new">
+              <div class="diff-task-title">
+                <iconify-icon icon="solar:check-square-bold" style="color: var(--pal-light-green);"></iconify-icon>
+                <span>${task.title || 'Задание'}</span>
+              </div>
+              <div class="diff-task-score">${Number(task.max_score) || 0} баллов</div>
+            </div>
+          `;
+        });
+        html += '</div>';
+      } else {
+        html += '<div style="font-size: 0.85rem; color: var(--text-muted); font-style: italic;">В этом блоке пока нет тем.</div>';
+      }
+    } else {
+      const baseTopicsMap = new Map();
+      baseTopics.forEach(t => {
+        if (!t) return;
+        if (t.id) baseTopicsMap.set(`id_${t.id}`, t);
+        const tKey = typeof t.title === 'string' ? t.title.trim().toLowerCase() : '';
+        if (tKey) baseTopicsMap.set(`title_${tKey}`, t);
+      });
+
+      blockTopics.forEach((topic, tIdx) => {
+        if (!topic) return;
+        const topicTitleKey = typeof topic.title === 'string' ? topic.title.trim().toLowerCase() : '';
+        const matchedBaseTopic = (topic.id && baseTopicsMap.get(`id_${topic.id}`)) ||
+                                 (topicTitleKey && baseTopicsMap.get(`title_${topicTitleKey}`));
+        const isNewTopic = !matchedBaseTopic;
+        const topicTasks = Array.isArray(topic.tasks) ? topic.tasks : [];
+        const baseTasks = Array.isArray(matchedBaseTopic?.tasks) ? matchedBaseTopic.tasks : [];
+
+        const topicStatusTag = isNewTopic 
+          ? '<span class="diff-tag-pill plus">+ Новая тема</span>' 
+          : '';
+
+        html += `
+          <div class="diff-topic-item ${isNewTopic ? 'is-new' : ''}">
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+              <div class="diff-topic-title">
+                <iconify-icon icon="solar:document-text-bold" style="color: var(--pal-light-green);"></iconify-icon>
+                <span>Тема ${tIdx + 1}: ${topic.title || 'Без названия'}</span>
+                ${topicStatusTag}
+              </div>
+              <div style="font-size: 0.78rem; color: var(--text-muted);">${topicTasks.length} заданий</div>
+            </div>
+            ${topic.description ? `<div style="font-size: 0.85rem; color: var(--text-muted);">${topic.description}</div>` : ''}
+
+            <div class="diff-tasks-list">
+        `;
+
+        if (!topicTasks.length) {
+          html += '<div style="font-size: 0.8rem; color: var(--text-muted); font-style: italic;">Нет заданий к этой теме.</div>';
+        } else {
+          const baseTasksMap = new Map();
+          baseTasks.forEach(tsk => {
+            if (!tsk) return;
+            if (tsk.id) baseTasksMap.set(`id_${tsk.id}`, tsk);
+            const taskKey = typeof tsk.title === 'string' ? tsk.title.trim().toLowerCase() : '';
+            if (taskKey) baseTasksMap.set(`title_${taskKey}`, tsk);
+          });
+
+          topicTasks.forEach((task) => {
+            if (!task) return;
+            const taskTitleKey = typeof task.title === 'string' ? task.title.trim().toLowerCase() : '';
+            const matchedBaseTask = (task.id && baseTasksMap.get(`id_${task.id}`)) ||
+                                    (taskTitleKey && baseTasksMap.get(`title_${taskTitleKey}`));
+            const isNewTask = !matchedBaseTask;
+
+            html += `
+              <div class="diff-task-row ${isNewTask ? 'is-new' : ''}">
+                <div class="diff-task-title">
+                  <iconify-icon icon="solar:check-square-bold" style="color: ${isNewTask ? 'var(--pal-light-green)' : 'var(--text-muted)'};"></iconify-icon>
+                  <span>${task.title || 'Задание'}</span>
+                  ${isNewTask ? '<span class="diff-tag-pill plus" style="font-size: 0.7rem;">+ Новое</span>' : ''}
+                </div>
+                <div class="diff-task-score">
+                  ${Number(task.max_score) || 0} баллов
+                </div>
+              </div>
+            `;
+          });
+        }
+
+        html += `
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    html += `
+        </div>
+      </div>
+    `;
+  });
+
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function renderProposalSnapshotTreeView(rawSnapshot, container, titleLabel) {
+  const snapshot = safeParseSnapshot(rawSnapshot);
+  const blocks = Array.isArray(snapshot.blocks) ? snapshot.blocks : [];
+
+  if (!blocks.length) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+        <iconify-icon icon="solar:folder-error-bold-duotone" style="font-size: 2.5rem; margin-bottom: 8px;"></iconify-icon>
+        <div>В этом плане нет блоков или данные не заполнены.</div>
+      </div>
+    `;
+    return;
+  }
+
+  let html = `
+    <div style="margin-bottom: 12px; font-weight: 700; color: var(--text-main); font-size: 1rem; display: flex; align-items: center; gap: 8px;">
+      <iconify-icon icon="solar:document-bold-duotone" style="color: var(--pal-light-green);"></iconify-icon>
+      <span>${titleLabel}</span>
+    </div>
+    <div class="diff-block-accordion">
+  `;
+
+  blocks.forEach((block, bIdx) => {
+    if (!block) return;
+    const topics = Array.isArray(block.topics) ? block.topics : [];
+
+    html += `
+      <div class="diff-block-item">
+        <div class="diff-block-header">
+          <div class="diff-block-title-row">
+            <span style="font-weight: 700; color: var(--pal-light-green); font-size: 0.9rem;">Блок ${bIdx + 1}</span>
+            <span class="diff-block-title">${block.title || 'Без названия'}</span>
+          </div>
+          <div style="font-size: 0.8rem; color: var(--text-muted);">${topics.length} тем</div>
+        </div>
+        ${block.description ? `<div class="diff-block-desc">${block.description}</div>` : ''}
+
+        <div class="diff-topics-container">
+    `;
+
+    if (!topics.length) {
+      const blockDirectTasks = Array.isArray(block.tasks) ? block.tasks : [];
+      if (blockDirectTasks.length) {
+        html += '<div class="diff-tasks-list" style="margin-top: 8px;">';
+        blockDirectTasks.forEach((task) => {
+          if (!task) return;
+          html += `
+            <div class="diff-task-row">
+              <div class="diff-task-title">
+                <iconify-icon icon="solar:check-square-bold" style="color: var(--pal-light-green);"></iconify-icon>
+                <span>${task.title || 'Задание'}</span>
+              </div>
+              <div class="diff-task-score">${Number(task.max_score) || 0} баллов</div>
+            </div>
+          `;
+        });
+        html += '</div>';
+      } else {
+        html += '<div style="font-size: 0.85rem; color: var(--text-muted); font-style: italic;">Нет тем в блоке.</div>';
+      }
+    } else {
+      topics.forEach((topic, tIdx) => {
+        if (!topic) return;
+        const tasks = Array.isArray(topic.tasks) ? topic.tasks : [];
+        html += `
+          <div class="diff-topic-item">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div class="diff-topic-title">
+                <iconify-icon icon="solar:document-text-bold" style="color: var(--pal-light-green);"></iconify-icon>
+                <span>Тема ${tIdx + 1}: ${topic.title || 'Без названия'}</span>
+              </div>
+              <div style="font-size: 0.78rem; color: var(--text-muted);">${tasks.length} заданий</div>
+            </div>
+            ${topic.description ? `<div style="font-size: 0.85rem; color: var(--text-muted);">${topic.description}</div>` : ''}
+
+            <div class="diff-tasks-list">
+        `;
+
+        if (!tasks.length) {
+          html += '<div style="font-size: 0.8rem; color: var(--text-muted); font-style: italic;">Нет заданий.</div>';
+        } else {
+          tasks.forEach((task) => {
+            if (!task) return;
+            html += `
+              <div class="diff-task-row">
+                <div class="diff-task-title">
+                  <iconify-icon icon="solar:check-square-bold" style="color: var(--pal-light-green);"></iconify-icon>
+                  <span>${task.title || 'Задание'}</span>
+                </div>
+                <div class="diff-task-score">${Number(task.max_score) || 0} баллов</div>
+              </div>
+            `;
+          });
+        }
+
+        html += `
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    html += `
+        </div>
+      </div>
+    `;
+  });
+
+  html += '</div>';
+  container.innerHTML = html;
+}
+
 // Единая логика переключения вкладок
 function activateTab(tabId) {
   const tabButtons = document.querySelectorAll('.tab-btn');
@@ -3885,6 +5284,10 @@ function activateTab(tabId) {
   tabContents.forEach(content => {
     content.classList.toggle('active', content.id === tabId);
   });
+
+  if (tabId === 'tab-program-proposals') {
+    loadTeacherProposals(false);
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -4020,7 +5423,7 @@ dossierModal.addEventListener('click', (e) => {
           <div class="program-body">
             <div class="groups-list">
               ${programGroups.length ? programGroups.map(group => `
-                <div class="group-row" onclick="openJournalModal('${(group.title || 'Группа').replace(/'/g, "\\'")}', 0); event.stopPropagation();">
+                <div class="group-row" onclick="openJournalModal(${group.id}, '${(group.title || 'Группа').replace(/'/g, "\\'")}', 0); event.stopPropagation();">
                   <div class="group-info">
                     <div class="group-name">${group.title || 'Группа без названия'}</div>
                   </div>
@@ -4028,7 +5431,7 @@ dossierModal.addEventListener('click', (e) => {
                     <span class="day">Программа</span>
                     <span class="time">${program.title || 'Без названия'}</span>
                   </div>
-                  <button class="btn-sm primary group-journal-btn" type="button" onclick="event.stopPropagation(); openJournalModal('${(group.title || 'Группа').replace(/'/g, "\\'")}', 0);">
+                  <button class="btn-sm primary group-journal-btn" type="button" onclick="event.stopPropagation(); openJournalModal(${group.id}, '${(group.title || 'Группа').replace(/'/g, "\\'")}', 0);">
                     <iconify-icon icon="solar:notebook-bold"></iconify-icon> Журнал
                   </button>
                 </div>
@@ -4482,6 +5885,90 @@ function openDayConfigModal(dayName, dateStr) {
       </div>
 
     </div>
+  </div>
+</div>
+
+<!-- МОДАЛЬНОЕ ОКНО: ДЕТАЛИ И СРАВНЕНИЕ ПРЕДЛОЖЕНИЯ ИЗМЕНЕНИЙ ПРОГРАММЫ (ДЛЯ УЧИТЕЛЯ) -->
+<div class="modal-overlay" id="proposalDetailsModal" onclick="if(event.target === this) closeProposalDetailsModal()">
+  <div class="modal-container proposal-modal-container">
+    
+    <!-- Шапка модального окна -->
+    <div class="modal-header" style="padding: 24px 32px 16px 32px; border-bottom: 1px solid var(--card-border);">
+      <div>
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 6px; flex-wrap: wrap;">
+          <h2 class="modal-title" id="proposalModalProgramTitle" style="margin: 0; font-size: 1.35rem;">Программа</h2>
+          <span class="proposal-status-badge" id="proposalModalStatusBadge">На рассмотрении</span>
+        </div>
+        <div class="modal-subtitle" id="proposalModalMeta" style="color: var(--text-muted); font-size: 0.88rem;">Автор предложения и дата</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn-close" onclick="closeProposalDetailsModal()">
+          <iconify-icon icon="solar:close-circle-bold"></iconify-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- Вкладки переключения вида -->
+    <div class="proposal-view-nav">
+      <button type="button" class="proposal-nav-tab-btn active" data-view="diff" onclick="switchProposalModalView('diff')">
+        <iconify-icon icon="solar:git-branch-bold-duotone"></iconify-icon>
+        Сравнение изменений
+      </button>
+      <button type="button" class="proposal-nav-tab-btn" data-view="proposed" onclick="switchProposalModalView('proposed')">
+        <iconify-icon icon="solar:document-add-bold-duotone"></iconify-icon>
+        Предлагаемый план
+      </button>
+      <button type="button" class="proposal-nav-tab-btn" data-view="base" onclick="switchProposalModalView('base')">
+        <iconify-icon icon="solar:documents-minimalistic-bold-duotone"></iconify-icon>
+        Исходный план
+      </button>
+    </div>
+
+    <!-- Тело модального окна -->
+    <div class="modal-body" style="flex-direction: column; padding: 24px 32px; overflow-y: auto; gap: 20px; flex: 1;">
+      
+      <!-- Комментарий преподавателя -->
+      <div id="proposalModalAuthorCommentBox" class="proposal-comment-quote" style="display: none;">
+        <iconify-icon icon="solar:chat-round-dots-bold-duotone" style="font-size: 1.5rem; color: var(--pal-light-green); flex-shrink: 0; margin-top: 2px;"></iconify-icon>
+        <div>
+          <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--pal-light-green); font-weight: 700; margin-bottom: 4px;" id="proposalModalAuthorCommentLabel">Ваш комментарий к предложению</div>
+          <div id="proposalModalAuthorCommentText" style="color: var(--pal-off-white); white-space: pre-wrap; font-size: 0.92rem;"></div>
+        </div>
+      </div>
+
+      <!-- Резолюция / Комментарий администратора (если есть) -->
+      <div id="proposalModalReviewerCommentBox" class="proposal-review-feedback" style="display: none;">
+        <iconify-icon icon="solar:shield-check-bold" style="font-size: 1.3rem; flex-shrink: 0;"></iconify-icon>
+        <div>
+          <strong id="proposalModalReviewerLabel" style="color: var(--text-main); margin-right: 6px;">Решение администрации:</strong>
+          <span id="proposalModalReviewerText"></span>
+        </div>
+      </div>
+
+      <!-- Карточки статистики изменений (Метрики) -->
+      <div class="proposal-diff-stats-grid" id="proposalModalStatsGrid">
+        <!-- Генерируется из JS: Блоки, Темы, Задания, Макс. баллы -->
+      </div>
+
+      <!-- Контейнер контента выбранного вида -->
+      <div id="proposalModalContentContainer">
+        <!-- Сюда динамически рендерится выбранный вид: diff, proposed или base -->
+      </div>
+
+    </div>
+
+    <!-- Подвал модального окна (только просмотр и статус для учителя) -->
+    <div class="modal-footer" style="padding: 18px 32px; border-top: 1px solid var(--card-border); display: flex; align-items: center; justify-content: space-between; gap: 16px; background: rgba(0, 0, 0, 0.2); flex-wrap: wrap;">
+      <div id="proposalModalDecisionInfo" style="font-size: 0.88rem; color: var(--text-muted); display: flex; align-items: center; gap: 8px;">
+        <!-- Информация о статусе -->
+      </div>
+      <div style="display: flex; gap: 12px; align-items: center;">
+        <button type="button" class="btn btn-secondary" onclick="closeProposalDetailsModal()">
+          Закрыть
+        </button>
+      </div>
+    </div>
+
   </div>
 </div>
 

@@ -347,15 +347,26 @@
     /* --- Обновленные стили для блока вкладок (Tabs) --- */
     .tabs-container {
       width: 100%;
-      margin: 32px 0;
-      border-bottom: 1px solid var(--card-border);
+      margin: 8px 0 32px 0;
+      position: relative;
     }
 
     .tabs-wrapper {
-      display: flex;
-      gap: 32px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px;
+      background: rgba(18, 22, 28, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-pill);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06);
       overflow-x: auto;
+      max-width: 100%;
       scrollbar-width: none;
+      -ms-overflow-style: none;
+      -webkit-overflow-scrolling: touch;
     }
 
     .tabs-wrapper::-webkit-scrollbar {
@@ -363,35 +374,72 @@
     }
 
     .tab-btn {
-      background: none;
-      border: none;
-      padding: 12px 0;
-      font-size: 0.95rem;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: var(--radius-pill);
+      padding: 9px 18px;
+      font-size: 0.86rem;
+      font-weight: 600;
       font-family: inherit;
-      color: var(--text-muted);
+      color: rgba(255, 255, 255, 0.65);
       cursor: pointer;
       position: relative;
-      transition: color 0.2s ease-in-out;
+      transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      user-select: none;
+      outline: none;
+    }
+
+    .tab-btn * {
+      pointer-events: none;
+    }
+
+    .tab-btn iconify-icon {
+      font-size: 1.15rem;
+      opacity: 0.7;
+      color: currentColor;
+      transition: all 0.22s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .tab-btn:hover {
-      color: var(--text-main);
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.09);
+      transform: translateY(-1px);
+    }
+
+    .tab-btn:hover iconify-icon {
+      opacity: 1;
+      color: var(--pal-light-green);
+      transform: scale(1.08);
+    }
+
+    .tab-btn:active {
+      transform: translateY(0);
     }
 
     .tab-btn.active {
+      background: linear-gradient(135deg, rgba(44, 71, 62, 0.95) 0%, rgba(30, 52, 45, 0.95) 100%);
       color: var(--pal-light-green);
-      font-weight: 600;
+      border-color: rgba(176, 209, 130, 0.4);
+      font-weight: 700;
+      box-shadow: 0 4px 18px rgba(44, 71, 62, 0.55), 0 0 14px rgba(176, 209, 130, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+
+    .tab-btn.active iconify-icon {
+      opacity: 1;
+      color: var(--pal-light-green);
+      filter: drop-shadow(0 0 8px rgba(176, 209, 130, 0.45));
     }
 
     .tab-btn.active::after {
-      content: '';
-      position: absolute;
-      bottom: -1px;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background-color: var(--pal-light-green);
-      box-shadow: 0 0 10px rgba(176, 209, 130, 0.5);
+      display: none;
     }
 
     /* ================= PROGRAMS SECTION ================= */
@@ -417,12 +465,6 @@
   padding: 32px;
   margin-top: 32px;
   backdrop-filter: blur(12px);
-}
-
-.tabs-container {
-  width: 100%;
-  margin: 0 0 32px 0; /* Изменили отступы, так как теперь есть внешний контейнер */
-  border-bottom: 1px solid var(--card-border);
 }
 
 /* --- ВКЛАДКА: УЧЕНИКИ (СПИСОК) --- */
@@ -2645,87 +2687,46 @@ select.custom-input option {
   <!-- MAIN CONTENT -->
   <main>
     <div class="container">
-      <div class="dashboard-grid">
-        <!-- Hero Блок -->
-        <div class="hero-banner">
-          <div>
-            <div class="tag">
-              <iconify-icon icon="solar:sparkles-bold-duotone"></iconify-icon>
-              Панель управления
-            </div>
-            <h1 class="hero-title">С возвращением,<br>Studio Alanko</h1>
-            <p class="hero-subtitle">
-              Отслеживайте посещаемость групп, управляйте расписанием частных уроков и добавляйте новые хореографические связки в едином окне.
-            </p>
-          </div>
-          <div class="actions-group">
-            <button class="btn btn-primary" onclick="openModal('createConsultationModal')">
-              <iconify-icon icon="solar:add-circle-bold" width="18"></iconify-icon> Добавить занятие
-            </button>
-            <button class="btn btn-secondary">
-              <iconify-icon icon="solar:document-text-bold" width="18"></iconify-icon> Отчеты
-            </button>
-          </div>
-        </div>
-
-        <!-- Статистика -->
-        <div class="stats-grid">
-          <div class="stat-box">
-            <div class="stat-header">
-              <div class="stat-icon-wrapper"><iconify-icon icon="solar:users-group-two-rounded-bold"></iconify-icon></div>
-              <span class="stat-trend">+12%</span>
-            </div>
-            <div>
-              <div class="stat-value">132</div>
-              <div class="stat-label">Активных учеников</div>
-            </div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-header">
-              <div class="stat-icon-wrapper"><iconify-icon icon="solar:calendar-mark-bold"></iconify-icon></div>
-              <span class="stat-trend">План</span>
-            </div>
-            <div>
-              <div class="stat-value">18</div>
-              <div class="stat-label">Классов на неделе</div>
-            </div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-header">
-              <div class="stat-icon-wrapper"><iconify-icon icon="solar:videocamera-record-bold"></iconify-icon></div>
-              <span class="stat-trend">База</span>
-            </div>
-            <div>
-              <div class="stat-value">24</div>
-              <div class="stat-label">Видео связок</div>
-            </div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-header">
-              <div class="stat-icon-wrapper"><iconify-icon icon="solar:cup-star-bold"></iconify-icon></div>
-              <span class="stat-trend">2026</span>
-            </div>
-            <div>
-              <div class="stat-value">12</div>
-              <div class="stat-label">Наград и побед</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
 
 <!-- Блок навигации по вкладкам -->
 <div class="tabs-container">
-    <nav class="tabs-wrapper">
-      <button class="tab-btn active" data-tab="tab-programs">Программы</button>
-      <button class="tab-btn" data-tab="tab-students">Ученики</button>
-      <button class="tab-btn" data-tab="tab-consultations">Консультации</button>
-      <button class="tab-btn" data-tab="tab-teachers">Учителя</button>
-      <button class="tab-btn" data-tab="tab-calendar">Календарь</button>
-      <button class="tab-btn" data-tab="tab-achievements">Достижения</button>
-      <button class="tab-btn" data-tab="tab-news">Новости</button>
-      <button class="tab-btn" data-tab="tab-subscriptions">Абонементы</button>
-      <button class="tab-btn" data-tab="tab-program-proposals" onclick="loadProgramProposals()">Согласование программ</button>
+    <nav class="tabs-wrapper" aria-label="Разделы панели управления">
+      <button class="tab-btn active" data-tab="tab-programs" type="button">
+        <iconify-icon icon="solar:layers-minimalistic-bold-duotone"></iconify-icon>
+        <span>Программы</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-students" type="button">
+        <iconify-icon icon="solar:users-group-two-rounded-bold-duotone"></iconify-icon>
+        <span>Ученики</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-consultations" type="button">
+        <iconify-icon icon="solar:chat-round-dots-bold-duotone"></iconify-icon>
+        <span>Консультации</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-teachers" type="button">
+        <iconify-icon icon="solar:user-speak-bold-duotone"></iconify-icon>
+        <span>Учителя</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-calendar" type="button">
+        <iconify-icon icon="solar:calendar-date-bold-duotone"></iconify-icon>
+        <span>Календарь</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-achievements" type="button">
+        <iconify-icon icon="solar:cup-star-bold-duotone"></iconify-icon>
+        <span>Достижения</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-news" type="button">
+        <iconify-icon icon="solar:bell-bing-bold-duotone"></iconify-icon>
+        <span>Новости</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-subscriptions" type="button">
+        <iconify-icon icon="solar:ticket-sale-bold-duotone"></iconify-icon>
+        <span>Абонементы</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-program-proposals" type="button" onclick="loadProgramProposals()">
+        <iconify-icon icon="solar:checklist-minimalistic-bold-duotone"></iconify-icon>
+        <span>Согласование программ</span>
+      </button>
     </nav>
 </div>
 
@@ -3808,16 +3809,19 @@ select.custom-input option {
 
       <!-- Правая часть: Расписание -->
       <div class="schedule-editor-sidebar">
-        <h4 style="font-size: 1.05rem; margin-bottom: 20px; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+        <h4 style="font-size: 1.05rem; margin-bottom: 12px; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
           <iconify-icon icon="solar:calendar-date-bold-duotone"></iconify-icon> Расписание занятий
         </h4>
+        <div style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 16px; line-height: 1.5;">
+          Занятия задаются по дням недели и времени. Периодичность формируется автоматически для группы.
+        </div>
         
         <div id="groupScheduleList" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
           <!-- Сюда добавляются строки расписания -->
         </div>
         
         <button class="btn btn-secondary" style="width: 100%; justify-content: center;" onclick="addScheduleRow('groupScheduleList')">
-          <iconify-icon icon="solar:add-circle-bold"></iconify-icon> Добавить время
+          <iconify-icon icon="solar:add-circle-bold"></iconify-icon> Добавить занятие
         </button>
       </div>
     </div>
@@ -5261,10 +5265,14 @@ const manageGroupNameInput = document.getElementById('manageGroupName');
 let editingGroupId = null;
 let editingGroupStudents = new Map();
 let editingGroupSchedules = [];
+let editingGroupTeachers = [];
+let editingGroupPrimaryTeacherId = null;
 
 async function openGroupManageModal(groupId, groupName = '') {
   editingGroupId = Number(groupId);
   manageGroupNameInput.value = groupName;
+  editingGroupSchedules = [];
+  document.getElementById('groupScheduleList').innerHTML = '<div style="padding: 18px 12px; text-align: center; color: var(--text-muted);">Загрузка расписания...</div>';
   groupManageModal.classList.add('active');
   document.body.style.overflow = 'hidden';
   try {
@@ -5273,9 +5281,11 @@ async function openGroupManageModal(groupId, groupName = '') {
       requestJson(`/education/groups/${editingGroupId}/students`),
       requestJson(`/education/groups/${editingGroupId}/schedule`),
     ]);
+    editingGroupTeachers = Array.isArray(groupResponse.data?.teachers) ? groupResponse.data.teachers : [];
+    editingGroupPrimaryTeacherId = Number(editingGroupTeachers[0]?.id || 0) || null;
     manageGroupNameInput.value = groupResponse.data?.title || groupName;
     document.getElementById('groupLeaderboardToggle').checked = Boolean(groupResponse.data?.leaderboard_enabled);
-    const curator = groupResponse.data?.teachers?.[0];
+    const curator = editingGroupTeachers[0];
     const curatorName = groupManageModal.querySelector('.teacher-assignment-block [data-curator-name]');
     if (curatorName) curatorName.textContent = curator?.full_name || 'У этой группы нет куратора';
     const curatorEmail = groupManageModal.querySelector('.teacher-assignment-block [data-curator-email]');
@@ -5295,6 +5305,19 @@ async function openGroupManageModal(groupId, groupName = '') {
   }
 }
 
+async function loadScheduleTeachers() {
+  try {
+    const teachersResponse = await requestJson('/accounts/users?role=teacher');
+    return (teachersResponse.data || []).map((teacher) => ({
+      id: Number(teacher.id),
+      full_name: teacher.full_name || teacher.name || teacher.email || `Teacher #${teacher.id}`,
+    }));
+  } catch (error) {
+    console.warn('Не удалось загрузить преподавателей для расписания:', error);
+    return [];
+  }
+}
+
 async function saveGroupChanges() {
   if (!editingGroupId || !manageGroupNameInput.value.trim()) return;
   try {
@@ -5306,19 +5329,60 @@ async function saveGroupChanges() {
         leaderboard_enabled: document.getElementById('groupLeaderboardToggle').checked,
       }),
     });
+
+    const defaultValidFrom = new Date().toISOString().slice(0, 10);
+    let hasCreatedSchedule = false;
+
     for (const row of document.querySelectorAll('#groupScheduleList .schedule-row[data-new="true"]')) {
+      const weekday = Number(row.querySelector('.schedule-weekday')?.value);
+      const startTime = row.querySelector('.schedule-start')?.value;
+      const endTime = row.querySelector('.schedule-end')?.value;
+      const teacherSelect = row.querySelector('.schedule-teacher');
+      const teacherId = Number(
+        teacherSelect?.value || editingGroupPrimaryTeacherId || row.dataset.teacherId || row.dataset.teacher_id || 0
+      );
+
+      if (!teacherId) {
+        showToast('К группе не привязан преподаватель. Сначала назначьте преподавателя для группы.', 'warning');
+        return;
+      }
+
+      if ((!weekday && weekday !== 0) || !startTime || !endTime) {
+        continue;
+      }
+
+      if (startTime >= endTime) {
+        showToast('Время занятий указано некорректно: начало должно быть раньше конца.', 'warning');
+        return;
+      }
+
+      hasCreatedSchedule = true;
+
       await requestJson(`/education/groups/${editingGroupId}/schedule`, {
         method: 'POST',
         body: JSON.stringify({
-          teacher_id: Number(row.dataset.teacherId),
-          weekday: Number(row.querySelector('.schedule-weekday').value),
-          start_time: row.querySelector('.schedule-start').value,
-          end_time: row.querySelector('.schedule-end').value,
-          valid_from: row.querySelector('.schedule-valid-from').value,
+          teacher_id: teacherId,
+          weekday,
+          start_time: startTime,
+          end_time: endTime,
+          valid_from: defaultValidFrom,
           valid_until: null,
         }),
       });
     }
+
+    if (hasCreatedSchedule) {
+      showToast('Расписание группы сохранено', 'success');
+    }
+
+    const refreshedSchedules = await requestJson(`/education/groups/${editingGroupId}/schedule`);
+    editingGroupSchedules = refreshedSchedules.data || [];
+    renderGroupSchedules();
+
+    if (typeof window.loadAdminCalendar === 'function') {
+      window.loadAdminCalendar();
+    }
+
     closeGroupManageModal();
     if (typeof loadAdminPrograms === 'function') await loadAdminPrograms();
     if (editingProgramId) await loadEditProgramGroups(editingProgramId);
@@ -5365,7 +5429,17 @@ function renderGroupSchedules() {
   const list = document.getElementById('groupScheduleList');
   if (!list) return;
   const days = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
-  list.innerHTML = editingGroupSchedules.map(schedule => `<div class="schedule-row" data-schedule-id="${schedule.id}" style="display:flex; justify-content:space-between; padding:8px 12px; border:1px solid var(--card-border); border-radius:var(--radius-md);"><span>${days[schedule.weekday]} ${schedule.start_time} - ${schedule.end_time}</span><button class="btn-icon-danger" title="Удалить"><iconify-icon icon="solar:trash-bin-trash-bold"></iconify-icon></button></div>`).join('');
+
+  if (!Array.isArray(editingGroupSchedules) || !editingGroupSchedules.length) {
+    list.innerHTML = '<div style="padding: 18px 12px; text-align: center; color: var(--text-muted); border: 1px dashed var(--card-border); border-radius: var(--radius-md);">Расписание ещё не задано</div>';
+    return;
+  }
+
+  list.innerHTML = (editingGroupSchedules || []).map(schedule => {
+    const from = schedule.valid_from || new Date().toISOString().slice(0, 10);
+    const until = schedule.valid_until ? ` → ${schedule.valid_until}` : ' → без ограничения';
+    return `<div class="schedule-row" data-schedule-id="${schedule.id}" style="display:flex; justify-content:space-between; align-items:center; gap:12px; padding:8px 12px; border:1px solid var(--card-border); border-radius:var(--radius-md);"><div><div style="font-weight:700;">${days[schedule.weekday]} ${schedule.start_time} - ${schedule.end_time}</div><div style="font-size:0.72rem; color:var(--text-muted); margin-top:4px;">${from}${until}</div></div><button class="btn-icon-danger" title="Удалить"><iconify-icon icon="solar:trash-bin-trash-bold"></iconify-icon></button></div>`;
+  }).join('');
   list.querySelectorAll('button').forEach(button => button.onclick = async () => {
     const confirmed = await showConfirm({
       title: 'Удалить время занятия?',
@@ -5378,6 +5452,9 @@ function renderGroupSchedules() {
     const row = button.closest('.schedule-row');
     await requestJson(`/education/groups/schedule/${row.dataset.scheduleId}`, { method: 'DELETE' });
     row.remove();
+    if (typeof window.loadAdminCalendar === 'function') {
+      window.loadAdminCalendar();
+    }
     showToast('Слот расписания удален', 'info');
   });
 }
@@ -5772,26 +5849,39 @@ function addNewTask(btnElement) {
 // Восстановленная функция добавления строки расписания
 async function addScheduleRow(containerId) {
   const container = document.getElementById(containerId);
+  if (!container) return;
+
   if (editingGroupId) {
-    const teachersResponse = await requestJson('/accounts/users?role=teacher');
-    const teacher = (teachersResponse.data || [])[0];
-    if (!teacher) {
-      showToast('Сначала создайте преподавателя для расписания.', 'warning');
+    const fallbackTeacherId = Number(editingGroupPrimaryTeacherId || 0);
+    const teacherId = fallbackTeacherId;
+
+    if (!teacherId) {
+      showToast('Сначала назначьте преподавателя для группы, чтобы задать расписание.', 'warning');
       return;
     }
-    container.insertAdjacentHTML('beforeend', `
-      <div class="schedule-row" data-new="true" data-teacher-id="${teacher.id}" style="display:flex; flex-wrap:wrap; gap:8px; align-items:center; background:rgba(255,255,255,0.02); border:1px solid var(--card-border); padding:8px 12px; border-radius:var(--radius-md);">
-        <select class="schedule-weekday custom-input" style="flex:1; min-width:120px; padding:6px;">
-          <option value="0">Понедельник</option><option value="1">Вторник</option><option value="2">Среда</option><option value="3">Четверг</option><option value="4">Пятница</option><option value="5">Суббота</option><option value="6">Воскресенье</option>
-        </select>
-        <input class="schedule-start custom-input" type="time" value="18:00" style="width:100px; padding:6px;">
-        <input class="schedule-end custom-input" type="time" value="19:30" style="width:100px; padding:6px;">
-        <input class="schedule-valid-from custom-input" type="date" value="${new Date().toISOString().slice(0, 10)}" style="width:140px; padding:6px;">
-        <button type="button" class="btn-icon-danger" title="Удалить"><iconify-icon icon="solar:trash-bin-trash-bold"></iconify-icon></button>
-      </div>`);
-    container.lastElementChild.querySelector('button').onclick = () => container.lastElementChild.remove();
+
+    const teacherName = editingGroupTeachers.find(t => Number(t.id) === teacherId)?.full_name || 'Преподаватель';
+    const row = document.createElement('div');
+    row.className = 'schedule-row';
+    row.setAttribute('data-new', 'true');
+    row.style.cssText = 'display:flex; flex-wrap:wrap; gap:8px; align-items:center; background:rgba(255,255,255,0.02); border:1px solid var(--card-border); padding:8px 12px; border-radius:var(--radius-md);';
+    row.innerHTML = `
+      <input type="hidden" class="schedule-teacher" value="${teacherId}">
+      <div style="min-width: 160px; font-size: 0.8rem; color: var(--text-muted);">${teacherName}</div>
+      <select class="schedule-weekday custom-input" style="flex:1; min-width:140px; padding:6px;">
+        <option value="0">Понедельник</option><option value="1">Вторник</option><option value="2">Среда</option><option value="3">Четверг</option><option value="4">Пятница</option><option value="5">Суббота</option><option value="6">Воскресенье</option>
+      </select>
+      <input class="schedule-start custom-input" type="time" value="18:00" style="width:100px; padding:6px;">
+      <input class="schedule-end custom-input" type="time" value="19:30" style="width:100px; padding:6px;">
+      <button type="button" class="btn-icon-danger" title="Удалить"><iconify-icon icon="solar:trash-bin-trash-bold"></iconify-icon></button>
+    `;
+
+    const removeButton = row.querySelector('button');
+    removeButton.onclick = () => row.remove();
+    container.appendChild(row);
     return;
   }
+
   const rowHTML = `
     <div class="schedule-row" style="display: flex; gap: 8px; align-items: center; animation: fadeIn 0.2s ease; background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); padding: 8px 12px; border-radius: var(--radius-md);">
       <select class="ghost-input" style="flex: 1; padding: 4px; background: rgba(0,0,0,0.2); border-radius: 6px; font-size: 0.85rem; outline: none; border: 1px solid transparent;">
@@ -6881,7 +6971,6 @@ function openDayConfigModal(dayName, dateStr) {
     const actionBtns = document.getElementById('proposalModalActionButtons');
     const decisionInfo = document.getElementById('proposalModalDecisionInfo');
 
-    const statusKey = normalizeProposalStatus(proposal.status);
     if (statusKey === 'pending') {
       decisionInfo.innerHTML = '⚡ <span>Это предложение ожидает вашего решения. При утверждении программа обновится мгновенно.</span>';
       actionBtns.innerHTML = `
@@ -7481,7 +7570,7 @@ function openDayConfigModal(dayName, dateStr) {
     list.innerHTML = '<div style="padding: 32px; color: var(--text-muted);">Загрузка абонементов...</div>';
     try {
       const response = await requestJson('/attendance/admin/subscriptions');
-      subscriptions = response.data || [];
+      subscriptions = (response.data || []).filter(sub => (sub.status || 'ACTIVE') !== 'CANCELLED');
       renderSubscriptions();
     } catch (error) {
       list.innerHTML = `<div style="padding:32px; color:var(--pal-accent-red);">${error.message}</div>`;
@@ -7647,7 +7736,8 @@ function openDayConfigModal(dayName, dateStr) {
     if (!confirmed) return;
     try {
       await requestJson(`/attendance/admin/subscriptions/${subscriptionId}`, { method: 'DELETE' });
-      await loadSubscriptions();
+      subscriptions = subscriptions.filter(sub => sub.id !== subscriptionId);
+      renderSubscriptions();
       showToast('Абонемент отменен', 'info');
     } catch (error) {
       showToast(`Не удалось отменить абонемент: ${error.message}`, 'error');

@@ -221,6 +221,12 @@ class EducationFacade:
     def delete_group_task_video(self, db: Session, *, ctx: AccessContext, group_id: int, student_task_id: int, media_id: int):
         return education_group_service.delete_group_task_video(db, ctx=ctx, group_id=group_id, student_task_id=student_task_id, media_id=media_id)
 
+    def add_group_material(self, db: Session, *, ctx: AccessContext, group_id: int, topic_id: int | None, task_id: int | None, file_url: str, file_name: str, content_type: str | None):
+        return education_group_service.add_group_material(db, ctx=ctx, group_id=group_id, topic_id=topic_id, task_id=task_id, file_url=file_url, file_name=file_name, content_type=content_type)
+
+    def delete_group_material(self, db: Session, *, ctx: AccessContext, group_id: int, material_id: int):
+        return education_group_service.delete_group_material(db, ctx=ctx, group_id=group_id, material_id=material_id)
+
     def list_group_schedules(self, db: Session, *, ctx: AccessContext, group_id: int):
         return education_group_service.list_schedules(db, ctx=ctx, group_id=group_id)
 

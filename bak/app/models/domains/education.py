@@ -68,6 +68,7 @@ class ProgramTopic(Base):
 
     block = relationship("ProgramBlock", back_populates="topics")
     tasks = relationship("ProgramTask", back_populates="topic", cascade="all, delete-orphan", order_by="ProgramTask.order")
+    materials = relationship("ProgramMaterial", back_populates="topic", cascade="all, delete-orphan")
 
 
 class ProgramTask(Base):
@@ -85,6 +86,23 @@ class ProgramTask(Base):
 
     block = relationship("ProgramBlock", back_populates="tasks")
     topic = relationship("ProgramTopic", back_populates="tasks")
+    materials = relationship("ProgramMaterial", back_populates="task", cascade="all, delete-orphan")
+
+
+class ProgramMaterial(Base):
+    __tablename__ = "program_materials"
+
+    id = Column(Integer, primary_key=True, index=True)
+    topic_id = Column(Integer, ForeignKey("program_topics.id", ondelete="CASCADE"), nullable=True, index=True)
+    task_id = Column(Integer, ForeignKey("program_tasks.id", ondelete="CASCADE"), nullable=True, index=True)
+    file_url = Column(Text, nullable=False)
+    file_name = Column(Text, nullable=False)
+    content_type = Column(String(128), nullable=True)
+    uploaded_by = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    created_at = Column(TIMESTAMP(timezone=True), server_default=func.now())
+
+    topic = relationship("ProgramTopic", back_populates="materials")
+    task = relationship("ProgramTask", back_populates="materials")
 
 
 class Group(Base):

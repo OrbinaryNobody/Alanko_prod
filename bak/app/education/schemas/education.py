@@ -122,14 +122,15 @@ class GroupScheduleCreate(BaseModel):
     weekday: int = Field(ge=0, le=6)
     start_time: time
     end_time: time
-    valid_from: date
+    valid_from: date | None = None
     valid_until: date | None = None
 
     @model_validator(mode="after")
     def validate_period(self):
         if self.start_time >= self.end_time:
             raise ValueError("start_time must be before end_time")
-        if self.valid_until and self.valid_until < self.valid_from:
+        valid_from = self.valid_from or date.today()
+        if self.valid_until and self.valid_until < valid_from:
             raise ValueError("valid_until must not be before valid_from")
         return self
 
