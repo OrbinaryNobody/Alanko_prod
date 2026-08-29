@@ -8,7 +8,11 @@ from education.policies.group_policy import GroupPolicy
 from education.repositories.group_repository import group_repository
 from education.services.group_management_service import group_management_service
 from models.domains.auth import Role, User
-from models.domains.education import GroupSchedule
+from models.domains.education import GroupSchedule, GroupStudentTask
+from models.domains.student import RatingsHistory, StudentProfile, TaskMedia
+from db.minio_client import BUCKET_NAMES
+from infrastructure.storage.file_service import file_service
+from shared.unit_of_work import UnitOfWork
 
 
 class GroupService:
@@ -25,6 +29,21 @@ class GroupService:
     def create_group(self, db: Session, *, ctx: AccessContext, title: str, description: str | None, program_id: int | None):
         return group_management_service.create_group(db, ctx=ctx, title=title, description=description, program_id=program_id)
 
+    def update_group(self, db: Session, *, ctx: AccessContext, group_id: int, title: str, description: str | None, leaderboard_enabled: bool):
+        with UnitOfWork(db):
+            group = self.ensure_group_access(db, ctx=ctx, group_id=group_id)
+            group.title = title
+            group.description = description
+            group.leaderboard_enabled = leaderboard_enabled
+            db.flush()
+            db.refresh(group)
+            return group
+
+    def delete_group(self, db: Session, *, ctx: AccessContext, group_id: int):
+        with UnitOfWork(db):
+            group = self.ensure_group_access(db, ctx=ctx, group_id=group_id)
+            group_repository.delete(db, group)
+
     def get_groups_for_user(self, db: Session, *, ctx: AccessContext):
         return group_repository.list_for_user(db, user_id=ctx.user_id, is_admin=ctx.is_admin)
 
@@ -36,6 +55,14 @@ class GroupService:
 
     def enroll_student(self, db: Session, *, ctx: AccessContext, group_id: int, student_id: int):
         return group_management_service.enroll_student(db, ctx=ctx, group_id=group_id, student_id=student_id)
+
+    def delete_enrollment(self, db: Session, *, ctx: AccessContext, group_id: int, enrollment_id: int):
+        with UnitOfWork(db):
+            enrollment = group_repository.get_enrollment_by_id(db, enrollment_id)
+            if not enrollment or enrollment.group_id != group_id:
+                raise PermissionDenied("Enrollment not found")
+            self.ensure_group_access(db, ctx=ctx, group_id=group_id)
+            group_repository.delete_enrollment(db, enrollment)
 
     def get_group_students(self, db: Session, *, ctx: AccessContext, group_id: int):
         from education.dtos.student_dto import GroupStudentPayload
@@ -52,6 +79,126 @@ class GroupService:
             ).to_dict()
             for enrollment in enrollments
         ]
+
+    def get_group_journal(self, db: Session, *, ctx: AccessContext, group_id: int):
+        group = self.ensure_group_access(db, ctx=ctx, group_id=group_id)
+        students = []
+        for enrollment in group.enrollments:
+            student = db.query(User).filter(User.id == enrollment.student_id).first()
+            students.append({
+                "enrollment_id": enrollment.id,
+                "student_id": enrollment.student_id,
+                "name": f"{student.first_name} {student.last_name or ''}".strip() if student else f"Ученик #{enrollment.student_id}",
+                "email": student.email if student else None,
+                "image_url": None,
+                "status": enrollment.status,
+                "tasks": [{
+                    "student_task_id": task.id,
+                    "task_id": task.program_task_id,
+                    "title": task.program_task.title,
+                    "description": task.program_task.description,
+                    "max_score": task.program_task.max_score,
+                    "grade": task.grade,
+                    "feedback": task.feedback,
+                    "status": task.status,
+                    "videos": [{"media_id": media.id, "video_url": file_service.get_file_url(media.video_url, BUCKET_NAMES["videos"])} for media in task.media],
+                } for task in enrollment.tasks if task.program_task],
+            })
+        return {
+            "group": {"id": group.id, "title": group.title, "description": group.description, "program_id": group.program_id},
+            "program": {
+                "id": group.program.id if group.program else None,
+                "title": group.program.title if group.program else None,
+                "description": group.program.description if group.program else None,
+                "blocks": [{
+                    "id": block.id,
+                    "title": block.title,
+                    "description": block.description,
+                    "order": block.order,
+                    "topics": [{
+                        "id": topic.id,
+                        "title": topic.title,
+                        "description": topic.description,
+                        "order": topic.order,
+                        "tasks": [{"id": task.id, "title": task.title, "description": task.description, "max_score": task.max_score, "order": task.order} for task in topic.tasks],
+                    } for topic in block.topics],
+                } for block in group.program.blocks] if group.program else [],
+            },
+            "students": students,
+        }
+
+    def grade_group_task(self, db: Session, *, ctx: AccessContext, group_id: int, student_task_id: int, grade: int, feedback: str | None):
+        with UnitOfWork(db):
+            task = db.query(GroupStudentTask).join(GroupStudentTask.enrollment).filter(
+                GroupStudentTask.id == student_task_id,
+                GroupStudentTask.enrollment.has(group_id=group_id),
+            ).first()
+            if not task:
+                raise PermissionDenied("Group task not found")
+            self.ensure_group_access(db, ctx=ctx, group_id=group_id)
+            if task.program_task and grade > task.program_task.max_score:
+                raise PermissionDenied("Grade exceeds maximum score")
+            previous_grade = task.grade or 0
+            task.grade = grade
+            task.feedback = feedback
+            task.status = "completed"
+            score_delta = grade - previous_grade
+            if score_delta:
+                student_profile = db.query(StudentProfile).filter(
+                    StudentProfile.user_id == task.enrollment.student_id,
+                ).first()
+                if student_profile:
+                    student_profile.rating_points = (student_profile.rating_points or 0) + score_delta
+                db.add(RatingsHistory(
+                    student_id=task.enrollment.student_id,
+                    points_change=score_delta,
+                    reason=(
+                        f"Задание «{task.program_task.title}» в группе "
+                        f"«{task.enrollment.group.title}»"
+                    ),
+                ))
+            db.flush()
+            return task
+
+    def upload_group_task_video(self, db: Session, *, ctx: AccessContext, group_id: int, student_task_id: int, video_url: str):
+        with UnitOfWork(db):
+            group = self.ensure_group_access(db, ctx=ctx, group_id=group_id)
+            task = (
+                db.query(GroupStudentTask)
+                .join(GroupStudentTask.enrollment)
+                .filter(
+                    GroupStudentTask.id == student_task_id,
+                    GroupStudentTask.enrollment.has(group_id=group.id),
+                )
+                .first()
+            )
+            if not task:
+                raise PermissionDenied("Student task not found in this group")
+            media = TaskMedia(group_student_task_id=task.id, uploaded_by=ctx.user_id, video_url=video_url)
+            db.add(media)
+            db.flush()
+            db.refresh(media)
+            return media
+
+    def delete_group_task_video(self, db: Session, *, ctx: AccessContext, group_id: int, student_task_id: int, media_id: int):
+        group = self.ensure_group_access(db, ctx=ctx, group_id=group_id)
+        task = (
+            db.query(GroupStudentTask)
+            .join(GroupStudentTask.enrollment)
+            .filter(
+                GroupStudentTask.id == student_task_id,
+                GroupStudentTask.enrollment.has(group_id=group.id),
+            )
+            .first()
+        )
+        if not task:
+            raise PermissionDenied("Student task not found in this group")
+        media = next((item for item in task.media if item.id == media_id), None)
+        if not media:
+            raise PermissionDenied("Video does not belong to this student task")
+        file_service.delete_file(media.video_url, BUCKET_NAMES["videos"])
+        db.delete(media)
+        db.flush()
 
     def list_schedules(self, db: Session, *, ctx: AccessContext, group_id: int):
         self.ensure_group_access(db, ctx=ctx, group_id=group_id)

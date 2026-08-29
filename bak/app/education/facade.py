@@ -98,8 +98,26 @@ class EducationFacade:
     def update_program(self, db: Session, *, ctx: AccessContext, program_id: int, title: str, description: str | None):
         return education_program_service.update_program(db, ctx=ctx, program_id=program_id, title=title, description=description)
 
-    def create_program_change_proposal(self, db: Session, *, ctx: AccessContext, program_id: int, blocks: list[dict], comment: str | None):
-        return program_change_service.create_proposal(db, ctx=ctx, program_id=program_id, blocks=blocks, comment=comment)
+    def create_program_change_proposal(
+        self,
+        db: Session,
+        *,
+        ctx: AccessContext,
+        program_id: int | None,
+        blocks: list[dict],
+        comment: str | None,
+        title: str | None = None,
+        description: str | None = None,
+    ):
+        return program_change_service.create_proposal(
+            db,
+            ctx=ctx,
+            program_id=program_id,
+            blocks=blocks,
+            comment=comment,
+            title=title,
+            description=description,
+        )
 
     def list_my_program_change_proposals(self, db: Session, *, ctx: AccessContext):
         return program_change_service.list_proposals(db, ctx=ctx, own_only=True)
@@ -119,6 +137,12 @@ class EducationFacade:
     def create_group(self, db: Session, *, ctx: AccessContext, title: str, description: str | None, program_id: int | None):
         return education_group_service.create_group(db, ctx=ctx, title=title, description=description, program_id=program_id)
 
+    def update_group(self, db: Session, *, ctx: AccessContext, group_id: int, title: str, description: str | None, leaderboard_enabled: bool):
+        return education_group_service.update_group(db, ctx=ctx, group_id=group_id, title=title, description=description, leaderboard_enabled=leaderboard_enabled)
+
+    def delete_group(self, db: Session, *, ctx: AccessContext, group_id: int):
+        return education_group_service.delete_group(db, ctx=ctx, group_id=group_id)
+
     def add_member(self, db: Session, *, ctx: AccessContext, group_id: int, user_id: int, role: str):
         return education_group_service.add_member(db, ctx=ctx, group_id=group_id, user_id=user_id, role=role)
 
@@ -127,6 +151,9 @@ class EducationFacade:
 
     def enroll_student(self, db: Session, *, ctx: AccessContext, group_id: int, student_id: int):
         return education_group_service.enroll_student(db, ctx=ctx, group_id=group_id, student_id=student_id)
+
+    def delete_enrollment(self, db: Session, *, ctx: AccessContext, group_id: int, enrollment_id: int):
+        return education_group_service.delete_enrollment(db, ctx=ctx, group_id=group_id, enrollment_id=enrollment_id)
 
     def has_active_registration(self, db: Session, *, ctx: AccessContext, course_id: int) -> bool:
         from models.domains.payments import CourseEnrollment
@@ -176,8 +203,23 @@ class EducationFacade:
     def get_groups_for_user(self, db: Session, *, ctx: AccessContext):
         return education_group_service.get_groups_for_user(db, ctx=ctx)
 
+    def get_group(self, db: Session, *, ctx: AccessContext, group_id: int):
+        return education_group_service.ensure_group_access(db, ctx=ctx, group_id=group_id)
+
     def get_group_students(self, db: Session, *, ctx: AccessContext, group_id: int):
         return education_group_service.get_group_students(db, ctx=ctx, group_id=group_id)
+
+    def get_group_journal(self, db: Session, *, ctx: AccessContext, group_id: int):
+        return education_group_service.get_group_journal(db, ctx=ctx, group_id=group_id)
+
+    def grade_group_task(self, db: Session, *, ctx: AccessContext, group_id: int, student_task_id: int, grade: int, feedback: str | None):
+        return education_group_service.grade_group_task(db, ctx=ctx, group_id=group_id, student_task_id=student_task_id, grade=grade, feedback=feedback)
+
+    def upload_group_task_video(self, db: Session, *, ctx: AccessContext, group_id: int, student_task_id: int, video_url: str):
+        return education_group_service.upload_group_task_video(db, ctx=ctx, group_id=group_id, student_task_id=student_task_id, video_url=video_url)
+
+    def delete_group_task_video(self, db: Session, *, ctx: AccessContext, group_id: int, student_task_id: int, media_id: int):
+        return education_group_service.delete_group_task_video(db, ctx=ctx, group_id=group_id, student_task_id=student_task_id, media_id=media_id)
 
     def list_group_schedules(self, db: Session, *, ctx: AccessContext, group_id: int):
         return education_group_service.list_schedules(db, ctx=ctx, group_id=group_id)

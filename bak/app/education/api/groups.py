@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, File, UploadFile
 from sqlalchemy.orm import Session
 
 from core.access import AccessContext
@@ -13,7 +13,10 @@ from db.database import get_db
 from education.dtos.program_dto import GroupPayload, GroupMemberPayload, StudentEnrollmentPayload
 from education.exceptions.domain_exceptions import EducationError
 from education.facade import education_facade
-from education.schemas.education import EnrollmentCreate, GroupCreate, GroupMemberCreate, GroupScheduleCreate, GroupStudentCreate, GroupTeacherCreate
+from education.schemas.education import EnrollmentCreate, GroupCreate, GroupMemberCreate, GroupScheduleCreate, GroupStudentCreate, GroupTeacherCreate, GroupUpdate, GroupTaskGradeUpdate
+from models.domains.auth import User
+from db.minio_client import BUCKET_NAMES
+from infrastructure.storage.file_service import file_service
 
 router = APIRouter(prefix="/groups", tags=["education-groups"])
 
@@ -38,6 +41,44 @@ def create_group(
     return {"message": "Group created", "data": GroupPayload(id=group.id, title=group.title).to_dict()}
 
 
+@router.get("/{group_id}")
+def get_group(group_id: int, ctx: AccessContext = Depends(require_view_groups), db: Session = Depends(get_db)):
+    try:
+        group = education_facade.get_group(db, ctx=ctx, group_id=group_id)
+    except EducationError as exc:
+        translate_domain_error(exc)
+    payload = GroupPayload(id=group.id, title=group.title, program_id=group.program_id, status=group.status, leaderboard_enabled=group.leaderboard_enabled).to_dict()
+    teacher_ids = [member.user_id for member in group.members if member.role == "teacher"]
+    teachers = db.query(User).filter(User.id.in_(teacher_ids)).all() if teacher_ids else []
+    payload["teachers"] = [
+        {
+            "id": teacher.id,
+            "full_name": f"{teacher.first_name} {teacher.last_name or ''}".strip(),
+            "email": teacher.email,
+            "avatar_url": file_service.get_file_url(teacher.image_url, BUCKET_NAMES["student_photos"]) if teacher.image_url else None,
+        }
+        for teacher in teachers
+    ]
+    return {"data": payload}
+
+
+@router.put("/{group_id}")
+def update_group(group_id: int, data: GroupUpdate, ctx: AccessContext = Depends(require_manage_groups), db: Session = Depends(get_db)):
+    try:
+        group = education_facade.update_group(db, ctx=ctx, group_id=group_id, title=data.title, description=data.description, leaderboard_enabled=data.leaderboard_enabled)
+    except EducationError as exc:
+        translate_domain_error(exc)
+    return {"data": GroupPayload(id=group.id, title=group.title, program_id=group.program_id, status=group.status, leaderboard_enabled=group.leaderboard_enabled).to_dict()}
+
+
+@router.delete("/{group_id}", status_code=204)
+def delete_group(group_id: int, ctx: AccessContext = Depends(require_manage_groups), db: Session = Depends(get_db)):
+    try:
+        education_facade.delete_group(db, ctx=ctx, group_id=group_id)
+    except EducationError as exc:
+        translate_domain_error(exc)
+
+
 @router.get("")
 def list_groups(
     ctx: AccessContext = Depends(require_view_groups),
@@ -48,7 +89,7 @@ def list_groups(
     except EducationError as exc:
         translate_domain_error(exc)
 
-    return {"data": [GroupPayload(id=g.id, title=g.title, program_id=g.program_id, status=g.status).to_dict() for g in groups]}
+    return {"data": [GroupPayload(id=g.id, title=g.title, program_id=g.program_id, status=g.status, leaderboard_enabled=g.leaderboard_enabled).to_dict() for g in groups]}
 
 
 @router.post("/{group_id}/members", status_code=201)
@@ -120,6 +161,72 @@ def get_group_students(
 ):
     students = education_facade.get_group_students(db, ctx=ctx, group_id=group_id)
     return {"data": students}
+
+
+@router.get("/{group_id}/journal")
+def get_group_journal(group_id: int, ctx: AccessContext = Depends(require_view_students), db: Session = Depends(get_db)):
+    try:
+        return {"data": education_facade.get_group_journal(db, ctx=ctx, group_id=group_id)}
+    except EducationError as exc:
+        translate_domain_error(exc)
+
+
+@router.put("/{group_id}/journal/tasks/{student_task_id}")
+def grade_group_task(group_id: int, student_task_id: int, data: GroupTaskGradeUpdate, ctx: AccessContext = Depends(require_manage_groups), db: Session = Depends(get_db)):
+    try:
+        task = education_facade.grade_group_task(db, ctx=ctx, group_id=group_id, student_task_id=student_task_id, grade=data.grade, feedback=data.feedback)
+    except EducationError as exc:
+        translate_domain_error(exc)
+    return {"data": {"student_task_id": task.id, "grade": task.grade, "feedback": task.feedback, "status": task.status}}
+
+
+@router.post("/{group_id}/journal/tasks/{student_task_id}/video")
+async def upload_group_task_video(
+    group_id: int,
+    student_task_id: int,
+    file: UploadFile = File(...),
+    ctx: AccessContext = Depends(require_manage_groups),
+    db: Session = Depends(get_db),
+):
+    try:
+        media = education_facade.upload_group_task_video(
+            db,
+            ctx=ctx,
+            group_id=group_id,
+            student_task_id=student_task_id,
+            video_url=await file_service.upload_video(file),
+        )
+    except EducationError as exc:
+        translate_domain_error(exc)
+    return {"data": {"media_id": media.id, "video_url": file_service.get_file_url(media.video_url, "videos")}}
+
+
+@router.delete("/{group_id}/journal/tasks/{student_task_id}/video/{media_id}", status_code=204)
+def delete_group_task_video(
+    group_id: int,
+    student_task_id: int,
+    media_id: int,
+    ctx: AccessContext = Depends(require_manage_groups),
+    db: Session = Depends(get_db),
+):
+    try:
+        education_facade.delete_group_task_video(
+            db,
+            ctx=ctx,
+            group_id=group_id,
+            student_task_id=student_task_id,
+            media_id=media_id,
+        )
+    except EducationError as exc:
+        translate_domain_error(exc)
+
+
+@router.delete("/{group_id}/enrollments/{enrollment_id}", status_code=204)
+def delete_enrollment(group_id: int, enrollment_id: int, ctx: AccessContext = Depends(require_manage_enrollments), db: Session = Depends(get_db)):
+    try:
+        education_facade.delete_enrollment(db, ctx=ctx, group_id=group_id, enrollment_id=enrollment_id)
+    except EducationError as exc:
+        translate_domain_error(exc)
 
 
 @router.get("/{group_id}/schedule")

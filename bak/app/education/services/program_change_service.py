@@ -64,22 +64,42 @@ class ProgramChangeService:
             })
         return topics
 
-    def create_proposal(self, db: Session, *, ctx: AccessContext, program_id: int, blocks: list[dict], comment: str | None):
+    def create_proposal(
+        self,
+        db: Session,
+        *,
+        ctx: AccessContext,
+        program_id: int | None,
+        blocks: list[dict],
+        comment: str | None,
+        title: str | None = None,
+        description: str | None = None,
+    ):
         with UnitOfWork(db):
-            program_read_service.ensure_program_access(db, ctx=ctx, program_id=program_id)
-            if ctx.can("edit_programs") or ctx.is_admin:
-                raise PermissionDenied("Users with edit permission must update the program directly")
-            active = db.query(ProgramChangeProposal).filter(
-                ProgramChangeProposal.program_id == program_id,
-                ProgramChangeProposal.author_id == ctx.user_id,
-                ProgramChangeProposal.status == "PENDING",
-            ).first()
-            if active:
-                raise PermissionDenied("A pending proposal already exists")
-            base = self._snapshot(db, program_id)
-            proposed = {"program_id": program_id, "blocks": blocks}
+            if program_id is not None:
+                program_read_service.ensure_program_access(db, ctx=ctx, program_id=program_id)
+
+            if program_id is not None:
+                active = db.query(ProgramChangeProposal).filter(
+                    ProgramChangeProposal.program_id == program_id,
+                    ProgramChangeProposal.author_id == ctx.user_id,
+                    ProgramChangeProposal.status == "PENDING",
+                ).first()
+                if active:
+                    raise PermissionDenied("A pending proposal already exists")
+                base = self._snapshot(db, program_id)
+            else:
+                base = {"program_id": None, "title": title or "", "description": description, "blocks": []}
+
+            proposed = {
+                "program_id": program_id,
+                "title": title or "",
+                "description": description,
+                "blocks": blocks,
+            }
             proposal = ProgramChangeProposal(
                 program_id=program_id,
+                proposal_type="CREATE" if program_id is None else "UPDATE",
                 author_id=ctx.user_id,
                 base_snapshot=base,
                 proposed_snapshot=proposed,
@@ -172,10 +192,24 @@ class ProgramChangeService:
             if proposal.status != "PENDING":
                 raise PermissionDenied("Only pending proposals can be decided")
             if approved:
-                current = self._snapshot(db, proposal.program_id)
-                if current != proposal.base_snapshot:
-                    raise PermissionDenied("Program changed after proposal was submitted")
-                self._apply_snapshot(db, proposal.program_id, proposal.proposed_snapshot)
+                if proposal.program_id is None:
+                    proposed = proposal.proposed_snapshot or {}
+                    program = Program(
+                        title=(proposed.get("title") or "Новая программа").strip() or "Новая программа",
+                        description=proposed.get("description"),
+                        created_by=proposal.author_id,
+                        status="draft",
+                    )
+                    db.add(program)
+                    db.flush()
+                    db.refresh(program)
+                    proposal.program_id = program.id
+                    self._apply_snapshot(db, program.id, proposed)
+                else:
+                    current = self._snapshot(db, proposal.program_id)
+                    if current != proposal.base_snapshot:
+                        raise PermissionDenied("Program changed after proposal was submitted")
+                    self._apply_snapshot(db, proposal.program_id, proposal.proposed_snapshot)
                 proposal.status = "APPROVED"
             else:
                 proposal.status = "REJECTED"

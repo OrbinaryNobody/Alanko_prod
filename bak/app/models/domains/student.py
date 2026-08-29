@@ -76,7 +76,8 @@ class TaskMedia(Base):
     )
 
     id = Column(Integer, primary_key=True, index=True)
-    student_task_id = Column(Integer, ForeignKey("student_tasks.id", ondelete="CASCADE"), nullable=False)
+    student_task_id = Column(Integer, ForeignKey("student_tasks.id", ondelete="CASCADE"), nullable=True)
+    group_student_task_id = Column(Integer, ForeignKey("group_student_tasks.id", ondelete="CASCADE"), nullable=True, index=True)
     video_url = Column(Text, nullable=False)
     uploaded_by = Column(Integer, ForeignKey("users.id"), nullable=False)
 
@@ -84,6 +85,7 @@ class TaskMedia(Base):
     created_at = Column(TIMESTAMP(timezone=True), server_default=func.now())
 
     student_task = relationship("StudentTask", back_populates="media")
+    group_student_task = relationship("GroupStudentTask", back_populates="media")
     teacher = relationship("User", back_populates="uploaded_media")
 
 

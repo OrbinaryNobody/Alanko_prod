@@ -14,6 +14,27 @@ router = APIRouter(prefix="/program-change-proposals", tags=["education-program-
 admin_router = APIRouter(prefix="/admin/program-change-proposals", tags=["education-admin-proposals"])
 
 
+@router.post("/new", status_code=201)
+def create_new_program_proposal(
+    data: ProgramChangeProposalCreate,
+    ctx: AccessContext = Depends(require_view_programs),
+    db: Session = Depends(get_db),
+):
+    try:
+        proposal = education_facade.create_program_change_proposal(
+            db,
+            ctx=ctx,
+            program_id=None,
+            blocks=[block.model_dump() for block in data.blocks],
+            comment=data.comment,
+            title=data.title,
+            description=data.description,
+        )
+    except EducationError as exc:
+        translate_domain_error(exc)
+    return {"message": "New program proposal submitted", "data": proposal_payload(proposal)}
+
+
 @router.post("/programs/{program_id}", status_code=201)
 def create_proposal(
     program_id: int,
@@ -28,6 +49,8 @@ def create_proposal(
             program_id=program_id,
             blocks=[block.model_dump() for block in data.blocks],
             comment=data.comment,
+            title=data.title,
+            description=data.description,
         )
     except EducationError as exc:
         translate_domain_error(exc)

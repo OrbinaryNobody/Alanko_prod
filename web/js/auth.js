@@ -35,15 +35,41 @@ function importHashToken() {
 }
 
 function getToken() {
-  return sessionStorage.getItem(AUTH_TOKEN_KEY);
+  try {
+    // Сначала проверяем sessionStorage (приоритет)
+    const sessionToken = sessionStorage.getItem(AUTH_TOKEN_KEY);
+    if (sessionToken) return sessionToken;
+    
+    // Если sessionStorage пуст, берем из localStorage
+    const localToken = localStorage.getItem(AUTH_TOKEN_KEY);
+    if (localToken) {
+      // Синхронизируем обратно в sessionStorage
+      sessionStorage.setItem(AUTH_TOKEN_KEY, localToken);
+      return localToken;
+    }
+    return null;
+  } catch (e) {
+    console.warn('Storage access error:', e);
+    return null;
+  }
 }
 
 function setToken(token) {
-  sessionStorage.setItem(AUTH_TOKEN_KEY, token);
+  try {
+    sessionStorage.setItem(AUTH_TOKEN_KEY, token);
+    localStorage.setItem(AUTH_TOKEN_KEY, token);
+  } catch (e) {
+    console.warn('Storage write error:', e);
+  }
 }
 
 function clearToken() {
-  sessionStorage.removeItem(AUTH_TOKEN_KEY);
+  try {
+    sessionStorage.removeItem(AUTH_TOKEN_KEY);
+    localStorage.removeItem(AUTH_TOKEN_KEY);
+  } catch (e) {
+    console.warn('Storage clear error:', e);
+  }
 }
 
 importHashToken();

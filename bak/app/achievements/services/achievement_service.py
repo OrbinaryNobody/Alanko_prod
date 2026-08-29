@@ -41,6 +41,10 @@ class AchievementService:
         result = []
 
         for achievement in achievements:
+            assignment = achievement.users[0] if achievement.users else None
+            student = assignment.user if assignment else None
+            profile = student.student_profile if student else None
+            image_key = profile.image_url if profile and profile.image_url else student.image_url if student else None
             file_url = None
             if achievement.certificate_url:
                 file_url = file_service.get_file_url(achievement.certificate_url, BUCKET_NAMES["certificates"])
@@ -59,10 +63,31 @@ class AchievementService:
                     is_collective=achievement.is_collective,
                     file_url=file_url,
                     video_url=video_url,
+                    student_id=student.id if student else None,
+                    student_name=f"{student.first_name} {student.last_name or ''}".strip() if student else None,
+                    student_avatar_url=file_service.get_file_url(image_key, BUCKET_NAMES["student_photos"]) if image_key else None,
                 ).to_dict()
             )
 
         return result
+
+    def delete_achievement(self, db: Session, *, ctx: AccessContext, achievement_id: int):
+        try:
+            AchievementPolicy.require_manage_achievements(ctx)
+        except PermissionError as exc:
+            raise PermissionDenied("Access denied to delete achievement") from exc
+
+        achievement = achievement_repository.get_by_id(db, achievement_id=achievement_id)
+        if not achievement:
+            raise NotFoundError("Achievement not found")
+
+        with UnitOfWork(db):
+            if achievement.certificate_url:
+                file_service.delete_file(achievement.certificate_url, BUCKET_NAMES["certificates"])
+            if achievement.video_url:
+                file_service.delete_file(achievement.video_url, BUCKET_NAMES["achievement_videos"])
+            db.delete(achievement)
+            db.flush()
 
     def get_student_achievements_payload(self, db: Session, student_id: int, *, ctx: AccessContext):
         try:

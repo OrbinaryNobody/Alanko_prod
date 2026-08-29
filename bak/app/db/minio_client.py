@@ -8,12 +8,22 @@ MINIO_INTERNAL_URL = settings.minio_internal_url or "minio:9000"
 MINIO_PUBLIC_URL = settings.minio_public_url or "http://localhost:9000"
 # Extract host:port from public URL for replacement (without http://)
 MINIO_PUBLIC_HOST = MINIO_PUBLIC_URL.replace("http://", "").replace("https://", "")
+MINIO_PUBLIC_SECURE = MINIO_PUBLIC_URL.startswith("https://")
 
 minio_client = Minio(
     MINIO_INTERNAL_URL,
     access_key=settings.minio_access_key,
     secret_key=settings.minio_secret_key,
     secure=False,
+    region="us-east-1",
+)
+
+public_minio_client = Minio(
+    MINIO_PUBLIC_HOST,
+    access_key=settings.minio_access_key,
+    secret_key=settings.minio_secret_key,
+    secure=MINIO_PUBLIC_SECURE,
+    region="us-east-1",
 )
 
 # Bucket names for different file types

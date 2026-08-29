@@ -1,12 +1,36 @@
 from sqlalchemy.orm import Session
 
 from attendance.repositories.attendance_repository import attendance_repository
-from core.exceptions import ConflictError
+from core.exceptions import ConflictError, NotFoundError
 from models.domains.attendance import Subscription
 from shared.unit_of_work import UnitOfWork
 
 
 class SubscriptionService:
+    def list_all(self, db: Session):
+        return db.query(Subscription).order_by(Subscription.created_at.desc(), Subscription.id.desc()).all()
+
+    def update(self, db: Session, *, subscription_id: int, **data):
+        subscription = db.query(Subscription).filter(Subscription.id == subscription_id).first()
+        if not subscription:
+            raise NotFoundError("Subscription not found")
+        if data["valid_until"] < data["valid_from"]:
+            raise ConflictError("Subscription end date must not precede start date")
+        with UnitOfWork(db):
+            for field, value in data.items():
+                setattr(subscription, field, value)
+            db.flush()
+            db.refresh(subscription)
+        return subscription
+
+    def cancel(self, db: Session, *, subscription_id: int):
+        subscription = db.query(Subscription).filter(Subscription.id == subscription_id).first()
+        if not subscription:
+            raise NotFoundError("Subscription not found")
+        with UnitOfWork(db):
+            subscription.status = "CANCELLED"
+            db.flush()
+        return subscription
     def create(self, db: Session, *, student_id: int, plan_name: str, total_visits: int, valid_from, valid_until, payment_status: str, amount: int, currency: str):
         if valid_until < valid_from:
             raise ConflictError("Subscription end date must not precede start date")

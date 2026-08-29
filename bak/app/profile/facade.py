@@ -11,5 +11,8 @@ class ProfileFacade:
     def get_student_tasks_payload(self, db: Session, *, ctx: AccessContext):
         return dashboard_service.get_student_tasks_payload(db, ctx=ctx)
 
+    def get_student_program_progress_payload(self, db: Session, *, ctx: AccessContext):
+        return dashboard_service.get_student_program_progress_payload(db, ctx=ctx)
+
 
 profile_facade = ProfileFacade()

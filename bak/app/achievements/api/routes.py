@@ -20,6 +20,15 @@ def get_achievements(
     return {"data": achievements_facade.get_achievements_payload(db, ctx=ctx)}
 
 
+@router.delete("/{achievement_id}", status_code=204)
+def delete_achievement(
+    achievement_id: int,
+    ctx: AccessContext = Depends(require_manage_achievements),
+    db: Session = Depends(get_db),
+):
+    achievements_facade.delete_achievement(db, ctx=ctx, achievement_id=achievement_id)
+
+
 @router.get("/student/{student_id}")
 def get_student_achievements(
     student_id: int,

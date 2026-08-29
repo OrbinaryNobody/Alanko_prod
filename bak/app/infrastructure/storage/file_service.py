@@ -11,7 +11,7 @@ from fastapi import UploadFile
 from starlette.concurrency import run_in_threadpool
 
 from core.exceptions import ConflictError
-from db.minio_client import BUCKET_NAMES, MINIO_PUBLIC_URL, PRIVATE_BUCKETS, minio_client
+from db.minio_client import BUCKET_NAMES, MINIO_PUBLIC_URL, PRIVATE_BUCKETS, minio_client, public_minio_client
 
 
 class FileService:
@@ -65,7 +65,30 @@ class FileService:
         return await self._upload_file(file, allowed_types=["application/pdf"], extension="pdf", bucket_name=BUCKET_NAMES["certificates"])
 
     async def upload_image(self, file: UploadFile) -> str:
-        return await self._upload_file(file, allowed_types=["image/jpeg", "image/png", "image/gif", "image/webp"], extension="jpg", bucket_name=BUCKET_NAMES["student_photos"])
+        content_type = file.content_type or ""
+        if not content_type and file.filename:
+            content_type = {
+                ".jpg": "image/jpeg",
+                ".jpeg": "image/jpeg",
+                ".png": "image/png",
+                ".gif": "image/gif",
+                ".webp": "image/webp",
+            }.get(os.path.splitext(file.filename)[1].lower(), "")
+        extension = {
+            "image/jpeg": "jpg",
+            "image/png": "png",
+            "image/gif": "gif",
+            "image/webp": "webp",
+        }.get(content_type)
+        if not extension:
+            raise ConflictError(f"Invalid image type: {content_type or file.filename}")
+        return await self._upload_file(
+            file,
+            allowed_types=["image/jpeg", "image/png", "image/gif", "image/webp"],
+            extension=extension,
+            bucket_name=BUCKET_NAMES["student_photos"],
+            content_type=content_type,
+        )
 
     async def upload_news_image(self, file: UploadFile) -> str:
         extension = {
@@ -116,9 +139,17 @@ class FileService:
 
         return await self._upload_file(file, allowed_types=["application/pdf", "image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif", "video/mp4", "video/mpeg"], extension=extension, bucket_name=BUCKET_NAMES["certificates"])
 
-    async def _upload_file(self, file: UploadFile, allowed_types: list[str], extension: str, bucket_name: str) -> str:
-        if file.content_type not in allowed_types:
-            raise ConflictError(f"Invalid file type: {file.content_type}")
+    async def _upload_file(
+        self,
+        file: UploadFile,
+        allowed_types: list[str],
+        extension: str,
+        bucket_name: str,
+        content_type: str | None = None,
+    ) -> str:
+        effective_content_type = content_type or file.content_type
+        if effective_content_type not in allowed_types:
+            raise ConflictError(f"Invalid file type: {effective_content_type}")
 
         max_size = 512 * 1024 * 1024
         file_id = f"{uuid.uuid4()}.{extension}"
@@ -140,7 +171,7 @@ class FileService:
                     file_id,
                     temporary_file,
                     file_size,
-                    file.content_type,
+                    effective_content_type,
                 )
             except Exception:
                 self.logger.exception("Failed to upload file to MinIO")
@@ -160,12 +191,11 @@ class FileService:
         )
 
     def get_signed_file_url(self, file_id: str, bucket_name: str, expires: int = 3600) -> str:
-        return minio_client.presigned_get_object(bucket_name, file_id, expires=timedelta(seconds=expires))
+        return public_minio_client.presigned_get_object(bucket_name, file_id, expires=timedelta(seconds=expires))
 
     def get_file_url(self, file_id: str, bucket_name: str = BUCKET_NAMES["videos"], expires: int = 3600) -> str:
         if bucket_name in PRIVATE_BUCKETS:
-            url = self.get_signed_file_url(file_id, bucket_name, expires=expires)
-            return url.replace("http://minio:9000", MINIO_PUBLIC_URL.rstrip("/"))
+            return self.get_signed_file_url(file_id, bucket_name, expires=expires)
         return f"{MINIO_PUBLIC_URL}/{bucket_name}/{file_id}"
 
     def delete_file(self, file_id: str, bucket_name: str) -> None:

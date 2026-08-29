@@ -34,6 +34,8 @@ class ProgramBlockProposal(BaseModel):
 
 
 class ProgramChangeProposalCreate(BaseModel):
+    title: str | None = None
+    description: str | None = None
     blocks: list[ProgramBlockProposal]
     comment: str | None = None
 
@@ -85,6 +87,17 @@ class GroupCreate(BaseModel):
     title: str
     description: str | None = None
     program_id: int | None = None
+
+
+class GroupUpdate(BaseModel):
+    title: str
+    description: str | None = None
+    leaderboard_enabled: bool = False
+
+
+class GroupTaskGradeUpdate(BaseModel):
+    grade: int = Field(ge=0, le=100000)
+    feedback: str | None = None
 
 
 class GroupMemberCreate(BaseModel):

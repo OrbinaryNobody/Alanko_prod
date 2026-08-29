@@ -33,9 +33,11 @@ router-маршруты получают дополнительный префи
 |---|---|---|---|---|
 | GET | `/api/accounts/health` | public | — | `{status, service}`, `200` |
 | POST | `/api/accounts/login` | public | JSON `LoginSchema`: `email`, `password` | `{access_token, token_type}`, `200` |
-| POST | `/api/accounts/users` | Bearer, `MANAGE_USERS` | JSON `AdminAddUserSchema` | `{message, data: {user_id, email}}`, `201` |
+| POST | `/api/accounts/users` | Bearer, `MANAGE_USERS` | JSON `AdminAddUserSchema` | `{message, data: {user_id, email, password}}`, `201` |
+| POST | `/api/accounts/teachers` | Bearer, `MANAGE_USERS` | multipart: `email`, `first_name`, `middle_name`; optional image, last name | `{message, data: {user_id, email, password, avatar_url}}`, `201` |
+| DELETE | `/api/accounts/teachers/{teacher_id}` | Bearer, `MANAGE_USERS` | Path `teacher_id: int` | empty, `204` |
 | GET | `/api/accounts/users` | Bearer, `MANAGE_USERS` | Query `role` optional | `{data: [user DTO]}`, `200` |
-| POST | `/api/accounts/students` | Bearer, `MANAGE_USERS` | multipart: `email`, `first_name`, `middle_name`, `image`; optional last name, birth year, parent fields | `{user_id, email}`, `201` |
+| POST | `/api/accounts/students` | Bearer, `MANAGE_USERS` | multipart: `email`, `first_name`, `middle_name`; optional image, last name, birth year, parent fields | `{user_id, email, image_url}`, `201` |
 | DELETE | `/api/accounts/students/{student_id}` | Bearer, `MANAGE_USERS` | Path `student_id: int` | `{message, student_id}`, `200` |
 | PATCH | `/api/accounts/students/{student_id}` | Bearer, `MANAGE_USERS` | Path; JSON `StudentUpdateSchema` | `{message, data}`, `200` |
 

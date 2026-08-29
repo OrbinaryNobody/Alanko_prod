@@ -8,7 +8,7 @@ class LoginSchema(BaseModel):
 
 class AdminAddUserSchema(BaseModel):
     email: EmailStr
-    password: str
+    password: str | None = None
     first_name: str
     last_name: str | None = None
     middle_name: str
@@ -30,3 +30,10 @@ class StudentUpdateSchema(BaseModel):
     last_name: str | None = None
     middle_name: str | None = None
     birth_year: int | None = None
+
+
+class TeacherUpdateSchema(BaseModel):
+    email: EmailStr | None = None
+    first_name: str | None = None
+    last_name: str | None = None
+    middle_name: str | None = None

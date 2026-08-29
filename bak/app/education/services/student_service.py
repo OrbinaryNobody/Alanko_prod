@@ -128,6 +128,18 @@ class StudentService:
         attendance_date = attendance_date or date.today()
         students = attendance_facade.list_students(db, search=search, group_id=group_id, limit=limit, offset=offset)
         result = []
+        active_enrollments = db.query(GroupEnrollment).filter(GroupEnrollment.status == "active").all()
+        group_points = {}
+        for enrollment in active_enrollments:
+            points = sum((task.grade or 0) for task in enrollment.tasks)
+            group_points.setdefault(enrollment.group_id, {})[enrollment.student_id] = points
+        group_ranks = {
+            group_id: {
+                student_id: index + 1
+                for index, (student_id, _) in enumerate(sorted(points.items(), key=lambda item: (-item[1], item[0])))
+            }
+            for group_id, points in group_points.items()
+        }
 
         for student in students:
             profile = student.student_profile
@@ -142,6 +154,16 @@ class StudentService:
             if remaining_visits_lte is not None and (not subscription or subscription.remaining_visits > remaining_visits_lte):
                 continue
 
+            student_groups = [
+                {
+                    "id": group.id,
+                    "title": group.title,
+                    "points": group_points.get(group.id, {}).get(student.id, 0),
+                    "rank": group_ranks.get(group.id, {}).get(student.id),
+                }
+                for group in context["groups"]
+            ]
+            program_points = sum(group["points"] for group in student_groups)
             student_payload = StudentPayload(
                     id=student.id,
                     email=student.email,
@@ -151,11 +173,14 @@ class StudentService:
                     full_name=f"{student.first_name} {student.last_name or ''}".strip(),
                     image_url=image_url,
                     password=None,
+                    birth_year=profile.birth_year if profile else None,
+                    rating_points=program_points,
                 ).to_dict()
             student_payload.update({
-                "groups": [{"id": group.id, "title": group.title} for group in context["groups"]],
+                "groups": student_groups,
                 "parent": self._parent_payload(context["parent"]),
                 "current_subscription": self._subscription_payload(subscription),
+                "payment_status": subscription.payment_status if subscription else "NO_SUBSCRIPTION",
                 "attendance": self._attendance_payload(context["attendance"], attendance_date),
             })
             result.append(student_payload)

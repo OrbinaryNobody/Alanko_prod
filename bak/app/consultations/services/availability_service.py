@@ -3,7 +3,11 @@ from datetime import date, datetime
 from sqlalchemy.orm import Session
 
 from consultations.models.consultation_day import ConsultationDay
+from consultations.models.consultation_participant import ConsultationParticipant
 from consultations.models.consultation_slot import ConsultationSlot
+from models.domains.auth import User
+from consultations.timezone import serialize_local
+from consultations.services.slot_service import consultation_price_for_booking
 
 
 class AvailabilityService:
@@ -20,17 +24,32 @@ class AvailabilityService:
                 continue
             slots = db.query(ConsultationSlot).filter(ConsultationSlot.day_id == day.id, ConsultationSlot.status == "ACTIVE").all()
             for slot in slots:
+                teacher = db.query(User).filter(User.id == slot.teacher_id).first()
+                booked_count = db.query(ConsultationParticipant).filter(
+                    ConsultationParticipant.slot_id == slot.id,
+                    ConsultationParticipant.booking_status == "CONFIRMED",
+                ).count()
+                is_booked = bool(student_id and db.query(ConsultationParticipant).filter(
+                    ConsultationParticipant.slot_id == slot.id,
+                    ConsultationParticipant.student_id == student_id,
+                    ConsultationParticipant.booking_status == "CONFIRMED",
+                ).first())
                 result.append({
                     "slot_id": slot.id,
                     "day_id": slot.day_id,
                     "teacher_id": slot.teacher_id,
-                    "start_at": slot.start_at.isoformat() if slot.start_at else None,
-                    "end_at": slot.end_at.isoformat() if slot.end_at else None,
+                    "teacher_name": f"{teacher.first_name} {teacher.last_name or ''}".strip() if teacher else f"Преподаватель #{slot.teacher_id}",
+                    "start_at": serialize_local(slot.start_at),
+                    "end_at": serialize_local(slot.end_at),
                     "capacity": slot.capacity,
-                    "price": slot.price,
+                    "price": consultation_price_for_booking(booked_count, slot.capacity),
                     "currency": slot.currency,
                     "payment_required": slot.price > 0,
                     "access_mode": slot.access_mode,
                     "status": slot.status,
+                    "booked_count": booked_count,
+                    "available_places": max(0, slot.capacity - booked_count),
+                    "is_last_spot": slot.capacity - booked_count == 1,
+                    "is_booked": is_booked,
                 })
         return result

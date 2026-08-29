@@ -12,6 +12,12 @@ class ProgramReadService:
         if not program:
             raise ProgramNotFound("Program not found")
 
+        if ctx.is_admin or ctx.can_manage(program.created_by):
+            return program
+
+        if program_repository.has_teacher_access(db, user_id=ctx.user_id, program_id=program.id):
+            return program
+
         try:
             ProgramPolicy.require_view_program(ctx, program)
         except PermissionError as exc:

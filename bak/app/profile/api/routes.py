@@ -15,3 +15,11 @@ def get_student_tasks(
     db: Session = Depends(get_db),
 ):
     return profile_facade.get_student_tasks_payload(db, ctx=ctx)
+
+
+@router.get("/program-progress")
+def get_student_program_progress(
+    ctx: AccessContext = Depends(require_permission(Permission.VIEW_OWN_TASKS)),
+    db: Session = Depends(get_db),
+):
+    return {"data": profile_facade.get_student_program_progress_payload(db, ctx=ctx)}

@@ -30,6 +30,10 @@ class GroupRepository:
         db.refresh(group)
         return group
 
+    def delete(self, db: Session, group: Group) -> None:
+        db.delete(group)
+        db.flush()
+
     def create_member(self, db: Session, member: GroupMember) -> GroupMember:
         db.add(member)
         db.flush()
@@ -41,6 +45,9 @@ class GroupRepository:
 
     def get_enrollment(self, db: Session, *, group_id: int, student_id: int) -> GroupEnrollment | None:
         return db.query(GroupEnrollment).filter(GroupEnrollment.group_id == group_id, GroupEnrollment.student_id == student_id).first()
+
+    def get_enrollment_by_id(self, db: Session, enrollment_id: int) -> GroupEnrollment | None:
+        return db.query(GroupEnrollment).filter(GroupEnrollment.id == enrollment_id).first()
 
     def create_enrollment(self, db: Session, enrollment: GroupEnrollment) -> GroupEnrollment:
         db.add(enrollment)
@@ -94,6 +101,10 @@ class GroupRepository:
 
     def delete_schedule(self, db: Session, schedule: GroupSchedule):
         db.delete(schedule)
+        db.flush()
+
+    def delete_enrollment(self, db: Session, enrollment: GroupEnrollment) -> None:
+        db.delete(enrollment)
         db.flush()
 
 

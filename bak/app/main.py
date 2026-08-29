@@ -1,8 +1,9 @@
 from fastapi import FastAPI, Request
+from time import perf_counter
 from fastapi.responses import JSONResponse
 import logging
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(message)s")
 from core.exceptions import DomainError, ConflictError, NotFoundError, PermissionDenied, ValidationError
 from profile.api.dashboard import router as profile_dashboard_router
 from profile.api.routes import router as profile_router
@@ -54,6 +55,21 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def log_request_timing(request: Request, call_next):
+    started_at = perf_counter()
+    response = await call_next(request)
+    elapsed_ms = (perf_counter() - started_at) * 1000
+    logging.getLogger("|").info(
+        "%s %s %s %.1fms",
+        request.method,
+        request.url.path,
+        response.status_code,
+        elapsed_ms,
+    )
+    return response
 
 @app.get("/")
 def health_check():

@@ -13,6 +13,9 @@ class AchievementPayload:
     file_url: str | None = None
     video_url: str | None = None
     awarded_at: str | None = None
+    student_id: int | None = None
+    student_name: str | None = None
+    student_avatar_url: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -25,6 +28,9 @@ class AchievementPayload:
             "file_url": self.file_url,
             "video_url": self.video_url,
             "awarded_at": self.awarded_at,
+            "student_id": self.student_id,
+            "student_name": self.student_name,
+            "student_avatar_url": self.student_avatar_url,
         }
 
 

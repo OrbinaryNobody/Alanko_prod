@@ -126,19 +126,164 @@
     /* Booking Slots */
     .available-slot {
       position: absolute; left: 4px; right: 4px;
-      background: rgba(176, 209, 130, 0.1); border: 1px dashed var(--pal-light-green); border-radius: 6px;
-      cursor: pointer; transition: all 0.2s ease;
+      background: rgba(176, 209, 130, 0.1); border: 1px dashed var(--pal-light-green); border-radius: 8px;
+      cursor: pointer; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       color: var(--pal-light-green); z-index: 10;
+      padding: 4px 6px; text-align: center;
     }
     .available-slot:hover {
       background: rgba(176, 209, 130, 0.25); border-style: solid;
-      transform: translateY(-2px); box-shadow: 0 4px 12px rgba(176, 209, 130, 0.2); z-index: 11;
+      transform: translateY(-2px); box-shadow: 0 6px 16px rgba(176, 209, 130, 0.25); z-index: 12;
     }
-    .available-slot .time-text { font-size: 0.8rem; font-weight: 700; margin-bottom: 2px; }
-    .available-slot .action-text { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; display: none; font-weight: 800; align-items: center; gap: 4px; }
+    .available-slot .time-text { font-size: 0.78rem; font-weight: 700; margin-bottom: 2px; }
+    .available-slot .slot-meta { font-size: 0.68rem; color: var(--pal-light-green); font-weight: 600; }
+    .available-slot .action-text { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; display: none; font-weight: 800; align-items: center; gap: 4px; }
     .available-slot:hover .action-text { display: flex; }
-    .available-slot:hover .time-text { display: none; }
+    .available-slot:hover .time-text, .available-slot:hover .slot-meta, .available-slot:hover .last-spot-badge { display: none; }
+    .available-slot.booked-by-student {
+      background: rgba(106, 142, 78, 0.16);
+      border-color: rgba(176, 209, 130, 0.35);
+      cursor: not-allowed;
+      opacity: 0.75;
+    }
+    .available-slot.booked-by-student:hover {
+      transform: none;
+      box-shadow: none;
+    }
+    .available-slot.booked-by-student .last-spot-badge,
+    .available-slot.booked-by-student:hover .last-spot-badge {
+      display: inline-flex;
+    }
+    .available-slot.booked-by-student .action-text,
+    .available-slot.booked-by-student:hover .action-text {
+      display: none;
+    }
+
+    /* --- ПОСЛЕДНЕЕ МЕСТО (URGENCY LAST SPOT) --- */
+    .available-slot.last-spot {
+      background: linear-gradient(135deg, rgba(255, 122, 0, 0.16) 0%, rgba(239, 108, 108, 0.14) 100%);
+      border: 1.5px solid #FF9F43;
+      color: #FFA94D;
+      box-shadow: 0 0 16px rgba(255, 159, 67, 0.28), inset 0 0 12px rgba(255, 122, 0, 0.1);
+      animation: pulse-border-flame 2.2s infinite ease-in-out;
+    }
+    .available-slot.last-spot:hover {
+      background: linear-gradient(135deg, rgba(255, 122, 0, 0.32) 0%, rgba(239, 108, 108, 0.26) 100%);
+      border-color: #FF7A00;
+      box-shadow: 0 8px 24px rgba(255, 122, 0, 0.45), inset 0 0 16px rgba(255, 122, 0, 0.2);
+      transform: translateY(-2px) scale(1.02);
+    }
+    .available-slot.last-spot .time-text {
+      color: #FFF;
+      font-weight: 800;
+    }
+    .available-slot.last-spot .slot-meta {
+      color: #FFB067;
+      font-weight: 700;
+    }
+    .last-spot-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: linear-gradient(90deg, #FF6B6B 0%, #FF9F43 100%);
+      color: #05060A;
+      font-size: 0.62rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      padding: 2px 7px;
+      border-radius: var(--radius-pill);
+      margin-top: 3px;
+      box-shadow: 0 2px 8px rgba(255, 107, 107, 0.45);
+      white-space: nowrap;
+      animation: flame-pulse 1.8s infinite alternate;
+    }
+    .available-slot.last-spot .action-text {
+      color: #FFF;
+      font-weight: 800;
+      display: none;
+      align-items: center;
+      gap: 5px;
+      background: linear-gradient(90deg, #FF9F43, #FF6B6B);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .available-slot.last-spot:hover .action-text {
+      display: flex;
+    }
+
+    @keyframes pulse-border-flame {
+      0%, 100% {
+        border-color: rgba(255, 159, 67, 0.85);
+        box-shadow: 0 0 12px rgba(255, 159, 67, 0.25);
+      }
+      50% {
+        border-color: #FF6B6B;
+        box-shadow: 0 0 22px rgba(255, 107, 107, 0.5);
+      }
+    }
+    @keyframes flame-pulse {
+      0% { transform: scale(1); filter: brightness(1); }
+      100% { transform: scale(1.05); filter: brightness(1.15); box-shadow: 0 4px 12px rgba(255, 159, 67, 0.6); }
+    }
+
+    /* Urgency Banner in Modal */
+    .modal-urgency-banner {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: linear-gradient(135deg, rgba(255, 107, 107, 0.15) 0%, rgba(255, 159, 67, 0.12) 100%);
+      border: 1px solid rgba(255, 159, 67, 0.4);
+      border-radius: var(--radius-lg);
+      padding: 14px 18px;
+      box-shadow: 0 6px 20px rgba(255, 107, 107, 0.12);
+      animation: fadeInBanner 0.3s ease;
+    }
+    .modal-urgency-banner .urgency-icon-wrap {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #FF6B6B 0%, #FF9F43 100%);
+      color: #05060A;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+      box-shadow: 0 4px 14px rgba(255, 107, 107, 0.4);
+    }
+    .modal-urgency-banner .urgency-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #FFA94D;
+      margin-bottom: 2px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .modal-urgency-banner .urgency-desc {
+      font-size: 0.8rem;
+      color: var(--pal-off-white);
+      opacity: 0.9;
+      line-height: 1.35;
+    }
+    @keyframes fadeInBanner {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .btn-urgent {
+      background: linear-gradient(90deg, #FF7A00 0%, #FF9F43 100%) !important;
+      color: #05060A !important;
+      box-shadow: 0 8px 24px rgba(255, 122, 0, 0.4) !important;
+      font-weight: 800 !important;
+    }
+    .btn-urgent:hover {
+      background: linear-gradient(90deg, #FF8F1F 0%, #FFAF5E 100%) !important;
+      transform: translateY(-2px) !important;
+      box-shadow: 0 12px 30px rgba(255, 122, 0, 0.55) !important;
+    }
 
     .booked-slot {
       position: absolute; left: 4px; right: 4px;
@@ -281,7 +426,7 @@
             <!-- Свободное время: 14:00 - 15:30 -->
             <div class="available-slot" style="top: 300px; height: 90px;" onclick="openBookingModal('Понедельник, 03 Августа', '14:00 - 15:30', 0)">
               <span class="time-text">14:00 - 15:30</span>
-              <span style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; font-weight: 600;">0/4 мест</span>
+              <span class="slot-meta">0/4 мест</span>
               <span class="action-text"><iconify-icon icon="solar:check-circle-bold" style="font-size: 1.1rem;"></iconify-icon> Записаться</span>
             </div>
             
@@ -299,37 +444,72 @@
             <!-- Свободное время: 10:00 - 11:00 (60px) - 1 человек записан -->
             <div class="available-slot" style="top: 60px; height: 60px;" onclick="openBookingModal('Среда, 05 Августа', '10:00 - 11:00', 1)">
               <span class="time-text">10:00 - 11:00</span>
-              <span style="font-size: 0.7rem; color: var(--pal-light-green); margin-top: 2px; font-weight: 600;">1/4 мест</span>
+              <span class="slot-meta">1/4 мест</span>
               <span class="action-text"><iconify-icon icon="solar:check-circle-bold" style="font-size: 1.1rem;"></iconify-icon> Присоединиться</span>
             </div>
             <!-- Свободное время: 11:30 - 13:00 (150px) - 2 человека записаны -->
             <div class="available-slot" style="top: 150px; height: 90px;" onclick="openBookingModal('Среда, 05 Августа', '11:30 - 13:00', 2)">
               <span class="time-text">11:30 - 13:00</span>
-              <span style="font-size: 0.7rem; color: var(--pal-light-green); margin-top: 4px; font-weight: 600;">2/4 мест</span>
+              <span class="slot-meta">2/4 мест</span>
               <span class="action-text"><iconify-icon icon="solar:check-circle-bold" style="font-size: 1.1rem;"></iconify-icon> Присоединиться</span>
+            </div>
+            <!-- Свободное время: 18:00 - 19:30 (540px) - 3 человека записано (ПОСЛЕДНЕЕ МЕСТО!) -->
+            <div class="available-slot last-spot" style="top: 540px; height: 90px;" onclick="openBookingModal('Среда, 05 Августа', '18:00 - 19:30', 3)">
+              <span class="time-text">18:00 - 19:30</span>
+              <span class="slot-meta">3/4 мест</span>
+              <span class="last-spot-badge"><iconify-icon icon="solar:fire-bold"></iconify-icon> Осталось 1 место!</span>
+              <span class="action-text"><iconify-icon icon="solar:fire-bold" style="font-size: 1.1rem;"></iconify-icon> Успейте забрать!</span>
             </div>
           </div>
 
           <!-- Четверг -->
           <div class="day-grid-col day-col" data-day="Чт">
-             <!-- Занято: 12:00 - 14:00 (180px, height 120px) -->
-             <div class="booked-slot" style="top: 180px; height: 120px;">
+            <!-- Занято: 12:00 - 14:00 (180px, height 120px) -->
+            <div class="booked-slot" style="top: 180px; height: 120px;">
               <span>Группа заполнена</span>
+            </div>
+            <!-- Свободное время: 16:00 - 17:30 (420px) - 3 человека записано (ПОСЛЕДНЕЕ МЕСТО!) -->
+            <div class="available-slot last-spot" style="top: 420px; height: 90px;" onclick="openBookingModal('Четверг, 06 Августа', '16:00 - 17:30', 3)">
+              <span class="time-text">16:00 - 17:30</span>
+              <span class="slot-meta">3/4 мест</span>
+              <span class="last-spot-badge"><iconify-icon icon="solar:fire-bold"></iconify-icon> Осталось 1 место!</span>
+              <span class="action-text"><iconify-icon icon="solar:bolt-bold" style="font-size: 1.1rem;"></iconify-icon> Успейте записаться!</span>
             </div>
           </div>
 
           <!-- Пятница -->
           <div class="day-grid-col day-col" data-day="Пт">
+            <!-- Свободное время: 12:00 - 13:30 (180px) - 3 человека записано (ПОСЛЕДНЕЕ МЕСТО!) -->
+            <div class="available-slot last-spot" style="top: 180px; height: 90px;" onclick="openBookingModal('Пятница, 07 Августа', '12:00 - 13:30', 3)">
+              <span class="time-text">12:00 - 13:30</span>
+              <span class="slot-meta">3/4 мест</span>
+              <span class="last-spot-badge"><iconify-icon icon="solar:fire-bold"></iconify-icon> Осталось 1 место!</span>
+              <span class="action-text"><iconify-icon icon="solar:fire-bold" style="font-size: 1.1rem;"></iconify-icon> Успейте забрать!</span>
+            </div>
             <!-- Свободное время: 15:00 - 16:00 (360px) -->
             <div class="available-slot" style="top: 360px; height: 60px;" onclick="openBookingModal('Пятница, 07 Августа', '15:00 - 16:00', 0)">
               <span class="time-text">15:00 - 16:00</span>
-              <span style="font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; font-weight: 600;">0/4 мест</span>
+              <span class="slot-meta" style="color: var(--text-muted);">0/4 мест</span>
               <span class="action-text"><iconify-icon icon="solar:check-circle-bold" style="font-size: 1.1rem;"></iconify-icon> Записаться</span>
             </div>
           </div>
 
           <!-- Суббота -->
-          <div class="day-grid-col day-col" data-day="Сб"></div>
+          <div class="day-grid-col day-col" data-day="Сб">
+            <!-- Свободное время: 11:00 - 12:30 (120px) - 3 человека (ПОСЛЕДНЕЕ МЕСТО!) -->
+            <div class="available-slot last-spot" style="top: 120px; height: 90px;" onclick="openBookingModal('Суббота, 08 Августа', '11:00 - 12:30', 3)">
+              <span class="time-text">11:00 - 12:30</span>
+              <span class="slot-meta">3/4 мест</span>
+              <span class="last-spot-badge"><iconify-icon icon="solar:fire-bold"></iconify-icon> Осталось 1 место!</span>
+              <span class="action-text"><iconify-icon icon="solar:bolt-bold" style="font-size: 1.1rem;"></iconify-icon> Успейте забрать!</span>
+            </div>
+            <!-- Свободное время: 14:00 - 15:30 (300px) -->
+            <div class="available-slot" style="top: 300px; height: 90px;" onclick="openBookingModal('Суббота, 08 Августа', '14:00 - 15:30', 1)">
+              <span class="time-text">14:00 - 15:30</span>
+              <span class="slot-meta">1/4 мест</span>
+              <span class="action-text"><iconify-icon icon="solar:check-circle-bold" style="font-size: 1.1rem;"></iconify-icon> Присоединиться</span>
+            </div>
+          </div>
           <!-- Воскресенье -->
           <div class="day-grid-col day-col" data-day="Вс"></div>
 
@@ -351,8 +531,19 @@
         </button>
       </div>
       
-      <div class="modal-body" style="flex-direction: column; gap: 24px;">
+      <div class="modal-body" style="flex-direction: column; gap: 20px;">
         
+        <!-- Блок срочности при последнем месте -->
+        <div class="modal-urgency-banner" id="modalUrgencyBanner" style="display: none;">
+          <div class="urgency-icon-wrap">
+            <iconify-icon icon="solar:fire-bold"></iconify-icon>
+          </div>
+          <div class="urgency-text-wrap">
+            <div class="urgency-title">Осталось последнее место! 🔥</div>
+            <div class="urgency-desc">Успейте забронировать и зарегистрироваться прямо сейчас, пока этот слот не заняли!</div>
+          </div>
+        </div>
+
         <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: 20px;">
           <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
             <img src="" id="modalTeacherAvatar" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;">
@@ -378,7 +569,7 @@
           </div>
         </div>
         
-        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); padding: 16px; border-radius: var(--radius-lg); margin-bottom: 16px;">
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); padding: 16px; border-radius: var(--radius-lg);">
           <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px;">Заполненность группы</div>
           <div style="display: flex; gap: 6px; margin-bottom: 8px;" id="modalOccupancyDots">
             <!-- Сюда вставляются точки (JS) -->
@@ -386,7 +577,7 @@
           <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-main);" id="modalOccupancyText">Записано: 0 человек (осталось 4 места)</div>
         </div>
         
-        <div style="display: flex; flex-direction: column; background: rgba(176, 209, 130, 0.05); border: 1px dashed var(--pal-light-green); padding: 16px 20px; border-radius: var(--radius-lg); margin-bottom: 8px;">
+        <div style="display: flex; flex-direction: column; background: rgba(176, 209, 130, 0.05); border: 1px dashed var(--pal-light-green); padding: 16px 20px; border-radius: var(--radius-lg); margin-bottom: 4px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
             <span style="font-weight: 600; color: var(--text-main);">К оплате наличными:</span>
             <span style="font-size: 1.5rem; font-weight: 800; color: var(--pal-light-green);" id="bookingPriceDisplay">900 руб.</span>
@@ -397,7 +588,7 @@
           </div>
         </div>
         
-        <button class="btn btn-primary" style="width: 100%; justify-content: center; padding: 16px; font-size: 1.05rem;" onclick="confirmBooking()">
+        <button class="btn btn-primary" id="bookingConfirmBtn" style="width: 100%; justify-content: center; padding: 16px; font-size: 1.05rem;" onclick="confirmBooking()">
           <iconify-icon icon="solar:check-circle-bold" style="font-size: 1.2rem;"></iconify-icon> Подтвердить запись
         </button>
         
@@ -411,6 +602,7 @@
     Вы успешно записаны на занятие!
   </div>
 
+  <script src="js/auth.js"></script>
   <script>
     /* --- АВАТАР И ДАННЫЕ УЧИТЕЛЯ --- */
     const teacherSelect = document.getElementById('teacherSelect');
@@ -491,8 +683,28 @@
       modalTeacherName.innerText = teacherValue;
       modalTeacherAvatar.src = teacherAvatar.src;
       
-      // Генерация точек для визуализации заполненности
       const maxCapacity = 4;
+      const isLastSpot = (currentEnrolled === maxCapacity - 1);
+      
+      // Управление блоком срочности и кнопкой
+      const urgencyBanner = document.getElementById('modalUrgencyBanner');
+      const confirmBtn = document.getElementById('bookingConfirmBtn');
+      
+      if (urgencyBanner) {
+        urgencyBanner.style.display = isLastSpot ? 'flex' : 'none';
+      }
+      
+      if (confirmBtn) {
+        if (isLastSpot) {
+          confirmBtn.className = 'btn btn-primary btn-urgent';
+          confirmBtn.innerHTML = '<iconify-icon icon="solar:fire-bold" style="font-size: 1.25rem;"></iconify-icon> Занять последнее место!';
+        } else {
+          confirmBtn.className = 'btn btn-primary';
+          confirmBtn.innerHTML = '<iconify-icon icon="solar:check-circle-bold" style="font-size: 1.2rem;"></iconify-icon> Подтвердить запись';
+        }
+      }
+      
+      // Генерация точек для визуализации заполненности
       const dotsContainer = document.getElementById('modalOccupancyDots');
       dotsContainer.innerHTML = '';
       
@@ -501,16 +713,24 @@
         dot.style.width = '12px';
         dot.style.height = '12px';
         dot.style.borderRadius = '50%';
+        dot.style.transition = 'all 0.3s ease';
         
         if (i < currentEnrolled) {
           // Уже занятые места
-          dot.style.background = 'rgba(255,255,255,0.4)';
+          dot.style.background = 'rgba(255,255,255,0.35)';
           dot.title = 'Место занято';
         } else if (i === currentEnrolled) {
           // Вы бронируете это место
-          dot.style.background = 'var(--pal-light-green)';
-          dot.style.boxShadow = '0 0 8px rgba(176, 209, 130, 0.6)';
-          dot.title = 'Ваше место';
+          if (isLastSpot) {
+            dot.style.background = 'linear-gradient(135deg, #FF6B6B 0%, #FF9F43 100%)';
+            dot.style.boxShadow = '0 0 10px rgba(255, 159, 67, 0.9)';
+            dot.style.transform = 'scale(1.2)';
+            dot.title = 'Ваше последнее свободное место!';
+          } else {
+            dot.style.background = 'var(--pal-light-green)';
+            dot.style.boxShadow = '0 0 8px rgba(176, 209, 130, 0.6)';
+            dot.title = 'Ваше место';
+          }
         } else {
           // Свободные места
           dot.style.background = 'rgba(255,255,255,0.05)';
@@ -526,7 +746,12 @@
       if (emptySpots === 1) spotsText = 'место';
       else if (emptySpots > 1 && emptySpots < 5) spotsText = 'места';
       
-      document.getElementById('modalOccupancyText').innerText = `Записано: ${currentEnrolled} человек (осталось ${emptySpots} ${spotsText})`;
+      const occupancyEl = document.getElementById('modalOccupancyText');
+      if (isLastSpot) {
+        occupancyEl.innerHTML = `<span style="color: #FFA94D; font-weight: 800; display: inline-flex; align-items: center; gap: 6px;"><iconify-icon icon="solar:fire-bold" style="font-size: 1.1rem;"></iconify-icon> Осталось последнее 1 место! (3/4 уже занято)</span>`;
+      } else {
+        occupancyEl.innerText = `Записано: ${currentEnrolled} человек (осталось ${emptySpots} ${spotsText})`;
+      }
       
       // Расчет цены для вас (текущие + вы = итого человек в группе)
       const groupSize = currentEnrolled + 1;
@@ -574,5 +799,214 @@
 
 
   </script>
+  <script>
+    requireAuth();
+
+    const bookingCalendarBody = document.getElementById('calendarBody');
+    const bookingTeacherSelect = document.getElementById('teacherSelect');
+    const bookingWeekDisplay = document.getElementById('currentWeekDisplay');
+    const bookingDayNames = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+    let bookingWeekStart = getMonday(new Date());
+    let bookingSlots = [];
+    let selectedBookingSlot = null;
+
+    function getMonday(value) {
+      const date = new Date(value);
+      const day = date.getDay() || 7;
+      date.setDate(date.getDate() - day + 1);
+      date.setHours(0, 0, 0, 0);
+      return date;
+    }
+
+    function toDateKey(value) {
+      if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}/.test(value)) {
+        return value.slice(0, 10);
+      }
+      const date = new Date(value);
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    }
+
+    function formatDateKey(value) {
+      return new Date(`${value}T00:00:00`).toLocaleDateString('ru-RU', { day: '2-digit', month: 'long' });
+    }
+
+    function formatTime(value) {
+      return new Intl.DateTimeFormat('ru-RU', {
+        timeZone: 'Asia/Yekaterinburg',
+        hour: '2-digit',
+        minute: '2-digit',
+      }).format(new Date(value));
+    }
+
+    function getBookingTimeParts(value) {
+      return Object.fromEntries(new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'Asia/Yekaterinburg',
+        hour: '2-digit',
+        minute: '2-digit',
+        hourCycle: 'h23',
+      }).formatToParts(new Date(value)).filter(part => part.type !== 'literal').map(part => [part.type, Number(part.value)]));
+    }
+
+    function showBookingToast(message, isError = false) {
+      const toast = document.getElementById('successToast');
+      toast.innerHTML = `<iconify-icon icon="solar:${isError ? 'danger-triangle' : 'check-circle'}-bold" style="font-size: 1.5rem;"></iconify-icon> ${message}`;
+      toast.style.background = isError ? 'var(--pal-accent-red)' : 'var(--pal-light-green)';
+      toast.classList.add('show');
+      window.setTimeout(() => toast.classList.remove('show'), 3500);
+    }
+
+    function updateBookingWeekHeader() {
+      const dates = [];
+      for (let index = 0; index < 7; index += 1) {
+        const date = new Date(bookingWeekStart);
+        date.setDate(date.getDate() + index);
+        dates.push(date);
+        const day = document.getElementById(`day-${index + 1}`);
+        if (day) day.textContent = String(date.getDate()).padStart(2, '0');
+      }
+      bookingWeekDisplay.textContent = `${dates[0].toLocaleDateString('ru-RU', { day: '2-digit', month: 'short' })} - ${dates[6].toLocaleDateString('ru-RU', { day: '2-digit', month: 'short', year: 'numeric' })}`;
+      return dates;
+    }
+
+    function updateBookingTeachers(slots) {
+      const teachers = new Map();
+      slots.forEach(slot => teachers.set(slot.teacher_id, slot.teacher_name || `Преподаватель #${slot.teacher_id}`));
+      const selectedTeacher = bookingTeacherSelect.value;
+      bookingTeacherSelect.innerHTML = '<option value="all">Все преподаватели</option>';
+      teachers.forEach((name, id) => {
+        bookingTeacherSelect.insertAdjacentHTML('beforeend', `<option value="${id}">${name}</option>`);
+      });
+      if ([...bookingTeacherSelect.options].some(option => option.value === selectedTeacher)) {
+        bookingTeacherSelect.value = selectedTeacher;
+      }
+    }
+
+    function createBookingSlot(slot, weekDates) {
+      const start = new Date(slot.start_at);
+      const end = new Date(slot.end_at);
+      const dayIndex = weekDates.findIndex(date => toDateKey(date) === toDateKey(slot.start_at));
+      if (dayIndex < 0) return;
+      const startParts = getBookingTimeParts(slot.start_at);
+      const endParts = getBookingTimeParts(slot.end_at);
+      const startMinutes = startParts.hour * 60 + startParts.minute;
+      const endMinutes = endParts.hour * 60 + endParts.minute;
+      const top = Math.max(0, (startMinutes - 9 * 60));
+      const height = Math.max(30, endMinutes - startMinutes);
+      const remaining = Number(slot.available_places ?? slot.capacity);
+      if (remaining <= 0) return;
+
+      const element = document.createElement('div');
+      const isLastSpot = Boolean(slot.is_last_spot ?? remaining === 1);
+      element.className = `available-slot${isLastSpot ? ' last-spot' : ''}${slot.is_booked ? ' booked-by-student' : ''}`;
+      element.style.top = `${top}px`;
+      element.style.height = `${height}px`;
+      element.innerHTML = `
+        <span class="time-text">${formatTime(slot.start_at)} - ${formatTime(slot.end_at)}</span>
+        <span class="slot-meta">${slot.booked_count || 0}/${slot.capacity} мест</span>
+        ${slot.is_booked ? '<span class="last-spot-badge" style="background: var(--pal-mid-green); color: var(--pal-off-white);"><iconify-icon icon="solar:check-circle-bold"></iconify-icon> Вы уже записаны</span>' : isLastSpot ? '<span class="last-spot-badge"><iconify-icon icon="solar:fire-bold"></iconify-icon> Осталось 1 место!</span>' : ''}
+        <span class="action-text">${slot.is_booked ? 'Запись подтверждена' : '<iconify-icon icon="solar:check-circle-bold"></iconify-icon> Записаться'}</span>`;
+      if (!slot.is_booked) element.addEventListener('click', () => openBookingModal(slot));
+      bookingCalendarBody.children[dayIndex + 1].appendChild(element);
+    }
+
+    function renderBookingCalendar() {
+      const weekDates = updateBookingWeekHeader();
+      const selectedTeacher = bookingTeacherSelect.value;
+      bookingCalendarBody.querySelectorAll('.day-grid-col').forEach(column => { column.remove(); });
+      for (let index = 0; index < 7; index += 1) {
+        const column = document.createElement('div');
+        column.className = 'day-grid-col day-col';
+        column.dataset.day = bookingDayNames[index];
+        bookingCalendarBody.appendChild(column);
+      }
+      bookingSlots
+        .filter(slot => selectedTeacher === 'all' || String(slot.teacher_id) === selectedTeacher)
+        .forEach(slot => createBookingSlot(slot, weekDates));
+    }
+
+    async function loadBookingAvailability() {
+      const dateFrom = toDateKey(bookingWeekStart);
+      const dateToDate = new Date(bookingWeekStart);
+      dateToDate.setDate(dateToDate.getDate() + 6);
+      const dateTo = toDateKey(dateToDate);
+      bookingCalendarBody.querySelectorAll('.day-grid-col').forEach(column => { column.innerHTML = ''; });
+      try {
+        const response = await apiFetch(`/consultations/availability?date_from=${dateFrom}&date_to=${dateTo}`);
+        const payload = await response.json();
+        bookingSlots = payload.items || [];
+        updateBookingTeachers(bookingSlots);
+        renderBookingCalendar();
+      } catch (error) {
+        bookingSlots = [];
+        renderBookingCalendar();
+        showBookingToast(`Не удалось загрузить расписание: ${error.message}`, true);
+      }
+    }
+
+    function openBookingModal(slot) {
+      if (slot.is_booked) return;
+      selectedBookingSlot = slot;
+      const teacherName = slot.teacher_name || `Преподаватель #${slot.teacher_id}`;
+      document.getElementById('modalDateStr').textContent = formatDateKey(toDateKey(slot.start_at));
+      document.getElementById('modalTimeStr').textContent = `${formatTime(slot.start_at)} - ${formatTime(slot.end_at)}`;
+      modalTeacherName.textContent = teacherName;
+      modalTeacherAvatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(teacherName)}&background=6A8E4E&color=fff`;
+      const remaining = Number(slot.available_places ?? slot.capacity);
+      document.getElementById('modalUrgencyBanner').style.display = remaining === 1 ? 'flex' : 'none';
+      document.getElementById('modalOccupancyText').textContent = `Записано: ${slot.booked_count || 0} человек (осталось ${remaining} мест)`;
+      const currencyLabel = slot.currency === 'RUB' ? '₽' : (slot.currency || 'RUB');
+      document.getElementById('bookingPriceDisplay').textContent = `${slot.price ?? 0} ${currencyLabel}`;
+      document.getElementById('bookingConfirmBtn').disabled = false;
+      bookingModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    async function confirmBooking() {
+      if (!selectedBookingSlot) return;
+      const button = document.getElementById('bookingConfirmBtn');
+      button.disabled = true;
+      try {
+        await requestJson(`/consultations/slots/${selectedBookingSlot.slot_id}/book`, { method: 'POST' });
+        closeModal('bookingModal');
+        showBookingToast('Вы успешно записались на занятие!');
+        await loadBookingAvailability();
+      } catch (error) {
+        button.disabled = false;
+        showBookingToast(`Не удалось записаться: ${error.message}`, true);
+      }
+    }
+
+    function changeWeek(dir) {
+      bookingWeekStart.setDate(bookingWeekStart.getDate() + dir * 7);
+      loadBookingAvailability();
+    }
+
+    bookingTeacherSelect.addEventListener('change', renderBookingCalendar);
+    loadBookingAvailability();
+  </script>
+<script>
+  window.changeWeek = function(dir) {
+    bookingWeekStart.setDate(bookingWeekStart.getDate() + dir * 7);
+    loadBookingAvailability();
+  };
+
+  window.confirmBooking = async function() {
+    if (!selectedBookingSlot) return;
+    const button = document.getElementById('bookingConfirmBtn');
+    button.disabled = true;
+    try {
+      await requestJson(`/consultations/slots/${selectedBookingSlot.slot_id}/book`, { method: 'POST' });
+      closeModal('bookingModal');
+      showBookingToast('Вы успешно записались на занятие!');
+      await loadBookingAvailability();
+    } catch (error) {
+      button.disabled = false;
+      showBookingToast(`Не удалось записаться: ${error.message}`, true);
+    }
+  };
+  bookingTeacherSelect.removeEventListener('change', renderBookingCalendar);
+  bookingTeacherSelect.addEventListener('change', renderBookingCalendar);
+  loadBookingAvailability();
+</script>
 </body>
 </html>

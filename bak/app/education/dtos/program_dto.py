@@ -40,6 +40,7 @@ class GroupPayload:
     title: str
     program_id: int | None = None
     status: str | None = None
+    leaderboard_enabled: bool = False
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -47,6 +48,7 @@ class GroupPayload:
             "title": self.title,
             "program_id": self.program_id,
             "status": self.status,
+            "leaderboard_enabled": self.leaderboard_enabled,
         }
 
 

@@ -3,12 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <title>Studio Alanko — Dashboard</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/notifications.js"></script>
 
   <style>
     :root {
@@ -1729,11 +1734,53 @@ select.custom-input option {
       </div>
 
       <div class="user-profile">
-        <div class="avatar" style="background: var(--pal-light-green); color: var(--bg-dark);">П</div>
+        <div class="avatar" style="background: var(--pal-light-green); color: var(--bg-dark); overflow: hidden; display: flex; align-items: center; justify-content: center;">
+          <span class="avatar-text">П</span>
+        </div>
         <span class="user-info">Преподаватель</span>
       </div>
     </div>
   </header>
+
+  <script>
+    async function loadTeacherHeaderProfile() {
+      const userInfo = document.querySelector('.user-info');
+      const avatar = document.querySelector('.avatar');
+      const avatarText = avatar?.querySelector('.avatar-text');
+      if (!userInfo || !avatar) return;
+
+      try {
+        const response = await fetchWithAuth('/profile/dashboard');
+        if (!response.ok) {
+          throw new Error('Profile unavailable');
+        }
+
+        const payload = await response.json();
+        const fullName = payload?.user?.full_name || payload?.user?.email || 'Преподаватель';
+        userInfo.textContent = fullName;
+
+        const imageUrl = payload?.user?.image_url;
+        if (imageUrl) {
+          avatar.innerHTML = `<img src="${imageUrl}" alt="${fullName}" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+          return;
+        }
+
+        const initials = fullName
+          .split(/\s+/)
+          .filter(Boolean)
+          .slice(0, 2)
+          .map(part => part[0])
+          .join('')
+          .toUpperCase() || 'П';
+        if (avatarText) avatarText.textContent = initials;
+        else avatar.textContent = initials;
+      } catch (error) {
+        userInfo.textContent = 'Преподаватель';
+        if (avatarText) avatarText.textContent = 'П';
+        else avatar.textContent = 'П';
+      }
+    }
+  </script>
 
 
   <!-- MAIN CONTENT -->
@@ -1753,7 +1800,7 @@ select.custom-input option {
             </p>
           </div>
           <div class="actions-group">
-            <button class="btn btn-primary" onclick="openModal('createConsultationModal')">
+            <button class="btn btn-primary" onclick="openConsultationModal()">
               <iconify-icon icon="solar:add-circle-bold" width="18"></iconify-icon> Добавить занятие
             </button>
             <button class="btn btn-secondary">
@@ -1827,55 +1874,12 @@ select.custom-input option {
         <p class="section-subtitle">Ваши активные классы</p>
       </div>
       <button class="btn btn-primary" onclick="openCreateProgramModal()">
-        <iconify-icon icon="solar:add-circle-bold" width="18"></iconify-icon> Создать программу
+        <iconify-icon icon="solar:add-circle-bold" width="18"></iconify-icon> Предложить программу
       </button>
     </div>
 
-    <div class="programs-list">
-      <div class="program-card">
-        <div class="program-header" onclick="toggleProgram(this)">
-          <div class="program-title-wrap">
-            <div class="program-icon"><iconify-icon icon="solar:music-note-bold-duotone"></iconify-icon></div>
-            <div>
-              <div class="program-name-container">
-                <div class="program-name">Contemporary Dance</div>
-                <div class="edit-program-btn-wrap">
-                  <button class="edit-program-btn" title="Изменить программу" onclick="event.stopPropagation(); openEditProgramModal('Contemporary Dance')">
-                    <iconify-icon icon="solar:pen-bold-duotone"></iconify-icon>
-                  </button>
-                  <span class="tooltip">Изменить программу</span>
-                </div>
-              </div>
-              <div class="program-level">Средний уровень</div>
-            </div>
-          </div>
-          <div class="program-meta">
-            <span class="groups-count">1 группа</span>
-            <iconify-icon class="chevron" icon="solar:alt-arrow-down-bold"></iconify-icon>
-          </div>
-        </div>
-
-        <div class="program-body">
-          <div class="groups-list">
-            <div class="group-row">
-              <div class="group-info">
-                <div class="group-name">Contemporary Mid</div>
-                <div class="group-students">14 учеников</div>
-                <div class="group-teacher" style="font-size: 0.8rem; color: var(--pal-light-green); margin-top: 4px; display: flex; align-items: center; gap: 4px;">
-                  <iconify-icon icon="solar:user-circle-bold-duotone"></iconify-icon> Куратор: Александр Иванов
-                </div>
-              </div>
-              <div class="group-schedule">
-                <span class="day">Пн, Ср</span>
-                <span class="time">18:00 - 19:30</span>
-              </div>
-              <button class="btn-sm primary" onclick="openJournalModal('Contemporary Mid', 14)">
-                <iconify-icon icon="solar:notebook-bold"></iconify-icon> Журнал
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="programs-list" id="teacherProgramsList">
+      <div style="padding: 32px; color: var(--text-muted);">Загрузка программ...</div>
     </div>
   </div>
 </div>
@@ -1938,7 +1942,7 @@ select.custom-input option {
         </div>
       </div>
       <div class="header-actions">
-        <button class="btn btn-primary btn-sm" onclick="alert('Изменения программы отправлены на согласование!'); closeEditProgramModal()">
+        <button class="btn btn-primary btn-sm" onclick="submitProgramProposal()">
           <iconify-icon icon="solar:send-square-bold"></iconify-icon> Отправить на согласование
         </button>
         <button class="btn-close" onclick="closeEditProgramModal()">
@@ -2025,13 +2029,8 @@ select.custom-input option {
               <span class="program-group-name">Contemporary Mid</span>
               <span class="program-group-meta">14 учеников • Пн, Ср 18:00</span>
             </div>
-            <button class="btn-sm primary"><iconify-icon icon="solar:pen-bold"></iconify-icon></button>
           </div>
         </div>
-        <!-- НОВАЯ КНОПКА -->
-        <button class="btn btn-secondary" style="width: 100%; justify-content: center; margin-top: 16px;" onclick="addNewGroupToProgram('editProgramGroupsList')">
-          <iconify-icon icon="solar:add-circle-bold"></iconify-icon> Создать группу
-        </button>
       </div>
       </div>
     </div>
@@ -2341,89 +2340,30 @@ select.custom-input option {
   </div>
 
   <!-- МОДАЛЬНОЕ ОКНО УПРАВЛЕНИЯ ГРУППОЙ -->
-<!-- МОДАЛЬНОЕ ОКНО УПРАВЛЕНИЯ ГРУППОЙ -->
 <div class="modal-overlay" id="groupManageModal">
-  <div class="modal-container" style="max-width: 960px;">
+  <div class="modal-container" style="max-width: 560px;">
     <div class="modal-header">
       <div style="flex: 1;">
-        <input type="text" class="modal-title-input" id="manageGroupName" value="Contemporary Mid" placeholder="Название группы" />
+        <h2 class="modal-title" id="manageGroupName">Журнал группы</h2>
         <div class="modal-subtitle" style="margin-top: 8px;">
-          <span><iconify-icon icon="solar:users-group-two-rounded-bold-duotone"></iconify-icon> Управление составом и расписанием</span>
+          <span><iconify-icon icon="solar:notebook-bold"></iconify-icon> Управление группой доступно только через журнал</span>
         </div>
       </div>
       <div class="header-actions">
-        <button class="btn btn-primary btn-sm" onclick="alert('Изменения состава группы отправлены на согласование!'); closeGroupManageModal()">
-          <iconify-icon icon="solar:send-square-bold"></iconify-icon> Отправить на согласование
+        <button class="btn btn-primary btn-sm" onclick="openJournalModal(document.getElementById('manageGroupName').textContent || 'Группа', 0); closeGroupManageModal();">
+          <iconify-icon icon="solar:notebook-bookmark-bold"></iconify-icon> Открыть журнал
         </button>
         <button class="btn-close" onclick="closeGroupManageModal()">
           <iconify-icon icon="solar:close-circle-bold"></iconify-icon>
         </button>
       </div>
     </div>
-    
-    <div class="modal-body group-manage-layout">
-      <!-- Левая часть: Состав группы и куратор -->
-      <div class="blocks-container">  
-        <!-- Блок куратора -->
-        <div class="teacher-assignment-block" style="background: rgba(176, 209, 130, 0.05); border: 1px solid rgba(176, 209, 130, 0.2); border-radius: var(--radius-lg); padding: 16px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between;">
-          <div style="display: flex; align-items: center; gap: 12px;">
-             <img src="https://ui-avatars.com/api/?name=Александр+Иванов&background=6A8E4E&color=fff" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;">
-             <div>
-               <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--pal-light-green); font-weight: 700; letter-spacing: 0.05em; margin-bottom: 4px;">Куратор группы</div>
-               <div style="font-size: 1.05rem; font-weight: 700; color: var(--text-main);">Александр Иванов</div>
-               <div style="font-size: 0.85rem; color: var(--text-muted);">Contemporary, Hip-Hop</div>
-             </div>
-          </div>
-          <button class="btn btn-secondary btn-sm" onclick="openModal('assignTeacherModal')">
-            <iconify-icon icon="solar:user-id-bold-duotone"></iconify-icon> Назначить/поменять учителя
-          </button>
-        </div>
 
-        <h3 class="modal-section-title" style="margin-bottom: 16px; font-size: 1.1rem;">Текущий состав</h3>
-        <div class="blocks-list">
-          <div class="student-item" style="border: 1px solid var(--card-border); background: var(--card-bg); margin-bottom: 8px;">
-            <div class="student-main">
-              <div class="student-identity">
-                <div class="student-photo"><img src="https://ui-avatars.com/api/?name=Мария+Смирнова&background=2C473E&color=B0D182"></div>
-                <div style="display: flex; flex-direction: column; gap: 4px;">
-                    <span class="student-name" style="line-height: 1;">Мария Смирнова</span>
-                    <span style="font-size: 0.65rem; background: rgba(176, 209, 130, 0.15); color: var(--pal-light-green); padding: 2px 6px; border-radius: 4px; width: fit-content; font-weight: 600; line-height: 1;">Абонемент оплачен</span>
-                  </div>
-              </div>
-              <button class="btn-icon-danger" title="Удалить из группы"><iconify-icon icon="solar:user-cross-rounded-bold"></iconify-icon></button>
-            </div>
-          </div>
-          <div class="student-item" style="border: 1px solid var(--card-border); background: var(--card-bg); margin-bottom: 8px;">
-            <div class="student-main">
-              <div class="student-identity">
-                <div class="student-photo"><img src="https://ui-avatars.com/api/?name=Анна+Козлова&background=3d1a1a&color=EF6C6C"></div>
-                <div style="display: flex; flex-direction: column; gap: 4px;">
-                    <span class="student-name" style="line-height: 1;">Анна Козлова</span>
-                    <span style="font-size: 0.65rem; background: rgba(239, 108, 108, 0.15); color: #EF6C6C; padding: 2px 6px; border-radius: 4px; width: fit-content; font-weight: 600; line-height: 1;">Не оплачено</span>
-                  </div>
-              </div>
-              <button class="btn-icon-danger"><iconify-icon icon="solar:user-cross-rounded-bold"></iconify-icon></button>
-            </div>
-          </div>
-        </div>
-        <button class="btn btn-secondary" style="width: 100%; justify-content: center; margin-top: 16px;" onclick="openAddStudentsModal()">
-          <iconify-icon icon="solar:user-plus-rounded-bold"></iconify-icon> Добавить учеников
-        </button>
-      </div>
-
-      <!-- Правая часть: Расписание -->
-      <div class="schedule-editor-sidebar">
-        <h4 style="font-size: 1.05rem; margin-bottom: 20px; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
-          <iconify-icon icon="solar:calendar-date-bold-duotone"></iconify-icon> Расписание занятий
-        </h4>
-        
-        <div id="groupScheduleList" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
-          <!-- Сюда добавляются строки расписания -->
-        </div>
-        
-        <button class="btn btn-secondary" style="width: 100%; justify-content: center;" onclick="addScheduleRow('groupScheduleList')">
-          <iconify-icon icon="solar:add-circle-bold"></iconify-icon> Добавить время
-        </button>
+    <div class="modal-body" style="padding-top: 12px;">
+      <div class="info-card" style="padding: 20px; border: 1px solid var(--card-border); border-radius: 12px; background: rgba(176, 209, 130, 0.04);">
+        <p style="margin: 0; color: var(--text-main); line-height: 1.6;">
+          Для просмотра состава, оценок и прикрепленных файлов используйте журнал группы. Изменение состава и расписания для преподавателя недоступно.
+        </p>
       </div>
     </div>
   </div>
@@ -2491,7 +2431,7 @@ select.custom-input option {
           Далее <iconify-icon icon="solar:arrow-right-bold"></iconify-icon>
         </button>
         <!-- Кнопка финального сохранения (скрыта на Шаге 1) -->
-        <button class="btn btn-primary btn-sm" id="btnFinishCreate" style="display: none;" onclick="alert('Новая программа отправлена на согласование!'); closeCreateProgramModal()">
+        <button class="btn btn-primary btn-sm" id="btnFinishCreate" style="display: none;">
           <iconify-icon icon="solar:send-square-bold"></iconify-icon> Отправить на согласование
         </button>
         <button class="btn-close" onclick="closeCreateProgramModal()">
@@ -2504,7 +2444,7 @@ select.custom-input option {
     <div class="modal-body" id="createStep1Body" style="display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center;">
       <iconify-icon icon="solar:folder-with-files-bold-duotone" style="font-size: 72px; color: var(--pal-light-green); opacity: 0.2; margin-bottom: 24px;"></iconify-icon>
       <h3 style="font-size: 1.5rem; margin-bottom: 8px;">Как назовем новую программу?</h3>
-      <p style="color: var(--text-muted); max-width: 400px; line-height: 1.5;">Введите название в поле сверху и нажмите «Далее», чтобы перейти к созданию учебного плана, блоков, тем и добавлению групп.</p>
+      <p style="color: var(--text-muted); max-width: 400px; line-height: 1.5;">Введите название, соберите структуру учебного плана и отправьте предложение на согласование администратору.</p>
     </div>
 
     <!-- ШАГ 2: Конструктор (скрыт по умолчанию) -->
@@ -2528,9 +2468,6 @@ select.custom-input option {
         <div class="program-groups-list" id="newProgramGroupsList">
           <!-- Сюда динамически добавляются группы -->
         </div>
-        <button class="btn btn-secondary" style="width: 100%; justify-content: center; margin-top: 16px;" onclick="addNewGroupToProgram('newProgramGroupsList')">
-          <iconify-icon icon="solar:add-circle-bold"></iconify-icon> Создать группу
-        </button>
       </div>
     </div>
   </div>
@@ -2626,9 +2563,8 @@ select.custom-input option {
         <div class="modal-subtitle">Запланируйте время и предложите ученикам посетить занятие</div>
       </div>
       <div class="header-actions">
-        <!-- Кнопка подчеркивает суть действия — мы только отправляем приглашение -->
-        <button class="btn btn-primary btn-sm" onclick="closeModal('createConsultationModal')">
-          <iconify-icon icon="solar:letter-bold"></iconify-icon> Отправить приглашения
+        <button class="btn btn-primary btn-sm" onclick="saveConsultation()">
+          <iconify-icon icon="solar:diskette-bold"></iconify-icon> Создать консультацию
         </button>
         <button class="btn-close" onclick="closeModal('createConsultationModal')">
           <iconify-icon icon="solar:close-circle-bold"></iconify-icon>
@@ -2638,7 +2574,6 @@ select.custom-input option {
     
     <div class="modal-body">
       
-      <!-- Левая колонка: Настройки времени и темы -->
       <div class="blocks-container" style="flex: 1.2;">
         <h3 class="modal-section-title" style="font-size: 1.1rem; margin-bottom: 20px;">
           <div class="title-left"><iconify-icon icon="solar:calendar-date-bold-duotone"></iconify-icon> Детали консультации</div>
@@ -2646,27 +2581,34 @@ select.custom-input option {
         
         <div class="form-group">
           <label class="form-label">Дата проведения</label>
-          <input type="date" class="custom-input">
+          <input type="date" id="consultationDate" class="custom-input" required>
         </div>
         
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
           <div class="form-group">
             <label class="form-label">Время начала</label>
-            <input type="time" class="custom-input">
+            <input type="time" id="consultationStart" class="custom-input" required>
           </div>
           <div class="form-group">
             <label class="form-label">Время окончания</label>
-            <input type="time" class="custom-input">
+            <input type="time" id="consultationEnd" class="custom-input" required>
           </div>
         </div>
         
         <div class="form-group" style="margin-top: 8px;">
           <label class="form-label">Тема и план занятия (увидят ученики)</label>
-          <textarea class="custom-input" rows="4" placeholder="Например: Индивидуальная отработка техники прыжков и разбор ошибок..."></textarea>
+          <textarea id="consultationTopic" class="custom-input" rows="4" placeholder="Например: Индивидуальная отработка техники прыжков и разбор ошибок..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Преподаватель</label>
+          <select id="consultationTeacher" class="custom-input" required></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Вместимость</label>
+          <input type="number" id="consultationCapacity" class="custom-input" min="1" max="4" value="4" required oninput="updateConsultationSelection()">
         </div>
       </div>
 
-      <!-- Правая колонка: Выбор и приглашение учеников -->
       <div class="program-groups-sidebar" style="flex: 0.8; width: auto;">
         <h3 class="modal-section-title" style="font-size: 1.1rem; margin-bottom: 12px;">
           <div class="title-left"><iconify-icon icon="solar:users-group-two-rounded-bold-duotone"></iconify-icon> Кого пригласить?</div>
@@ -2675,26 +2617,16 @@ select.custom-input option {
           Выберите до 4 учеников. Им будет отправлено уведомление с предложением забронировать и оплатить это время.
         </p>
 
-        <!-- Список выбранных для приглашения -->
         <div class="selected-list" style="margin-top: 16px; flex: 1;">
           <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 12px; letter-spacing: 0.05em;">
-            Выбрано (1 / 4)
+            Выбранные ученики
           </div>
           
-          <!-- Пример выбранного ученика -->
-          <div class="selected-item-mini">
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <div class="dir-avatar" style="width: 28px; height: 28px;">
-                <img src="https://ui-avatars.com/api/?name=Алексей+Иванов&background=2C473E&color=B0D182" alt="">
-              </div>
-              <span class="name">Алексей Иванов</span>
-            </div>
-            <button class="remove-mini-btn" title="Отменить приглашение"><iconify-icon icon="solar:close-circle-bold"></iconify-icon></button>
-          </div>
+          <select id="consultationStudents" class="custom-input" multiple size="7" aria-label="Ученики для приглашения" onchange="updateConsultationSelection()" style="min-height: 170px;"></select>
+          <div id="consultationStudentsCount" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 8px;">Выбрано: 0 / 4</div>
           
-          <!-- Слот для добавления -->
-          <div style="text-align: center; padding: 16px; margin-top: 12px; border: 1px dashed var(--card-border); border-radius: var(--radius-md); color: var(--text-muted); font-size: 0.85rem; cursor: pointer; transition: all 0.2s;" onclick="openAddStudentsModal()" onmouseover="this.style.borderColor='var(--pal-light-green)'; this.style.color='var(--pal-light-green)';" onmouseout="this.style.borderColor='var(--card-border)'; this.style.color='var(--text-muted)';">
-            <iconify-icon icon="solar:add-circle-bold" style="vertical-align: middle; margin-right: 4px;"></iconify-icon> Найти и добавить
+          <div style="text-align: center; padding: 16px; margin-top: 12px; border: 1px dashed var(--card-border); border-radius: var(--radius-md); color: var(--text-muted); font-size: 0.85rem;">
+            <iconify-icon icon="solar:bell-bold" style="vertical-align: middle; margin-right: 4px;"></iconify-icon> Выбранные дети получат приглашение
           </div>
         </div>
       </div>
@@ -3237,15 +3169,227 @@ select.custom-input option {
     const editProgramModal = document.getElementById('editProgramModal');
     const editProgramTitleInput = document.getElementById('editProgramTitleInput');
 
-    function openEditProgramModal(programName) {
-      editProgramTitleInput.value = programName;
+    let activeProgramId = null;
+
+    async function openEditProgramModal(programId, programName) {
+      activeProgramId = programId;
+      editProgramTitleInput.value = programName || '';
       editProgramModal.classList.add('active');
       document.body.style.overflow = 'hidden';
+
+      const list = document.getElementById('editProgramBlocksList');
+      const groupsList = document.getElementById('editProgramGroupsList');
+      list.innerHTML = '<div style="padding: 24px; color: var(--text-muted); text-align: center;">Загрузка учебного плана...</div>';
+      groupsList.innerHTML = '<div style="padding: 24px; color: var(--text-muted); text-align: center;">Загрузка групп...</div>';
+
+      try {
+        const [structureResponse, groupsResponse] = await Promise.all([
+          fetchWithAuth(`/education/programs/${programId}/structure`),
+          fetchWithAuth('/education/groups')
+        ]);
+
+        if (!structureResponse.ok) {
+          throw new Error('Не удалось загрузить структуру программы');
+        }
+
+        const structurePayload = await structureResponse.json();
+        const program = structurePayload.data || { blocks: [] };
+        renderProgramEditorStructure(program);
+
+        // Load and display groups for this program
+        if (groupsResponse.ok) {
+          const groupsPayload = await groupsResponse.json();
+          const groups = groupsPayload.data || [];
+          const programGroups = groups.filter(g => g.program_id === programId);
+          renderEditProgramGroups(programGroups);
+        } else {
+          groupsList.innerHTML = '<div style="padding: 24px; color: var(--text-muted); text-align: center;">Не удалось загрузить группы</div>';
+        }
+      } catch (error) {
+        list.innerHTML = `<div style="padding: 24px; color: var(--pal-accent-red); text-align: center;">Ошибка: ${error.message}</div>`;
+        groupsList.innerHTML = `<div style="padding: 24px; color: var(--pal-accent-red); text-align: center;">Ошибка: ${error.message}</div>`;
+      }
+    }
+
+    function renderEditProgramGroups(groups) {
+      const groupsList = document.getElementById('editProgramGroupsList');
+      groupsList.innerHTML = '';
+
+      if (!groups.length) {
+        groupsList.innerHTML = '<div style="padding: 24px; color: var(--text-muted); text-align: center;">К этой программе не назначены группы</div>';
+        return;
+      }
+
+      groups.forEach(group => {
+        const card = document.createElement('div');
+        card.className = 'program-group-card';
+        card.innerHTML = `
+          <div class="program-group-info">
+            <span class="program-group-name">${group.title || 'Группа без названия'}</span>
+            <span class="program-group-meta">${group.students_count || 0} учеников</span>
+          </div>
+        `;
+        groupsList.appendChild(card);
+      });
+    }
+
+
+    function renderProgramEditorStructure(program) {
+      const list = document.getElementById('editProgramBlocksList');
+      const blocks = Array.isArray(program?.blocks) ? program.blocks : [];
+      list.innerHTML = '';
+
+      if (!blocks.length) {
+        list.innerHTML = '<div style="padding: 24px; color: var(--text-muted); text-align: center;">В программе пока нет блоков.</div>';
+        return;
+      }
+
+      blocks.forEach((block, blockIndex) => {
+        const topicsHtml = (block.topics || []).map((topic, topicIndex) => {
+          const tasksHtml = (topic.tasks || []).map((task, taskIndex) => `
+            <div class="task-edit-row" data-task-id="${task.id || ''}" style="animation: fadeIn 0.2s ease;">
+              <textarea class="ghost-textarea" style="flex: 1;" rows="2" data-role="task-title">${(task.title || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>
+              <div class="task-points-wrap">
+                <span>Max:</span>
+                <input type="number" class="task-points-input" value="${task.max_score || 10}" min="1" data-role="task-max-score">
+              </div>
+              <button class="btn-icon-danger" title="Удалить задание" style="margin-top: 6px;" onclick="this.closest('.task-edit-row').remove()">
+                <iconify-icon icon="solar:trash-bin-trash-bold"></iconify-icon>
+              </button>
+            </div>
+          `).join('');
+
+          return `
+            <div class="topic-item" data-topic-id="${topic.id || ''}" style="animation: fadeIn 0.3s ease;">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <input type="text" class="ghost-input title-medium" style="flex:1;" value="${(topic.title || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}" data-role="topic-title">
+                <button class="btn-icon-danger" onclick="this.closest('.topic-item').remove()" style="margin-left: 8px;">
+                  <iconify-icon icon="solar:trash-bin-trash-bold"></iconify-icon>
+                </button>
+              </div>
+              <textarea class="ghost-textarea desc-text" rows="2" data-role="topic-description">${(topic.description || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>
+              <div class="topic-hw" style="margin-top: 12px;">
+                <strong style="display: block; margin-bottom: 8px; color: var(--text-main);">Задания и ДЗ:</strong>
+                <div class="tasks-container">${tasksHtml || '<div style="color: var(--text-muted); font-size: 0.8rem; padding: 8px 0;">Пока нет заданий</div>'}</div>
+                <button class="add-action-link" onclick="addNewTask(this)"><iconify-icon icon="solar:add-circle-bold"></iconify-icon> Добавить задание</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        list.insertAdjacentHTML('beforeend', `
+          <div class="course-block current" data-block-id="${block.id || ''}" style="animation: fadeIn 0.3s ease;">
+            <div class="block-header-info">
+              <span class="status-badge status-current">Блок ${blockIndex + 1}</span>
+            </div>
+            <input type="text" class="ghost-input title-large" data-role="block-title" value="${(block.title || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}">
+            <textarea class="ghost-textarea desc-text" rows="1" data-role="block-description">${(block.description || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>
+            <div class="topics-list" style="margin-top: 16px;">${topicsHtml || '<div style="color: var(--text-muted); font-size: 0.8rem; padding: 8px 0;">Пока нет тем</div>'}</div>
+            <button class="add-action-link" style="margin-top: 16px;" onclick="addNewTopic(this)"><iconify-icon icon="solar:add-circle-bold"></iconify-icon> Добавить тему</button>
+          </div>
+        `);
+      });
+    }
+
+    function collectProgramProposalBlocks() {
+      const blocks = [];
+      const blockEls = document.querySelectorAll('#editProgramBlocksList .course-block');
+
+      blockEls.forEach((blockEl, blockIndex) => {
+        const topics = [];
+        const topicEls = blockEl.querySelectorAll('.topic-item');
+
+        topicEls.forEach((topicEl, topicIndex) => {
+          const tasks = [];
+          const taskEls = topicEl.querySelectorAll('.task-edit-row');
+
+          taskEls.forEach((taskEl) => {
+            const title = (taskEl.querySelector('[data-role="task-title"]')?.value || '').trim();
+            if (!title) return;
+            tasks.push({
+              id: taskEl.dataset.taskId ? Number(taskEl.dataset.taskId) : null,
+              title,
+              description: null,
+              max_score: Number(taskEl.querySelector('[data-role="task-max-score"]')?.value || 10),
+              order: tasks.length,
+              is_manual: false,
+            });
+          });
+
+          const topicTitle = (topicEl.querySelector('[data-role="topic-title"]')?.value || '').trim();
+          if (!topicTitle && !tasks.length) return;
+
+          topics.push({
+            id: topicEl.dataset.topicId ? Number(topicEl.dataset.topicId) : null,
+            title: topicTitle || `Тема ${topicIndex + 1}`,
+            description: (topicEl.querySelector('[data-role="topic-description"]')?.value || '').trim() || null,
+            order: topicIndex,
+            tasks,
+          });
+        });
+
+        const blockTitle = (blockEl.querySelector('[data-role="block-title"]')?.value || '').trim();
+        if (!blockTitle && !topics.length) return;
+
+        blocks.push({
+          id: blockEl.dataset.blockId ? Number(blockEl.dataset.blockId) : null,
+          title: blockTitle || `Блок ${blockIndex + 1}`,
+          description: (blockEl.querySelector('[data-role="block-description"]')?.value || '').trim() || null,
+          order: blockIndex,
+          topics,
+        });
+      });
+
+      return blocks;
+    }
+
+    async function submitProgramProposal() {
+      if (!activeProgramId) return;
+
+      const blocks = collectProgramProposalBlocks();
+      if (!blocks.length) {
+        if (window.showToast) {
+          window.showToast('Нельзя отправить пустое предложение по программе.', 'warning');
+        } else {
+          alert('Нельзя отправить пустое предложение по программе.');
+        }
+        return;
+      }
+
+      try {
+        const response = await fetchWithAuth(`/education/program-change-proposals/programs/${activeProgramId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            blocks,
+            comment: `Предложены изменения программы: ${editProgramTitleInput.value.trim() || 'без названия'}`,
+          }),
+        });
+
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(result?.detail || result?.message || 'Не удалось отправить предложение на согласование');
+        }
+
+        closeEditProgramModal();
+        if (window.showToast) {
+          window.showToast('Изменения отправлены на согласование администратору', 'success');
+        } else {
+          alert('Изменения отправлены на согласование администратору');
+        }
+      } catch (error) {
+        if (window.showToast) {
+          window.showToast(error.message, 'error');
+        } else {
+          alert(error.message);
+        }
+      }
     }
 
     function closeEditProgramModal() {
       editProgramModal.classList.remove('active');
       document.body.style.overflow = '';
+      activeProgramId = null;
     }
 
     function saveProgramName() {
@@ -3321,11 +3465,12 @@ const groupManageModal = document.getElementById('groupManageModal');
 const manageGroupNameInput = document.getElementById('manageGroupName');
 
 function openGroupManageModal(groupName) {
-  // Закрываем окно программы, чтобы открыть окно управления составом
-  closeEditProgramModal(); 
-  manageGroupNameInput.value = groupName;
-  groupManageModal.classList.add('active');
-  document.body.style.overflow = 'hidden';
+  closeEditProgramModal();
+  const normalizedName = (groupName || 'Группа').trim();
+  const groupNameEl = document.getElementById('manageGroupName');
+  if (groupNameEl) groupNameEl.textContent = normalizedName;
+  openJournalModal(normalizedName, 0);
+  groupManageModal.classList.remove('active');
 }
 
 function closeGroupManageModal() {
@@ -3452,24 +3597,23 @@ function acceptStudentChanges() {
 const createProgramModal = document.getElementById('createProgramModal');
 
 function openCreateProgramModal() {
-  // Сброс состояния окна к Шагу 1
-  document.getElementById('createProgramTitleInput').value = '';
-  document.getElementById('createStep1Body').style.display = 'flex';
-  document.getElementById('createStep2Body').style.display = 'none';
-  document.getElementById('btnNextStep').style.display = 'inline-flex';
-  document.getElementById('btnFinishCreate').style.display = 'none';
-  
+  const titleInput = document.getElementById('createProgramTitleInput');
+  const createStep1Body = document.getElementById('createStep1Body');
+  const createStep2Body = document.getElementById('createStep2Body');
+  const btnNextStep = document.getElementById('btnNextStep');
+  const btnFinishCreate = document.getElementById('btnFinishCreate');
+
+  titleInput.value = '';
+  titleInput.style.transform = 'translateX(0)';
+  createStep1Body.style.display = 'flex';
+  createStep2Body.style.display = 'none';
+  btnNextStep.style.display = 'inline-flex';
+  btnFinishCreate.style.display = 'none';
   document.getElementById('createProgramSubtitle').innerHTML = '<span><iconify-icon icon="solar:magic-stick-3-bold-duotone"></iconify-icon> Шаг 1: Укажите название программы</span>';
-  
-  // Очистка старых данных (если окно открывается повторно)
   document.getElementById('newProgramBlocksList').innerHTML = '';
-  document.getElementById('newProgramGroupsList').innerHTML = '<div id="emptyGroupsPlaceholder" style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 20px 0;">Групп пока нет</div>';
-  
   createProgramModal.classList.add('active');
   document.body.style.overflow = 'hidden';
-  
-  // Фокус на инпут названия
-  setTimeout(() => document.getElementById('createProgramTitleInput').focus(), 100);
+  setTimeout(() => titleInput.focus(), 100);
 }
 
 function closeCreateProgramModal() {
@@ -3477,10 +3621,116 @@ function closeCreateProgramModal() {
   document.body.style.overflow = '';
 }
 
+function collectNewProgramProposalBlocks() {
+  const blocks = [];
+  const blockEls = document.querySelectorAll('#newProgramBlocksList .course-block');
+
+  blockEls.forEach((blockEl, blockIndex) => {
+    const topics = [];
+    const topicEls = blockEl.querySelectorAll('.topic-item');
+
+    topicEls.forEach((topicEl, topicIndex) => {
+      const tasks = [];
+      const taskEls = topicEl.querySelectorAll('.task-edit-row');
+
+      taskEls.forEach((taskEl) => {
+        const title = (taskEl.querySelector('[data-role="task-title"]')?.value || '').trim();
+        if (!title) return;
+        tasks.push({
+          id: null,
+          title,
+          description: null,
+          max_score: Number(taskEl.querySelector('[data-role="task-max-score"]')?.value || 10),
+          order: tasks.length,
+          is_manual: false,
+        });
+      });
+
+      const topicTitle = (topicEl.querySelector('[data-role="topic-title"]')?.value || '').trim();
+      if (!topicTitle && !tasks.length) return;
+
+      topics.push({
+        id: null,
+        title: topicTitle || `Тема ${topicIndex + 1}`,
+        description: (topicEl.querySelector('[data-role="topic-description"]')?.value || '').trim() || null,
+        order: topicIndex,
+        tasks,
+      });
+    });
+
+    const blockTitle = (blockEl.querySelector('[data-role="block-title"]')?.value || '').trim();
+    if (!blockTitle && !topics.length) return;
+
+    blocks.push({
+      id: null,
+      title: blockTitle || `Блок ${blockIndex + 1}`,
+      description: (blockEl.querySelector('[data-role="block-description"]')?.value || '').trim() || null,
+      order: blockIndex,
+      topics,
+    });
+  });
+
+  return blocks;
+}
+
+async function submitNewProgramProposal() {
+  const titleInput = document.getElementById('createProgramTitleInput');
+  const title = titleInput.value.trim();
+  if (!title) {
+    titleInput.focus();
+    if (window.showToast) {
+      window.showToast('Введите название программы', 'warning');
+    } else {
+      alert('Введите название программы');
+    }
+    return;
+  }
+
+  const blocks = collectNewProgramProposalBlocks();
+  if (!blocks.length) {
+    if (window.showToast) {
+      window.showToast('Нужно добавить хотя бы один блок в новую программу.', 'warning');
+    } else {
+      alert('Нужно добавить хотя бы один блок в новую программу.');
+    }
+    return;
+  }
+
+  try {
+    const response = await fetchWithAuth('/education/program-change-proposals/new', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title,
+        description: null,
+        blocks,
+        comment: `Предлагается создать новую программу: ${title}`,
+      }),
+    });
+
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(result?.detail || result?.message || 'Не удалось отправить программу на согласование');
+    }
+
+    closeCreateProgramModal();
+    if (window.showToast) {
+      window.showToast('Предложение по новой программе отправлено на согласование администратору', 'success');
+    } else {
+      alert('Предложение по новой программе отправлено на согласование администратору');
+    }
+  } catch (error) {
+    if (window.showToast) {
+      window.showToast(error.message, 'error');
+    } else {
+      alert(error.message);
+    }
+  }
+}
+
 function goToCreateStep2() {
   const titleInput = document.getElementById('createProgramTitleInput');
   if (titleInput.value.trim() === '') {
-    // Небольшая анимация ошибки (тряска), если поле пустое
     titleInput.style.transform = 'translateX(-10px)';
     setTimeout(() => titleInput.style.transform = 'translateX(10px)', 50);
     setTimeout(() => titleInput.style.transform = 'translateX(0)', 100);
@@ -3488,15 +3738,21 @@ function goToCreateStep2() {
     return;
   }
 
-  // Переключение интерфейса на Шаг 2
   document.getElementById('createStep1Body').style.display = 'none';
   document.getElementById('createStep2Body').style.display = 'flex';
   document.getElementById('btnNextStep').style.display = 'none';
   document.getElementById('btnFinishCreate').style.display = 'inline-flex';
   document.getElementById('createProgramSubtitle').innerHTML = '<span><iconify-icon icon="solar:pen-bold-duotone"></iconify-icon> Шаг 2: Наполнение блоков, тем и создание групп</span>';
-  
-  // Автоматически добавляем первый пустой блок для удобства
-  addNewBlock('newProgramBlocksList');
+
+  const container = document.getElementById('newProgramBlocksList');
+  if (!container.querySelector('.course-block')) {
+    addNewBlock('newProgramBlocksList');
+  }
+}
+
+const finishCreateBtn = document.getElementById('btnFinishCreate');
+if (finishCreateBtn) {
+  finishCreateBtn.onclick = submitNewProgramProposal;
 }
 
 // Закрытие по клику на фон
@@ -3512,16 +3768,15 @@ function addNewBlock(containerId) {
   const blockCount = container.querySelectorAll('.course-block').length + 1;
   
   const blockHTML = `
-    <div class="course-block current" style="animation: fadeIn 0.3s ease;">
+    <div class="course-block current" data-block-id="" style="animation: fadeIn 0.3s ease;">
       <div class="block-header-info">
         <span class="status-badge status-current">Новый блок</span>
-        <input type="text" class="ghost-input" style="width: auto; font-size: 0.85rem; color: var(--text-muted); padding: 0; text-align: right;" placeholder="Сроки (напр. 01 Сен - 15 Сен)">
       </div>
-      <input type="text" class="ghost-input title-large" value="Блок ${blockCount}: " placeholder="Название блока">
-      <textarea class="ghost-textarea desc-text" rows="1" placeholder="Краткое описание блока..."></textarea>
+      <input type="text" class="ghost-input title-large" data-role="block-title" value="Блок ${blockCount}" placeholder="Название блока">
+      <textarea class="ghost-textarea desc-text" rows="1" data-role="block-description" placeholder="Краткое описание блока..."></textarea>
       
       <div class="topics-list" style="margin-top: 16px;"></div>
-      <button class="add-action-link" style="margin-top: 16px;" onclick="addNewTopic(this)"><iconify-icon icon="solar:add-circle-bold"></iconify-icon> Создать тему</button>
+      <button class="add-action-link" style="margin-top: 16px;" onclick="addNewTopic(this)"><iconify-icon icon="solar:add-circle-bold"></iconify-icon> Добавить тему</button>
     </div>
   `;
   container.insertAdjacentHTML('beforeend', blockHTML);
@@ -3531,23 +3786,17 @@ function addNewBlock(containerId) {
 function addNewTopic(btnElement) {
   const topicsList = btnElement.previousElementSibling;
   const topicHTML = `
-    <div class="topic-item" style="animation: fadeIn 0.3s ease;">
+    <div class="topic-item" data-topic-id="" style="animation: fadeIn 0.3s ease;">
       <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-        <input type="text" class="ghost-input title-medium" style="flex:1;" placeholder="Название темы (напр. Тема 1...)">
+        <input type="text" class="ghost-input title-medium" style="flex:1;" data-role="topic-title" placeholder="Название темы">
         <button class="btn-icon-danger" onclick="this.closest('.topic-item').remove()" style="margin-left: 8px;"><iconify-icon icon="solar:trash-bin-trash-bold"></iconify-icon></button>
       </div>
-      <textarea class="ghost-textarea desc-text" rows="2" placeholder="Опишите, что будет изучаться..."></textarea>
+      <textarea class="ghost-textarea desc-text" rows="2" data-role="topic-description" placeholder="Опишите, что будет изучаться..."></textarea>
       
       <div class="topic-hw" style="margin-top: 12px;">
         <strong style="display: block; margin-bottom: 8px; color: var(--text-main);">Задания и материалы:</strong>
         <div class="tasks-container"></div>
         <button class="add-action-link" onclick="addNewTask(this)"><iconify-icon icon="solar:add-circle-bold"></iconify-icon> Добавить задание</button>
-      </div>
-      
-      <div class="materials-grid" style="margin-top: 16px;">
-        <button class="add-material-btn" onclick="alert('Вызов стандартного окна загрузки файла')">
-          <iconify-icon icon="solar:add-folder-bold"></iconify-icon> Добавить файл
-        </button>
       </div>
     </div>
   `;
@@ -3558,17 +3807,16 @@ function addNewTopic(btnElement) {
 function addNewTask(btnElement) {
   const tasksContainer = btnElement.previousElementSibling;
   const taskHTML = `
-    <div class="task-edit-row" style="animation: fadeIn 0.2s ease;">
-      <iconify-icon icon="solar:square-alt-arrow-right-bold-duotone" style="color: var(--pal-light-green); margin-top: 12px;"></iconify-icon>
-      <textarea class="ghost-textarea" style="flex: 1;" rows="1" placeholder="Опишите суть задания..."></textarea>
+    <div class="task-edit-row" data-task-id="" style="animation: fadeIn 0.2s ease;">
+      <textarea class="ghost-textarea" style="flex: 1;" rows="2" data-role="task-title" placeholder="Опишите суть задания..."></textarea>
       
-      <div class="task-points-wrap" style="margin-top: 0;">
+      <div class="task-points-wrap">
         <span>Max:</span>
-        <input type="number" class="task-points-input" value="10" min="1" placeholder="0">
+        <input type="number" class="task-points-input" data-role="task-max-score" value="10" min="1" placeholder="0">
       </div>
       
-      <button class="btn-icon-danger" onclick="this.closest('.task-edit-row').remove()">
-        <iconify-icon icon="solar:close-circle-bold"></iconify-icon>
+      <button class="btn-icon-danger" title="Удалить задание" style="margin-top: 6px;" onclick="this.closest('.task-edit-row').remove()">
+        <iconify-icon icon="solar:trash-bin-trash-bold"></iconify-icon>
       </button>
     </div>
   `;
@@ -3640,6 +3888,10 @@ function activateTab(tabId) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Ранняя проверка авторизации
+  requireAuth();
+  
+  // ===== Инициализация табов =====
   const tabButtons = document.querySelectorAll('.tab-btn');
 
   tabButtons.forEach(button => {
@@ -3651,27 +3903,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Активируем первый таб и загружаем данные
   const activeTab = document.querySelector('.tab-btn.active');
   if (activeTab) {
     activateTab(activeTab.getAttribute('data-tab'));
   }
-});
 
-/* --- ЛОГИКА ПЕРЕКЛЮЧЕНИЯ ВНЕШНИХ ВКЛАДОК --- */
-document.querySelectorAll('.tab-btn').forEach(button => {
-  button.addEventListener('click', () => {
-    // Убираем класс active у всех кнопок
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-    // Убираем класс active у всех контент-блоков
-    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-    
-    // Добавляем класс нажатой кнопке и её контенту
-    button.classList.add('active');
-    const targetTab = document.getElementById(button.getAttribute('data-tab'));
-    if (targetTab) {
-      targetTab.classList.add('active');
-    }
-  });
+  // ===== Загрузка начальных данных =====
+  loadTeacherHeaderProfile();
+  loadTeacherPrograms();
+  
+  // ===== Инициализация новостей =====
+  const newsTab = document.querySelector('[data-tab="tab-news"]');
+  if (newsTab) {
+    newsTab.addEventListener('click', loadNews);
+  }
 });
 
 /* --- ЛОГИКА ДОСЬЕ УЧЕНИКА --- */
@@ -3714,6 +3960,135 @@ dossierModal.addEventListener('click', (e) => {
     closeStudentDossier();
   }
 });
+  async function loadTeacherPrograms() {
+    const list = document.getElementById('teacherProgramsList');
+    if (!list) return;
+    list.innerHTML = '<div style="padding: 32px; color: var(--text-muted);">Загрузка программ и групп...</div>';
+
+    try {
+      const [programsResponse, groupsResponse] = await Promise.all([
+        fetchWithAuth('/education/programs'),
+        fetchWithAuth('/education/groups')
+      ]);
+
+      if (!programsResponse.ok || !groupsResponse.ok) {
+        throw new Error('Не удалось загрузить данные учителя');
+      }
+
+      const programsPayload = await programsResponse.json();
+      const groupsPayload = await groupsResponse.json();
+      const programs = programsPayload.data || [];
+      const groups = groupsPayload.data || [];
+
+      const groupsByProgram = groups.reduce((acc, group) => {
+        if (!group.program_id) return acc;
+        if (!acc[group.program_id]) acc[group.program_id] = [];
+        acc[group.program_id].push(group);
+        return acc;
+      }, {});
+
+      if (!programs.length && !groups.length) {
+        list.innerHTML = '<div style="padding: 32px; color: var(--text-muted);">У вас пока нет назначенных программ и групп.</div>';
+        return;
+      }
+
+      list.innerHTML = '';
+
+      programs.forEach(program => {
+        const programGroups = groupsByProgram[program.id] || [];
+        const card = document.createElement('div');
+        card.className = 'program-card';
+
+        card.innerHTML = `
+          <div class="program-header" onclick="toggleProgram(this)">
+            <div class="program-title-wrap">
+              <div class="program-icon"><iconify-icon icon="solar:music-note-bold-duotone"></iconify-icon></div>
+              <div>
+                <div class="program-name-container">
+                  <div class="program-name">${program.title || 'Без названия'}</div>
+                </div>
+              </div>
+            </div>
+            <div class="program-meta">
+              <span class="groups-count">${programGroups.length} ${programGroups.length === 1 ? 'группа' : 'групп'}</span>
+              <button class="btn-sm primary" type="button" onclick="event.stopPropagation(); openEditProgramModal(${program.id}, '${(program.title || 'Без названия').replace(/'/g, "\\'")}' );">
+                <iconify-icon icon="solar:pen-bold"></iconify-icon> Предложить изменения
+              </button>
+              <iconify-icon class="chevron" icon="solar:alt-arrow-down-bold"></iconify-icon>
+            </div>
+          </div>
+          <div class="program-body">
+            <div class="groups-list">
+              ${programGroups.length ? programGroups.map(group => `
+                <div class="group-row" onclick="openJournalModal('${(group.title || 'Группа').replace(/'/g, "\\'")}', 0); event.stopPropagation();">
+                  <div class="group-info">
+                    <div class="group-name">${group.title || 'Группа без названия'}</div>
+                  </div>
+                  <div class="group-schedule">
+                    <span class="day">Программа</span>
+                    <span class="time">${program.title || 'Без названия'}</span>
+                  </div>
+                  <button class="btn-sm primary group-journal-btn" type="button" onclick="event.stopPropagation(); openJournalModal('${(group.title || 'Группа').replace(/'/g, "\\'")}', 0);">
+                    <iconify-icon icon="solar:notebook-bold"></iconify-icon> Журнал
+                  </button>
+                </div>
+              `).join('') : `
+                <div class="group-row">
+                  <div class="group-info">
+                    <div class="group-name">К этой программе не назначены группы</div>
+                    <div class="group-students">Проверьте назначение учителя в администрировании</div>
+                  </div>
+                </div>
+              `}
+            </div>
+          </div>
+        `;
+
+        list.appendChild(card);
+      });
+
+      if (!programs.length && groups.length) {
+        const unassignedGroups = groups.filter(group => !group.program_id);
+        if (unassignedGroups.length) {
+          const card = document.createElement('div');
+          card.className = 'program-card';
+          card.innerHTML = `
+            <div class="program-header" onclick="toggleProgram(this)">
+              <div class="program-title-wrap">
+                <div class="program-icon"><iconify-icon icon="solar:people-team-bold"></iconify-icon></div>
+                <div>
+                  <div class="program-name-container">
+                    <div class="program-name">Назначенные группы без программы</div>
+                  </div>
+                  <div class="program-level">Требует проверки</div>
+                </div>
+              </div>
+              <div class="program-meta">
+                <span class="groups-count">${unassignedGroups.length}</span>
+                <iconify-icon class="chevron" icon="solar:alt-arrow-down-bold"></iconify-icon>
+              </div>
+            </div>
+            <div class="program-body">
+              <div class="groups-list">
+                ${unassignedGroups.map(group => `
+                  <div class="group-row">
+                    <div class="group-info">
+                      <div class="group-name">${group.title || 'Группа без названия'}</div>
+                      <div class="group-students">Нужна привязка к программе</div>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `;
+          list.appendChild(card);
+        }
+      }
+    } catch (error) {
+      list.innerHTML = `<div style="padding: 32px; color: var(--pal-accent-red);">Ошибка: ${error.message}</div>`;
+    }
+  }
+
   function toggleEditStudentInfo(btnElement) {
     // Находим все поля, которые можно редактировать в досье
     const editFields = document.querySelectorAll('.dossier-edit-input');
@@ -3961,6 +4336,8 @@ function openDayConfigModal(dayName, dateStr) {
 </script>
 
 <script>
+  // ============= ИНИЦИАЛИЗАЦИЯ СТРАНИЦЫ =============
+
   let editingNewsId = null;
 
   function openNewsModal(news = null) {
@@ -4045,12 +4422,6 @@ function openDayConfigModal(dayName, dateStr) {
     if (!response.ok) throw new Error('Не удалось удалить новость');
     await loadNews();
   }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    const newsTab = document.querySelector('[data-tab="tab-news"]');
-    newsTab?.addEventListener('click', loadNews);
-    
-  });
 </script>
 
 

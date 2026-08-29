@@ -77,35 +77,178 @@
     }
 
     /* ============================================================
-       ШАПКА (HEADER)
+       ШАПКА (HEADER) И НАВИГАЦИЯ В ЕДИНОМ СТИЛЕ
        ============================================================ */
     header {
-      position: absolute;
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100%;
-      z-index: 10;
-      padding: 24px 0;
+      z-index: 100;
+      padding: 14px 0;
+      transition: background 0.3s ease, padding 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+      background: rgba(5, 6, 10, 0.55);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    header.scrolled {
+      background: rgba(5, 6, 10, 0.92);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(176, 209, 130, 0.2);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+      padding: 10px 0;
     }
 
     .header-content {
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      position: relative;
+      gap: 16px;
     }
 
+    /* ЛОГО — слева */
     .logo-text {
       font-weight: 900;
-      font-size: 1rem;
+      font-size: 0.95rem;
       letter-spacing: 0.05em;
       text-transform: uppercase;
+      color: var(--pal-off-white);
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+      transition: color 0.25s ease;
+      flex-shrink: 0;
     }
 
-    nav {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
+    .logo-text:hover {
+      color: var(--pal-light-green);
+    }
+
+    /* ЦЕНТР — панель навигации в едином стиле Studio Alanko */
+    nav.nav-pills-bar {
       display: flex;
-      gap: 12px;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-pill);
+      padding: 4px 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    nav.nav-pills-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-pills-bar .pill {
+      border: 1px solid transparent;
+      border-radius: var(--radius-pill);
+      padding: 6px 12px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: rgba(255, 255, 255, 0.72);
+      text-transform: uppercase;
+      white-space: nowrap;
+      transition: all 0.22s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      background: transparent;
+    }
+
+    .nav-pills-bar .pill iconify-icon {
+      font-size: 0.95rem;
+      opacity: 0.85;
+      color: var(--pal-light-green);
+    }
+
+    .nav-pills-bar .pill:hover {
+      background: rgba(176, 209, 130, 0.12);
+      border-color: rgba(176, 209, 130, 0.35);
+      color: var(--pal-off-white);
+      transform: translateY(-1px);
+    }
+
+    .nav-pills-bar .pill.active {
+      background: var(--pal-dark-green);
+      border-color: var(--pal-light-green);
+      color: var(--pal-light-green);
+      box-shadow: 0 0 14px rgba(176, 209, 130, 0.25);
+    }
+
+    /* ПРАВО — действия */
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    /* Отступ сверху для идеального перехода к якорям */
+    .hero,
+    .achievements-section,
+    .awards-section,
+    .rating-section,
+    .leaderboard-section,
+    .exams-section,
+    .my-classes-section {
+      scroll-margin-top: 78px;
+    }
+
+    /* Мягкая подсветка целевого блока при быстром переходе */
+    @keyframes blockPulseGlow {
+      0% {
+        box-shadow: 0 0 0 0 rgba(176, 209, 130, 0.45);
+        outline: 2px solid var(--pal-light-green);
+      }
+      50% {
+        box-shadow: 0 0 32px 6px rgba(176, 209, 130, 0.3);
+        outline: 2px solid var(--pal-light-green);
+      }
+      100% {
+        box-shadow: 0 0 0 0 transparent;
+        outline: 2px solid transparent;
+      }
+    }
+
+    .highlight-block-target {
+      animation: blockPulseGlow 1.4s ease-out;
+      border-radius: var(--radius-lg);
+    }
+
+    @media (max-width: 1180px) {
+      .nav-pills-bar .pill span {
+        font-size: 0.68rem;
+      }
+      .nav-pills-bar .pill {
+        padding: 5px 9px;
+      }
+    }
+
+    @media (max-width: 992px) {
+      header {
+        padding: 10px 0;
+      }
+      .header-content {
+        flex-wrap: wrap;
+        justify-content: space-between;
+      }
+      nav.nav-pills-bar {
+        order: 3;
+        width: 100%;
+        max-width: 100%;
+        margin-top: 8px;
+        justify-content: flex-start;
+      }
     }
 
     /* ============================================================
@@ -745,7 +888,8 @@
 .category-modal {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.65);
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
   display: none;
   align-items: center;
   justify-content: center;
@@ -760,36 +904,52 @@
 .category-modal-content {
   width: min(980px, 100%);
   max-height: min(90vh, 780px);
-  overflow: auto;
-  background: rgba(8, 12, 19, 0.97);
-  border: 1px solid rgba(176, 209, 130, 0.18);
+  overflow-y: auto;
+  background: rgba(8, 12, 19, 0.98);
+  border: 1px solid rgba(176, 209, 130, 0.22);
   border-radius: 24px;
   padding: 28px;
-  box-shadow: 0 0 60px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 30px rgba(176, 209, 130, 0.08);
 }
 
-.category-modal-content h3 {
-  margin-bottom: 16px;
+.category-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.category-modal-header h3 {
   font-size: 1.4rem;
+  font-weight: 700;
   color: var(--text-main);
+  margin: 0 0 4px 0;
 }
 
-.category-modal-close {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255,255,255,0.15);
-  color: var(--text-main);
-  padding: 10px 16px;
-  border-radius: var(--radius-md);
+.category-modal-close-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--text-muted);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
   cursor: pointer;
-  font-size: 0.95rem;
-  margin-bottom: 20px;
-  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
-.category-modal-close:hover {
-  background: rgba(239, 108, 108, 0.1);
-  border-color: rgba(239, 108, 108, 0.3);
+.category-modal-close-btn:hover {
+  background: rgba(239, 108, 108, 0.15);
+  border-color: rgba(239, 108, 108, 0.4);
   color: var(--pal-accent-red);
+  transform: rotate(90deg);
 }
 
 .category-task-list {
@@ -798,49 +958,211 @@
 }
 
 .category-task-item {
-  background: var(--card-bg);
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-lg);
-  padding: 18px;
+  padding: 20px;
   transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .category-task-item:hover {
   background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(176, 209, 130, 0.3);
   transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.category-task-item-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .category-task-item h4 {
-  margin-bottom: 8px;
-  font-size: 1rem;
+  margin: 0;
+  font-size: 1.08rem;
+  font-weight: 700;
+  color: var(--text-main);
 }
 
 .category-task-item p {
   color: var(--text-muted);
-  margin-bottom: 8px;
+  margin: 0;
+  line-height: 1.5;
+  font-size: 0.92rem;
+}
+
+.category-task-feedback {
+  background: rgba(176, 209, 130, 0.06);
+  border-left: 3px solid var(--pal-light-green);
+  padding: 10px 14px;
+  border-radius: 4px 8px 8px 4px;
+  font-size: 0.88rem;
+  color: var(--pal-off-white);
+  line-height: 1.45;
 }
 
 .category-task-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 10px;
   align-items: center;
 }
 
-.category-task-meta span,
-.category-task-meta a {
-  font-size: 0.9rem;
-  color: rgba(255,255,255,0.75);
+.task-meta-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.8);
 }
 
-.category-task-meta a {
+.task-meta-chip.status-done {
+  background: rgba(176, 209, 130, 0.15);
+  border-color: rgba(176, 209, 130, 0.35);
   color: var(--pal-light-green);
-  text-decoration: none;
 }
 
-.category-task-meta a:hover {
-  text-decoration: underline;
+.task-attachments-block {
+  margin-top: 8px;
+  padding-top: 14px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.task-attachment-header {
+  font-size: 0.78rem;
+  color: var(--pal-light-green);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.task-attachment-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 10px;
+}
+
+.task-attachment-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(176, 209, 130, 0.2);
+  border-radius: 12px;
+  padding: 8px 12px;
+  transition: all 0.2s ease;
+}
+
+.task-attachment-item:hover {
+  border-color: var(--pal-light-green);
+  background: rgba(176, 209, 130, 0.08);
+  transform: translateY(-1px);
+}
+
+.task-attachment-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.task-attachment-info iconify-icon {
+  color: var(--pal-light-green);
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.task-attachment-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--pal-off-white);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.task-attachment-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.task-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  border: none;
+}
+
+.task-action-btn.btn-download {
+  background: linear-gradient(135deg, rgba(176, 209, 130, 0.2) 0%, rgba(106, 142, 78, 0.25) 100%);
+  border: 1px solid rgba(176, 209, 130, 0.4);
+  color: var(--pal-light-green);
+}
+
+.task-action-btn.btn-download:hover {
+  background: var(--pal-light-green);
+  color: #05060A;
+  box-shadow: 0 4px 12px rgba(176, 209, 130, 0.35);
+  transform: translateY(-1px);
+}
+
+.task-action-btn.btn-view {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--pal-off-white);
+}
+
+.task-action-btn.btn-view:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: #FFF;
+  transform: translateY(-1px);
+}
+
+.task-no-attachments {
+  margin-top: 4px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.84rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.task-no-attachments iconify-icon {
+  font-size: 1.15rem;
+  color: rgba(255, 255, 255, 0.35);
+  flex-shrink: 0;
 }
 
 @media (max-width: 900px) {
@@ -1003,22 +1325,54 @@
 </head>
 <body>
 
-  <header style="position: relative; z-index: 10;">
+  <header id="mainHeader">
     <div class="container header-content">
-      <div class="logo-text">Studio Alanko</div>
-      <nav>
-        <a href="#" class="pill">(РАСПИСАНИЕ)</a>
-        <a href="#" class="pill">(ПРОГРЕСС)</a>
+      <a href="#hero" class="logo-text">
+        <iconify-icon icon="solar:shield-check-linear" style="margin-right: 6px; font-size: 1.1rem; color: var(--pal-light-green);"></iconify-icon>
+        Studio Alanko
+      </a>
+      <nav class="nav-pills-bar" id="mainNavbar">
+        <a href="#hero" class="pill active">
+          <iconify-icon icon="solar:user-circle-linear"></iconify-icon>
+          <span>Профиль</span>
+        </a>
+        <a href="#achievements" class="pill">
+          <iconify-icon icon="solar:clapperboard-play-linear"></iconify-icon>
+          <span>Достижения</span>
+        </a>
+        <a href="#awards" class="pill">
+          <iconify-icon icon="solar:cup-linear"></iconify-icon>
+          <span>Награды</span>
+        </a>
+        <a href="#rating" class="pill">
+          <iconify-icon icon="solar:chart-square-linear"></iconify-icon>
+          <span>Успеваемость</span>
+        </a>
+        <a href="#leaderboard" class="pill">
+          <iconify-icon icon="solar:ranking-linear"></iconify-icon>
+          <span>Рейтинг</span>
+        </a>
+        <a href="#exams" class="pill">
+          <iconify-icon icon="solar:diploma-verified-linear"></iconify-icon>
+          <span>Зачёты</span>
+        </a>
+        <a href="#classes" class="pill">
+          <iconify-icon icon="solar:calendar-linear"></iconify-icon>
+          <span>Занятия</span>
+        </a>
       </nav>
       <div class="actions">
-        <span class="pill" style="color: var(--pal-light-green); border-color: var(--pal-mid-green);">(ID: 481516)</span>
+        <a href="index.html" class="pill" style="border-color: rgba(255,255,255,0.15); color: var(--text-muted); font-size: 0.72rem;" title="На главную">
+          <iconify-icon icon="solar:home-2-linear" style="margin-right: 4px;"></iconify-icon>
+          Главная
+        </a>
       </div>
     </div>
   </header>
 
   <main style="position: relative; z-index: 10;">
     <!-- ГЛАВНЫЙ ЭКРАН -->
-    <section class="hero">
+    <section class="hero" id="hero">
       <div class="container">
         <div class="hero-content">
           <div class="hero-title-img">
@@ -1039,7 +1393,7 @@
   </div>
 
 <!-- БЛОК ДОСТИЖЕНИЙ -->
-<section class="achievements-section">
+<section class="achievements-section" id="achievements">
       <div class="glowworm-track">
         <div class="glowworm"></div>
       </div>
@@ -1078,7 +1432,7 @@
     <div class="diamond"></div>
     <div class="line right"></div>
   </div>
-<section class="awards-section">
+<section class="awards-section" id="awards">
       <div class="container">
         <div class="awards-header">
           <h2>Награды и результаты</h2>
@@ -1115,26 +1469,32 @@
     <div class="diamond"></div>
     <div class="line right"></div>
   </div>
-<section class="rating-section">
+<section class="rating-section" id="rating">
   <div class="container">
 
     <div class="rating-header">
       <h2>Успеваемость ученика</h2>
     </div>
 
+    <!-- Вкладки переключения рейтинга -->
+    <div class="achievements-tabs rating-tabs">
+      <button type="button" class="achievement-tab rating-tab active" data-board="group">Рейтинг группы</button>
+      <button type="button" class="achievement-tab rating-tab" data-board="overall">Конкурсы ALANKO</button>
+    </div>
+
     <div class="rating-summary">
       <div class="rating-card">
-        <span>Текущие баллы</span>
-        <strong id="ratingPoints">1280</strong>
+        <span id="ratingPointsLabel">Баллы в группе</span>
+        <strong id="ratingPoints">0</strong>
       </div>
 
       <div class="rating-card">
-        <span>Место в рейтинге</span>
+        <span id="ratingPlaceLabel">Место в группе</span>
         <strong id="ratingPlace">#0</strong>
       </div>
 
       <div class="rating-card">
-        <span>Задания</span>
+        <span id="ratingTasksLabel">Выполнено заданий</span>
         <strong id="ratingTasks">0</strong>
       </div>
     </div>
@@ -1148,8 +1508,6 @@
       </div>
     </div>
 
-    </div>
-
   </div>
 </section>
   <div class="section-divider">
@@ -1157,17 +1515,23 @@
     <div class="diamond"></div>
     <div class="line right"></div>
   </div>
-<section class="leaderboard-section">
+<section class="leaderboard-section" id="leaderboard">
   <div class="container">
     
     <div class="leaderboard-header">
       <div class="leader-label">РЕЙТИНГ</div>
       <h2 class="leader-name" style="font-size: 2.5rem; margin-bottom: 10px;">
-        Общий рейтинг
+        <span id="leaderboardTitle">Рейтинг группы</span>
       </h2>
-      <p style="color: rgba(255,255,255,0.5);">
-        Рейтинг формируется на основе всех занятий
+      <p style="color: rgba(255,255,255,0.5);" id="leaderboardSubtitle">
+        Рейтинг формируется на основе всех занятий и заданий группы
       </p>
+    </div>
+
+    <!-- Вкладки таблицы лидеров -->
+    <div class="achievements-tabs leaderboard-tabs" style="margin-bottom: 24px;">
+      <button type="button" class="achievement-tab rating-tab active" data-board="group">Рейтинг группы</button>
+      <button type="button" class="achievement-tab rating-tab" data-board="overall">Конкурсы ALANKO</button>
     </div>
 
     <table class="leaderboard-table">
@@ -1193,7 +1557,7 @@
     <div class="diamond"></div>
     <div class="line right"></div>
   </div>
-<section class="exams-section">
+<section class="exams-section" id="exams">
   <div class="container">
     <div class="exams-header">
       <h2>Зачёты</h2>
@@ -1221,14 +1585,14 @@
     <div class="line right"></div>
   </div>
 
-  <section class="my-classes-section">
+  <section class="my-classes-section" id="classes">
     <div class="container">
       <div class="classes-header">
         <h2>Мои занятия</h2>
         <p>Ваши предстоящие индивидуальные тренировки</p>
       </div>
       
-      <div class="classes-grid">
+      <div class="classes-grid" id="studentClassesGrid">
 
         <!-- Блок-приглашение на индивидуальное занятие -->
         <div class="class-card offer-card" style="border: 2px dashed var(--pal-light-green); background: linear-gradient(135deg, rgba(176,209,130,0.15) 0%, rgba(5,6,10,0.8) 100%); position: relative; overflow: hidden; box-shadow: 0 8px 32px rgba(176,209,130,0.15);">
@@ -1318,21 +1682,31 @@
 
   <div class="category-modal" id="categoryModal">
     <div class="category-modal-content">
-      <button type="button" class="category-modal-close" id="closeCategoryModal">Закрыть</button>
-      <h3 id="categoryModalTitle">Категория</h3>
+      <div class="category-modal-header">
+        <div>
+          <h3 id="categoryModalTitle">Задания блока</h3>
+          <p id="categoryModalSubtitle" style="color: var(--text-muted); font-size: 0.88rem; margin: 0;"></p>
+        </div>
+        <button type="button" class="category-modal-close-btn" id="closeCategoryModal" aria-label="Закрыть" title="Закрыть окно">
+          <iconify-icon icon="solar:close-circle-linear"></iconify-icon>
+        </button>
+      </div>
       <div class="category-task-list" id="categoryTaskList"></div>
     </div>
   </div>
 
   <script src="js/auth.js"></script>
   <script>
-    // requireAuth();
+    requireAuth();
 
     const studentWelcome = document.getElementById('studentWelcome');
     const studentIntroText = document.getElementById('studentIntroText');
     const ratingPointsEl = document.getElementById('ratingPoints');
     const ratingPlaceEl = document.getElementById('ratingPlace');
     const ratingTasksEl = document.getElementById('ratingTasks');
+    const ratingPointsLabel = document.getElementById('ratingPointsLabel');
+    const ratingPlaceLabel = document.getElementById('ratingPlaceLabel');
+    const ratingTasksLabel = document.getElementById('ratingTasksLabel');
     const ratingHistoryList = document.getElementById('ratingHistoryList');
     const leaderboardTableBody = document.getElementById('leaderboardTableBody');
     const studentIndividualVideosContainer = document.getElementById('studentIndividualVideosContainer');
@@ -1342,13 +1716,19 @@
     const achievementTabs = document.querySelectorAll('.achievement-tab:not(.video-tab)');
     const videoTabs = document.querySelectorAll('.video-tab');
     const studentCategoriesGrid = document.getElementById('studentCategoriesGrid');
+    const studentClassesGrid = document.getElementById('studentClassesGrid');
     const categoryModal = document.getElementById('categoryModal');
     const categoryModalTitle = document.getElementById('categoryModalTitle');
     const categoryTaskList = document.getElementById('categoryTaskList');
     const closeCategoryModal = document.getElementById('closeCategoryModal');
     let currentUserId = null;
+    let dashboardData = null;
+    let activeRatingBoard = 'group';
+    let activeRatingGroupId = null;
 
-    function apiFetch(path, options = {}) {
+    studentClassesGrid.innerHTML = '<div class="class-card"><div class="class-title">Загрузка занятий...</div></div>';
+
+    function studentApiFetch(path, options = {}) {
       return fetchWithAuth(path, options);
     }
 
@@ -1475,37 +1855,205 @@
     });
 
     function isTaskComplete(task) {
-      return task.status === 'completed' || Number(task.score) > 0;
+      return task.status === 'completed' || Number(task.score) > 0 || Number(task.grade) > 0;
     }
 
-    function openCategoryModal(categoryName, tasks) {
-      categoryModalTitle.textContent = `${categoryName} — ${tasks.filter(isTaskComplete).length}/${tasks.length} выполнено`;
+    function extractTaskAttachments(task) {
+      const list = [];
+      const seenUrls = new Set();
+
+      function addAttachment(url, title, typeHint) {
+        if (!url || typeof url !== 'string') return;
+        const cleanUrl = url.trim();
+        if (!cleanUrl || seenUrls.has(cleanUrl)) return;
+        seenUrls.add(cleanUrl);
+
+        let type = typeHint || 'file';
+        const lower = cleanUrl.toLowerCase();
+        if (lower.match(/\.(mp4|webm|ogg|mov|m4v)(\?.*)?$/) || lower.includes('youtube.com') || lower.includes('youtu.be') || lower.includes('vimeo.com')) {
+          type = 'video';
+        } else if (lower.match(/\.(pdf)(\?.*)?$/)) {
+          type = 'pdf';
+        } else if (lower.match(/\.(jpg|jpeg|png|webp|gif|svg)(\?.*)?$/)) {
+          type = 'image';
+        } else if (lower.match(/\.(mp3|wav|m4a|aac)(\?.*)?$/)) {
+          type = 'audio';
+        } else if (lower.match(/\.(doc|docx|xls|xlsx|ppt|pptx|zip|rar|7z)(\?.*)?$/)) {
+          type = 'document';
+        }
+
+        let name = title || '';
+        if (!name) {
+          try {
+            const urlPath = new URL(cleanUrl, window.location.href).pathname;
+            const segment = urlPath.split('/').filter(Boolean).pop();
+            name = segment ? decodeURIComponent(segment) : 'Материал к задаче';
+          } catch {
+            name = 'Материал к задаче';
+          }
+        }
+
+        list.push({ url: cleanUrl, name, type });
+      }
+
+      if (Array.isArray(task.videos)) {
+        task.videos.forEach((v, idx) => {
+          if (!v) return;
+          const url = v.video_url || v.url || v.file_url || (typeof v === 'string' ? v : '');
+          const downloadUrl = v.download_url || url;
+          const name = v.title || v.name || `Видеоматериал ${idx + 1}`;
+          addAttachment(downloadUrl, name, 'video');
+        });
+      }
+
+      if (Array.isArray(task.files)) {
+        task.files.forEach((f, idx) => {
+          if (!f) return;
+          const url = f.file_url || f.url || f.download_url || (typeof f === 'string' ? f : '');
+          const name = f.name || f.title || f.filename || `Файл ${idx + 1}`;
+          addAttachment(url, name, 'file');
+        });
+      }
+
+      if (Array.isArray(task.attachments)) {
+        task.attachments.forEach((a, idx) => {
+          if (!a) return;
+          const url = a.url || a.file_url || a.download_url || (typeof a === 'string' ? a : '');
+          const name = a.name || a.title || a.filename || `Прикрепленный файл ${idx + 1}`;
+          addAttachment(url, name, 'file');
+        });
+      }
+
+      if (Array.isArray(task.materials)) {
+        task.materials.forEach((m, idx) => {
+          if (!m) return;
+          const url = m.url || m.file_url || (typeof m === 'string' ? m : '');
+          const name = m.name || m.title || `Материал ${idx + 1}`;
+          addAttachment(url, name, 'file');
+        });
+      } else if (typeof task.materials === 'string' && task.materials.startsWith('http')) {
+        addAttachment(task.materials, 'Материалы к заданию', 'file');
+      }
+
+      if (task.video_url) addAttachment(task.video_url, 'Видеозапись к заданию', 'video');
+      if (task.file_url) addAttachment(task.file_url, 'Прикрепленный файл', 'file');
+      if (task.attachment_url) addAttachment(task.attachment_url, 'Прикрепленный документ', 'file');
+      if (task.document_url) addAttachment(task.document_url, 'Документ к заданию', 'document');
+
+      return list;
+    }
+
+    function getAttachmentIcon(type) {
+      switch (type) {
+        case 'video': return 'solar:play-circle-bold-duotone';
+        case 'pdf': return 'solar:document-text-bold-duotone';
+        case 'image': return 'solar:gallery-bold-duotone';
+        case 'audio': return 'solar:music-note-2-bold-duotone';
+        case 'document': return 'solar:file-text-bold-duotone';
+        default: return 'solar:file-download-bold-duotone';
+      }
+    }
+
+    function openBlockModal(blockTitle, groupTitle, tasks) {
+      categoryModalTitle.textContent = `${groupTitle} — ${blockTitle}`;
+      const subtitleEl = document.getElementById('categoryModalSubtitle');
+      if (subtitleEl) {
+        const total = tasks.length;
+        const done = tasks.filter(isTaskComplete).length;
+        subtitleEl.textContent = `Выполнено ${done} из ${total} заданий`;
+      }
+
       categoryTaskList.innerHTML = '';
 
       if (!tasks.length) {
         categoryTaskList.innerHTML = `
-          <div class="category-task-item">
-            <h4>Нет задач</h4>
-            <p>Для этой категории пока нет задач.</p>
+          <div class="category-task-item" style="text-align: center; padding: 32px 20px;">
+            <iconify-icon icon="solar:folder-open-linear" style="font-size: 2.5rem; color: rgba(255,255,255,0.3); margin-bottom: 10px;"></iconify-icon>
+            <h4>Нет задач в этом блоке</h4>
+            <p>Преподаватель еще не добавил задания в данный блок программы.</p>
           </div>
         `;
       } else {
-        tasks.forEach(task => {
+        tasks.forEach((task, taskIndex) => {
           const taskItem = document.createElement('div');
           taskItem.className = 'category-task-item';
 
-          const videoLinks = (task.videos || []).map(video => `
-            <a href="${video.video_url}" target="_blank" rel="noopener">Смотреть видео</a>
-          `).join('');
+          const attachments = extractTaskAttachments(task);
+          const isDone = isTaskComplete(task);
+          const statusText = isDone ? 'Выполнено' : (task.status || 'В процессе');
+          const gradeValue = task.grade ?? task.score ?? 0;
+          const maxScoreText = task.max_score ? ` / ${task.max_score}` : '';
+
+          let attachmentsHtml = '';
+          if (attachments.length) {
+            const itemsHtml = attachments.map((att, attIdx) => {
+              const safeName = att.name.replace(/"/g, '&quot;');
+              const isVideo = att.type === 'video';
+              const downloadLabel = isVideo ? 'Скачать видеоролик' : 'Скачать файл';
+              const viewLabel = isVideo ? 'Смотреть видео' : 'Открыть файл';
+              const viewIcon = isVideo ? 'solar:play-circle-linear' : 'solar:eye-linear';
+              const downloadIcon = isVideo ? 'solar:video-library-bold' : 'solar:download-square-bold';
+              const downloadName = `alanko-task-${task.program_task_id || taskIndex + 1}-${isVideo ? 'video' : 'file'}-${attIdx + 1}${att.url.includes('.') ? att.url.substring(att.url.lastIndexOf('.')) : (isVideo ? '.mp4' : '')}`;
+              return `
+                <div class="task-attachment-item">
+                  <div class="task-attachment-info">
+                    <iconify-icon icon="${getAttachmentIcon(att.type)}"></iconify-icon>
+                    <span class="task-attachment-name" title="${safeName}">${safeName}</span>
+                  </div>
+                  <div class="task-attachment-actions">
+                    <a href="${att.url}" target="_blank" rel="noopener" class="task-action-btn btn-view" title="${viewLabel}">
+                      <iconify-icon icon="${viewIcon}"></iconify-icon> ${viewLabel}
+                    </a>
+                    <button type="button" class="task-action-btn btn-download" data-download-url="${att.url}" data-download-name="${downloadName}" title="${downloadLabel}">
+                      <iconify-icon icon="${downloadIcon}"></iconify-icon> ${downloadLabel}
+                    </button>
+                  </div>
+                </div>
+              `;
+            }).join('');
+
+            attachmentsHtml = `
+              <div class="task-attachments-block">
+                <div class="task-attachment-header">
+                  <iconify-icon icon="solar:paperclip-2-bold"></iconify-icon>
+                  Прикрепленные файлы и видеоматериалы (${attachments.length})
+                </div>
+                <div class="task-attachment-list">
+                  ${itemsHtml}
+                </div>
+              </div>
+            `;
+          } else {
+            attachmentsHtml = `
+              <div class="task-no-attachments">
+                <iconify-icon icon="solar:info-circle-linear"></iconify-icon>
+                <span>Файлы и видеоролики к этому заданию не прикреплены</span>
+              </div>
+            `;
+          }
 
           taskItem.innerHTML = `
-            <h4>${task.title || 'Без названия'}</h4>
-            <p>${task.description || 'Описание отсутствует'}</p>
-            <div class="category-task-meta">
-              <span>Статус: ${task.status || 'неизвестно'}</span>
-              <span>Оценка: ${task.score ?? 0} / ${task.max_score ?? '-'}</span>
-              ${videoLinks || '<span>Видео не прикреплено</span>'}
+            <div class="category-task-item-head">
+              <h4>${task.title || `Задание #${taskIndex + 1}`}</h4>
+              <div class="category-task-meta">
+                <span class="task-meta-chip ${isDone ? 'status-done' : ''}">
+                  <iconify-icon icon="${isDone ? 'solar:check-circle-bold' : 'solar:clock-circle-linear'}"></iconify-icon>
+                  ${statusText}
+                </span>
+                <span class="task-meta-chip">
+                  <iconify-icon icon="solar:star-bold" style="color: #FFD166;"></iconify-icon>
+                  Оценка: ${gradeValue}${maxScoreText}
+                </span>
+              </div>
             </div>
+            ${task.description ? `<p>${task.description}</p>` : ''}
+            ${task.feedback ? `
+              <div class="category-task-feedback">
+                <strong style="color: var(--pal-light-green); display: block; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 2px;">Комментарий преподавателя:</strong>
+                ${task.feedback}
+              </div>
+            ` : ''}
+            ${attachmentsHtml}
           `;
 
           categoryTaskList.appendChild(taskItem);
@@ -1515,17 +2063,51 @@
       categoryModal.classList.add('active');
     }
 
-    function renderCategoryCards(tasks) {
-      const categories = {};
-      (tasks || []).forEach(task => {
-        const name = task.category_name || 'Без категории';
-        if (!categories[name]) categories[name] = [];
-        categories[name].push(task);
-      });
+    document.addEventListener('click', async event => {
+      const downloadBtn = event.target.closest('[data-download-url]');
+      if (!downloadBtn) return;
+      event.preventDefault();
+      event.stopPropagation();
 
+      const url = downloadBtn.dataset.downloadUrl;
+      const downloadName = downloadBtn.dataset.downloadName || 'alanko-attachment';
+      const originalHtml = downloadBtn.innerHTML;
+      downloadBtn.innerHTML = '<iconify-icon icon="solar:refresh-circle-bold" class="spin" style="animation: spin 1s linear infinite;"></iconify-icon> Скачивание...';
+      downloadBtn.disabled = true;
+
+      try {
+        const response = await fetch(url, { mode: 'cors' });
+        if (!response.ok) throw new Error('Network response not ok');
+        const blob = await response.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        const temporaryLink = document.createElement('a');
+        temporaryLink.href = blobUrl;
+        temporaryLink.download = downloadName;
+        document.body.appendChild(temporaryLink);
+        temporaryLink.click();
+        temporaryLink.remove();
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
+      } catch (error) {
+        console.warn('Direct blob download failed, falling back to direct navigation/download:', error);
+        const fallbackLink = document.createElement('a');
+        fallbackLink.href = url;
+        fallbackLink.download = downloadName;
+        fallbackLink.target = '_blank';
+        fallbackLink.rel = 'noopener';
+        document.body.appendChild(fallbackLink);
+        fallbackLink.click();
+        fallbackLink.remove();
+      } finally {
+        downloadBtn.innerHTML = originalHtml;
+        downloadBtn.disabled = false;
+      }
+    });
+
+    function renderBlockCards(groups) {
       studentCategoriesGrid.innerHTML = '';
 
-      if (!Object.keys(categories).length) {
+      const blocks = (groups || []).flatMap(group => (group.blocks || []).map(block => ({ ...block, group_title: group.group_title })));
+      if (!blocks.length) {
         studentCategoriesGrid.innerHTML = `
           <div class="exam-card">
             <div class="circle">
@@ -1535,17 +2117,17 @@
               </svg>
               <div class="percent">0%</div>
             </div>
-            <h3>Задачи не найдены</h3>
-            <p style="color: rgba(255,255,255,0.6); margin-top: 12px;">У вас пока нет задач для категорий.</p>
+            <h3>Блоки не найдены</h3>
+            <p style="color: rgba(255,255,255,0.6); margin-top: 12px;">У вас пока нет активных программ.</p>
           </div>
         `;
         return;
       }
 
-      Object.entries(categories).forEach(([categoryName, categoryTasks]) => {
-        const total = categoryTasks.length;
-        const completed = categoryTasks.filter(isTaskComplete).length;
-        const percent = total ? Math.round((completed / total) * 100) : 0;
+      blocks.forEach(block => {
+        const total = block.total_tasks || 0;
+        const completed = block.completed_tasks || 0;
+        const percent = block.completion_percent || 0;
 
         const card = document.createElement('div');
         card.className = 'exam-card';
@@ -1558,10 +2140,10 @@
             </svg>
             <div class="percent">0%</div>
           </div>
-          <h3>${categoryName}</h3>
+          <h3>${block.group_title} — ${block.title}</h3>
           <p style="color: rgba(255,255,255,0.7); margin-top: 10px;">${completed} из ${total} задач</p>
         `;
-        card.addEventListener('click', () => openCategoryModal(categoryName, categoryTasks));
+        card.addEventListener('click', () => openBlockModal(block.title, block.group_title, block.tasks || []));
         studentCategoriesGrid.appendChild(card);
       });
 
@@ -1570,12 +2152,13 @@
 
     async function loadStudentTasks() {
       try {
-        const response = await apiFetch('/user/tasks');
+        const response = await studentApiFetch('/profile/program-progress');
         const data = await response.json();
         if (!response.ok) {
           throw new Error(data.detail || 'Не удалось загрузить задачи');
         }
-        renderCategoryCards(data);
+        renderBlockCards(data.data || []);
+        return data.data || [];
       } catch (error) {
         console.error(error);
         studentCategoriesGrid.innerHTML = `
@@ -1587,10 +2170,11 @@
               </svg>
               <div class="percent">0%</div>
             </div>
-            <h3>Не удалось загрузить категории</h3>
+            <h3>Не удалось загрузить блоки</h3>
             <p style="color: rgba(255,255,255,0.6); margin-top: 12px;">Попробуйте обновить страницу.</p>
           </div>
         `;
+        return [];
       }
     }
 
@@ -1649,16 +2233,38 @@
       history.forEach(item => {
         const row = document.createElement('div');
         row.className = 'history-row';
+        const change = Number(item.points_change || 0);
+        const changeLabel = change > 0 ? `Добавлено: +${change} баллов` : change < 0 ? `Снято: ${change} баллов` : 'Баллы не изменились';
         row.innerHTML = `
           <div class="history-info">
             <h4>${item.reason || 'Обновление рейтинга'}</h4>
-            <p>${new Date(item.timestamp).toLocaleDateString('ru-RU', { year: 'numeric', month: 'long', day: 'numeric' })} — ${item.points_change > 0 ? '+' : ''}${item.points_change} баллов</p>
+            <p>${new Date(item.timestamp).toLocaleDateString('ru-RU', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+            <p>${changeLabel}</p>
             <p>Текущий рейтинг: ${item.points_after} баллов</p>
             <p>Место: #${item.place_estimate}</p>
           </div>
         `;
         ratingHistoryList.appendChild(row);
       });
+    }
+
+    function renderGroupRatingSummary(groups) {
+      const group = groups?.[0];
+      const rating = group?.group_rating;
+      if (!rating) {
+        ratingPointsLabel.textContent = 'Текущие баллы';
+        ratingPlaceLabel.textContent = 'Место в рейтинге';
+        ratingTasksLabel.textContent = 'Задания';
+        return;
+      }
+
+      const groupName = group.group_title || 'группе';
+      ratingPointsLabel.textContent = `Баллы в ${groupName}`;
+      ratingPlaceLabel.textContent = `Место в ${groupName}`;
+      ratingTasksLabel.textContent = 'Выполнено заданий';
+      ratingPointsEl.textContent = String(rating.points ?? 0);
+      ratingPlaceEl.textContent = rating.place ? `#${rating.place} / ${rating.total_students || 0}` : '-';
+      ratingTasksEl.textContent = String(rating.completed_tasks ?? 0);
     }
 
     function renderLeaderboard(leaderboard) {
@@ -1673,10 +2279,10 @@
       }
 
       const uniquePlaces = [...new Set(leaderboard.map(item => item.place))].slice(0, 3);
-    leaderboard.forEach(item => {
+      leaderboard.forEach(item => {
         const row = document.createElement('tr');
         row.className = 'leaderboard-row';
-        if (item.user_id && item.user_id === currentUserId) {
+        if (item.user_id && String(item.user_id) === String(currentUserId)) {
           row.classList.add('current-user-row');
         }
         const movement = (item.movement || item.direction || '').toLowerCase();
@@ -1701,15 +2307,310 @@
       });
     }
 
+    function renderSelectedRatingBoard() {
+      const boards = dashboardData?.leaderboards || {};
+      const selectedGroup = activeRatingBoard === 'group'
+        ? (boards.groups || []).find(item => Number(item.group_id) === Number(activeRatingGroupId))
+        : null;
+      const leaderboard = activeRatingBoard === 'overall'
+        ? (boards.overall || [])
+        : (selectedGroup?.entries || boards.group || []);
+      const current = leaderboard.find(item => String(item.user_id) === String(currentUserId));
+      const groupName = selectedGroup?.group_title || current?.group_title || dashboardData?.user?.group_name || 'группе';
+
+      // Синхронизация активного класса на всех вкладках рейтинга
+      document.querySelectorAll('.rating-tab').forEach(tab => {
+        const isActive = tab.dataset.board === activeRatingBoard && (
+          activeRatingBoard === 'overall' || Number(tab.dataset.groupId || activeRatingGroupId) === Number(activeRatingGroupId)
+        );
+        tab.classList.toggle('active', isActive);
+      });
+
+      const leaderboardTitleEl = document.getElementById('leaderboardTitle');
+      const leaderboardSubtitleEl = document.getElementById('leaderboardSubtitle');
+
+      if (activeRatingBoard === 'overall') {
+        ratingPointsLabel.textContent = 'Баллы ALANKO (Конкурсы)';
+        ratingPlaceLabel.textContent = 'Место в конкурсах ALANKO';
+        ratingTasksLabel.textContent = 'Задания конкурсов';
+        if (leaderboardTitleEl) leaderboardTitleEl.textContent = 'Конкурсы ALANKO';
+        if (leaderboardSubtitleEl) leaderboardSubtitleEl.textContent = 'Рейтинг формируется на основе участия в конкурсах и мероприятиях ALANKO';
+        ratingPointsEl.textContent = String(current?.rating ?? current?.rating_points ?? dashboardData?.rating ?? 0);
+        const totalParticipants = dashboardData?.leaderboard_totals?.overall || leaderboard.length;
+        ratingPlaceEl.textContent = current?.place ? `#${current.place} / ${totalParticipants}` : '-';
+        ratingTasksEl.textContent = String(current?.tasks_completed ?? dashboardData?.tasks ?? 0);
+      } else {
+        const groupTitle = groupName !== 'группе' ? groupName : (leaderboard[0]?.group_title || 'группе');
+        ratingPointsLabel.textContent = `Баллы в ${groupTitle}`;
+        ratingPlaceLabel.textContent = `Место в ${groupTitle}`;
+        ratingTasksLabel.textContent = 'Выполнено заданий';
+        if (leaderboardTitleEl) leaderboardTitleEl.textContent = groupTitle !== 'группе' ? `Рейтинг группы: ${groupTitle}` : 'Рейтинг группы';
+        if (leaderboardSubtitleEl) leaderboardSubtitleEl.textContent = 'Рейтинг формируется на основе всех занятий и заданий группы';
+        ratingPointsEl.textContent = String(current?.rating ?? current?.rating_points ?? dashboardData?.rating ?? 0);
+        const totalParticipants = selectedGroup?.total_students || dashboardData?.leaderboard_totals?.group || leaderboard.length;
+        ratingPlaceEl.textContent = current?.place ? `#${current.place} / ${totalParticipants}` : '-';
+        ratingTasksEl.textContent = String(dashboardData?.tasks ?? current?.tasks_completed ?? 0);
+      }
+
+      renderLeaderboard(leaderboard);
+    }
+
+    function setupRatingTabs() {
+      const ratingTabs = document.querySelectorAll('.rating-tab');
+      ratingTabs.forEach(tab => {
+        if (tab.dataset.ratingListenerAttached) return;
+        tab.dataset.ratingListenerAttached = 'true';
+        tab.addEventListener('click', () => {
+          activeRatingBoard = tab.dataset.board || 'group';
+          activeRatingGroupId = tab.dataset.groupId ? Number(tab.dataset.groupId) : activeRatingGroupId;
+          renderSelectedRatingBoard();
+        });
+      });
+    }
+
+    function renderRatingTabs(groups) {
+      const groupItems = groups || [];
+      const containers = document.querySelectorAll('.rating-tabs, .leaderboard-tabs');
+      containers.forEach(container => {
+        container.innerHTML = '';
+        groupItems.forEach((group, index) => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'achievement-tab rating-tab';
+          button.dataset.board = 'group';
+          button.dataset.groupId = group.group_id;
+          button.textContent = groupItems.length > 1 ? `Группа ${index + 1}: ${group.group_title}` : 'Рейтинг группы';
+          container.appendChild(button);
+        });
+        const overallButton = document.createElement('button');
+        overallButton.type = 'button';
+        overallButton.className = 'achievement-tab rating-tab';
+        overallButton.dataset.board = 'overall';
+        overallButton.textContent = 'Конкурсы ALANKO';
+        container.appendChild(overallButton);
+      });
+      if (groupItems.length && !activeRatingGroupId) activeRatingGroupId = groupItems[0].group_id;
+      setupRatingTabs();
+    }
+
     function getStudentLeaderboardRating(leaderboard, userId) {
       if (!Array.isArray(leaderboard) || !userId) return null;
       const entry = leaderboard.find(item => item.user_id === userId || item.id === userId);
       return entry ? (entry.rating ?? entry.rating_points ?? null) : null;
     }
 
+    function createClassCard(title, details, status, actionLabel, action) {
+      const card = document.createElement('div');
+      card.className = 'class-card';
+
+      const titleEl = document.createElement('div');
+      titleEl.className = 'class-title';
+      titleEl.textContent = title;
+      card.appendChild(titleEl);
+
+      const detailsEl = document.createElement('div');
+      detailsEl.className = 'class-coach';
+      detailsEl.textContent = details;
+      card.appendChild(detailsEl);
+
+      const footer = document.createElement('div');
+      footer.className = 'class-footer';
+      const statusEl = document.createElement('span');
+      statusEl.className = `status-badge ${status === 'CONFIRMED' ? 'planned' : 'cancelled'}`;
+      statusEl.textContent = status;
+      footer.appendChild(statusEl);
+
+      if (actionLabel && action) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'pill cancel-btn';
+        button.textContent = actionLabel;
+        button.addEventListener('click', action);
+        footer.appendChild(button);
+      }
+
+      card.appendChild(footer);
+      return card;
+    }
+
+    function formatConsultationTime(dateValue) {
+      if (!dateValue) return 'Время уточняется';
+      const date = new Date(dateValue);
+      return new Intl.DateTimeFormat('ru-RU', {
+        timeZone: 'Asia/Yekaterinburg',
+        hour: '2-digit',
+        minute: '2-digit',
+      }).format(date);
+    }
+
+    function formatConsultationDate(dateValue) {
+      if (!dateValue) return 'Дата уточняется';
+      const date = new Date(dateValue);
+      return date.toLocaleDateString('ru-RU', {
+        timeZone: 'Asia/Yekaterinburg',
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+      });
+    }
+
+    function formatConsultationPrice(price) {
+      if (price === null || price === undefined || Number.isNaN(Number(price))) {
+        return 'Стоимость уточняется';
+      }
+      return `${Number(price).toLocaleString('ru-RU')} ₽`;
+    }
+
+    function renderClasses(bookings, invitations, slotMap = new Map()) {
+      studentClassesGrid.innerHTML = '';
+      const activeBookings = (bookings || []).filter(item => item.booking_status === 'CONFIRMED');
+      const pendingInvitations = (invitations || []).filter(item => item.status === 'PENDING');
+
+      if (!activeBookings.length && !pendingInvitations.length) {
+        const emptyCard = document.createElement('div');
+        emptyCard.className = 'class-card';
+        emptyCard.innerHTML = '<div class="class-title">Предстоящих занятий нет</div><div class="class-coach">Выберите свободное время в разделе записи.</div>';
+        studentClassesGrid.appendChild(emptyCard);
+        return;
+      }
+
+      activeBookings.forEach(booking => {
+        const startDate = booking.start_at ? new Date(booking.start_at) : null;
+        const dateLabel = startDate ? startDate.toLocaleDateString('ru-RU', {
+          timeZone: 'Asia/Yekaterinburg',
+          day: '2-digit',
+          month: 'long',
+          year: 'numeric',
+        }) : 'Дата уточняется';
+        const timeLabel = booking.start_at && booking.end_at
+          ? `${new Intl.DateTimeFormat('ru-RU', { timeZone: 'Asia/Yekaterinburg', hour: '2-digit', minute: '2-digit' }).format(new Date(booking.start_at))} - ${new Intl.DateTimeFormat('ru-RU', { timeZone: 'Asia/Yekaterinburg', hour: '2-digit', minute: '2-digit' }).format(new Date(booking.end_at))}`
+          : 'Время уточняется';
+        const card = createClassCard(
+          `Индивидуальная консультация: ${dateLabel}`,
+          `${timeLabel} • ${booking.teacher_name || 'Преподаватель уточняется'}${booking.price != null ? ` • ${booking.price} ${booking.currency === 'RUB' ? '₽' : booking.currency}` : ''}`,
+          booking.booking_status,
+          'Отменить',
+          async event => {
+            if (!confirm('Вы уверены, что хотите отменить эту запись на занятие?')) return;
+            const button = event.currentTarget;
+            button.disabled = true;
+            try {
+              await studentApiFetch(`/consultations/bookings/${booking.id}/cancel`, { method: 'POST' });
+              await loadStudentClasses();
+            } catch (error) {
+              console.error(error);
+              button.disabled = false;
+              alert('Не удалось отменить запись. Попробуйте еще раз.');
+            }
+          }
+        );
+        studentClassesGrid.appendChild(card);
+      });
+
+      pendingInvitations.forEach(invitation => {
+        const slot = slotMap.get(invitation.slot_id);
+        const start = slot?.start_at ? new Date(slot.start_at) : null;
+        const end = slot?.end_at ? new Date(slot.end_at) : null;
+        const dateLabel = start ? formatConsultationDate(start) : 'Дата консультации';
+        const timeLabel = start && end
+          ? `${formatConsultationTime(start)} - ${formatConsultationTime(end)}`
+          : 'Время консультации';
+        const teacherLabel = slot?.teacher_name || `Преподаватель #${slot?.teacher_id || invitation.slot_id}`;
+        const priceLabel = slot?.price != null && slot.price > 0
+          ? formatConsultationPrice(slot.price)
+          : 'Стоимость будет рассчитана после подтверждения присутствия';
+
+        const card = document.createElement('div');
+        card.className = 'class-card';
+        card.innerHTML = `
+          <div class="class-date" style="display:flex; align-items:center; justify-content:space-between; color: var(--pal-light-green);">
+            <span>Вам пришло приглашение</span>
+            <iconify-icon icon="solar:bell-bing-bold-duotone" style="font-size:1.4rem;"></iconify-icon>
+          </div>
+          <div class="class-title">Индивидуальная консультация</div>
+          <div class="class-coach" style="line-height:1.5; color: var(--pal-off-white);">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+              <iconify-icon icon="solar:calendar-date-bold-duotone" style="color: var(--pal-light-green); font-size:1.1rem;"></iconify-icon>
+              ${dateLabel}
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+              <iconify-icon icon="solar:clock-circle-bold-duotone" style="color: var(--pal-light-green); font-size:1.1rem;"></iconify-icon>
+              ${timeLabel}
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+              <iconify-icon icon="solar:wallet-money-bold-duotone" style="color: var(--pal-light-green); font-size:1.1rem;"></iconify-icon>
+              ${priceLabel}
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <iconify-icon icon="solar:user-circle-bold-duotone" style="color: var(--pal-light-green); font-size:1.1rem;"></iconify-icon>
+              ${teacherLabel}
+            </div>
+          </div>
+          <div class="class-footer" style="display:flex; gap:12px; margin-top:auto; border-top:1px dashed rgba(176,209,130,0.3); padding-top:16px;">
+            <button type="button" class="pill" style="flex:1; background: var(--pal-light-green); color: var(--pal-bg-dark); border:none; font-weight:700; padding:12px 16px; display:flex; justify-content:center; align-items:center; gap:8px; cursor:pointer; border-radius:12px;"> <iconify-icon icon="solar:check-circle-bold"></iconify-icon> Принять </button>
+            <button type="button" class="pill cancel-btn" style="flex:1; background: rgba(255, 100, 100, 0.12); border:1px solid rgba(255, 100, 100, 0.4); color: #ff8e8e; padding:12px 16px; display:flex; justify-content:center; align-items:center; gap:8px; cursor:pointer; border-radius:12px;"> <iconify-icon icon="solar:close-circle-bold"></iconify-icon> Отказать </button>
+          </div>
+        `;
+
+        const acceptButton = card.querySelectorAll('button')[0];
+        const declineButton = card.querySelectorAll('button')[1];
+
+        acceptButton.addEventListener('click', async () => {
+          acceptButton.disabled = true;
+          declineButton.disabled = true;
+          try {
+            await studentApiFetch(`/consultations/invitations/${invitation.id}/accept`, { method: 'POST' });
+            await loadStudentClasses();
+          } catch (error) {
+            console.error(error);
+            acceptButton.disabled = false;
+            declineButton.disabled = false;
+            alert('Не удалось принять приглашение. Попробуйте еще раз.');
+          }
+        });
+
+        declineButton.addEventListener('click', async () => {
+          acceptButton.disabled = true;
+          declineButton.disabled = true;
+          try {
+            await studentApiFetch(`/consultations/invitations/${invitation.id}/decline`, { method: 'POST' });
+            await loadStudentClasses();
+          } catch (error) {
+            console.error(error);
+            acceptButton.disabled = false;
+            declineButton.disabled = false;
+            alert('Не удалось отказаться от приглашения. Попробуйте еще раз.');
+          }
+        });
+
+        studentClassesGrid.appendChild(card);
+      });
+    }
+
+    async function loadStudentClasses() {
+      try {
+        const startDate = new Date();
+        const endDate = new Date();
+        endDate.setDate(startDate.getDate() + 90);
+        const [bookingsResponse, invitationsResponse, availabilityResponse] = await Promise.all([
+          studentApiFetch('/consultations/my'),
+          studentApiFetch('/consultations/invitations'),
+          studentApiFetch(`/consultations/availability?date_from=${startDate.toISOString().slice(0, 10)}&date_to=${endDate.toISOString().slice(0, 10)}`),
+        ]);
+        const bookings = await bookingsResponse.json();
+        const invitations = await invitationsResponse.json();
+        const availability = await availabilityResponse.json();
+        const slotMap = new Map((availability.items || []).map(slot => [slot.slot_id, slot]));
+        renderClasses(bookings.items || [], invitations.items || [], slotMap);
+      } catch (error) {
+        console.error(error);
+        studentClassesGrid.innerHTML = '<div class="class-card"><div class="class-title">Не удалось загрузить занятия</div><div class="class-coach">Попробуйте обновить страницу.</div></div>';
+      }
+    }
+
     async function loadStudentDashboard() {
       try {
-        const response = await apiFetch('/user/dashboard');
+        const response = await studentApiFetch('/profile/dashboard');
         const data = await response.json();
 
         if (!response.ok) {
@@ -1717,6 +2618,12 @@
         }
 
         currentUserId = data.user_id;
+        dashboardData = data;
+        renderRatingTabs(data.leaderboards?.groups);
+        const userBadgeId = document.getElementById('userBadgeId');
+        if (userBadgeId && currentUserId) {
+          userBadgeId.textContent = `(ID: ${currentUserId})`;
+        }
         studentWelcome.innerHTML = `ДОБРО ПОЖАЛОВАТЬ,<br>${data.user?.full_name || data.user?.email || 'Ученик'}!`;
         studentIntroText.textContent = 'Здесь собраны твои достижения, текущее место в рейтинге и загруженные видео.';
         const dashboardRating = data.rating ?? data.rating_points ?? data.user?.rating ?? data.user?.rating_points;
@@ -1731,13 +2638,14 @@
 
         renderStudentVideos(data.achievement_videos?.length ? data.achievement_videos : data.videos);
         renderStudentAchievements(data.achievements);
+        const progress = await loadStudentTasks();
+        renderGroupRatingSummary(progress);
         renderRatingHistory(data.history);
-        renderLeaderboard(data.leaderboard);
-        await loadStudentTasks();
+        renderSelectedRatingBoard();
       } catch (error) {
         console.error(error);
         studentIntroText.textContent = 'Не удалось загрузить данные профиля. Попробуйте снова.';
-        studentVideosContainer.innerHTML = `
+        studentIndividualVideosContainer.innerHTML = `
           <div class="video-card">
             <div class="video-wrapper">
               <div style="display:flex; align-items:center; justify-content:center; height:100%; color:rgba(255,255,255,0.6);">Ошибка загрузки видео</div>
@@ -1766,7 +2674,10 @@
       }
     }
 
-    // loadStudentDashboard();
+
+    setupRatingTabs();
+    loadStudentDashboard();
+    loadStudentClasses();
   </script>
 
 <canvas id="cinematicDust"></canvas>
@@ -1894,6 +2805,79 @@
         card.style.opacity = '0.7';
       }, 300);
     }
+  }
+
+  // --- ПЛАВНАЯ НАВИГАЦИЯ, ПОДСВЕТКА СЕКЦИЙ И АКТИВНЫХ КНОПОК В ШАПКЕ ЛИЧНОГО КАБИНЕТА ---
+  const mainHeader = document.getElementById('mainHeader') || document.querySelector('header');
+  const navPills = document.querySelectorAll('.nav-pills-bar .pill');
+  const pageSections = document.querySelectorAll('section[id]');
+
+  // Отслеживание скролла для шапки (эффект матового стекла)
+  function handleHeaderScroll() {
+    if (window.scrollY > 30) {
+      mainHeader?.classList.add('scrolled');
+    } else {
+      mainHeader?.classList.remove('scrolled');
+    }
+  }
+  window.addEventListener('scroll', handleHeaderScroll, { passive: true });
+  handleHeaderScroll();
+
+  // Обработка клика по якорным ссылкам страницы
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      const targetId = this.getAttribute('href');
+      if (!targetId || targetId === '#') return;
+
+      const targetElement = document.querySelector(targetId);
+      if (targetElement) {
+        e.preventDefault();
+
+        targetElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+
+        // Мягкая подсветка целевого блока
+        targetElement.classList.remove('highlight-block-target');
+        void targetElement.offsetWidth;
+        targetElement.classList.add('highlight-block-target');
+
+        // Обновляем визуальный активный статус в меню
+        navPills.forEach(pill => {
+          if (pill.getAttribute('href') === targetId) {
+            pill.classList.add('active');
+          } else {
+            pill.classList.remove('active');
+          }
+        });
+      }
+    });
+  });
+
+  // Отслеживание активного блока при скролле (IntersectionObserver)
+  if ('IntersectionObserver' in window && pageSections.length > 0) {
+    const navSectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const currentId = entry.target.getAttribute('id');
+          if (currentId) {
+            navPills.forEach(pill => {
+              if (pill.getAttribute('href') === `#${currentId}`) {
+                pill.classList.add('active');
+              } else {
+                pill.classList.remove('active');
+              }
+            });
+          }
+        }
+      });
+    }, {
+      rootMargin: '-20% 0px -60% 0px',
+      threshold: 0.05
+    });
+
+    pageSections.forEach(section => navSectionObserver.observe(section));
   }
 </script>
 

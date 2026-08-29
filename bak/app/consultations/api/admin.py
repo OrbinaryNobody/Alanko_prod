@@ -12,22 +12,28 @@ from core.exceptions import DomainError
 from core.http import translate_domain_error
 from core.permissions import Permission, require_any_permission
 from db.database import get_db
-from consultations.schemas.consultations import ConsultationAttendanceUpdate, ConsultationDayCreate, ConsultationDayStatusUpdate, ConsultationInvitationCreate, ConsultationPaymentUpdate, ConsultationSlotCreate
+from consultations.schemas.consultations import ConsultationAttendanceUpdate, ConsultationDayCreate, ConsultationDayStatusUpdate, ConsultationDayWindowUpdate, ConsultationInvitationCreate, ConsultationPaymentUpdate, ConsultationSlotCreate
+from consultations.timezone import serialize_local
+from consultations.models.consultation_participant import ConsultationParticipant
+from models.domains.auth import User
 
 router = APIRouter(prefix="/consultations/admin", tags=["consultations-admin"])
 
 
 @router.get("/days")
 def list_days(
+    date_from: date | None = Query(default=None),
+    date_to: date | None = Query(default=None),
     ctx: AccessContext = Depends(require_any_permission(Permission.MANAGE_CONSULTATIONS, Permission.MANAGE_USERS)),
     db: Session = Depends(get_db),
 ):
-    days = consultations_facade.list_days(db)
+    days = consultations_facade.list_days(db, date_from=date_from, date_to=date_to)
     return {
         "items": [
             {
                 "id": day.id,
                 "date": day.date.isoformat(),
+                "teacher_id": day.teacher_id,
                 "status": day.status,
                 "available_from": day.available_from.isoformat() if day.available_from else None,
                 "available_to": day.available_to.isoformat() if day.available_to else None,
@@ -45,7 +51,8 @@ def create_day(
 ):
     day = consultations_facade.create_day(
         db,
-        date_value=data.date,
+        date=data.date,
+        teacher_id=ctx.user_id,
         status=data.status,
         available_from=data.available_from,
         available_to=data.available_to,
@@ -53,6 +60,7 @@ def create_day(
     return {
         "id": day.id,
         "date": day.date.isoformat(),
+        "teacher_id": day.teacher_id,
         "status": day.status,
         "available_from": day.available_from.isoformat() if day.available_from else None,
         "available_to": day.available_to.isoformat() if day.available_to else None,
@@ -73,27 +81,68 @@ def set_day_status(
     }
 
 
+@router.patch("/days/{day_id}/window")
+def set_day_window(
+    day_id: int,
+    data: ConsultationDayWindowUpdate,
+    ctx: AccessContext = Depends(require_any_permission(Permission.MANAGE_CONSULTATIONS, Permission.MANAGE_USERS)),
+    db: Session = Depends(get_db),
+):
+    day = consultations_facade.set_day_working_window(
+        db,
+        day_id=day_id,
+        teacher_id=ctx.user_id,
+        status=data.status,
+        available_from=data.available_from,
+        available_to=data.available_to,
+    )
+    return {
+        "id": day.id,
+        "date": day.date.isoformat(),
+        "teacher_id": day.teacher_id,
+        "status": day.status,
+        "available_from": day.available_from.isoformat() if day.available_from else None,
+        "available_to": day.available_to.isoformat() if day.available_to else None,
+    }
+
+
 @router.get("/slots")
 def list_slots(
+    date_from: date | None = Query(default=None),
+    date_to: date | None = Query(default=None),
     limit: int = Query(default=100, ge=1, le=200),
     offset: int = Query(default=0, ge=0),
     ctx: AccessContext = Depends(require_any_permission(Permission.MANAGE_CONSULTATIONS, Permission.MANAGE_USERS)),
     db: Session = Depends(get_db),
 ):
-    slots = consultations_facade.list_slots(db, limit=limit, offset=offset)
+    slots = consultations_facade.list_slots(db, date_from=date_from, date_to=date_to, limit=limit, offset=offset)
+    participant_rows = db.query(ConsultationParticipant, User).join(
+        User,
+        User.id == ConsultationParticipant.student_id,
+    ).filter(
+        ConsultationParticipant.slot_id.in_([slot.id for slot in slots]),
+        ConsultationParticipant.booking_status == "CONFIRMED",
+    ).all() if slots else []
+    participants_by_slot = {}
+    for participant, student in participant_rows:
+        participants_by_slot.setdefault(participant.slot_id, []).append({
+            "id": student.id,
+            "full_name": f"{student.first_name} {student.last_name or ''}".strip(),
+        })
     return {
         "items": [
             {
                 "id": slot.id,
                 "day_id": slot.day_id,
                 "teacher_id": slot.teacher_id,
-                "start_at": slot.start_at.isoformat() if slot.start_at else None,
-                "end_at": slot.end_at.isoformat() if slot.end_at else None,
+                "start_at": serialize_local(slot.start_at),
+                "end_at": serialize_local(slot.end_at),
                 "capacity": slot.capacity,
                 "price": slot.price,
                 "currency": slot.currency,
                 "access_mode": slot.access_mode,
                 "status": slot.status,
+                "participants": participants_by_slot.get(slot.id, []),
             }
             for slot in slots
         ]
@@ -122,8 +171,8 @@ def create_slot(
         "id": slot.id,
         "day_id": slot.day_id,
         "teacher_id": slot.teacher_id,
-        "start_at": slot.start_at.isoformat() if slot.start_at else None,
-        "end_at": slot.end_at.isoformat() if slot.end_at else None,
+        "start_at": serialize_local(slot.start_at),
+        "end_at": serialize_local(slot.end_at),
         "capacity": slot.capacity,
         "price": slot.price,
         "currency": slot.currency,

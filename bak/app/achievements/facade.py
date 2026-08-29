@@ -7,6 +7,9 @@ class AchievementsFacade:
     def get_achievements_payload(self, db: Session, *, ctx):
         return achievement_service.get_achievements_payload(db, ctx=ctx)
 
+    def delete_achievement(self, db: Session, *, ctx, achievement_id: int):
+        return achievement_service.delete_achievement(db, ctx=ctx, achievement_id=achievement_id)
+
     def get_student_achievements_payload(self, db: Session, student_id: int, *, ctx):
         return achievement_service.get_student_achievements_payload(db, student_id, ctx=ctx)
 

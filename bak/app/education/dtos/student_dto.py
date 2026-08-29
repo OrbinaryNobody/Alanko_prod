@@ -12,6 +12,8 @@ class StudentPayload:
     full_name: str | None = None
     image_url: str | None = None
     password: str | None = None
+    birth_year: int | None = None
+    rating_points: int | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -23,6 +25,8 @@ class StudentPayload:
             "full_name": self.full_name,
             "image_url": self.image_url,
             "password": self.password,
+            "birth_year": self.birth_year,
+            "rating_points": self.rating_points,
         }
 
 

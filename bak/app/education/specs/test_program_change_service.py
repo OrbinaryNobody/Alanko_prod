@@ -46,6 +46,31 @@ def test_teacher_submission_keeps_program_unchanged():
     assert proposal.proposed_snapshot["blocks"][0]["title"] == "New block"
 
 
+def test_teacher_with_edit_permission_can_submit_proposal():
+    db = _session()
+    program = Program(id=1, title="Program", description="Description", created_by=7)
+    db.add(program)
+    db.commit()
+
+    ctx = AccessContext.from_parts(
+        user_id=7,
+        roles=["teacher"],
+        permissions=["view_programs", "edit_programs"],
+        is_admin=False,
+    )
+
+    proposal = ProgramChangeService().create_proposal(
+        db,
+        ctx=ctx,
+        program_id=1,
+        blocks=[{"id": None, "title": "Proposed block", "description": None, "order": 0, "topics": []}],
+        comment="Please review",
+    )
+
+    assert proposal.status == "PENDING"
+    assert proposal.proposed_snapshot["blocks"][0]["title"] == "Proposed block"
+
+
 def test_admin_approval_applies_structure_but_not_program_title():
     db = _session()
     program = Program(id=1, title="Admin title", created_by=7)

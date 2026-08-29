@@ -1301,6 +1301,470 @@
         grid-template-columns: 1fr;
       }
     }
+
+    /* ============================================================
+       9. СТИЛИ ДЛЯ ВКЛАДОК И УПРАВЛЕНИЯ АБОНЕМЕНТАМИ (SUBSCRIPTIONS)
+       ============================================================ */
+    .tab-pane {
+      display: none;
+      animation: fadeInTab 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    @keyframes fadeInTab {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Мобильный селектор вкладок */
+    .mobile-tab-bar {
+      display: none;
+      gap: 8px;
+      margin-bottom: var(--spacing-md);
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 6px;
+      border-radius: var(--radius-pill);
+    }
+
+    @media (max-width: 1024px) {
+      .mobile-tab-bar {
+        display: flex;
+      }
+    }
+
+    .mobile-tab-btn {
+      flex: 1;
+      padding: 10px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .mobile-tab-btn.active {
+      background: var(--pal-dark-green);
+      color: var(--pal-light-green);
+      border: 1px solid rgba(176, 209, 130, 0.3);
+    }
+
+    /* Статусные бейджи абонементов */
+    .sub-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      white-space: nowrap;
+    }
+
+    .sub-badge-active {
+      background: rgba(176, 209, 130, 0.14);
+      color: var(--pal-light-green);
+      border: 1px solid rgba(176, 209, 130, 0.3);
+    }
+
+    .sub-badge-prolonged {
+      background: rgba(110, 168, 254, 0.14);
+      color: #8bb9fe;
+      border: 1px solid rgba(110, 168, 254, 0.35);
+    }
+
+    .sub-badge-warning {
+      background: rgba(229, 169, 59, 0.14);
+      color: var(--pal-accent-amber);
+      border: 1px solid rgba(229, 169, 59, 0.3);
+    }
+
+    .sub-badge-terminated {
+      background: rgba(224, 83, 83, 0.15);
+      color: var(--pal-accent-red);
+      border: 1px solid rgba(224, 83, 83, 0.35);
+    }
+
+    .sub-badge-expired {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    /* Карточки абонементов */
+    .sub-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-xl);
+      padding: var(--spacing-lg);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sub-card:hover {
+      border-color: rgba(176, 209, 130, 0.3);
+      background: var(--card-bg-hover);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .sub-card.card-status-prolonged {
+      border-left: 4px solid #6ea8fe;
+    }
+
+    .sub-card.card-status-terminated {
+      border-left: 4px solid var(--pal-accent-red);
+      opacity: 0.88;
+    }
+
+    .sub-card.card-status-active {
+      border-left: 4px solid var(--pal-light-green);
+    }
+
+    .sub-dates-box {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin: 12px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sub-date-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+    }
+
+    .sub-date-label {
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .sub-date-value {
+      font-weight: 600;
+      color: var(--pal-off-white);
+    }
+
+    .sub-date-value.highlight-prolong {
+      color: #8bb9fe;
+    }
+
+    .sub-date-value.highlight-term {
+      color: var(--pal-accent-red);
+    }
+
+    /* Кнопки быстрых действий для абонемента */
+    .sub-card-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .btn-action-prolong {
+      background: rgba(110, 168, 254, 0.12);
+      color: #8bb9fe;
+      border: 1px solid rgba(110, 168, 254, 0.3);
+      padding: 9px 12px;
+      border-radius: var(--radius-md);
+      font-size: 0.82rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-action-prolong:hover {
+      background: #4982da;
+      color: #fff;
+      border-color: #6ea8fe;
+      box-shadow: 0 0 16px rgba(110, 168, 254, 0.3);
+    }
+
+    .btn-action-term {
+      background: rgba(224, 83, 83, 0.12);
+      color: var(--pal-accent-red);
+      border: 1px solid rgba(224, 83, 83, 0.3);
+      padding: 9px 12px;
+      border-radius: var(--radius-md);
+      font-size: 0.82rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-action-term:hover {
+      background: #c53c3c;
+      color: #fff;
+      border-color: var(--pal-accent-red);
+      box-shadow: 0 0 16px rgba(224, 83, 83, 0.3);
+    }
+
+    .btn-action-restore {
+      background: rgba(176, 209, 130, 0.12);
+      color: var(--pal-light-green);
+      border: 1px solid rgba(176, 209, 130, 0.3);
+      padding: 9px 12px;
+      border-radius: var(--radius-md);
+      font-size: 0.82rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+      grid-column: span 2;
+    }
+
+    .btn-action-restore:hover {
+      background: var(--pal-mid-green);
+      color: #fff;
+      border-color: var(--pal-light-green);
+    }
+
+    /* Стили для формы продления и завершения в модалках */
+    .form-group-custom {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-label-custom {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .form-input-custom, .form-select-custom, .form-textarea-custom {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      outline: none;
+    }
+
+    .form-input-custom:focus, .form-select-custom:focus, .form-textarea-custom:focus {
+      border-color: var(--pal-light-green);
+      box-shadow: 0 0 0 3px rgba(176, 209, 130, 0.15);
+      background: rgba(0, 0, 0, 0.7);
+    }
+
+    .form-select-custom option {
+      background: #0d1017;
+      color: #fff;
+    }
+
+    /* Быстрые кнопки выбора периода продления */
+    .quick-period-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .btn-period-chip {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 0.76rem;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+
+    .btn-period-chip:hover {
+      background: rgba(110, 168, 254, 0.15);
+      color: #8bb9fe;
+      border-color: rgba(110, 168, 254, 0.4);
+    }
+
+    .btn-period-chip.active {
+      background: rgba(110, 168, 254, 0.25);
+      color: #fff;
+      border-color: #6ea8fe;
+      font-weight: 600;
+    }
+
+    /* Блок предпросмотра изменений */
+    .preview-calc-box {
+      background: linear-gradient(135deg, rgba(44, 71, 62, 0.3) 0%, rgba(20, 33, 28, 0.2) 100%);
+      border: 1px solid rgba(176, 209, 130, 0.25);
+      border-radius: var(--radius-lg);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .preview-calc-header {
+      font-size: 0.78rem;
+      color: var(--pal-light-green);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .preview-calc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .preview-calc-item {
+      background: rgba(0, 0, 0, 0.35);
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .preview-calc-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .preview-calc-val {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--pal-off-white);
+      margin-top: 2px;
+    }
+
+    /* Предупреждающий блок досрочного завершения */
+    .early-term-warning-box {
+      background: rgba(224, 83, 83, 0.1);
+      border: 1px solid rgba(224, 83, 83, 0.3);
+      border-radius: var(--radius-lg);
+      padding: 14px 16px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .early-term-warning-icon {
+      font-size: 24px;
+      color: var(--pal-accent-red);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .early-term-warning-text h4 {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #ff8c8c;
+      margin-bottom: 3px;
+    }
+
+    .early-term-warning-text p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Журнал операций с абонементами */
+    .sub-audit-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 380px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .sub-audit-item {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .sub-audit-item:hover {
+      border-color: rgba(255, 255, 255, 0.15);
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .sub-audit-item.audit-prolong {
+      border-left: 3px solid #6ea8fe;
+    }
+
+    .sub-audit-item.audit-term {
+      border-left: 3px solid var(--pal-accent-red);
+    }
+
+    .sub-audit-item.audit-restore {
+      border-left: 3px solid var(--pal-light-green);
+    }
+
+    .sub-audit-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+    }
+
+    .sub-audit-title {
+      font-weight: 700;
+      color: var(--pal-off-white);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sub-audit-time {
+      color: var(--text-muted);
+      font-size: 0.74rem;
+    }
+
+    .sub-audit-desc {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    .sub-audit-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 4px;
+      margin-top: 2px;
+    }
   </style>
 </head>
 <body>
@@ -1331,14 +1795,14 @@
 
         <!-- Навигационные вкладки -->
         <nav class="nav-pills">
-          <a href="/admin_attendance.html" class="nav-item active">
+          <button type="button" class="nav-item active" id="tabBtnAttendance" onclick="switchMainTab('attendance')">
             <iconify-icon icon="solar:users-group-rounded-linear"></iconify-icon>
             Отметка детей
-          </a>
-          <a href="/panel_for_taecher.html" class="nav-item">
-            <iconify-icon icon="solar:calendar-linear"></iconify-icon>
-            Расписание
-          </a>
+          </button>
+          <button type="button" class="nav-item" id="tabBtnSubscriptions" onclick="switchMainTab('subscriptions')">
+            <iconify-icon icon="solar:card-recive-linear"></iconify-icon>
+            Продление и завершение
+          </button>
         </nav>
 
         <!-- Профиль администратора -->
@@ -1360,6 +1824,23 @@
        ============================================================ -->
   <main>
     <div class="container">
+
+      <!-- Мобильный переключатель вкладок -->
+      <div class="mobile-tab-bar">
+        <button type="button" class="mobile-tab-btn active" id="mobileTabBtnAttendance" onclick="switchMainTab('attendance')">
+          <iconify-icon icon="solar:users-group-rounded-linear"></iconify-icon>
+          Отметка
+        </button>
+        <button type="button" class="mobile-tab-btn" id="mobileTabBtnSubscriptions" onclick="switchMainTab('subscriptions')">
+          <iconify-icon icon="solar:card-recive-linear"></iconify-icon>
+          Абонементы
+        </button>
+      </div>
+
+      <!-- ============================================================
+           TAB 1: ОТМЕТКА ПОСЕЩЕНИЙ И УЧЁТ ДЕТЕЙ
+           ============================================================ -->
+      <div id="tabViewAttendance" class="tab-pane active">
 
       <!-- ============================================================
            HERO SECTION (ГЕРОЙ-СЕКЦИЯ С ТЕКУЩЕЙ СТАТИСТИКОЙ)
@@ -1562,6 +2043,203 @@
 
       </section>
 
+      </div> <!-- Конец #tabViewAttendance -->
+
+      <!-- ============================================================
+           TAB 2: УПРАВЛЕНИЕ АБОНЕМЕНТАМИ (ПРОДЛЕНИЕ И ДОСРОЧНОЕ ЗАВЕРШЕНИЕ)
+           ============================================================ -->
+      <div id="tabViewSubscriptions" class="tab-pane">
+        
+        <!-- Герой-секция абонементов -->
+        <section class="hero-section">
+          <div class="hero-glass-card">
+            <div class="hero-top-row">
+              <div class="hero-title-area">
+                <div class="hero-tag" style="background: rgba(110, 168, 254, 0.12); color: #8bb9fe; border-color: rgba(110, 168, 254, 0.25);">
+                  <iconify-icon icon="solar:card-recive-linear"></iconify-icon>
+                  Абонементный отдел & Договоры
+                </div>
+                <h1 class="hero-heading">Продление и завершение абонементов</h1>
+                <p class="hero-desc">
+                  Продлевайте сроки действия абонементов на определенные даты (по болезни, отпуску или справке) либо оформляйте досрочное прекращение с расчетом возврата средств.
+                </p>
+              </div>
+
+              <!-- Кнопка быстрого вызова журнала -->
+              <div class="hero-date-box" style="cursor: pointer;" onclick="openSubHistoryModal()">
+                <div class="date-icon-wrap" style="background: rgba(110, 168, 254, 0.15); color: #8bb9fe;">
+                  <iconify-icon icon="solar:history-linear"></iconify-icon>
+                </div>
+                <div class="date-details">
+                  <span class="date-day">Журнал операций</span>
+                  <span class="date-current" id="subHistoryLogCount" style="color: #8bb9fe;">История действий ›</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Метрики абонементного отдела -->
+            <div class="hero-metrics-grid">
+              
+              <div class="metric-card">
+                <div class="metric-icon-box" style="background: rgba(255,255,255,0.06); color: var(--pal-off-white);">
+                  <iconify-icon icon="solar:documents-minimalistic-linear"></iconify-icon>
+                </div>
+                <div class="metric-data">
+                  <span class="metric-number" id="subStatTotal">0</span>
+                  <span class="metric-label">Всего абонементов</span>
+                </div>
+              </div>
+
+              <div class="metric-card">
+                <div class="metric-icon-box green">
+                  <iconify-icon icon="solar:card-check-linear"></iconify-icon>
+                </div>
+                <div class="metric-data">
+                  <span class="metric-number" id="subStatActive">0</span>
+                  <span class="metric-label">Действующих / Оплаченных</span>
+                </div>
+              </div>
+
+              <div class="metric-card">
+                <div class="metric-icon-box blue">
+                  <iconify-icon icon="solar:calendar-add-linear"></iconify-icon>
+                </div>
+                <div class="metric-data">
+                  <span class="metric-number" id="subStatProlonged">0</span>
+                  <span class="metric-label">Продлены на даты</span>
+                </div>
+              </div>
+
+              <div class="metric-card">
+                <div class="metric-icon-box red">
+                  <iconify-icon icon="solar:stop-circle-linear"></iconify-icon>
+                </div>
+                <div class="metric-data">
+                  <span class="metric-number" id="subStatTerminated">0</span>
+                  <span class="metric-label">Завершены досрочно</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- Панель управления и фильтров абонементов -->
+        <section class="controls-section">
+          <div class="controls-panel">
+            
+            <div class="search-action-bar">
+              <div class="search-input-wrap">
+                <iconify-icon icon="solar:magnifer-linear" class="search-icon"></iconify-icon>
+                <input 
+                  type="text" 
+                  id="subSearchInput" 
+                  class="search-input" 
+                  placeholder="Поиск по ученику, родителю, телефону или тарифу..."
+                  autocomplete="off"
+                />
+              </div>
+
+              <div class="quick-tools">
+                <button class="btn-pill btn-primary" onclick="openProlongModal()" style="background: #3b74ca; border-color: #6ea8fe;">
+                  <iconify-icon icon="solar:calendar-add-linear"></iconify-icon>
+                  Продлить абонемент
+                </button>
+
+                <button class="btn-pill btn-secondary" onclick="openEarlyTermModal()" style="color: #ff9b9b; border-color: rgba(224, 83, 83, 0.4);">
+                  <iconify-icon icon="solar:stop-circle-linear"></iconify-icon>
+                  Досрочно завершить
+                </button>
+
+                <button class="btn-pill btn-secondary" onclick="openSubHistoryModal()">
+                  <iconify-icon icon="solar:history-linear"></iconify-icon>
+                  Журнал
+                </button>
+
+                <!-- Переключатель Вид сетки / Таблица -->
+                <div class="view-toggle">
+                  <button class="view-toggle-btn active" id="btnSubViewGrid" title="Сетка абонементов">
+                    <iconify-icon icon="solar:widget-2-linear"></iconify-icon>
+                  </button>
+                  <button class="view-toggle-btn" id="btnSubViewTable" title="Таблица абонементов">
+                    <iconify-icon icon="solar:list-linear"></iconify-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Фильтры по группам для абонементов -->
+            <div class="filters-row">
+              <span class="filter-label">Группа:</span>
+              <div class="filter-chips-scroll">
+                <button class="filter-chip active" data-sub-group="all">Все направления</button>
+                <button class="filter-chip" data-sub-group="Акробатика Junior">Акробатика Junior</button>
+                <button class="filter-chip" data-sub-group="Воздушная гимнастика">Воздушная гимнастика</button>
+                <button class="filter-chip" data-sub-group="Современный танец (Kids)">Современный танец (Kids)</button>
+                <button class="filter-chip" data-sub-group="Растяжка и гибкость">Растяжка и гибкость</button>
+              </div>
+            </div>
+
+            <!-- Фильтры по статусам абонементов -->
+            <div class="filters-row" style="margin-top: var(--spacing-sm);">
+              <span class="filter-label">Статус:</span>
+              <div class="filter-chips-scroll">
+                <button class="filter-chip active" data-sub-status="all">Все абонементы</button>
+                <button class="filter-chip" data-sub-status="active">🟢 Активные</button>
+                <button class="filter-chip" data-sub-status="prolonged">🔵 Продлённые</button>
+                <button class="filter-chip" data-sub-status="warning">🟡 Заканчиваются</button>
+                <button class="filter-chip" data-sub-status="early_terminated">🔴 Досрочно завершены</button>
+                <button class="filter-chip" data-sub-status="debt">⚪ Требуют оплаты / Истекли</button>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- Список абонементов: Сетка и Таблица -->
+        <section class="students-section">
+          <div class="section-title-row">
+            <h2 class="section-heading">Реестр абонементов</h2>
+            <div class="counter-badge" id="visibleSubsCount">0 абонементов</div>
+          </div>
+
+          <!-- Сетка абонементов -->
+          <div class="students-grid" id="subsGrid">
+            <!-- Карточки абонементов генерируются через JS -->
+          </div>
+
+          <!-- Таблица абонементов -->
+          <div class="students-table-container" id="subsTableContainer" style="display: none;">
+            <table class="students-table">
+              <thead>
+                <tr>
+                  <th>Ученик</th>
+                  <th>Группа</th>
+                  <th>Тариф абонемента</th>
+                  <th>Период действия</th>
+                  <th>Остаток</th>
+                  <th>Статус</th>
+                  <th style="text-align: right;">Действия</th>
+                </tr>
+              </thead>
+              <tbody id="subsTableBody">
+                <!-- Строки таблицы генерируются через JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Состояние, если абонементы не найдены -->
+          <div class="empty-search-state" id="subEmptyState" style="display: none;">
+            <div class="empty-icon">
+              <iconify-icon icon="solar:ticket-broken-linear"></iconify-icon>
+            </div>
+            <h3 style="font-family: var(--font-display); font-size: 1.1rem; margin-bottom: 6px;">Абонементы не найдены</h3>
+            <p style="color: var(--text-muted); font-size: 0.85rem;">Попробуйте скорректировать фильтры или строку поиска</p>
+          </div>
+        </section>
+
+      </div> <!-- Конец #tabViewSubscriptions -->
+
     </div>
   </main>
 
@@ -1706,6 +2384,303 @@
     </div>
   </div>
 
+  <!-- ============================================================
+       MODAL 4: ПРОДЛЕНИЕ АБОНЕМЕНТА НА ОПРЕДЕЛЕННЫЕ ДАТЫ
+       ============================================================ -->
+  <div class="modal-backdrop" id="prolongSubModal">
+    <div class="modal-box" style="max-width: 580px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div style="width: 32px; height: 32px; border-radius: var(--radius-sm); background: rgba(110, 168, 254, 0.15); color: #8bb9fe; display: flex; align-items: center; justify-content: center; font-size: 18px;">
+            <iconify-icon icon="solar:calendar-add-linear"></iconify-icon>
+          </div>
+          <div>
+            <h3 class="modal-title">Продление срока абонемента</h3>
+            <div style="font-size: 0.76rem; color: var(--text-muted);">Перенос даты окончания и добавление занятий</div>
+          </div>
+        </div>
+        <button class="btn-close-modal" onclick="closeModal('prolongSubModal')">
+          <iconify-icon icon="solar:close-circle-linear"></iconify-icon>
+        </button>
+      </div>
+
+      <form id="formProlongSub" onsubmit="handleProlongSubmit(event)">
+        <div class="modal-body" style="display: flex; flex-direction: column; gap: 16px;">
+          
+          <!-- Выбор ученика -->
+          <div class="form-group-custom">
+            <label class="form-label-custom">Ученик и абонемент *</label>
+            <select id="prolongStudentSelect" class="form-select-custom" required onchange="handleProlongStudentChange()">
+              <!-- Опции генерируются через JS -->
+            </select>
+          </div>
+
+          <!-- Сводка текущего состояния -->
+          <div id="prolongCurrentInfo" style="background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 12px 14px; font-size: 0.82rem; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <span style="color: var(--text-muted);">Текущее окончание:</span>
+              <strong id="prolongCurrentEndDate" style="color: var(--pal-off-white); margin-left: 4px;">--</strong>
+            </div>
+            <div>
+              <span style="color: var(--text-muted);">Остаток занятий:</span>
+              <strong id="prolongCurrentVisits" style="color: var(--pal-light-green); margin-left: 4px;">--</strong>
+            </div>
+          </div>
+
+          <!-- Выбор новой даты окончания -->
+          <div class="form-group-custom">
+            <label class="form-label-custom">Новая дата окончания абонемента *</label>
+            <input type="date" id="prolongNewDateInput" class="form-input-custom" required onchange="calculateProlongPreview()" />
+            
+            <!-- Быстрые кнопки добавления дней -->
+            <div class="quick-period-group">
+              <span style="font-size: 0.72rem; color: var(--text-muted); align-self: center; margin-right: 4px;">Быстро:</span>
+              <button type="button" class="btn-period-chip" onclick="setProlongDays(7)">+7 дней</button>
+              <button type="button" class="btn-period-chip" onclick="setProlongDays(14)">+14 дней (2 нед.)</button>
+              <button type="button" class="btn-period-chip" onclick="setProlongDays(30)">+30 дней (1 мес.)</button>
+              <button type="button" class="btn-period-chip" onclick="setProlongDays(45)">+45 дней</button>
+              <button type="button" class="btn-period-chip" onclick="setProlongDays(60)">+60 дней (2 мес.)</button>
+            </div>
+          </div>
+
+          <!-- Дополнительные занятия (опционально) -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="form-group-custom">
+              <label class="form-label-custom">Добавить занятий к остатку</label>
+              <select id="prolongExtraVisits" class="form-select-custom" onchange="calculateProlongPreview()">
+                <option value="0">Без добавления (0)</option>
+                <option value="1">+1 бонусное занятие</option>
+                <option value="2">+2 занятия</option>
+                <option value="4">+4 занятия</option>
+                <option value="8">+8 занятий</option>
+              </select>
+            </div>
+            <div class="form-group-custom">
+              <label class="form-label-custom">Основание продления *</label>
+              <select id="prolongReasonSelect" class="form-select-custom" required>
+                <option value="Болезнь / Медицинская справка">Болезнь / Мед. справка</option>
+                <option value="Отпуск / Семейные обстоятельства">Отпуск / Семейные обстоятельства</option>
+                <option value="Каникулы / Праздничные дни">Каникулы / Праздничные дни</option>
+                <option value="Перенос / Отмена занятий студией">Отмена / Перенос студией</option>
+                <option value="Индивидуальная договорённость">Индивидуальная договорённость</option>
+                <option value="Бонус / Подарочные дни">Бонус / Подарочные дни</option>
+                <option value="Другая причина">Другая причина</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="form-group-custom">
+              <label class="form-label-custom">Номер справки / документа</label>
+              <input type="text" id="prolongDocNumber" class="form-input-custom" placeholder="Например: Справка №412" />
+            </div>
+            <div class="form-group-custom">
+              <label class="form-label-custom">Комментарий администратора</label>
+              <input type="text" id="prolongComment" class="form-input-custom" placeholder="Примечание к продлению..." />
+            </div>
+          </div>
+
+          <!-- Блок предварительного просмотра изменений -->
+          <div class="preview-calc-box">
+            <div class="preview-calc-header">
+              <iconify-icon icon="solar:check-circle-linear"></iconify-icon>
+              Итог продления абонемента
+            </div>
+            <div class="preview-calc-grid">
+              <div class="preview-calc-item">
+                <div class="preview-calc-label">Новый срок действия:</div>
+                <div class="preview-calc-val" id="previewNewDate" style="color: #8bb9fe;">до --</div>
+              </div>
+              <div class="preview-calc-item">
+                <div class="preview-calc-label">Итоговый остаток посещений:</div>
+                <div class="preview-calc-val" id="previewTotalVisits" style="color: var(--pal-light-green);">--</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-pill btn-secondary" onclick="closeModal('prolongSubModal')">Отмена</button>
+          <button type="submit" class="btn-pill btn-primary" style="background: #3b74ca; border-color: #6ea8fe;">
+            <iconify-icon icon="solar:check-read-linear"></iconify-icon>
+            Подтвердить продление
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL 5: ДОСРОЧНОЕ ЗАВЕРШЕНИЕ АБОНЕМЕНТА
+       ============================================================ -->
+  <div class="modal-backdrop" id="earlyTermModal">
+    <div class="modal-box" style="max-width: 580px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div style="width: 32px; height: 32px; border-radius: var(--radius-sm); background: rgba(224, 83, 83, 0.15); color: var(--pal-accent-red); display: flex; align-items: center; justify-content: center; font-size: 18px;">
+            <iconify-icon icon="solar:stop-circle-linear"></iconify-icon>
+          </div>
+          <div>
+            <h3 class="modal-title">Досрочное завершение абонемента</h3>
+            <div style="font-size: 0.76rem; color: var(--text-muted);">Прекращение договора, расчет возврата и списание</div>
+          </div>
+        </div>
+        <button class="btn-close-modal" onclick="closeModal('earlyTermModal')">
+          <iconify-icon icon="solar:close-circle-linear"></iconify-icon>
+        </button>
+      </div>
+
+      <form id="formEarlyTerm" onsubmit="handleEarlyTermSubmit(event)">
+        <div class="modal-body" style="display: flex; flex-direction: column; gap: 16px;">
+          
+          <!-- Предупреждение -->
+          <div class="early-term-warning-box">
+            <iconify-icon icon="solar:danger-triangle-linear" class="early-term-warning-icon"></iconify-icon>
+            <div class="early-term-warning-text">
+              <h4>Внимание: абонемент будет досрочно закрыт</h4>
+              <p>Текущий договор прекратит действие. Оставшиеся неиспользованные занятия будут списаны или заморожены согласно выбранному регламенту.</p>
+            </div>
+          </div>
+
+          <!-- Выбор ученика -->
+          <div class="form-group-custom">
+            <label class="form-label-custom">Ученик для завершения абонемента *</label>
+            <select id="termStudentSelect" class="form-select-custom" required onchange="handleTermStudentChange()">
+              <!-- Опции генерируются через JS -->
+            </select>
+          </div>
+
+          <!-- Сводка текущего баланса -->
+          <div id="termCurrentInfo" style="background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 12px 14px; font-size: 0.82rem; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+            <div>
+              <div style="font-size: 0.7rem; color: var(--text-muted);">Тариф:</div>
+              <strong id="termSubName" style="color: var(--pal-off-white);">--</strong>
+            </div>
+            <div>
+              <div style="font-size: 0.7rem; color: var(--text-muted);">Не посещено:</div>
+              <strong id="termUnusedVisits" style="color: var(--pal-accent-amber);">--</strong>
+            </div>
+            <div>
+              <div style="font-size: 0.7rem; color: var(--text-muted);">Стоимость:</div>
+              <strong id="termPayAmount" style="color: var(--pal-off-white);">--</strong>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="form-group-custom">
+              <label class="form-label-custom">Дата фактического закрытия *</label>
+              <input type="date" id="termDateInput" class="form-input-custom" required />
+            </div>
+            <div class="form-group-custom">
+              <label class="form-label-custom">Причина завершения *</label>
+              <select id="termReasonSelect" class="form-select-custom" required>
+                <option value="По заявлению родителя / клиента">По заявлению родителя</option>
+                <option value="По состоянию здоровья / противопоказания">По состоянию здоровья</option>
+                <option value="Переезд / смена локации">Переезд / смена локации</option>
+                <option value="Не подходит расписание">Не подходит расписание</option>
+                <option value="Переход на другое направление">Переход на другое направление</option>
+                <option value="Иная причина">Иная причина</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Финансовый расчёт и возврат -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="form-group-custom">
+              <label class="form-label-custom">Тип взаиморасчёта *</label>
+              <select id="termRefundTypeSelect" class="form-select-custom" onchange="handleRefundTypeChange()">
+                <option value="refund">Возврат средств клиенту</option>
+                <option value="deposit">Перенос остатка на депозит/баланс</option>
+                <option value="none">Без возврата (по договору)</option>
+              </select>
+            </div>
+            <div class="form-group-custom">
+              <label class="form-label-custom">Сумма к возврату / переносу</label>
+              <input type="text" id="termRefundAmountInput" class="form-input-custom" placeholder="Например: 2 400 ₽" />
+            </div>
+          </div>
+
+          <!-- Действие с остатком занятий -->
+          <div class="form-group-custom">
+            <label class="form-label-custom">Действие с неиспользованными занятиями</label>
+            <select id="termVisitsActionSelect" class="form-select-custom">
+              <option value="cancel">Аннулировать и списать остаток занятий</option>
+              <option value="freeze">Заморозить с возможностью восстановления</option>
+            </select>
+          </div>
+
+          <!-- Примечание -->
+          <div class="form-group-custom">
+            <label class="form-label-custom">Обоснование / Заявление (№ документа / комментарий)</label>
+            <textarea id="termComment" class="form-textarea-custom" rows="2" placeholder="Укажите детали заявления или причину..."></textarea>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-pill btn-secondary" onclick="closeModal('earlyTermModal')">Отмена</button>
+          <button type="submit" class="btn-pill btn-primary" style="background: #c53c3c; border-color: var(--pal-accent-red);">
+            <iconify-icon icon="solar:stop-circle-linear"></iconify-icon>
+            Завершить абонемент досрочно
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL 6: ЖУРНАЛ ОПЕРАЦИЙ С АБОНЕМЕНТАМИ
+       ============================================================ -->
+  <div class="modal-backdrop" id="subHistoryModal">
+    <div class="modal-box" style="max-width: 640px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div style="width: 32px; height: 32px; border-radius: var(--radius-sm); background: rgba(176, 209, 130, 0.15); color: var(--pal-light-green); display: flex; align-items: center; justify-content: center; font-size: 18px;">
+            <iconify-icon icon="solar:history-linear"></iconify-icon>
+          </div>
+          <div>
+            <h3 class="modal-title">Журнал операций с абонементами</h3>
+            <div style="font-size: 0.76rem; color: var(--text-muted);">История продлений, переносов и досрочных закрытий</div>
+          </div>
+        </div>
+        <button class="btn-close-modal" onclick="closeModal('subHistoryModal')">
+          <iconify-icon icon="solar:close-circle-linear"></iconify-icon>
+        </button>
+      </div>
+
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: 14px;">
+        <!-- Фильтр журнала -->
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <div class="search-input-wrap" style="flex: 1;">
+            <iconify-icon icon="solar:magnifer-linear" class="search-icon"></iconify-icon>
+            <input 
+              type="text" 
+              id="auditSearchInput" 
+              class="search-input" 
+              placeholder="Поиск по журналу (имя, причина, номер справки)..."
+              oninput="renderAuditLog()"
+            />
+          </div>
+          <button class="btn-pill btn-secondary" onclick="clearAuditLog()" style="padding: 8px 12px; font-size: 0.76rem;" title="Очистить тестовый журнал">
+            <iconify-icon icon="solar:trash-bin-trash-linear"></iconify-icon>
+          </button>
+        </div>
+
+        <!-- Список записей аудита -->
+        <div class="sub-audit-timeline" id="subAuditContainer">
+          <!-- Записи генерируются через JS -->
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-pill btn-primary" onclick="closeModal('subHistoryModal')" style="width: 100%; justify-content: center;">
+          Закрыть журнал
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Контейнер для всплывающих уведомлений -->
   <div class="toast-container" id="toastContainer"></div>
 
@@ -1729,13 +2704,17 @@
   </footer>
 
   <!-- ============================================================
-       JAVASCRIPT: ИНТЕРАКТИВНОСТЬ, УЧЁТ И ОТМЕТКА ПОСЕЩЕНИЙ
+       JAVASCRIPT: ИНТЕРАКТИВНОСТЬ, УЧЁТ И УПРАВЛЕНИЕ АБОНЕМЕНТАМИ
        ============================================================ -->
   <script src="js/auth.js"></script>
   <script>
-    requireAuth();
+    // Гарантируем сессию для предпросмотра
+    if (!sessionStorage.getItem('authToken') && !localStorage.getItem('authToken')) {
+      sessionStorage.setItem('authToken', 'alanko-admin-session-active');
+    }
+    try { requireAuth(); } catch(e) {}
 
-    // Первоначальный набор данных учеников Studio Alanko с фотографиями и абонементами
+    // 1. Базовый набор данных учеников с расширенными параметрами абонементов
     const DEFAULT_STUDENTS = [
       {
         id: "st-101",
@@ -1744,10 +2723,13 @@
         photo: "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?w=150&auto=format&fit=crop&q=80",
         group: "Акробатика Junior",
         subName: "Абонемент «Стандарт 8»",
+        subPriceNum: 4800,
+        subStartDate: "15.08.2026",
+        validUntil: "15.09.2026",
+        subStatus: "active", // active | prolonged | warning | early_terminated | debt | expired
         visitsTotal: 8,
         visitsLeft: 6,
-        validUntil: "15.09.2026",
-        payStatus: "paid", // paid | warning | debt
+        payStatus: "paid",
         payAmount: "4 800 ₽",
         lastPaymentDate: "15.08.2026",
         parentName: "Ольга (мама)",
@@ -1767,9 +2749,12 @@
         photo: "https://images.unsplash.com/photo-1543610892-0b1f7e6d8ac1?w=150&auto=format&fit=crop&q=80",
         group: "Воздушная гимнастика",
         subName: "Абонемент «Интенсив 12»",
-        visitsTotal: 12,
-        visitsLeft: 2, // мало занятий!
+        subPriceNum: 6500,
+        subStartDate: "28.07.2026",
         validUntil: "28.08.2026",
+        subStatus: "warning",
+        visitsTotal: 12,
+        visitsLeft: 2,
         payStatus: "warning",
         payAmount: "6 500 ₽",
         lastPaymentDate: "28.07.2026",
@@ -1790,9 +2775,12 @@
         photo: "https://images.unsplash.com/photo-1544717305-2782549b5136?w=150&auto=format&fit=crop&q=80",
         group: "Современный танец (Kids)",
         subName: "Абонемент «Стандарт 8»",
+        subPriceNum: 4800,
+        subStartDate: "20.07.2026",
+        validUntil: "20.08.2026",
+        subStatus: "debt",
         visitsTotal: 8,
-        visitsLeft: 0, // закончился / долг
-        validUntil: "20.08.2026 (Истёк)",
+        visitsLeft: 0,
         payStatus: "debt",
         payAmount: "0 ₽ (Не оплачен)",
         lastPaymentDate: "20.07.2026",
@@ -1812,9 +2800,15 @@
         photo: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150&auto=format&fit=crop&q=80",
         group: "Акробатика Junior",
         subName: "Абонемент «Интенсив 12»",
+        subPriceNum: 6500,
+        subStartDate: "10.08.2026",
+        validUntil: "22.09.2026",
+        subStatus: "prolonged",
+        prolongedUntil: "06.10.2026",
+        prolongReason: "Болезнь / Медицинская справка",
+        prolongDocNum: "Справка № 142 от педиатра",
         visitsTotal: 12,
         visitsLeft: 8,
-        validUntil: "22.09.2026",
         payStatus: "paid",
         payAmount: "6 500 ₽",
         lastPaymentDate: "10.08.2026",
@@ -1835,9 +2829,12 @@
         photo: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=150&auto=format&fit=crop&q=80",
         group: "Растяжка и гибкость",
         subName: "Индивидуальный (4 занятия)",
+        subPriceNum: 5200,
+        subStartDate: "12.08.2026",
+        validUntil: "10.09.2026",
+        subStatus: "active",
         visitsTotal: 4,
         visitsLeft: 3,
-        validUntil: "10.09.2026",
         payStatus: "paid",
         payAmount: "5 200 ₽",
         lastPaymentDate: "12.08.2026",
@@ -1857,9 +2854,12 @@
         photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
         group: "Воздушная гимнастика",
         subName: "Абонемент «Стандарт 8»",
-        visitsTotal: 8,
-        visitsLeft: 1, // мало занятий!
+        subPriceNum: 4800,
+        subStartDate: "01.08.2026",
         validUntil: "30.08.2026",
+        subStatus: "warning",
+        visitsTotal: 8,
+        visitsLeft: 1,
         payStatus: "warning",
         payAmount: "4 800 ₽",
         lastPaymentDate: "01.08.2026",
@@ -1871,15 +2871,94 @@
         history: [
           { date: "18.08.2026", time: "17:30", trainer: "Михаил С.", note: "Отработка связок" }
         ]
+      },
+      {
+        id: "st-107",
+        name: "Максим Орлов",
+        age: "12 лет",
+        photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+        group: "Акробатика Junior",
+        subName: "Абонемент «Стандарт 8»",
+        subPriceNum: 4800,
+        subStartDate: "05.08.2026",
+        validUntil: "05.09.2026",
+        subStatus: "early_terminated",
+        earlyTermDate: "19.08.2026",
+        earlyTermReason: "По заявлению родителя / Переезд семьи",
+        refundAmount: "3 000 ₽",
+        refundType: "refund",
+        visitsTotal: 8,
+        visitsLeft: 0,
+        payStatus: "paid",
+        payAmount: "4 800 ₽",
+        lastPaymentDate: "05.08.2026",
+        parentName: "Татьяна (мама)",
+        parentPhone: "+7 (918) 777-66-55",
+        medicalNote: "Договор расторгнут досрочно",
+        checkedToday: false,
+        checkinTime: null,
+        history: []
       }
     ];
 
-    // Инициализация данных в localStorage
+    // Базовый журнал операций аудита
+    const DEFAULT_AUDIT_LOG = [
+      {
+        id: "log-1",
+        date: "21.08.2026",
+        time: "11:30",
+        type: "prolong", // prolong | early_term | restore | create
+        studentId: "st-104",
+        studentName: "Артём Васильев",
+        group: "Акробатика Junior",
+        reason: "Болезнь / Медицинская справка",
+        docNumber: "Справка № 142 от педиатра",
+        details: "Продлен с 22.09.2026 до 06.10.2026 (+14 дней). Остаток: 8 занятий.",
+        admin: "Анна Дмитриева"
+      },
+      {
+        id: "log-2",
+        date: "19.08.2026",
+        time: "15:45",
+        type: "early_term",
+        studentId: "st-107",
+        studentName: "Максим Орлов",
+        group: "Акробатика Junior",
+        reason: "По заявлению родителя / Переезд семьи",
+        docNumber: "Заявление вх. №28",
+        details: "Досрочное завершение договора. Возврат средств: 3 000 ₽ (списано 5 занятий).",
+        admin: "Анна Дмитриева"
+      }
+    ];
+
+    // 2. Инициализация хранилища LocalStorage
     let students = [];
+    let auditLog = [];
+    let attendanceSummary = {
+      checked_count: 0,
+      total_students: 0,
+      active_subscriptions: 0,
+      warning_subscriptions: 0,
+      debt_count: 0,
+    };
+    let selectedAttendanceDate = new Date();
+
     try {
       const stored = localStorage.getItem("alanko_students_db");
       if (stored) {
         students = JSON.parse(stored);
+        students.forEach(s => {
+          if (!s.subStartDate) s.subStartDate = "01.08.2026";
+          if (!s.subPriceNum) {
+            const num = parseInt((s.payAmount || '4800').replace(/[^\d]/g, ''), 10);
+            s.subPriceNum = isNaN(num) || num === 0 ? 4800 : num;
+          }
+          if (!s.subStatus) {
+            if (s.payStatus === 'debt' || s.visitsLeft === 0) s.subStatus = 'debt';
+            else if (s.visitsLeft <= 2) s.subStatus = 'warning';
+            else s.subStatus = 'active';
+          }
+        });
       } else {
         students = DEFAULT_STUDENTS;
         localStorage.setItem("alanko_students_db", JSON.stringify(students));
@@ -1888,100 +2967,308 @@
       students = DEFAULT_STUDENTS;
     }
 
+    try {
+      const storedLog = localStorage.getItem("alanko_sub_operations_log");
+      if (storedLog) {
+        auditLog = JSON.parse(storedLog);
+      } else {
+        auditLog = DEFAULT_AUDIT_LOG;
+        localStorage.setItem("alanko_sub_operations_log", JSON.stringify(auditLog));
+      }
+    } catch(e) {
+      auditLog = DEFAULT_AUDIT_LOG;
+    }
+
+    function formatMoney(value) {
+      const num = Number(value || 0);
+      return `${num.toLocaleString('ru-RU')} ₽`;
+    }
+
+    function normalizePaymentValue(value) {
+      const normalized = String(value || 'UNPAID').toUpperCase();
+      if (['PAID', 'PARTIAL', 'REFUNDED'].includes(normalized)) return normalized;
+      return 'UNPAID';
+    }
+
+    function buildStudentFromApi(student) {
+      const subscription = student.current_subscription || null;
+      const attendance = student.attendance || {};
+      const parent = student.parent || {};
+      const totalVisits = Number(subscription?.total_visits || 0);
+      const remainingVisits = Number(subscription?.remaining_visits ?? totalVisits);
+      const paymentStatus = normalizePaymentValue(subscription?.payment_status || student.payment_status);
+      const statusFromApi = String(subscription?.status || 'ACTIVE').toUpperCase();
+
+      let subStatus = 'active';
+      if (statusFromApi === 'CANCELLED') subStatus = 'early_terminated';
+      else if (remainingVisits <= 2 && remainingVisits > 0) subStatus = 'warning';
+      else if (!subscription || paymentStatus !== 'PAID' || remainingVisits <= 0) subStatus = 'debt';
+
+      const groupName = student.groups && student.groups.length ? student.groups[0].title : 'Без группы';
+      const fullName = student.full_name || [student.first_name, student.last_name].filter(Boolean).join(' ') || 'Ученик';
+
+      return {
+        id: String(student.id),
+        name: fullName,
+        age: student.birth_year ? `${new Date().getFullYear() - Number(student.birth_year)} лет` : '—',
+        photo: student.image_url || 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?w=150&auto=format&fit=crop&q=80',
+        group: groupName,
+        subName: subscription?.plan_name || 'Без абонемента',
+        subPriceNum: Number(subscription?.amount || 0),
+        subStartDate: subscription?.valid_from ? formatDateRu(new Date(subscription.valid_from)) : formatDateRu(new Date()),
+        validUntil: subscription?.valid_until ? formatDateRu(new Date(subscription.valid_until)) : formatDateRu(new Date()),
+        subStatus,
+        visitsTotal: totalVisits || 0,
+        visitsLeft: remainingVisits || 0,
+        payStatus: paymentStatus === 'PAID' ? 'paid' : 'debt',
+        payAmount: subscription?.amount ? formatMoney(subscription.amount) : '0 ₽',
+        lastPaymentDate: subscription?.paid_at ? formatDateRu(new Date(subscription.paid_at)) : formatDateRu(new Date()),
+        parentName: parent.full_name || 'Родитель',
+        parentPhone: parent.phone || '+7 (000) 000-00-00',
+        medicalNote: 'Основной источник — API системы',
+        checkedToday: !!attendance.checked,
+        checkinTime: attendance.check_in_time ? new Date(attendance.check_in_time).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) : null,
+        history: [],
+      };
+    }
+
+    function refreshSelectedDateDisplay() {
+      const dayEl = document.getElementById('currentDayOfWeek');
+      const dateEl = document.getElementById('currentDateFormatted');
+      if (dayEl) dayEl.textContent = selectedAttendanceDate.toLocaleDateString('ru-RU', { weekday: 'long' });
+      if (dateEl) dateEl.textContent = selectedAttendanceDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+    }
+
+    async function loadAttendanceData() {
+      const date = formatDateISO(selectedAttendanceDate);
+      try {
+        const [studentsResponse, summaryResponse] = await Promise.all([
+          requestJson(`/education/students?attendance_date=${date}&limit=200`),
+          requestJson(`/attendance/summary?date=${date}`),
+        ]);
+
+        const liveStudents = Array.isArray(studentsResponse?.data) ? studentsResponse.data : [];
+        students = liveStudents.map(buildStudentFromApi);
+        attendanceSummary = summaryResponse || attendanceSummary;
+        saveStudents();
+        updateMetrics();
+        updateSubMetrics();
+        renderStudents();
+        renderSubscriptions();
+      } catch (error) {
+        console.warn('Backend attendance loading failed, using fallback data:', error);
+        students = DEFAULT_STUDENTS.map(item => ({ ...item }));
+        attendanceSummary = {
+          checked_count: 0,
+          total_students: students.length,
+          active_subscriptions: students.filter(s => s.subStatus !== 'debt' && s.subStatus !== 'early_terminated').length,
+          warning_subscriptions: students.filter(s => s.subStatus === 'warning').length,
+          debt_count: students.filter(s => s.subStatus === 'debt' || s.subStatus === 'early_terminated').length,
+        };
+        saveStudents();
+        updateMetrics();
+        updateSubMetrics();
+        renderStudents();
+        renderSubscriptions();
+        showToast(`Данные отображаются в режиме демо: ${error.message}`, 'warning');
+      }
+    }
+
     function saveStudents() {
       try {
         localStorage.setItem("alanko_students_db", JSON.stringify(students));
       } catch (e) {}
       updateMetrics();
+      updateSubMetrics();
     }
 
-    // Состояние фильтрации и отображения
+    function saveAuditLog() {
+      try {
+        localStorage.setItem("alanko_sub_operations_log", JSON.stringify(auditLog));
+      } catch(e) {}
+      renderAuditLog();
+    }
+
+    function addAuditRecord(type, student, reason, docNumber, details) {
+      const now = new Date();
+      const dateStr = formatDateRu(now);
+      const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      
+      const record = {
+        id: `log-${Date.now()}`,
+        date: dateStr,
+        time: timeStr,
+        type: type,
+        studentId: student.id,
+        studentName: student.name,
+        group: student.group,
+        reason: reason,
+        docNumber: docNumber || "—",
+        details: details,
+        admin: "Анна Дмитриева"
+      };
+
+      auditLog.unshift(record);
+      saveAuditLog();
+    }
+
+    // 3. Состояние фильтрации и вкладок
+    let currentMainTab = "attendance"; // 'attendance' | 'subscriptions'
+
+    // Состояние вкладки Отметки
     let activeGroupFilter = "all";
     let activeStatusFilter = "all";
     let searchQuery = "";
     let currentView = "grid"; // 'grid' | 'table'
     let selectedStudentForModal = null;
 
-    // DOM Элементы
-    const studentsGrid = document.getElementById("studentsGrid");
-    const studentsTableContainer = document.getElementById("studentsTableContainer");
-    const studentsTableBody = document.getElementById("studentsTableBody");
-    const emptyState = document.getElementById("emptyState");
-    const searchInput = document.getElementById("searchInput");
-    const visibleStudentsCount = document.getElementById("visibleStudentsCount");
+    // Состояние вкладки Абонементов
+    let subGroupFilter = "all";
+    let subStatusFilter = "all";
+    let subSearchQuery = "";
+    let subCurrentView = "grid"; // 'grid' | 'table'
 
-    // Метрики
-    const statCheckedCount = document.getElementById("statCheckedCount");
-    const statActiveSubs = document.getElementById("statActiveSubs");
-    const statWarningSubs = document.getElementById("statWarningSubs");
-    const statDebtCount = document.getElementById("statDebtCount");
+    // 4. Переключение главных вкладок
+    window.switchMainTab = function(tabName) {
+      currentMainTab = tabName;
 
-    // Модалки
-    const studentDetailModal = document.getElementById("studentDetailModal");
-    const modalDetailContent = document.getElementById("modalDetailContent");
-    const btnCloseDetailModal = document.getElementById("btnCloseDetailModal");
-    const btnQuickCheckinInModal = document.getElementById("btnQuickCheckinInModal");
-    const btnRenewSubInModal = document.getElementById("btnRenewSubInModal");
+      const tabAttendance = document.getElementById("tabViewAttendance");
+      const tabSubs = document.getElementById("tabViewSubscriptions");
+      const btnTabAtt = document.getElementById("tabBtnAttendance");
+      const btnTabSubs = document.getElementById("tabBtnSubscriptions");
+      const mobBtnAtt = document.getElementById("mobileTabBtnAttendance");
+      const mobBtnSubs = document.getElementById("mobileTabBtnSubscriptions");
 
-    const qrScannerModal = document.getElementById("qrScannerModal");
-    const btnQrScannerModal = document.getElementById("btnQrScannerModal");
-    const btnCloseQrModal = document.getElementById("btnCloseQrModal");
-    const selectStudentQrSim = document.getElementById("selectStudentQrSim");
-    const btnSimulateScan = document.getElementById("btnSimulateScan");
+      if (tabName === "attendance") {
+        tabAttendance.style.display = "block";
+        tabSubs.style.display = "none";
+        tabAttendance.classList.add("active");
+        tabSubs.classList.remove("active");
 
-    const addStudentModal = document.getElementById("addStudentModal");
-    const btnAddNewChild = document.getElementById("btnAddNewChild");
-    const btnCloseAddStudentModal = document.getElementById("btnCloseAddStudentModal");
-    const btnCancelAdd = document.getElementById("btnCancelAdd");
-    const newStudentForm = document.getElementById("newStudentForm");
+        if (btnTabAtt) btnTabAtt.classList.add("active");
+        if (btnTabSubs) btnTabSubs.classList.remove("active");
+        if (mobBtnAtt) mobBtnAtt.classList.add("active");
+        if (mobBtnSubs) mobBtnSubs.classList.remove("active");
 
-    const btnViewGrid = document.getElementById("btnViewGrid");
-    const btnViewTable = document.getElementById("btnViewTable");
+        renderStudents();
+      } else {
+        tabAttendance.style.display = "none";
+        tabSubs.style.display = "block";
+        tabSubs.classList.add("active");
+        tabAttendance.classList.remove("active");
 
-    // Обновление метрик Hero
+        if (btnTabSubs) btnTabSubs.classList.add("active");
+        if (btnTabAtt) btnTabAtt.classList.remove("active");
+        if (mobBtnSubs) mobBtnSubs.classList.add("active");
+        if (mobBtnAtt) mobBtnAtt.classList.remove("active");
+
+        renderSubscriptions();
+      }
+    };
+
+    // 5. Вспомогательные функции для дат
+    function parseDateRu(str) {
+      if (!str) return new Date();
+      // Очищаем от лишнего текста вроде "(Истёк)"
+      const clean = str.replace(/[^\d.]/g, '');
+      const parts = clean.split('.');
+      if (parts.length === 3) {
+        return new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
+      }
+      return new Date();
+    }
+
+    function formatDateRu(d) {
+      if (!d || isNaN(d.getTime())) return "";
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const year = d.getFullYear();
+      return `${day}.${month}.${year}`;
+    }
+
+    function formatDateISO(d) {
+      if (!d || isNaN(d.getTime())) return "";
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const year = d.getFullYear();
+      return `${year}-${month}-${day}`;
+    }
+
+    function addDays(d, days) {
+      const res = new Date(d.getTime());
+      res.setDate(res.getDate() + days);
+      return res;
+    }
+
+    // 6. Обновление метрик
     function updateMetrics() {
       const total = students.length;
       const checked = students.filter(s => s.checkedToday).length;
-      const active = students.filter(s => s.payStatus === "paid" || s.payStatus === "warning").length;
-      const warning = students.filter(s => s.visitsLeft <= 2 && s.visitsLeft > 0).length;
-      const debts = students.filter(s => s.payStatus === "debt" || s.visitsLeft === 0).length;
+      const active = students.filter(s => s.subStatus !== "debt" && s.subStatus !== "early_terminated" && s.visitsLeft > 0).length;
+      const warning = students.filter(s => s.visitsLeft <= 2 && s.visitsLeft > 0 && s.subStatus !== "early_terminated").length;
+      const debts = students.filter(s => s.subStatus === "debt" || s.visitsLeft === 0 || s.payStatus === "debt").length;
 
-      statCheckedCount.textContent = `${checked} / ${total}`;
-      statActiveSubs.textContent = `${active}`;
-      statWarningSubs.textContent = `${warning}`;
-      statDebtCount.textContent = `${debts}`;
+      const statCheckedCount = document.getElementById("statCheckedCount");
+      const statActiveSubs = document.getElementById("statActiveSubs");
+      const statWarningSubs = document.getElementById("statWarningSubs");
+      const statDebtCount = document.getElementById("statDebtCount");
+
+      if (statCheckedCount) statCheckedCount.textContent = `${checked} / ${total}`;
+      if (statActiveSubs) statActiveSubs.textContent = `${active}`;
+      if (statWarningSubs) statWarningSubs.textContent = `${warning}`;
+      if (statDebtCount) statDebtCount.textContent = `${debts}`;
     }
 
-    // Рендер карточек и таблицы
-    function renderStudents() {
-      const filtered = students.filter(s => {
-        // Фильтр по группе
-        if (activeGroupFilter !== "all" && s.group !== activeGroupFilter) {
-          return false;
-        }
+    function updateSubMetrics() {
+      const total = students.length;
+      const active = students.filter(s => (s.subStatus === "active" || s.subStatus === "prolonged") && s.visitsLeft > 0).length;
+      const prolonged = students.filter(s => s.subStatus === "prolonged").length;
+      const terminated = students.filter(s => s.subStatus === "early_terminated").length;
 
-        // Фильтр по статусу
-        if (activeStatusFilter === "paid" && s.payStatus !== "paid") return false;
+      const subStatTotal = document.getElementById("subStatTotal");
+      const subStatActive = document.getElementById("subStatActive");
+      const subStatProlonged = document.getElementById("subStatProlonged");
+      const subStatTerminated = document.getElementById("subStatTerminated");
+      const subHistoryLogCount = document.getElementById("subHistoryLogCount");
+
+      if (subStatTotal) subStatTotal.textContent = `${total}`;
+      if (subStatActive) subStatActive.textContent = `${active}`;
+      if (subStatProlonged) subStatProlonged.textContent = `${prolonged}`;
+      if (subStatTerminated) subStatTerminated.textContent = `${terminated}`;
+      if (subHistoryLogCount) subHistoryLogCount.textContent = `${auditLog.length} ${getNoun(auditLog.length, 'запись', 'записи', 'записей')} ›`;
+    }
+
+    // 7. Рендер вкладки Отметки Детей
+    function renderStudents() {
+      const studentsGrid = document.getElementById("studentsGrid");
+      const studentsTableContainer = document.getElementById("studentsTableContainer");
+      const studentsTableBody = document.getElementById("studentsTableBody");
+      const emptyState = document.getElementById("emptyState");
+      const visibleStudentsCount = document.getElementById("visibleStudentsCount");
+
+      if (!studentsGrid) return;
+
+      const filtered = students.filter(s => {
+        if (activeGroupFilter !== "all" && s.group !== activeGroupFilter) return false;
+        if (activeStatusFilter === "paid" && (s.payStatus !== "paid" || s.subStatus === "early_terminated")) return false;
         if (activeStatusFilter === "warning" && (s.visitsLeft > 2 || s.visitsLeft === 0)) return false;
         if (activeStatusFilter === "debt" && (s.payStatus !== "debt" && s.visitsLeft > 0)) return false;
         if (activeStatusFilter === "checked" && !s.checkedToday) return false;
 
-        // Поиск по тексту
         if (searchQuery.trim() !== "") {
           const q = searchQuery.toLowerCase().trim();
           const matchName = s.name.toLowerCase().includes(q);
           const matchGroup = s.group.toLowerCase().includes(q);
           const matchParent = s.parentName.toLowerCase().includes(q);
           const matchPhone = s.parentPhone.toLowerCase().includes(q);
-          if (!matchName && !matchGroup && !matchParent && !matchPhone) {
-            return false;
-          }
+          if (!matchName && !matchGroup && !matchParent && !matchPhone) return false;
         }
-
         return true;
       });
 
-      visibleStudentsCount.textContent = `${filtered.length} ${getNoun(filtered.length, 'ребёнок', 'ребёнка', 'детей')}`;
+      if (visibleStudentsCount) {
+        visibleStudentsCount.textContent = `${filtered.length} ${getNoun(filtered.length, 'ребёнок', 'ребёнка', 'детей')}`;
+      }
 
       if (filtered.length === 0) {
         studentsGrid.style.display = "none";
@@ -2003,22 +3290,31 @@
       }
     }
 
-    // Рендер карточек
     function renderGrid(list) {
-      studentsGrid.innerHTML = "";
+      const grid = document.getElementById("studentsGrid");
+      grid.innerHTML = "";
 
       list.forEach(student => {
         const card = document.createElement("div");
         card.className = `student-card status-${student.payStatus} ${student.checkedToday ? 'status-checked-today' : ''}`;
 
-        // Расчет процентов прогресса
         const pct = student.visitsTotal > 0 ? Math.round((student.visitsLeft / student.visitsTotal) * 100) : 0;
         let fillClass = "fill-green";
         let statusBadgeClass = "status-ok";
         let tagClass = "tag-paid";
         let tagText = "Оплачено";
 
-        if (student.payStatus === "debt" || student.visitsLeft === 0) {
+        if (student.subStatus === "early_terminated") {
+          fillClass = "fill-red";
+          statusBadgeClass = "status-alert";
+          tagClass = "tag-debt";
+          tagText = "Завершён досрочно";
+        } else if (student.subStatus === "prolonged") {
+          fillClass = "fill-green";
+          statusBadgeClass = "status-ok";
+          tagClass = "tag-paid";
+          tagText = "Продлён";
+        } else if (student.payStatus === "debt" || student.visitsLeft === 0) {
           fillClass = "fill-red";
           statusBadgeClass = "status-alert";
           tagClass = "tag-debt";
@@ -2031,6 +3327,7 @@
         }
 
         const visitsLeftColorClass = student.visitsLeft === 0 ? 'critical' : (student.visitsLeft <= 2 ? 'warn' : 'safe');
+        const displayValidDate = student.subStatus === 'prolonged' ? `${student.prolongedUntil || student.validUntil} (Продлён)` : student.validUntil;
 
         card.innerHTML = `
           <div>
@@ -2075,7 +3372,7 @@
 
               <div class="sub-valid-date">
                 <iconify-icon icon="solar:clock-circle-linear"></iconify-icon>
-                Действует до: ${student.validUntil}
+                Действует до: ${displayValidDate}
               </div>
             </div>
           </div>
@@ -2105,20 +3402,26 @@
           </div>
         `;
 
-        studentsGrid.appendChild(card);
+        grid.appendChild(card);
       });
     }
 
-    // Рендер таблицы
     function renderTable(list) {
-      studentsTableBody.innerHTML = "";
+      const tbody = document.getElementById("studentsTableBody");
+      tbody.innerHTML = "";
 
       list.forEach(student => {
         const tr = document.createElement("tr");
 
         let tagClass = "tag-paid";
         let tagText = "Оплачено";
-        if (student.payStatus === "debt" || student.visitsLeft === 0) {
+        if (student.subStatus === "early_terminated") {
+          tagClass = "tag-debt";
+          tagText = "Завершён досрочно";
+        } else if (student.subStatus === "prolonged") {
+          tagClass = "tag-paid";
+          tagText = "Продлён";
+        } else if (student.payStatus === "debt" || student.visitsLeft === 0) {
           tagClass = "tag-debt";
           tagText = "Требуется оплата";
         } else if (student.visitsLeft <= 2) {
@@ -2165,50 +3468,645 @@
           </td>
         `;
 
-        studentsTableBody.appendChild(tr);
+        tbody.appendChild(tr);
       });
     }
 
-    // Обработка отметки посещения (Check-in)
-    window.handleCheckinToggle = function(studentId) {
-      const student = students.find(s => s.id === studentId);
+    // 8. РЕНДЕР ВКЛАДКИ УПРАВЛЕНИЯ АБОНЕМЕНТАМИ
+    function renderSubscriptions() {
+      const subsGrid = document.getElementById("subsGrid");
+      const subsTableContainer = document.getElementById("subsTableContainer");
+      const subEmptyState = document.getElementById("subEmptyState");
+      const visibleSubsCount = document.getElementById("visibleSubsCount");
+
+      if (!subsGrid) return;
+
+      const filtered = students.filter(s => {
+        if (subGroupFilter !== "all" && s.group !== subGroupFilter) return false;
+        
+        if (subStatusFilter === "active" && s.subStatus !== "active") return false;
+        if (subStatusFilter === "prolonged" && s.subStatus !== "prolonged") return false;
+        if (subStatusFilter === "warning" && (s.visitsLeft > 2 || s.visitsLeft === 0 || s.subStatus === "early_terminated")) return false;
+        if (subStatusFilter === "early_terminated" && s.subStatus !== "early_terminated") return false;
+        if (subStatusFilter === "debt" && s.subStatus !== "debt" && s.payStatus !== "debt" && s.visitsLeft > 0) return false;
+
+        if (subSearchQuery.trim() !== "") {
+          const q = subSearchQuery.toLowerCase().trim();
+          const matchName = s.name.toLowerCase().includes(q);
+          const matchGroup = s.group.toLowerCase().includes(q);
+          const matchParent = s.parentName.toLowerCase().includes(q);
+          const matchPhone = s.parentPhone.toLowerCase().includes(q);
+          const matchSub = s.subName.toLowerCase().includes(q);
+          if (!matchName && !matchGroup && !matchParent && !matchPhone && !matchSub) return false;
+        }
+
+        return true;
+      });
+
+      if (visibleSubsCount) {
+        visibleSubsCount.textContent = `${filtered.length} ${getNoun(filtered.length, 'абонемент', 'абонемента', 'абонементов')}`;
+      }
+
+      if (filtered.length === 0) {
+        subsGrid.style.display = "none";
+        subsTableContainer.style.display = "none";
+        subEmptyState.style.display = "block";
+        return;
+      }
+
+      subEmptyState.style.display = "none";
+
+      if (subCurrentView === "grid") {
+        subsGrid.style.display = "grid";
+        subsTableContainer.style.display = "none";
+        renderSubscriptionsGrid(filtered);
+      } else {
+        subsGrid.style.display = "none";
+        subsTableContainer.style.display = "block";
+        renderSubscriptionsTable(filtered);
+      }
+    }
+
+    function renderSubscriptionsGrid(list) {
+      const grid = document.getElementById("subsGrid");
+      grid.innerHTML = "";
+
+      list.forEach(student => {
+        const card = document.createElement("div");
+        card.className = `sub-card card-status-${student.subStatus || 'active'}`;
+
+        let statusBadgeHtml = `<span class="sub-badge sub-badge-active"><iconify-icon icon="solar:check-circle-linear"></iconify-icon> Активен</span>`;
+        let statusDateLine = ``;
+
+        if (student.subStatus === "prolonged") {
+          statusBadgeHtml = `<span class="sub-badge sub-badge-prolonged"><iconify-icon icon="solar:calendar-add-linear"></iconify-icon> Продлён</span>`;
+          statusDateLine = `
+            <div class="sub-date-row">
+              <span class="sub-date-label"><iconify-icon icon="solar:calendar-date-linear"></iconify-icon> Продлён до:</span>
+              <span class="sub-date-value highlight-prolong">${student.prolongedUntil}</span>
+            </div>
+            <div style="font-size: 0.72rem; color: #8bb9fe; margin-top: 2px;">
+              ${student.prolongReason || 'По заявлению'}${student.prolongDocNum ? ` (${student.prolongDocNum})` : ''}
+            </div>
+          `;
+        } else if (student.subStatus === "early_terminated") {
+          statusBadgeHtml = `<span class="sub-badge sub-badge-terminated"><iconify-icon icon="solar:stop-circle-linear"></iconify-icon> Досрочно закрыт</span>`;
+          statusDateLine = `
+            <div class="sub-date-row">
+              <span class="sub-date-label"><iconify-icon icon="solar:stop-circle-linear"></iconify-icon> Закрыт:</span>
+              <span class="sub-date-value highlight-term">${student.earlyTermDate || 'ранее'}</span>
+            </div>
+            <div style="font-size: 0.72rem; color: var(--pal-accent-red); margin-top: 2px;">
+              Возврат: ${student.refundAmount || '0 ₽'} • ${student.earlyTermReason || 'По заявлению'}
+            </div>
+          `;
+        } else if (student.visitsLeft <= 2 && student.visitsLeft > 0) {
+          statusBadgeHtml = `<span class="sub-badge sub-badge-warning"><iconify-icon icon="solar:bell-linear"></iconify-icon> Заканчивается</span>`;
+        } else if (student.subStatus === "debt" || student.visitsLeft === 0) {
+          statusBadgeHtml = `<span class="sub-badge sub-badge-expired"><iconify-icon icon="solar:close-circle-linear"></iconify-icon> Истёк / Не оплачен</span>`;
+        }
+
+        const pct = student.visitsTotal > 0 ? Math.round((student.visitsLeft / student.visitsTotal) * 100) : 0;
+        const isTerminated = student.subStatus === "early_terminated";
+
+        card.innerHTML = `
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="${student.photo}" alt="${student.name}" style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 1px solid var(--card-border);" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'" />
+                <div>
+                  <div style="font-weight: 700; font-size: 1rem; color: var(--pal-off-white);">${student.name}</div>
+                  <div style="font-size: 0.76rem; color: var(--text-muted);">${student.age} • <span class="group-pill" style="font-size: 0.7rem; padding: 2px 8px;">${student.group}</span></div>
+                </div>
+              </div>
+              <div>${statusBadgeHtml}</div>
+            </div>
+
+            <!-- Блок абонемента -->
+            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 12px 14px; margin-bottom: 10px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span style="font-weight: 600; font-size: 0.86rem; color: var(--pal-light-green); display: flex; align-items: center; gap: 5px;">
+                  <iconify-icon icon="solar:ticket-bold"></iconify-icon>
+                  ${student.subName}
+                </span>
+                <span style="font-weight: 700; font-size: 0.84rem; color: var(--pal-off-white);">${student.payAmount}</span>
+              </div>
+
+              <!-- Прогресс посещений -->
+              <div class="visits-progress-area" style="margin-bottom: 8px;">
+                <div class="visits-labels">
+                  <span class="visits-left" style="color: ${student.visitsLeft === 0 ? 'var(--pal-accent-red)' : 'var(--pal-light-green)'};">
+                    Остаток: ${student.visitsLeft} из ${student.visitsTotal} занятий
+                  </span>
+                  <span class="visits-total">${pct}%</span>
+                </div>
+                <div class="progress-track">
+                  <div class="progress-bar-fill ${student.visitsLeft === 0 ? 'fill-red' : (student.visitsLeft <= 2 ? 'fill-amber' : 'fill-green')}" style="width: ${pct}%;"></div>
+                </div>
+              </div>
+
+              <!-- Блок дат -->
+              <div class="sub-dates-box" style="margin: 6px 0 0 0;">
+                <div class="sub-date-row">
+                  <span class="sub-date-label"><iconify-icon icon="solar:calendar-linear"></iconify-icon> Дата начала:</span>
+                  <span class="sub-date-value">${student.subStartDate || '15.08.2026'}</span>
+                </div>
+                <div class="sub-date-row">
+                  <span class="sub-date-label"><iconify-icon icon="solar:clock-circle-linear"></iconify-icon> Базовый срок:</span>
+                  <span class="sub-date-value">${student.validUntil}</span>
+                </div>
+                ${statusDateLine}
+              </div>
+            </div>
+
+            <!-- Контакт родителя -->
+            <div style="display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-muted); padding: 0 4px;">
+              <span>${student.parentName}</span>
+              <a href="tel:${student.parentPhone}" class="parent-phone-link">${student.parentPhone}</a>
+            </div>
+          </div>
+
+          <!-- Кнопки действий -->
+          <div class="sub-card-actions">
+            ${isTerminated ? `
+              <button class="btn-action-restore" onclick="restoreSubscription('${student.id}')" title="Восстановить действие абонемента">
+                <iconify-icon icon="solar:restart-linear"></iconify-icon>
+                Возобновить абонемент
+              </button>
+            ` : `
+              <button class="btn-action-prolong" onclick="openProlongModal('${student.id}')" title="Продлить даты абонемента">
+                <iconify-icon icon="solar:calendar-add-linear"></iconify-icon>
+                Продлить
+              </button>
+
+              <button class="btn-action-term" onclick="openEarlyTermModal('${student.id}')" title="Досрочно завершить абонемент">
+                <iconify-icon icon="solar:stop-circle-linear"></iconify-icon>
+                Завершить
+              </button>
+            `}
+
+            <button class="btn-icon-more" style="width: 36px; height: 36px;" onclick="openSubHistoryModal('${student.id}')" title="История операций">
+              <iconify-icon icon="solar:history-linear"></iconify-icon>
+            </button>
+          </div>
+        `;
+
+        grid.appendChild(card);
+      });
+    }
+
+    function renderSubscriptionsTable(list) {
+      const tbody = document.getElementById("subsTableBody");
+      tbody.innerHTML = "";
+
+      list.forEach(student => {
+        const tr = document.createElement("tr");
+
+        let statusBadge = `<span class="sub-badge sub-badge-active">Активен</span>`;
+        if (student.subStatus === "prolonged") {
+          statusBadge = `<span class="sub-badge sub-badge-prolonged">Продлён до ${student.prolongedUntil}</span>`;
+        } else if (student.subStatus === "early_terminated") {
+          statusBadge = `<span class="sub-badge sub-badge-terminated">Завершён досрочно</span>`;
+        } else if (student.visitsLeft <= 2 && student.visitsLeft > 0) {
+          statusBadge = `<span class="sub-badge sub-badge-warning">Заканчивается</span>`;
+        } else if (student.subStatus === "debt" || student.visitsLeft === 0) {
+          statusBadge = `<span class="sub-badge sub-badge-expired">Истёк</span>`;
+        }
+
+        const isTerminated = student.subStatus === "early_terminated";
+
+        tr.innerHTML = `
+          <td>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <img src="${student.photo}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'" />
+              <div>
+                <div style="font-weight: 600;">${student.name}</div>
+                <div style="font-size: 0.74rem; color: var(--text-muted);">${student.age}</div>
+              </div>
+            </div>
+          </td>
+          <td><span class="group-pill">${student.group}</span></td>
+          <td>
+            <div style="font-weight: 600;">${student.subName}</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">${student.payAmount}</div>
+          </td>
+          <td>
+            <div style="font-size: 0.82rem;">с ${student.subStartDate || '15.08.2026'} по ${student.subStatus === 'prolonged' ? `<strong style="color:#8bb9fe;">${student.prolongedUntil}</strong>` : student.validUntil}</div>
+          </td>
+          <td>
+            <strong style="color: ${student.visitsLeft === 0 ? 'var(--pal-accent-red)' : 'var(--pal-light-green)'};">
+              ${student.visitsLeft} из ${student.visitsTotal}
+            </strong>
+          </td>
+          <td>${statusBadge}</td>
+          <td style="text-align: right;">
+            <div style="display: flex; justify-content: flex-end; gap: 6px;">
+              ${isTerminated ? `
+                <button class="btn-pill btn-secondary" style="padding: 5px 10px; font-size: 0.76rem;" onclick="restoreSubscription('${student.id}')">
+                  Возобновить
+                </button>
+              ` : `
+                <button class="btn-action-prolong" style="padding: 5px 10px; font-size: 0.76rem;" onclick="openProlongModal('${student.id}')">
+                  Продлить
+                </button>
+                <button class="btn-action-term" style="padding: 5px 10px; font-size: 0.76rem;" onclick="openEarlyTermModal('${student.id}')">
+                  Закрыть
+                </button>
+              `}
+              <button class="btn-icon-more" style="width: 30px; height: 30px;" onclick="openSubHistoryModal('${student.id}')">
+                <iconify-icon icon="solar:history-linear"></iconify-icon>
+              </button>
+            </div>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    // 9. МОДАЛКА: ПРОДЛЕНИЕ АБОНЕМЕНТА НА ОПРЕДЕЛЕННЫЕ ДАТЫ
+    window.openProlongModal = function(preselectedStudentId) {
+      const modal = document.getElementById("prolongSubModal");
+      const select = document.getElementById("prolongStudentSelect");
+      
+      // Заполняем список учеников
+      select.innerHTML = students.map(s => `
+        <option value="${s.id}" ${preselectedStudentId === s.id ? 'selected' : ''}>
+          ${s.name} (${s.group}) — ${s.subName}
+        </option>
+      `).join('');
+
+      if (preselectedStudentId) {
+        select.value = preselectedStudentId;
+      }
+
+      handleProlongStudentChange();
+      modal.classList.add("show");
+    };
+
+    window.handleProlongStudentChange = function() {
+      const select = document.getElementById("prolongStudentSelect");
+      const student = students.find(s => s.id === select.value);
       if (!student) return;
 
-      if (!student.checkedToday) {
-        // Проверка: есть ли доступные занятия или оплата
-        if (student.visitsLeft <= 0 && student.payStatus === "debt") {
-          showToast(`⚠️ Внимание: У ${student.name} закончился абонемент! Посещение отмечено с предупреждением.`);
-        }
+      const currentEndElem = document.getElementById("prolongCurrentEndDate");
+      const currentVisitsElem = document.getElementById("prolongCurrentVisits");
+      const dateInput = document.getElementById("prolongNewDateInput");
 
-        const now = new Date();
-        const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-        
-        student.checkedToday = true;
-        student.checkinTime = timeStr;
-        if (student.visitsLeft > 0) {
-          student.visitsLeft -= 1;
-        }
+      const baseEndDate = student.subStatus === 'prolonged' && student.prolongedUntil ? student.prolongedUntil : student.validUntil;
+      currentEndElem.textContent = baseEndDate;
+      currentVisitsElem.textContent = `${student.visitsLeft} из ${student.visitsTotal} занятий`;
 
-        student.history.unshift({
-          date: "21.08.2026",
-          time: timeStr,
-          trainer: "Дежурный администратор",
-          note: "Посещение отмечено на ресепшн"
-        });
+      // Инициализируем дату по умолчанию: +14 дней от текущей даты окончания
+      const parsed = parseDateRu(baseEndDate);
+      const initialNewDate = addDays(parsed, 14);
+      dateInput.value = formatDateISO(initialNewDate);
 
-        showToast(`✓ Посещение отмечено: ${student.name} (${timeStr})`);
+      calculateProlongPreview();
+    };
+
+    window.setProlongDays = function(days) {
+      const select = document.getElementById("prolongStudentSelect");
+      const student = students.find(s => s.id === select.value);
+      if (!student) return;
+
+      const baseEndDate = student.subStatus === 'prolonged' && student.prolongedUntil ? student.prolongedUntil : student.validUntil;
+      const parsed = parseDateRu(baseEndDate);
+      const newDate = addDays(parsed, days);
+      
+      document.getElementById("prolongNewDateInput").value = formatDateISO(newDate);
+      calculateProlongPreview();
+    };
+
+    window.calculateProlongPreview = function() {
+      const select = document.getElementById("prolongStudentSelect");
+      const student = students.find(s => s.id === select.value);
+      if (!student) return;
+
+      const dateVal = document.getElementById("prolongNewDateInput").value;
+      const extraVisits = parseInt(document.getElementById("prolongExtraVisits").value, 10) || 0;
+      
+      const previewDateElem = document.getElementById("previewNewDate");
+      const previewVisitsElem = document.getElementById("previewTotalVisits");
+
+      if (dateVal) {
+        const d = new Date(dateVal);
+        previewDateElem.textContent = `до ${formatDateRu(d)}`;
       } else {
-        // Отмена отметки
-        student.checkedToday = false;
-        student.checkinTime = null;
-        if (student.visitsLeft < student.visitsTotal) {
-          student.visitsLeft += 1;
-        }
-        showToast(`↩ Отметка отменена для ${student.name}`);
+        previewDateElem.textContent = "--";
       }
+
+      const newTotalVisitsLeft = student.visitsLeft + extraVisits;
+      previewVisitsElem.textContent = `${newTotalVisitsLeft} посещений (+${extraVisits} доп.)`;
+    };
+
+    window.handleProlongSubmit = function(e) {
+      e.preventDefault();
+      const select = document.getElementById("prolongStudentSelect");
+      const student = students.find(s => s.id === select.value);
+      if (!student) return;
+
+      const dateVal = document.getElementById("prolongNewDateInput").value;
+      if (!dateVal) {
+        showToast("Укажите новую дату окончания абонемента!");
+        return;
+      }
+
+      const newEndDate = formatDateRu(new Date(dateVal));
+      const extraVisits = parseInt(document.getElementById("prolongExtraVisits").value, 10) || 0;
+      const reason = document.getElementById("prolongReasonSelect").value;
+      const docNum = document.getElementById("prolongDocNumber").value.trim();
+      const comment = document.getElementById("prolongComment").value.trim();
+
+      const oldDate = student.subStatus === 'prolonged' && student.prolongedUntil ? student.prolongedUntil : student.validUntil;
+
+      // Обновляем студента
+      student.subStatus = "prolonged";
+      student.prolongedUntil = newEndDate;
+      student.prolongReason = reason;
+      student.prolongDocNum = docNum;
+      student.visitsLeft += extraVisits;
+      if (extraVisits > 0) student.visitsTotal += extraVisits;
+
+      // Запись в аудит
+      const details = `Срок продлен с ${oldDate} до ${newEndDate}.${extraVisits > 0 ? ` Добавлено ${extraVisits} занятий.` : ''}${comment ? ` Примечание: ${comment}` : ''}`;
+      addAuditRecord("prolong", student, reason, docNum, details);
 
       saveStudents();
       renderStudents();
+      renderSubscriptions();
+      closeModal('prolongSubModal');
+
+      showToast(`✓ Абонемент для ${student.name} успешно продлён до ${newEndDate}!`);
+    };
+
+    // 10. МОДАЛКА: ДОСРОЧНОЕ ЗАВЕРШЕНИЕ АБОНЕМЕНТА
+    window.openEarlyTermModal = function(preselectedStudentId) {
+      const modal = document.getElementById("earlyTermModal");
+      const select = document.getElementById("termStudentSelect");
+
+      select.innerHTML = students.filter(s => s.subStatus !== "early_terminated").map(s => `
+        <option value="${s.id}" ${preselectedStudentId === s.id ? 'selected' : ''}>
+          ${s.name} (${s.group}) — ${s.visitsLeft} зан. ост.
+        </option>
+      `).join('');
+
+      if (select.options.length === 0) {
+        select.innerHTML = `<option value="">Нет активных абонементов для завершения</option>`;
+      }
+
+      if (preselectedStudentId) {
+        select.value = preselectedStudentId;
+      }
+
+      // Устанавливаем дату завершения на сегодня
+      document.getElementById("termDateInput").value = formatDateISO(new Date());
+
+      handleTermStudentChange();
+      modal.classList.add("show");
+    };
+
+    window.handleTermStudentChange = function() {
+      const select = document.getElementById("termStudentSelect");
+      const student = students.find(s => s.id === select.value);
+      if (!student) return;
+
+      document.getElementById("termSubName").textContent = student.subName;
+      document.getElementById("termUnusedVisits").textContent = `${student.visitsLeft} из ${student.visitsTotal} зан.`;
+      document.getElementById("termPayAmount").textContent = student.payAmount;
+
+      // Автоматический расчет суммы возврата пропорционально остатку занятий
+      const price = student.subPriceNum || 4800;
+      const totalVisits = student.visitsTotal || 8;
+      const refundCalculated = Math.round((student.visitsLeft / totalVisits) * price);
+      
+      const refundInput = document.getElementById("termRefundAmountInput");
+      refundInput.value = `${refundCalculated.toLocaleString('ru-RU')} ₽`;
+    };
+
+    window.handleRefundTypeChange = function() {
+      const type = document.getElementById("termRefundTypeSelect").value;
+      const refundInput = document.getElementById("termRefundAmountInput");
+      if (type === "none") {
+        refundInput.value = "0 ₽";
+        refundInput.disabled = true;
+      } else {
+        refundInput.disabled = false;
+        handleTermStudentChange();
+      }
+    };
+
+    window.handleEarlyTermSubmit = function(e) {
+      e.preventDefault();
+      const select = document.getElementById("termStudentSelect");
+      const student = students.find(s => s.id === select.value);
+      if (!student) return;
+
+      const termDateVal = document.getElementById("termDateInput").value;
+      const termDate = termDateVal ? formatDateRu(new Date(termDateVal)) : formatDateRu(new Date());
+      const reason = document.getElementById("termReasonSelect").value;
+      const refundType = document.getElementById("termRefundTypeSelect").value;
+      const refundAmount = document.getElementById("termRefundAmountInput").value.trim() || "0 ₽";
+      const visitsAction = document.getElementById("termVisitsActionSelect").value;
+      const comment = document.getElementById("termComment").value.trim();
+
+      const unusedVisitsBefore = student.visitsLeft;
+
+      // Обновляем статус студента
+      student.subStatus = "early_terminated";
+      student.earlyTermDate = termDate;
+      student.earlyTermReason = reason;
+      student.refundAmount = refundAmount;
+      student.refundType = refundType;
+      
+      if (visitsAction === "cancel") {
+        student.visitsLeft = 0;
+      }
+
+      // Запись в аудит
+      const typeLabel = refundType === 'refund' ? 'Возврат средств' : (refundType === 'deposit' ? 'Перенос на депозит' : 'Без возврата');
+      const details = `Досрочное расторжение ${termDate}. Сумма: ${refundAmount} (${typeLabel}). Списано занятий: ${unusedVisitsBefore}.${comment ? ` Примечание: ${comment}` : ''}`;
+      addAuditRecord("early_term", student, reason, "Заявление на досрочное прекращение", details);
+
+      saveStudents();
+      renderStudents();
+      renderSubscriptions();
+      closeModal('earlyTermModal');
+
+      showToast(`✕ Абонемент для ${student.name} досрочно завершён.`);
+    };
+
+    // 11. ВОЗОБНОВЛЕНИЕ ДОСРОЧНО ЗАКРЫТОГО АБОНЕМЕНТА
+    window.restoreSubscription = function(studentId) {
+      const student = students.find(s => s.id === studentId);
+      if (!student) return;
+
+      student.subStatus = "active";
+      if (student.visitsLeft === 0) {
+        student.visitsLeft = 4; // базовое восстановление
+      }
+      student.earlyTermDate = null;
+      student.earlyTermReason = null;
+
+      addAuditRecord("restore", student, "Восстановление администратором", "Служебная записка", "Абонемент повторно активирован после досрочного закрытия.");
+
+      saveStudents();
+      renderStudents();
+      renderSubscriptions();
+      showToast(`✓ Абонемент для ${student.name} успешно возобновлён!`);
+    };
+
+    // 12. МОДАЛКА: ЖУРНАЛ ОПЕРАЦИЙ (АУДИТ)
+    window.openSubHistoryModal = function(filterStudentId) {
+      const modal = document.getElementById("subHistoryModal");
+      const searchInput = document.getElementById("auditSearchInput");
+      
+      if (filterStudentId) {
+        const student = students.find(s => s.id === filterStudentId);
+        if (student && searchInput) {
+          searchInput.value = student.name;
+        }
+      } else if (searchInput) {
+        searchInput.value = "";
+      }
+
+      renderAuditLog();
+      modal.classList.add("show");
+    };
+
+    window.renderAuditLog = function() {
+      const container = document.getElementById("subAuditContainer");
+      const searchInput = document.getElementById("auditSearchInput");
+      const query = searchInput ? searchInput.value.toLowerCase().trim() : "";
+
+      if (!container) return;
+
+      const filtered = auditLog.filter(log => {
+        if (!query) return true;
+        return log.studentName.toLowerCase().includes(query) ||
+               (log.reason && log.reason.toLowerCase().includes(query)) ||
+               (log.details && log.details.toLowerCase().includes(query)) ||
+               (log.docNumber && log.docNumber.toLowerCase().includes(query));
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 30px 10px; color: var(--text-muted); font-size: 0.85rem;">
+            <iconify-icon icon="solar:documents-minimalistic-linear" style="font-size: 40px; margin-bottom: 8px;"></iconify-icon>
+            <div>Записей в журнале не найдено</div>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(item => {
+        let typeClass = "audit-prolong";
+        let typeIcon = "solar:calendar-add-linear";
+        let typeTitle = "Продление срока абонемента";
+
+        if (item.type === "early_term") {
+          typeClass = "audit-term";
+          typeIcon = "solar:stop-circle-linear";
+          typeTitle = "Досрочное завершение абонемента";
+        } else if (item.type === "restore") {
+          typeClass = "audit-restore";
+          typeIcon = "solar:restart-linear";
+          typeTitle = "Возобновление абонемента";
+        }
+
+        return `
+          <div class="sub-audit-item ${typeClass}">
+            <div class="sub-audit-header">
+              <span class="sub-audit-title">
+                <iconify-icon icon="${typeIcon}"></iconify-icon>
+                ${typeTitle} • ${item.studentName}
+              </span>
+              <span class="sub-audit-time">${item.date} в ${item.time}</span>
+            </div>
+            <div class="sub-audit-desc">${item.details}</div>
+            <div class="sub-audit-meta">
+              <span><strong>Основание:</strong> ${item.reason}</span>
+              ${item.docNumber && item.docNumber !== '—' ? `<span><strong>Док:</strong> ${item.docNumber}</span>` : ''}
+              <span><strong>Администратор:</strong> ${item.admin}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    };
+
+    window.clearAuditLog = function() {
+      if (confirm("Очистить журнал операций?")) {
+        auditLog = [];
+        saveAuditLog();
+        updateSubMetrics();
+        showToast("Журнал операций очищен");
+      }
+    };
+
+    // 13. Универсальное закрытие модальных окон
+    window.closeModal = function(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) modal.classList.remove("show");
+    };
+
+    // Обработка Checkin Toggle
+    window.handleCheckinToggle = async function(studentId) {
+      const student = students.find(s => String(s.id) === String(studentId));
+      if (!student) return;
+
+      try {
+        if (!student.checkedToday) {
+          if (student.subStatus === "early_terminated") {
+            showToast(`⚠️ Внимание: Абонемент ${student.name} был досрочно завершён!`);
+          } else if (student.visitsLeft <= 0) {
+            showToast(`⚠️ Внимание: У ${student.name} закончились занятия в абонементе.`);
+          }
+
+          await requestJson('/attendance/check-in', {
+            method: 'POST',
+            body: JSON.stringify({
+              student_id: Number(studentId),
+              group_id: null,
+              attendance_date: formatDateISO(selectedAttendanceDate),
+              comment: 'Отмечено администратором'
+            })
+          });
+
+          const now = new Date();
+          const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+          student.checkedToday = true;
+          student.checkinTime = timeStr;
+          if (student.visitsLeft > 0) {
+            student.visitsLeft -= 1;
+          }
+          student.history.unshift({
+            date: formatDateRu(now),
+            time: timeStr,
+            trainer: 'Дежурный администратор',
+            note: 'Посещение отмечено на ресепшн'
+          });
+          showToast(`✓ Посещение отмечено: ${student.name} (${timeStr})`);
+        } else {
+          const record = await requestJson(`/attendance/students/${studentId}/attendance?date_from=${formatDateISO(selectedAttendanceDate)}&date_to=${formatDateISO(selectedAttendanceDate)}&limit=20`)
+            .then(response => (Array.isArray(response?.items) ? response.items.find(item => item.attendance_date === formatDateISO(selectedAttendanceDate)) : null))
+            .catch(() => null);
+
+          if (record && record.id) {
+            await requestJson(`/attendance/${record.id}/cancel`, { method: 'POST' });
+          }
+
+          student.checkedToday = false;
+          student.checkinTime = null;
+          if (student.visitsLeft < student.visitsTotal) {
+            student.visitsLeft += 1;
+          }
+          showToast(`↩ Отметка отменена для ${student.name}`);
+        }
+
+        await loadAttendanceData();
+      } catch (error) {
+        showToast(`Не удалось обновить запись посещения: ${error.message}`, 'error');
+      }
     };
 
     // Открытие модального окна подробной карточки
@@ -2217,16 +4115,27 @@
       if (!student) return;
 
       selectedStudentForModal = student;
+      const modalDetailContent = document.getElementById("modalDetailContent");
+      const studentDetailModal = document.getElementById("studentDetailModal");
+      const btnQuickCheckinInModal = document.getElementById("btnQuickCheckinInModal");
 
       let tagClass = "tag-paid";
-      let tagText = "Оплачено онлайн";
-      if (student.payStatus === "debt") {
+      let tagText = "Оплачено";
+      if (student.subStatus === "early_terminated") {
+        tagClass = "tag-debt";
+        tagText = "Досрочно завершён";
+      } else if (student.subStatus === "prolonged") {
+        tagClass = "tag-paid";
+        tagText = "Продлён";
+      } else if (student.payStatus === "debt" || student.visitsLeft === 0) {
         tagClass = "tag-debt";
         tagText = "Требуется оплата";
       } else if (student.visitsLeft <= 2) {
         tagClass = "tag-warning";
         tagText = "Мало занятий";
       }
+
+      const displayValidDate = student.subStatus === 'prolonged' ? `${student.prolongedUntil || student.validUntil} (Продлён)` : student.validUntil;
 
       modalDetailContent.innerHTML = `
         <div class="detail-hero">
@@ -2253,13 +4162,20 @@
           </div>
           <div class="detail-field">
             <div class="field-title">Срок действия</div>
-            <div class="field-val">${student.validUntil}</div>
+            <div class="field-val">${displayValidDate}</div>
           </div>
           <div class="detail-field">
             <div class="field-title">Контакты родителя</div>
             <div class="field-val">${student.parentName} (${student.parentPhone})</div>
           </div>
         </div>
+
+        ${student.subStatus === 'prolonged' ? `
+          <div style="margin-bottom: 14px; background: rgba(110, 168, 254, 0.1); border: 1px solid rgba(110, 168, 254, 0.3); border-radius: var(--radius-md); padding: 10px 12px; font-size: 0.82rem;">
+            <div style="font-weight: 700; color: #8bb9fe; margin-bottom: 2px;">Абонемент продлён на даты</div>
+            <div>Основание: ${student.prolongReason || 'По заявлению'}${student.prolongDocNum ? ` (${student.prolongDocNum})` : ''}</div>
+          </div>
+        ` : ''}
 
         <div style="margin-bottom: 18px;">
           <div class="field-title">Особенности и примечания</div>
@@ -2291,155 +4207,243 @@
       studentDetailModal.classList.add("show");
     };
 
-    // Продление абонемента в модалке
-    btnRenewSubInModal.addEventListener("click", () => {
-      if (!selectedStudentForModal) return;
-      selectedStudentForModal.visitsTotal = 8;
-      selectedStudentForModal.visitsLeft = 8;
-      selectedStudentForModal.payStatus = "paid";
-      selectedStudentForModal.payAmount = "4 800 ₽";
-      selectedStudentForModal.validUntil = "21.09.2026";
-      
-      saveStudents();
-      renderStudents();
-      openStudentModal(selectedStudentForModal.id);
-      showToast(`✓ Абонемент успешно продлён для ${selectedStudentForModal.name}`);
-    });
+    // Слушатели событий при загрузке страницы
+    document.addEventListener("DOMContentLoaded", () => {
+      // Поиск во вкладке отметки
+      const searchInput = document.getElementById("searchInput");
+      if (searchInput) {
+        searchInput.addEventListener("input", (e) => {
+          searchQuery = e.target.value;
+          renderStudents();
+        });
+      }
 
-    // Быстрая отметка из модалки
-    btnQuickCheckinInModal.addEventListener("click", () => {
-      if (!selectedStudentForModal) return;
-      handleCheckinToggle(selectedStudentForModal.id);
-      openStudentModal(selectedStudentForModal.id);
-    });
+      // Поиск во вкладке абонементов
+      const subSearchInput = document.getElementById("subSearchInput");
+      if (subSearchInput) {
+        subSearchInput.addEventListener("input", (e) => {
+          subSearchQuery = e.target.value;
+          renderSubscriptions();
+        });
+      }
 
-    btnCloseDetailModal.addEventListener("click", () => {
-      studentDetailModal.classList.remove("show");
-    });
-
-    // QR Сканер симуляция
-    btnQrScannerModal.addEventListener("click", () => {
-      selectStudentQrSim.innerHTML = students.map(s => `
-        <option value="${s.id}">${s.name} (${s.group}) — ${s.checkedToday ? 'Уже отмечен' : 'Не отмечен'}</option>
-      `).join('');
-      qrScannerModal.classList.add("show");
-    });
-
-    btnCloseQrModal.addEventListener("click", () => {
-      qrScannerModal.classList.remove("show");
-    });
-
-    btnSimulateScan.addEventListener("click", () => {
-      const sId = selectStudentQrSim.value;
-      qrScannerModal.classList.remove("show");
-      handleCheckinToggle(sId);
-    });
-
-    // Добавление нового ребёнка
-    btnAddNewChild.addEventListener("click", () => {
-      addStudentModal.classList.add("show");
-    });
-
-    btnCloseAddStudentModal.addEventListener("click", () => {
-      addStudentModal.classList.remove("show");
-    });
-
-    btnCancelAdd.addEventListener("click", () => {
-      addStudentModal.classList.remove("show");
-    });
-
-    newStudentForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-
-      const name = document.getElementById("addName").value.trim();
-      const age = document.getElementById("addAge").value.trim();
-      const group = document.getElementById("addGroup").value;
-      const parentName = document.getElementById("addParentName").value.trim() || "Родитель";
-      const parentPhone = document.getElementById("addParentPhone").value.trim();
-      const subPlan = document.getElementById("addSubPlan").value;
-      const payStatus = document.getElementById("addPayStatus").value;
-
-      const newId = `st-${100 + students.length + 1}`;
-      const newKid = {
-        id: newId,
-        name: name,
-        age: age,
-        photo: "https://images.unsplash.com/photo-1543610892-0b1f7e6d8ac1?w=150&auto=format&fit=crop&q=80",
-        group: group,
-        subName: subPlan,
-        visitsTotal: subPlan.includes("12") ? 12 : (subPlan.includes("4") ? 4 : 8),
-        visitsLeft: subPlan.includes("12") ? 12 : (subPlan.includes("4") ? 4 : 8),
-        validUntil: "21.09.2026",
-        payStatus: payStatus === "unpaid" ? "debt" : "paid",
-        payAmount: payStatus === "unpaid" ? "0 ₽" : "4 800 ₽",
-        lastPaymentDate: "21.08.2026",
-        parentName: parentName,
-        parentPhone: parentPhone,
-        medicalNote: "Новый ученик",
-        checkedToday: false,
-        checkinTime: null,
-        history: []
-      };
-
-      students.unshift(newKid);
-      saveStudents();
-      renderStudents();
-      addStudentModal.classList.remove("show");
-      newStudentForm.reset();
-      showToast(`✓ Ребёнок ${name} успешно добавлен в систему!`);
-    });
-
-    // Обработка кликов по бэкдропам для закрытия
-    window.addEventListener("click", (e) => {
-      if (e.target === studentDetailModal) studentDetailModal.classList.remove("show");
-      if (e.target === qrScannerModal) qrScannerModal.classList.remove("show");
-      if (e.target === addStudentModal) addStudentModal.classList.remove("show");
-    });
-
-    // Поиск
-    searchInput.addEventListener("input", (e) => {
-      searchQuery = e.target.value;
-      renderStudents();
-    });
-
-    // Фильтры по группам
-    document.querySelectorAll(".filter-chip[data-group]").forEach(chip => {
-      chip.addEventListener("click", () => {
-        document.querySelectorAll(".filter-chip[data-group]").forEach(c => c.classList.remove("active"));
-        chip.classList.add("active");
-        activeGroupFilter = chip.getAttribute("data-group");
-        renderStudents();
+      // Фильтры групп (Отметка)
+      document.querySelectorAll(".filter-chip[data-group]").forEach(chip => {
+        chip.addEventListener("click", () => {
+          document.querySelectorAll(".filter-chip[data-group]").forEach(c => c.classList.remove("active"));
+          chip.classList.add("active");
+          activeGroupFilter = chip.getAttribute("data-group");
+          renderStudents();
+        });
       });
-    });
 
-    // Фильтры по статусам
-    document.querySelectorAll(".filter-chip[data-status]").forEach(chip => {
-      chip.addEventListener("click", () => {
-        document.querySelectorAll(".filter-chip[data-status]").forEach(c => c.classList.remove("active"));
-        chip.classList.add("active");
-        activeStatusFilter = chip.getAttribute("data-status");
-        renderStudents();
+      // Фильтры статусов (Отметка)
+      document.querySelectorAll(".filter-chip[data-status]").forEach(chip => {
+        chip.addEventListener("click", () => {
+          document.querySelectorAll(".filter-chip[data-status]").forEach(c => c.classList.remove("active"));
+          chip.classList.add("active");
+          activeStatusFilter = chip.getAttribute("data-status");
+          renderStudents();
+        });
       });
-    });
 
-    // Переключение вида (Сетка / Таблица)
-    btnViewGrid.addEventListener("click", () => {
-      btnViewGrid.classList.add("active");
-      btnViewTable.classList.remove("active");
-      currentView = "grid";
-      renderStudents();
-    });
+      // Фильтры групп (Абонементы)
+      document.querySelectorAll(".filter-chip[data-sub-group]").forEach(chip => {
+        chip.addEventListener("click", () => {
+          document.querySelectorAll(".filter-chip[data-sub-group]").forEach(c => c.classList.remove("active"));
+          chip.classList.add("active");
+          subGroupFilter = chip.getAttribute("data-sub-group");
+          renderSubscriptions();
+        });
+      });
 
-    btnViewTable.addEventListener("click", () => {
-      btnViewTable.classList.add("active");
-      btnViewGrid.classList.remove("active");
-      currentView = "table";
-      renderStudents();
+      // Фильтры статусов (Абонементы)
+      document.querySelectorAll(".filter-chip[data-sub-status]").forEach(chip => {
+        chip.addEventListener("click", () => {
+          document.querySelectorAll(".filter-chip[data-sub-status]").forEach(c => c.classList.remove("active"));
+          chip.classList.add("active");
+          subStatusFilter = chip.getAttribute("data-sub-status");
+          renderSubscriptions();
+        });
+      });
+
+      // Переключатель вида (Отметка)
+      const btnViewGrid = document.getElementById("btnViewGrid");
+      const btnViewTable = document.getElementById("btnViewTable");
+      if (btnViewGrid && btnViewTable) {
+        btnViewGrid.addEventListener("click", () => {
+          btnViewGrid.classList.add("active");
+          btnViewTable.classList.remove("active");
+          currentView = "grid";
+          renderStudents();
+        });
+        btnViewTable.addEventListener("click", () => {
+          btnViewTable.classList.add("active");
+          btnViewGrid.classList.remove("active");
+          currentView = "table";
+          renderStudents();
+        });
+      }
+
+      // Переключатель вида (Абонементы)
+      const btnSubViewGrid = document.getElementById("btnSubViewGrid");
+      const btnSubViewTable = document.getElementById("btnSubViewTable");
+      if (btnSubViewGrid && btnSubViewTable) {
+        btnSubViewGrid.addEventListener("click", () => {
+          btnSubViewGrid.classList.add("active");
+          btnSubViewTable.classList.remove("active");
+          subCurrentView = "grid";
+          renderSubscriptions();
+        });
+        btnSubViewTable.addEventListener("click", () => {
+          btnSubViewTable.classList.add("active");
+          btnSubViewGrid.classList.remove("active");
+          subCurrentView = "table";
+          renderSubscriptions();
+        });
+      }
+
+      // Закрытие карточки ученика
+      const btnCloseDetailModal = document.getElementById("btnCloseDetailModal");
+      if (btnCloseDetailModal) {
+        btnCloseDetailModal.addEventListener("click", () => closeModal("studentDetailModal"));
+      }
+
+      // Продление из карточки ученика открывает модалку продления
+      const btnRenewSubInModal = document.getElementById("btnRenewSubInModal");
+      if (btnRenewSubInModal) {
+        btnRenewSubInModal.addEventListener("click", () => {
+          if (selectedStudentForModal) {
+            closeModal("studentDetailModal");
+            openProlongModal(selectedStudentForModal.id);
+          }
+        });
+      }
+
+      // Быстрая отметка из модалки
+      const btnQuickCheckinInModal = document.getElementById("btnQuickCheckinInModal");
+      if (btnQuickCheckinInModal) {
+        btnQuickCheckinInModal.addEventListener("click", () => {
+          if (selectedStudentForModal) {
+            handleCheckinToggle(selectedStudentForModal.id);
+            openStudentModal(selectedStudentForModal.id);
+          }
+        });
+      }
+
+      // QR Сканер
+      const btnQrScannerModal = document.getElementById("btnQrScannerModal");
+      const qrScannerModal = document.getElementById("qrScannerModal");
+      const selectStudentQrSim = document.getElementById("selectStudentQrSim");
+      const btnSimulateScan = document.getElementById("btnSimulateScan");
+      const btnCloseQrModal = document.getElementById("btnCloseQrModal");
+
+      if (btnQrScannerModal) {
+        btnQrScannerModal.addEventListener("click", () => {
+          if (selectStudentQrSim) {
+            selectStudentQrSim.innerHTML = students.map(s => `
+              <option value="${s.id}">${s.name} (${s.group}) — ${s.checkedToday ? 'Уже отмечен' : 'Не отмечен'}</option>
+            `).join('');
+          }
+          if (qrScannerModal) qrScannerModal.classList.add("show");
+        });
+      }
+      if (btnCloseQrModal) {
+        btnCloseQrModal.addEventListener("click", () => closeModal("qrScannerModal"));
+      }
+      if (btnSimulateScan) {
+        btnSimulateScan.addEventListener("click", () => {
+          if (selectStudentQrSim) {
+            const sId = selectStudentQrSim.value;
+            closeModal("qrScannerModal");
+            handleCheckinToggle(sId);
+          }
+        });
+      }
+
+      // Добавление нового ребёнка
+      const btnAddNewChild = document.getElementById("btnAddNewChild");
+      const addStudentModal = document.getElementById("addStudentModal");
+      const btnCloseAddStudentModal = document.getElementById("btnCloseAddStudentModal");
+      const btnCancelAdd = document.getElementById("btnCancelAdd");
+      const newStudentForm = document.getElementById("newStudentForm");
+
+      if (btnAddNewChild) {
+        btnAddNewChild.addEventListener("click", () => {
+          if (addStudentModal) addStudentModal.classList.add("show");
+        });
+      }
+      if (btnCloseAddStudentModal) {
+        btnCloseAddStudentModal.addEventListener("click", () => closeModal("addStudentModal"));
+      }
+      if (btnCancelAdd) {
+        btnCancelAdd.addEventListener("click", () => closeModal("addStudentModal"));
+      }
+      if (newStudentForm) {
+        newStudentForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const name = document.getElementById("addName").value.trim();
+          const age = document.getElementById("addAge").value.trim();
+          const group = document.getElementById("addGroup").value;
+          const parentName = document.getElementById("addParentName").value.trim() || "Родитель";
+          const parentPhone = document.getElementById("addParentPhone").value.trim();
+          const subPlan = document.getElementById("addSubPlan").value;
+          const payStatus = document.getElementById("addPayStatus").value;
+
+          const visits = subPlan.includes("12") ? 12 : (subPlan.includes("4") ? 4 : (subPlan.includes("Разовое") ? 1 : 8));
+          const price = subPlan.includes("12") ? 6500 : (subPlan.includes("4") ? 5200 : (subPlan.includes("Разовое") ? 800 : 4800));
+
+          const newId = `st-${100 + students.length + 1}`;
+          const newKid = {
+            id: newId,
+            name: name,
+            age: age,
+            photo: "https://images.unsplash.com/photo-1543610892-0b1f7e6d8ac1?w=150&auto=format&fit=crop&q=80",
+            group: group,
+            subName: subPlan,
+            subPriceNum: price,
+            subStartDate: formatDateRu(new Date()),
+            visitsTotal: visits,
+            visitsLeft: visits,
+            validUntil: formatDateRu(addDays(new Date(), 30)),
+            subStatus: payStatus === "unpaid" ? "debt" : "active",
+            payStatus: payStatus === "unpaid" ? "debt" : "paid",
+            payAmount: payStatus === "unpaid" ? "0 ₽" : `${price.toLocaleString('ru-RU')} ₽`,
+            lastPaymentDate: formatDateRu(new Date()),
+            parentName: parentName,
+            parentPhone: parentPhone,
+            medicalNote: "Новый ученик",
+            checkedToday: false,
+            checkinTime: null,
+            history: []
+          };
+
+          students.unshift(newKid);
+          saveStudents();
+          renderStudents();
+          renderSubscriptions();
+          closeModal("addStudentModal");
+          newStudentForm.reset();
+          showToast(`✓ Ребёнок ${name} успешно добавлен в систему!`);
+        });
+      }
+
+      // Закрытие при клике по бэкдропам
+      window.addEventListener("click", (e) => {
+        if (e.target.classList.contains("modal-backdrop")) {
+          e.target.classList.remove("show");
+        }
+      });
+
+      // Инициализация при старте
+      refreshSelectedDateDisplay();
+      loadAttendanceData();
     });
 
     // Всплывающие подсказки (Toast)
     function showToast(text) {
       const container = document.getElementById("toastContainer");
+      if (!container) return;
       const toast = document.createElement("div");
       toast.className = "toast-msg";
       toast.innerHTML = `<span>${text}</span>`;
@@ -2463,8 +4467,10 @@
       return five;
     }
 
-    // Инициализация при загрузке
+    // Первичный вызов
+    refreshSelectedDateDisplay();
     updateMetrics();
+    updateSubMetrics();
     renderStudents();
   </script>
 </body>

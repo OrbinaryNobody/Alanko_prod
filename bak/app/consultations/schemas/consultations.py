@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 
 class ConsultationDayCreate(BaseModel):
     date: date
+    teacher_id: int | None = Field(default=None, gt=0)
     status: str = "OPEN"
     available_from: time | None = None
     available_to: time | None = None
@@ -14,6 +15,13 @@ class ConsultationDayCreate(BaseModel):
 
 class ConsultationDayStatusUpdate(BaseModel):
     status: str = Field(..., pattern=r"^(OPEN|CLOSED)$")
+
+
+class ConsultationDayWindowUpdate(BaseModel):
+    status: str = Field(default="OPEN", pattern=r"^(OPEN|CLOSED)$")
+    teacher_id: int | None = Field(default=None, gt=0)
+    available_from: time | None = None
+    available_to: time | None = None
 
 
 class ConsultationSlotCreate(BaseModel):

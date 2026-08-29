@@ -13,6 +13,7 @@ class AttendanceRepository:
         query = (
             db.query(User)
             .join(User.roles)
+            .join(Role)
             .filter(Role.name == "student")
             .filter(~User.roles.any(UserRole.role.has(Role.name.in_(("admin", "teacher", "secretary")))))
             .options(joinedload(User.student_profile))

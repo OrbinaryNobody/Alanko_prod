@@ -32,11 +32,12 @@ class User(Base):
     last_name = Column(Text)
     middle_name = Column(Text, nullable=False)
     password_hash = Column(Text, nullable=False)
+    image_url = Column(Text)
     created_at = Column(TIMESTAMP(timezone=True), server_default=func.now())
 
-    roles = relationship("UserRole", back_populates="user")
-    student_profile = relationship("StudentProfile", back_populates="user", uselist=False)
-    student_tasks = relationship("StudentTask", back_populates="student")
+    roles = relationship("UserRole", back_populates="user", cascade="all, delete-orphan", passive_deletes=True)
+    student_profile = relationship("StudentProfile", back_populates="user", uselist=False, cascade="all, delete-orphan", passive_deletes=True)
+    student_tasks = relationship("StudentTask", back_populates="student", cascade="all, delete-orphan", passive_deletes=True)
     uploaded_media = relationship("TaskMedia", back_populates="teacher")
 
 

@@ -42,6 +42,7 @@ class ConsultationSlot(Base):
     created_by = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
     updated_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())
+    generated_by_window = Column(Boolean, nullable=False, default=False, server_default="false")
 
     def __repr__(self) -> str:
         return f"ConsultationSlot(id={self.id}, teacher_id={self.teacher_id}, start_at={self.start_at}, end_at={self.end_at})"

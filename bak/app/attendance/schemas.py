@@ -18,3 +18,14 @@ class SubscriptionCreate(BaseModel):
     payment_status: str = Field(default="UNPAID", pattern=r"^(PAID|UNPAID|PARTIAL|REFUNDED)$")
     amount: int = Field(default=0, ge=0)
     currency: str = Field(default="RUB", min_length=3, max_length=8)
+
+
+class SubscriptionUpdate(BaseModel):
+    plan_name: str = Field(min_length=1, max_length=128)
+    total_visits: int = Field(gt=0)
+    remaining_visits: int = Field(ge=0)
+    valid_from: date
+    valid_until: date
+    payment_status: str = Field(pattern=r"^(PAID|UNPAID|PARTIAL|REFUNDED)$")
+    amount: int = Field(ge=0)
+    currency: str = Field(min_length=3, max_length=8)

@@ -11,6 +11,8 @@ class DashboardPayload:
     total_students: int
     history: list[dict[str, Any]] | None = None
     leaderboard: list[dict[str, Any]] | None = None
+    leaderboards: dict[str, Any] | None = None
+    leaderboard_totals: dict[str, int] | None = None
     videos: list[dict[str, Any]] | None = None
     achievement_videos: list[dict[str, Any]] | None = None
     achievements: dict[str, Any] | None = None
@@ -25,6 +27,8 @@ class DashboardPayload:
             "total_students": self.total_students,
             "history": self.history or [],
             "leaderboard": self.leaderboard or [],
+            "leaderboards": self.leaderboards or {"group": [], "overall": []},
+            "leaderboard_totals": self.leaderboard_totals or {"group": 0, "overall": 0},
             "videos": self.videos or [],
             "achievement_videos": self.achievement_videos or [],
             "achievements": self.achievements or {"individual": [], "collective": []},

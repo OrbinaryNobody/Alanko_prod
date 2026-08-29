@@ -4,9 +4,23 @@ from sqlalchemy.orm import Session
 
 from consultations.models.consultation_slot import ConsultationSlot
 from consultations.repositories.slot_repository import consultation_slot_repository
+from consultations.timezone import to_utc
 from core.config import settings
 from core.exceptions import NotFoundError, ValidationError
 from shared.unit_of_work import UnitOfWork
+
+
+CONSULTATION_PRICES = {1: 900, 2: 600, 3: 500, 4: 450}
+
+
+def consultation_price_for_booking(booked_count: int, capacity: int) -> int:
+    participant_count = min(max(booked_count + 1, 1), capacity, 4)
+    return CONSULTATION_PRICES[participant_count]
+
+
+def consultation_price_for_participants(participant_count: int, capacity: int) -> int:
+    current_count = min(max(participant_count, 1), capacity, 4)
+    return CONSULTATION_PRICES[current_count]
 
 
 class SlotService:
@@ -24,6 +38,8 @@ class SlotService:
         access_mode: str = "PUBLIC",
         created_by: int | None = None,
     ):
+        start_at = to_utc(start_at)
+        end_at = to_utc(end_at)
         if start_at >= end_at:
             raise ValidationError("slot start time must be before end time")
         if capacity < 1 or capacity > settings.consultation_max_capacity:
@@ -61,11 +77,20 @@ class SlotService:
         slot = consultation_slot_repository.get_by_id(db, slot_id=slot_id)
         if not slot:
             raise NotFoundError("Consultation slot not found")
+        from consultations.models.consultation_participant import ConsultationParticipant
+
+        booked_count = db.query(ConsultationParticipant).filter(
+            ConsultationParticipant.slot_id == slot.id,
+            ConsultationParticipant.booking_status == "CONFIRMED",
+        ).count()
+        amount = consultation_price_for_booking(booked_count, slot.capacity)
         return {
             "slot_id": slot.id,
-            "amount": slot.price,
+            "amount": amount,
             "currency": slot.currency,
-            "payment_required": slot.price > 0,
+            "payment_required": amount > 0,
+            "booked_count": booked_count,
+            "available_places": max(0, slot.capacity - booked_count),
         }
 
     def cancel_slot(self, db: Session, *, slot_id: int):

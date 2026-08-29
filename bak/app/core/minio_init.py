@@ -12,3 +12,7 @@ def init_minio():
         file_service.set_private_policy(bucket_name)
         print(f"Set private policy for private bucket: {bucket_name}")
     print("All MinIO buckets initialized with explicit public/private policies.")
+
+
+if __name__ == "__main__":
+    init_minio()

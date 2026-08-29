@@ -42,6 +42,7 @@ class Settings(BaseSettings):
     consultation_cancel_cutoff_hours: int = Field(24, alias="PRIVATE_CONSULTATION_CANCEL_CUTOFF_HOURS")
     consultations_allow_overlapping_slots: bool = Field(False, alias="PRIVATE_CONSULTATIONS_ALLOW_OVERLAPPING_SLOTS")
     consultation_default_price: int = Field(0, alias="PRIVATE_CONSULTATION_DEFAULT_PRICE")
+    consultation_timezone: str = Field("Asia/Yekaterinburg", alias="CONSULTATION_TIMEZONE")
 
 
 settings = Settings()

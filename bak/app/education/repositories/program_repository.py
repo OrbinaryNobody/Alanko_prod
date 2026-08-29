@@ -1,19 +1,40 @@
 from sqlalchemy.orm import Session
 
-from models.domains.education import Program, ProgramBlock, ProgramTask, ProgramTopic
+from models.domains.education import Group, GroupMember, Program, ProgramBlock, ProgramTask, ProgramTopic
 
 
 class ProgramRepository:
     def get_by_id(self, db: Session, program_id: int) -> Program | None:
         return db.query(Program).filter(Program.id == program_id).first()
 
+    def has_teacher_access(self, db: Session, *, user_id: int, program_id: int) -> bool:
+        return (
+            db.query(GroupMember.user_id)
+            .join(Group, Group.id == GroupMember.group_id)
+            .filter(
+                GroupMember.user_id == user_id,
+                GroupMember.role == "teacher",
+                Group.program_id == program_id,
+            )
+            .first()
+            is not None
+        )
+
     def list_for_user(self, db: Session, *, user_id: int, is_admin: bool = False) -> list[Program]:
         if is_admin:
             return db.query(Program).order_by(Program.created_at.desc()).all()
 
+        assigned_program_ids = (
+            db.query(Group.program_id)
+            .join(GroupMember, Group.id == GroupMember.group_id)
+            .filter(GroupMember.user_id == user_id, GroupMember.role == "teacher")
+            .filter(Group.program_id.isnot(None))
+            .subquery()
+        )
+
         return (
             db.query(Program)
-            .filter((Program.created_by == user_id) | (Program.status == "draft"))
+            .filter(Program.id.in_(assigned_program_ids))
             .order_by(Program.created_at.desc())
             .all()
         )

@@ -2,13 +2,20 @@ from typing import Any
 
 
 def proposal_payload(proposal) -> dict[str, Any]:
+    base_snapshot = proposal.base_snapshot or {}
+    proposed_snapshot = proposal.proposed_snapshot or {}
+    title = (proposed_snapshot.get("title") or base_snapshot.get("title") or "Новая программа").strip() or "Новая программа"
+
     return {
         "id": proposal.id,
         "program_id": proposal.program_id,
+        "proposal_type": getattr(proposal, "proposal_type", "UPDATE"),
+        "title": title,
+        "description": (proposed_snapshot.get("description") or base_snapshot.get("description")),
         "author_id": proposal.author_id,
         "status": proposal.status,
-        "base_snapshot": proposal.base_snapshot,
-        "proposed_snapshot": proposal.proposed_snapshot,
+        "base_snapshot": base_snapshot,
+        "proposed_snapshot": proposed_snapshot,
         "author_comment": proposal.author_comment,
         "reviewer_comment": proposal.reviewer_comment,
         "reviewed_by": proposal.reviewed_by,

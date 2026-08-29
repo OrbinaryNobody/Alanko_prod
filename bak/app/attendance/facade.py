@@ -39,6 +39,15 @@ class AttendanceFacade:
     def create_subscriptions_for_students(self, db: Session, *, student_ids: list[int], **kwargs):
         return subscription_service.create_for_students(db, student_ids=student_ids, **kwargs)
 
+    def list_subscriptions(self, db: Session):
+        return subscription_service.list_all(db)
+
+    def update_subscription(self, db: Session, *, subscription_id: int, **kwargs):
+        return subscription_service.update(db, subscription_id=subscription_id, **kwargs)
+
+    def cancel_subscription(self, db: Session, *, subscription_id: int):
+        return subscription_service.cancel(db, subscription_id=subscription_id)
+
     def attach_parent(self, db: Session, *, student_id: int, **kwargs):
         return parent_service.attach_parent(db, student_id=student_id, **kwargs)
 

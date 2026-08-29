@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 
 from consultations.services.availability_service import AvailabilityService
 from consultations.services.attendance_service import AttendanceService
@@ -8,6 +9,11 @@ from consultations.services.invitation_service import InvitationService
 from consultations.services.notification_service import NotificationService
 from consultations.services.slot_service import SlotService
 from consultations.services.settlement_service import SettlementService
+from consultations.models.consultation_slot import ConsultationSlot
+from models.domains.auth import User
+from consultations.timezone import serialize_local
+from consultations.models.consultation_participant import ConsultationParticipant
+from consultations.services.slot_service import consultation_price_for_participants
 
 
 class ConsultationsFacade:
@@ -21,8 +27,8 @@ class ConsultationsFacade:
         self.notification_service = NotificationService()
         self.settlement_service = SettlementService()
 
-    def create_day(self, db: Session, *, date, status="OPEN", available_from=None, available_to=None):
-        return self.day_service.create_day(db, date_value=date, status=status, available_from=available_from, available_to=available_to)
+    def create_day(self, db: Session, *, date, teacher_id=None, status="OPEN", available_from=None, available_to=None):
+        return self.day_service.create_day(db, date_value=date, teacher_id=teacher_id, status=status, available_from=available_from, available_to=available_to)
 
     def get_day(self, db: Session, *, day_id: int):
         return self.day_service.get_day(db, day_id=day_id)
@@ -32,6 +38,9 @@ class ConsultationsFacade:
 
     def set_day_status(self, db: Session, *, day_id: int, status: str):
         return self.day_service.set_status(db, day_id=day_id, status=status)
+
+    def set_day_working_window(self, db: Session, *, day_id: int, teacher_id: int, status: str, available_from=None, available_to=None):
+        return self.day_service.set_working_window(db, day_id=day_id, teacher_id=teacher_id, status=status, available_from=available_from, available_to=available_to)
 
     def create_slot(self, db: Session, *, day_id: int, teacher_id: int, start_at, end_at, capacity=4, price=None, currency="RUB", access_mode="PUBLIC", created_by=None):
         return self.slot_service.create_slot(
@@ -61,6 +70,27 @@ class ConsultationsFacade:
 
     def get_my_bookings(self, db: Session, *, student_id: int):
         rows = self.booking_service.get_my_bookings(db, student_id=student_id)
+        slots = {
+            slot.id: slot
+            for slot in db.query(ConsultationSlot).filter(
+                ConsultationSlot.id.in_([row.slot_id for row in rows]),
+            ).all()
+        } if rows else {}
+        teacher_ids = {slot.teacher_id for slot in slots.values()}
+        teachers = {
+            teacher.id: teacher
+            for teacher in db.query(User).filter(User.id.in_(teacher_ids)).all()
+        } if teacher_ids else {}
+        booked_counts = {
+            slot_id: count
+            for slot_id, count in db.query(
+                ConsultationParticipant.slot_id,
+                func.count(ConsultationParticipant.id),
+            ).filter(
+                ConsultationParticipant.slot_id.in_(slots),
+                    ConsultationParticipant.booking_status == "CONFIRMED",
+            ).group_by(ConsultationParticipant.slot_id).all()
+        }
         return [
             {
                 "id": row.id,
@@ -69,6 +99,20 @@ class ConsultationsFacade:
                 "booking_status": row.booking_status,
                 "attendance_status": row.attendance_status,
                 "booked_at": row.booked_at.isoformat() if row.booked_at else None,
+                "start_at": serialize_local(slots[row.slot_id].start_at) if row.slot_id in slots else None,
+                "end_at": serialize_local(slots[row.slot_id].end_at) if row.slot_id in slots else None,
+                "teacher_name": (
+                    f"{teachers[slots[row.slot_id].teacher_id].first_name} "
+                    f"{teachers[slots[row.slot_id].teacher_id].last_name or ''}"
+                ).strip() if row.slot_id in slots and slots[row.slot_id].teacher_id in teachers else None,
+                "price": (
+                    consultation_price_for_participants(
+                        booked_counts.get(row.slot_id, 0),
+                        slots[row.slot_id].capacity,
+                    )
+                    if row.slot_id in slots else None
+                ),
+                "currency": slots[row.slot_id].currency if row.slot_id in slots else None,
             }
             for row in rows
         ]

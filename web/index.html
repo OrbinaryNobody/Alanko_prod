@@ -67,6 +67,7 @@
     }
 
     /* Компонент интерактивной кнопки-пилюли */
+    /* Компонент интерактивной кнопки-пилюли */
     .pill {
       border: 1px solid rgba(255,255,255,0.4);
       border-radius: var(--radius-pill);
@@ -86,59 +87,199 @@
     }
 
     /* ============================================================
-       ШАПКА САЙТА (HEADER)
+       ШАПКА САЙТА (HEADER) И НАВИГАЦИЯ В ЕДИНОМ СТИЛЕ
        ============================================================ */
     header {
-  position: absolute;
-  width: 100%;
-  z-index: 10;
-  padding: var(--spacing-lg) 0;
-}
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 100;
+      padding: 14px 0;
+      transition: background 0.3s ease, padding 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+      background: rgba(5, 6, 10, 0.45);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
 
-.header-content {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
+    header.scrolled {
+      background: rgba(5, 6, 10, 0.9);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(176, 209, 130, 0.18);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55);
+      padding: 10px 0;
+    }
 
-/* ЛОГО — просто слева */
-.logo-text {
-  font-weight: 900;
-  font-size: 1rem;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
+    .header-content {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
 
-/* ЦЕНТР — навигация */
-nav {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 12px;
-}
+    /* ЛОГО — слева */
+    .logo-text {
+      font-weight: 900;
+      font-size: 0.95rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--pal-off-white);
+      white-space: nowrap;
+      transition: color 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
 
-/* ПРАВО — время */
-.actions {
-  display: flex;
-  align-items: center;
-}
+    .logo-text:hover {
+      color: var(--pal-light-green);
+    }
 
-/* виджет времени */
-.time-widget {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  font-size: 0.75rem;
-  color: rgba(255,255,255,0.7);
-  letter-spacing: 1px;
-}
+    /* ЦЕНТР — панель навигации в едином стиле Studio Alanko */
+    nav.nav-pills-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-pill);
+      padding: 4px 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
 
-.time-widget span:first-child {
-  font-weight: 600;
-  color: var(--pal-light-green);
-}
+    nav.nav-pills-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-pills-bar .pill {
+      border: 1px solid transparent;
+      border-radius: var(--radius-pill);
+      padding: 6px 12px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: rgba(255, 255, 255, 0.72);
+      text-transform: uppercase;
+      white-space: nowrap;
+      transition: all 0.22s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      background: transparent;
+    }
+
+    .nav-pills-bar .pill iconify-icon {
+      font-size: 0.95rem;
+      opacity: 0.85;
+      color: var(--pal-light-green);
+    }
+
+    .nav-pills-bar .pill:hover {
+      background: rgba(176, 209, 130, 0.12);
+      border-color: rgba(176, 209, 130, 0.35);
+      color: var(--pal-off-white);
+      transform: translateY(-1px);
+    }
+
+    .nav-pills-bar .pill.active {
+      background: var(--pal-dark-green);
+      border-color: var(--pal-light-green);
+      color: var(--pal-light-green);
+      box-shadow: 0 0 14px rgba(176, 209, 130, 0.25);
+    }
+
+    /* ПРАВО — время */
+    .actions {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    /* виджет времени */
+    .time-widget {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      font-size: 0.72rem;
+      color: rgba(255, 255, 255, 0.7);
+      letter-spacing: 1px;
+      white-space: nowrap;
+    }
+
+    .time-widget span:first-child {
+      font-weight: 700;
+      color: var(--pal-light-green);
+    }
+
+    /* Отступ сверху для идеального перехода к якорям */
+    .hero,
+    .achievements-section,
+    .collab-section,
+    .students-section,
+    .leader-section,
+    .pricing-section,
+    .leaderboard-section,
+    .faq-section,
+    .contact-footer {
+      scroll-margin-top: 78px;
+    }
+
+    /* Мягкая подсветка блока при быстром переходе */
+    @keyframes blockPulseGlow {
+      0% {
+        box-shadow: 0 0 0 0 rgba(176, 209, 130, 0.45);
+        outline: 2px solid var(--pal-light-green);
+      }
+      50% {
+        box-shadow: 0 0 32px 6px rgba(176, 209, 130, 0.3);
+        outline: 2px solid var(--pal-light-green);
+      }
+      100% {
+        box-shadow: 0 0 0 0 transparent;
+        outline: 2px solid transparent;
+      }
+    }
+
+    .highlight-block-target {
+      animation: blockPulseGlow 1.4s ease-out;
+      border-radius: var(--radius-card);
+    }
+
+    @media (max-width: 1180px) {
+      .nav-pills-bar .pill span {
+        font-size: 0.68rem;
+      }
+      .nav-pills-bar .pill {
+        padding: 5px 9px;
+      }
+    }
+
+    @media (max-width: 992px) {
+      header {
+        padding: 10px 0;
+      }
+      .header-content {
+        flex-wrap: wrap;
+        justify-content: space-between;
+      }
+      nav.nav-pills-bar {
+        order: 3;
+        width: 100%;
+        max-width: 100%;
+        margin-top: 8px;
+        justify-content: flex-start;
+      }
+      .time-widget {
+        font-size: 0.65rem;
+      }
+    }
 
     /* ============================================================
        БЛОК №1: ГЛАВНЫЙ ЭКРАН (HERO SECTION)
@@ -2167,27 +2308,57 @@ nav {
 </head>
 <body>
 
-  <header>
+  <header id="mainHeader">
     <div class="container header-content">
-      <div class="logo-text">Dance Studio Alanko</div>
-<nav>
-  <a href="#achievements" class="pill">ДОСТИЖЕНИЯ</a>
-  <a href="#leader" class="pill">РУКОВОДИТЕЛЬ</a>
-  <a href="#award" class="pill">ПРЕМИЯ</a>
-  <a href="#faq" class="pill">ВОПРОСЫ</a>
-  <a href="#faq" class="pill">ДЛЯ РОДИТЕЛЕЙ</a>
-</nav>
-<div class="actions">
-  <div class="time-widget">
-    <span id="day"></span>
-    <span id="time"></span>
-  </div>
-</div>
+      <a href="#hero" class="logo-text">
+        <iconify-icon icon="solar:shield-check-linear" style="margin-right: 6px; font-size: 1.1rem; color: var(--pal-light-green);"></iconify-icon>
+        Studio Alanko
+      </a>
+      <nav class="nav-pills-bar" id="mainNavbar">
+        <a href="#achievements" class="pill">
+          <iconify-icon icon="solar:cup-linear"></iconify-icon>
+          <span>Достижения</span>
+        </a>
+        <a href="#collab" class="pill">
+          <iconify-icon icon="solar:stars-linear"></iconify-icon>
+          <span>Коллаборация</span>
+        </a>
+        <a href="#students" class="pill">
+          <iconify-icon icon="solar:users-group-rounded-linear"></iconify-icon>
+          <span>Ученики</span>
+        </a>
+        <a href="#leader" class="pill">
+          <iconify-icon icon="solar:crown-linear"></iconify-icon>
+          <span>Руководитель</span>
+        </a>
+        <a href="#private-training" class="pill">
+          <iconify-icon icon="solar:dumbbell-large-minimalistic-linear"></iconify-icon>
+          <span>Тренировки</span>
+        </a>
+        <a href="#award" class="pill">
+          <iconify-icon icon="solar:ranking-linear"></iconify-icon>
+          <span>Премия</span>
+        </a>
+        <a href="#faq" class="pill">
+          <iconify-icon icon="solar:question-circle-linear"></iconify-icon>
+          <span>Вопросы</span>
+        </a>
+        <a href="#contacts" class="pill">
+          <iconify-icon icon="solar:phone-calling-linear"></iconify-icon>
+          <span>Контакты</span>
+        </a>
+      </nav>
+      <div class="actions">
+        <div class="time-widget">
+          <span id="day"></span>
+          <span id="time"></span>
+        </div>
+      </div>
     </div>
   </header>
 
   <main>
-    <section class="hero">
+    <section class="hero" id="hero">
       <div class="container hero-content">
         <div class="hero-title-img">
           <img src="images/Logo.PNG" alt="Studio Alanko">
@@ -2443,7 +2614,7 @@ nav {
         <p class="collab-card-desc">
           Базовая профессиональная подготовка, авторская техника движения и системная дисциплина.
         </p>
-        <a href="#about-alanko" class="collab-icon-btn" aria-label="Подробнее об Alanko">
+        <a href="#leader" class="collab-icon-btn" aria-label="Подробнее об Alanko">
           <iconify-icon icon="solar:arrow-right-up-linear"></iconify-icon>
         </a>
       </div>
@@ -2458,7 +2629,7 @@ nav {
         <p class="collab-card-desc">
           Уникальные мастер-классы, новые танцевальные стили и регулярные совместные перформансы.
         </p>
-        <a href="#about-partner" class="collab-icon-btn" aria-label="Подробнее о партнере">
+        <a href="#collab" class="collab-icon-btn" aria-label="Подробнее о партнере">
           <iconify-icon icon="solar:arrow-right-up-linear"></iconify-icon>
         </a>
       </div>
@@ -2493,7 +2664,7 @@ nav {
     <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=800" alt="Partner Dance">
   </div>
 </section>
-<section class="students-section">
+<section class="students-section" id="students">
 
   <div class="container">
 
@@ -2509,8 +2680,6 @@ nav {
   </div>
 
 </section>
-
-</main>
 <!-- ============================================================
 MODAL STUDENT PROFILE
 ============================================================ -->
@@ -2626,7 +2795,7 @@ MODAL STUDENT PROFILE
           <li><iconify-icon icon="solar:check-circle-linear"></iconify-icon> Персональная хореография</li>
           <li><iconify-icon icon="solar:check-circle-linear"></iconify-icon> Гибкий график занятий</li>
         </ul>
-        <a href="#book" class="pricing-btn">Записаться</a>
+        <a href="student_booking.html" class="pricing-btn booking-btn">Записаться</a>
       </div>
 
       <!-- Карточка 2 -->
@@ -2644,7 +2813,7 @@ MODAL STUDENT PROFILE
           <li><iconify-icon icon="solar:check-circle-linear"></iconify-icon> Парная хореография</li>
           <li><iconify-icon icon="solar:check-circle-linear"></iconify-icon> Общие цели</li>
         </ul>
-        <a href="#book" class="pricing-btn">Записаться</a>
+        <a href="student_booking.html" class="pricing-btn booking-btn">Записаться</a>
       </div>
 
       <!-- Карточка 3 -->
@@ -2662,7 +2831,7 @@ MODAL STUDENT PROFILE
           <li><iconify-icon icon="solar:check-circle-linear"></iconify-icon> Основы синхрона</li>
           <li><iconify-icon icon="solar:check-circle-linear"></iconify-icon> Подготовка к команде</li>
         </ul>
-        <a href="#book" class="pricing-btn">Записаться</a>
+        <a href="student_booking.html" class="pricing-btn booking-btn">Записаться</a>
       </div>
 
       <!-- Карточка 4 -->
@@ -2680,7 +2849,7 @@ MODAL STUDENT PROFILE
           <li><iconify-icon icon="solar:check-circle-linear"></iconify-icon> Сценические рисунки</li>
           <li><iconify-icon icon="solar:check-circle-linear"></iconify-icon> Выгодный формат</li>
         </ul>
-        <a href="#book" class="pricing-btn">Записаться</a>
+        <a href="student_booking.html" class="pricing-btn booking-btn">Записаться</a>
       </div>
 
     </div>
@@ -2800,40 +2969,40 @@ MODAL STUDENT PROFILE
         </div>
     </div>
 </section>
-    <footer class="contact-footer">
+    <footer class="contact-footer" id="contacts">
       <div class="container">
         <div class="footer-top">
           <div class="contact-info">
             <h2>Свяжитесь с нами</h2>
             <p>Готовы начать свое путешествие в мир танца? Напишите нам, и мы поможем подобрать идеальное направление для вашего старта.</p>
-            <a href="#" class="cta-button-footer">СТАТЬ КЛИЕНТОМ →</a>
+            <a href="#contacts" class="cta-button-footer">СТАТЬ КЛИЕНТОМ →</a>
           </div>
           
           <div class="footer-links">
             <div class="link-group">
               <h4>Навигация</h4>
               <ul>
-                <li><a href="#">Главная</a></li>
-                <li><a href="#">О студии</a></li>
-                <li><a href="#">Блог</a></li>
-                <li><a href="#">Карьера</a></li>
+                <li><a href="#hero">Главная</a></li>
+                <li><a href="#leader">О студии</a></li>
+                <li><a href="#collab">Коллаборация</a></li>
+                <li><a href="#contacts">Контакты</a></li>
               </ul>
             </div>
             <div class="link-group">
               <h4>Предложения</h4>
               <ul>
-                <li><a href="#">Абонементы</a></li>
-                <li><a href="#">Интенсивы</a></li>
-                <li><a href="#">Аренда залов</a></li>
-                <li><a href="#">Мерч</a></li>
+                <li><a href="#private-training">Абонементы</a></li>
+                <li><a href="#collab">Интенсивы</a></li>
+                <li><a href="#private-training">Частные тренировки</a></li>
+                <li><a href="#award">Премия года</a></li>
               </ul>
             </div>
             <div class="link-group">
               <h4>Помощь</h4>
               <ul>
-                <li><a href="#">FAQ</a></li>
-                <li><a href="#">Правила</a></li>
-                <li><a href="#">Контакты</a></li>
+                <li><a href="#faq">FAQ</a></li>
+                <li><a href="#faq">Правила</a></li>
+                <li><a href="#contacts">Контакты</a></li>
               </ul>
             </div>
           </div>
@@ -2876,10 +3045,36 @@ MODAL STUDENT PROFILE
   // --- ЛОГИКА ДЛЯ ВХОДА ---
   const loginBtns = document.querySelectorAll('.login-btn');
   const loginModal = document.querySelector('.login-modal');
+  const pendingRedirectKey = 'pendingAuthRedirect';
+
+  function setPendingRedirect(targetPage) {
+    if (targetPage) {
+      sessionStorage.setItem(pendingRedirectKey, targetPage);
+    } else {
+      sessionStorage.removeItem(pendingRedirectKey);
+    }
+  }
+
+  function consumePendingRedirect() {
+    const targetPage = sessionStorage.getItem(pendingRedirectKey);
+    sessionStorage.removeItem(pendingRedirectKey);
+    return targetPage;
+  }
 
   loginBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
+      setPendingRedirect(null);
+      loginModal.classList.add('active');
+      document.body.classList.add('modal-open');
+    });
+  });
+
+  document.querySelectorAll('.booking-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      if (getToken()) return;
+      e.preventDefault();
+      setPendingRedirect('student_booking.html');
       loginModal.classList.add('active');
       document.body.classList.add('modal-open');
     });
@@ -2899,9 +3094,15 @@ MODAL STUDENT PROFILE
 
       setToken(data.access_token);
 
-      // Декодировать токен для роли
       const payload = JSON.parse(atob(data.access_token.split('.')[1]));
       const redirectHash = '#authToken=' + encodeURIComponent(data.access_token);
+      const pendingRedirect = consumePendingRedirect();
+
+      if (pendingRedirect) {
+        window.location.href = pendingRedirect + redirectHash;
+        return;
+      }
+
       if (payload.role === 'admin') {
         window.location.href = 'panel_for_al.html' + redirectHash;
       } else if (payload.role === 'teacher') {
@@ -3282,6 +3483,79 @@ function updateTime() {
 // обновление каждую секунду
 setInterval(updateTime, 1000);
 updateTime();
+
+// --- ПЛАВНАЯ НАВИГАЦИЯ, ПОДСВЕТКА СЕКЦИЙ И АКТИВНЫХ КНОПОК В ШАПКЕ ---
+const mainHeader = document.getElementById('mainHeader') || document.querySelector('header');
+const navPills = document.querySelectorAll('.nav-pills-bar .pill');
+const pageSections = document.querySelectorAll('section[id], footer[id]');
+
+// Отслеживание скролла для шапки (эффект матового стекла)
+function handleHeaderScroll() {
+  if (window.scrollY > 30) {
+    mainHeader?.classList.add('scrolled');
+  } else {
+    mainHeader?.classList.remove('scrolled');
+  }
+}
+window.addEventListener('scroll', handleHeaderScroll, { passive: true });
+handleHeaderScroll();
+
+// Обработка клика по якорным ссылкам страницы
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    const targetId = this.getAttribute('href');
+    if (!targetId || targetId === '#') return;
+    
+    const targetElement = document.querySelector(targetId);
+    if (targetElement) {
+      e.preventDefault();
+      
+      targetElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+
+      // Мягкая подсветка целевого блока
+      targetElement.classList.remove('highlight-block-target');
+      void targetElement.offsetWidth;
+      targetElement.classList.add('highlight-block-target');
+
+      // Обновляем визуальный активный статус в меню
+      navPills.forEach(pill => {
+        if (pill.getAttribute('href') === targetId) {
+          pill.classList.add('active');
+        } else {
+          pill.classList.remove('active');
+        }
+      });
+    }
+  });
+});
+
+// Отслеживание активного блока при скролле (IntersectionObserver)
+if ('IntersectionObserver' in window && pageSections.length > 0) {
+  const navSectionObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const currentId = entry.target.getAttribute('id');
+        if (currentId) {
+          navPills.forEach(pill => {
+            if (pill.getAttribute('href') === `#${currentId}`) {
+              pill.classList.add('active');
+            } else {
+              pill.classList.remove('active');
+            }
+          });
+        }
+      }
+    });
+  }, {
+    rootMargin: '-20% 0px -60% 0px',
+    threshold: 0.05
+  });
+
+  pageSections.forEach(section => navSectionObserver.observe(section));
+}
 </script>
 </body>
 </html>

@@ -5,19 +5,67 @@ from sqlalchemy.orm import Session
 
 from attendance.dtos.attendance_dto import AttendancePayload
 from attendance.facade import attendance_facade
-from attendance.schemas import AttendanceCheckInCreate, SubscriptionCreate
+from attendance.schemas import AttendanceCheckInCreate, SubscriptionCreate, SubscriptionUpdate
 from attendance.schemas_response import AttendanceHistoryResponse
 from core.access import AccessContext
 from core.exceptions import DomainError
 from core.http import translate_domain_error
 from core.permissions import require_manage_attendance, require_view_attendance
 from db.database import get_db
+from db.minio_client import BUCKET_NAMES
 from education.facade import education_facade
 from education.exceptions.domain_exceptions import EducationError
+from infrastructure.storage.file_service import file_service
 
 
 router = APIRouter(prefix="/attendance", tags=["attendance"])
 student_router = APIRouter(prefix="/attendance", tags=["attendance"])
+
+
+def _subscription_payload(subscription, student=None):
+    image_key = None
+    if student:
+        profile = getattr(student, "student_profile", None)
+        image_key = profile.image_url if profile and profile.image_url else student.image_url
+    return {
+        "id": subscription.id,
+        "student_id": subscription.student_id,
+        "student_name": f"{student.first_name} {student.last_name or ''}".strip() if student else None,
+        "image_url": file_service.get_file_url(image_key, BUCKET_NAMES["student_photos"]) if image_key else None,
+        "plan_name": subscription.plan_name,
+        "total_visits": subscription.total_visits,
+        "remaining_visits": subscription.remaining_visits,
+        "valid_from": subscription.valid_from.isoformat(),
+        "valid_until": subscription.valid_until.isoformat(),
+        "status": subscription.status,
+        "payment_status": subscription.payment_status,
+        "amount": subscription.amount,
+        "currency": subscription.currency,
+    }
+
+
+@router.get("/admin/subscriptions")
+def list_admin_subscriptions(ctx: AccessContext = Depends(require_manage_attendance), db: Session = Depends(get_db)):
+    subscriptions = attendance_facade.list_subscriptions(db)
+    return {"data": [_subscription_payload(item, item.student) for item in subscriptions]}
+
+
+@router.patch("/admin/subscriptions/{subscription_id}")
+def update_admin_subscription(subscription_id: int, data: SubscriptionUpdate, ctx: AccessContext = Depends(require_manage_attendance), db: Session = Depends(get_db)):
+    try:
+        subscription = attendance_facade.update_subscription(db, subscription_id=subscription_id, **data.model_dump())
+    except DomainError as exc:
+        translate_domain_error(exc)
+    return {"data": _subscription_payload(subscription, subscription.student)}
+
+
+@router.delete("/admin/subscriptions/{subscription_id}")
+def cancel_admin_subscription(subscription_id: int, ctx: AccessContext = Depends(require_manage_attendance), db: Session = Depends(get_db)):
+    try:
+        subscription = attendance_facade.cancel_subscription(db, subscription_id=subscription_id)
+    except DomainError as exc:
+        translate_domain_error(exc)
+    return {"data": _subscription_payload(subscription, subscription.student)}
 
 
 def _attendance_payload(record):
@@ -135,7 +183,7 @@ def create_group_subscriptions(
 ):
     try:
         group_students = education_facade.get_group_students(db, ctx=ctx, group_id=group_id)
-        student_ids = [student.student_id for student in group_students if student.status == "active"]
+        student_ids = [student["student_id"] for student in group_students if student.get("status") == "active"]
         subscriptions = attendance_facade.create_subscriptions_for_students(
             db,
             student_ids=student_ids,
