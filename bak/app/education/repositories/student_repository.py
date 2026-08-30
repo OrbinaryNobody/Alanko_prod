@@ -23,7 +23,7 @@ class StudentRepository:
             .filter(User.student_profile.has())
             .options(
                 joinedload(User.student_profile),
-                joinedload(User.student_tasks).joinedload(StudentTask.task).joinedload(Task.category),
+                joinedload(User.student_tasks).joinedload(StudentTask.task),
                 joinedload(User.student_tasks).joinedload(StudentTask.media),
             )
             .all()

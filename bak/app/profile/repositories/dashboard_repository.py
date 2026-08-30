@@ -46,7 +46,7 @@ class DashboardRepository:
     def get_student_tasks(self, db: Session, *, user_id: int, limit: int = 100) -> list[StudentTask]:
         return (
             db.query(StudentTask)
-            .options(joinedload(StudentTask.task).joinedload(Task.category), joinedload(StudentTask.media))
+            .options(joinedload(StudentTask.task), joinedload(StudentTask.media))
             .filter(StudentTask.student_id == user_id)
             .order_by(StudentTask.id.desc())
             .limit(limit)

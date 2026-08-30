@@ -19,21 +19,10 @@ class StudentProfile(Base):
     user = relationship("User", back_populates="student_profile")
 
 
-class Category(Base):
-    __tablename__ = "categories"
-
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(Text, unique=True, nullable=False)
-    description = Column(Text)
-
-    tasks = relationship("Task", back_populates="category")
-
-
 class Task(Base):
     __tablename__ = "tasks"
 
     id = Column(Integer, primary_key=True, index=True)
-    category_id = Column(Integer, ForeignKey("categories.id", ondelete="CASCADE"))
     title = Column(Text, nullable=False)
     description = Column(Text)
     video_url = Column(Text)
@@ -41,7 +30,6 @@ class Task(Base):
     max_score = Column(Integer, default=100)
     created_at = Column(TIMESTAMP(timezone=True), server_default=func.now())
 
-    category = relationship("Category", back_populates="tasks")
     student_tasks = relationship("StudentTask", back_populates="task")
 
 

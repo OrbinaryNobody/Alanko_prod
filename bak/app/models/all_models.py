@@ -9,7 +9,6 @@ from models.base import Base
 from models.domains import (
     Achievement,
     AttendanceRecord,
-    Category,
     CourseEnrollment,
     Gallery,
     Group,
@@ -46,7 +45,6 @@ __all__ = [
     "User",
     "UserRole",
     "StudentProfile",
-    "Category",
     "Task",
     "StudentTask",
     "Gallery",

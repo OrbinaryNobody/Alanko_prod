@@ -128,7 +128,7 @@ class PublicService:
             db.query(TaskMedia)
             .join(StudentTask, TaskMedia.student_task_id == StudentTask.id)
             .join(Task, StudentTask.task_id == Task.id)
-            .options(joinedload(TaskMedia.student_task).joinedload(StudentTask.task).joinedload(Task.category))
+            .options(joinedload(TaskMedia.student_task).joinedload(StudentTask.task))
             .filter(StudentTask.student_id == student_id, TaskMedia.is_public == True)
             .order_by(TaskMedia.created_at.desc())
             .all()
@@ -143,16 +143,14 @@ class PublicService:
                 video_url = file_service.get_file_url(source, BUCKET_NAMES["videos"])
 
             task_title = "Выполненное задание"
-            category_name = ""
             if media.student_task and media.student_task.task:
                 task_title = media.student_task.task.title or task_title
-                category_name = media.student_task.task.category.name if media.student_task.task.category else ""
 
             result_videos.append(
                 PublicStudentVideoItem(
                     id=media.id,
                     task_name=task_title,
-                    category=category_name,
+                    category="",
                     video_url=video_url,
                     uploaded_at=media.created_at.isoformat() if media.created_at else None,
                 )

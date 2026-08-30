@@ -5,7 +5,7 @@ from .auth import GroupRole, Role, User, UserRole
 from .education import Group, GroupEnrollment, GroupMember, GroupSchedule, GroupStudentTask, Program, ProgramBlock, ProgramChangeProposal, ProgramMaterial, ProgramTask, ProgramTopic
 from .payments import CourseEnrollment, Payment, SpecialOffer
 from .news import News
-from .student import Category, Gallery, RatingsHistory, StudentProfile, StudentTask, Task, TaskMedia
+from .student import Gallery, RatingsHistory, StudentProfile, StudentTask, Task, TaskMedia
 
 __all__ = [
     "Base",
@@ -14,7 +14,6 @@ __all__ = [
     "UserRole",
     "GroupRole",
     "StudentProfile",
-    "Category",
     "Task",
     "StudentTask",
     "Gallery",

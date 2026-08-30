@@ -360,7 +360,7 @@ class DashboardService:
                 task_id=st.task.id if st.task else None,
                 title=st.task.title if st.task else None,
                 description=st.task.description if st.task else None,
-                category_name=st.task.category.name if st.task and st.task.category else None,
+                category_name=None,
                 status=st.status,
                 score=st.score,
                 max_score=st.task.max_score if st.task else None,

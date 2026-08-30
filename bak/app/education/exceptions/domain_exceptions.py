@@ -38,13 +38,5 @@ class InvalidStudentTaskScore(EducationError):
     pass
 
 
-class CategoryAlreadyExists(EducationError):
-    pass
-
-
-class CategoryNotFound(EducationError):
-    pass
-
-
 class NoStudentsFound(EducationError):
     pass

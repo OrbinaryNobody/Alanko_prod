@@ -243,22 +243,19 @@ class StudentService:
                 elif last_history.points_change < 0:
                     movement = "down"
 
-            categories = {}
+            default_category_name = "Все задания"
+            categories = {default_category_name: {"category_name": default_category_name, "tasks": []}}
             for student_task in student.student_tasks:
                 if not student_task.task:
                     continue
 
-                category_name = student_task.task.category.name if student_task.task.category else "Без категории"
-                if category_name not in categories:
-                    categories[category_name] = {"category_name": category_name, "tasks": []}
-
-                categories[category_name]["tasks"].append(
+                categories[default_category_name]["tasks"].append(
                     StudentTaskPayload(
                         student_task_id=student_task.id,
                         task_id=student_task.task.id,
                         title=student_task.task.title,
                         description=student_task.task.description,
-                        category_name=category_name,
+                        category_name=default_category_name,
                         status=student_task.status or "not_started",
                         score=student_task.score,
                         max_score=student_task.task.max_score,

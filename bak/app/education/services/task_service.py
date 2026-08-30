@@ -1,37 +1,20 @@
 from sqlalchemy.orm import Session
 
 from core.access import AccessContext
-from education.exceptions.domain_exceptions import CategoryAlreadyExists, CategoryNotFound, NoStudentsFound, TaskNotFound
+from education.exceptions.domain_exceptions import NoStudentsFound, TaskNotFound
 from education.repositories.task_repository import task_repository
-from models.domains.auth import User
-from models.domains.student import Category, Task
-from models.domains.auth import Role
+from models.domains.auth import Role, User
+from models.domains.student import Task
 from shared.unit_of_work import UnitOfWork
 
 
 class TaskService:
-    def create_category(self, db: Session, *, name: str, description: str | None = None):
-        existing = db.query(Category).filter(Category.name == name).first()
-        if existing:
-            raise CategoryAlreadyExists("Category with this name already exists")
-
-        with UnitOfWork(db):
-            return task_repository.create_category(db, name=name, description=description)
-
-    def get_categories(self, db: Session):
-        return task_repository.list_categories(db)
-
-    def create_task(self, db: Session, *, ctx: AccessContext, title: str, description: str | None, category_id: int, difficulty: int, max_score: int):
-        category = db.query(Category).filter(Category.id == category_id).first()
-        if not category:
-            raise CategoryNotFound("There is no such category")
-
+    def create_task(self, db: Session, *, ctx: AccessContext, title: str, description: str | None, difficulty: int, max_score: int):
         with UnitOfWork(db):
             task = task_repository.create_task(
                 db,
                 title=title,
                 description=description,
-                category_id=category_id,
                 difficulty=difficulty,
                 max_score=max_score,
             )
@@ -66,7 +49,6 @@ class TaskService:
         with UnitOfWork(db):
             task.title = task_data.title
             task.description = task_data.description
-            task.category_id = task_data.category_id
             task.difficulty = task_data.difficulty
             task.max_score = task_data.max_score
             db.refresh(task)
