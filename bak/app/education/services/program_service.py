@@ -57,6 +57,29 @@ class ProgramService:
             is_manual=is_manual,
         )
 
+    async def add_topic_material(self, db: Session, *, ctx: AccessContext, program_id: int, block_id: int, topic_id: int, file):
+        return await program_creation_service.add_topic_material(
+            db,
+            ctx=ctx,
+            program_id=program_id,
+            block_id=block_id,
+            topic_id=topic_id,
+            file=file,
+        )
+
+    async def add_task_material(self, db: Session, *, ctx: AccessContext, program_id: int, block_id: int, task_id: int, file):
+        return await program_creation_service.add_task_material(
+            db,
+            ctx=ctx,
+            program_id=program_id,
+            block_id=block_id,
+            task_id=task_id,
+            file=file,
+        )
+
+    def delete_material(self, db: Session, *, ctx: AccessContext, program_id: int, material_id: int):
+        return program_creation_service.delete_material(db, ctx=ctx, program_id=program_id, material_id=material_id)
+
     def update_block(self, db: Session, *, ctx: AccessContext, block_id: int, title: str, description: str | None, order: int):
         return program_creation_service.update_block(db, ctx=ctx, block_id=block_id, title=title, description=description, order=order)
 

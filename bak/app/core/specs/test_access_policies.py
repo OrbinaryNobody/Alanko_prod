@@ -49,6 +49,21 @@ def test_program_policy_denies_other_user():
         raise AssertionError("Expected PermissionError for non-owner")
 
 
+def test_program_policy_allows_teacher_linked_via_group():
+    ctx = AccessContext.from_parts(user_id=77, roles=["teacher"], permissions=[], is_admin=False)
+    program = SimpleNamespace(
+        created_by=10,
+        groups=[
+            SimpleNamespace(
+                members=[SimpleNamespace(user_id=77, role="teacher")],
+            )
+        ],
+    )
+
+    ProgramPolicy.require_edit_program(ctx, program)
+    ProgramPolicy.require_view_program(ctx, program)
+
+
 def test_student_task_policy_allows_group_manager():
     ctx = AccessContext.from_parts(user_id=5, roles=["teacher"], permissions=[], is_admin=False)
     enrollment = SimpleNamespace(

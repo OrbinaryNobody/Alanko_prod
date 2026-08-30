@@ -4,7 +4,7 @@ from core.exceptions import NotFoundError, PermissionDenied
 from db.minio_client import BUCKET_NAMES
 from models.domains.achievements import Achievement
 from models.domains.auth import User
-from models.domains.education import GroupEnrollment, GroupMember
+from models.domains.education import Group, GroupEnrollment, GroupMember
 from models.domains.student import RatingsHistory, StudentProfile, StudentTask, Task, TaskMedia
 from public.dtos.public_dto import (
     PublicLeaderboardItem,
@@ -19,32 +19,52 @@ from infrastructure.storage.file_service import file_service
 
 class PublicService:
     def get_public_leaderboard(self, db: Session):
-        all_profiles = (
-            db.query(StudentProfile)
-            .join(User)
-            .options(joinedload(StudentProfile.user))
-            .order_by(StudentProfile.rating_points.desc())
-            .limit(5)
+        eligible_enrollments = (
+            db.query(GroupEnrollment)
+            .join(Group)
+            .filter(
+                GroupEnrollment.status == "active",
+                Group.status == "active",
+                Group.leaderboard_enabled.is_(True),
+            )
             .all()
         )
 
+        overall_scores_by_user = {}
+        for enrollment in eligible_enrollments:
+            overall_scores_by_user[enrollment.student_id] = overall_scores_by_user.get(enrollment.student_id, 0) + sum(
+                task.grade or 0 for task in enrollment.tasks
+            )
+
+        ranking_scores = sorted(
+            [
+                {"user_id": student_id, "rating": rating}
+                for student_id, rating in overall_scores_by_user.items()
+            ],
+            key=lambda item: (-item["rating"], item["user_id"]),
+        )
+
         top_3_students = []
-        for profile in all_profiles[:3]:
-            user = profile.user
-            image_url = file_service.get_file_url(profile.image_url, BUCKET_NAMES["student_photos"]) if profile.image_url else None
+        for item in ranking_scores[:3]:
+            user = db.query(User).filter(User.id == item["user_id"]).first()
+            if not user:
+                continue
+
+            profile = db.query(StudentProfile).filter(StudentProfile.user_id == user.id).first()
+            image_url = file_service.get_file_url(profile.image_url, BUCKET_NAMES["student_photos"]) if profile and profile.image_url else None
 
             top_3_students.append(
                 PublicLeaderboardItem(
                     user_id=user.id,
                     full_name=f"{user.first_name} {user.last_name}".strip(),
-                    rating=profile.rating_points,
+                    rating=item["rating"],
                     image_url=image_url,
-                    role=getattr(profile, "role", "Студент"),
-                    description=getattr(profile, "bio", ""),
+                    role=getattr(profile, "role", "Студент") if profile else "Студент",
+                    description=getattr(profile, "bio", "") if profile else "",
                 )
             )
 
-        profile_ids = [profile.user_id for profile in all_profiles[:5]]
+        profile_ids = [item["user_id"] for item in ranking_scores[:5]]
         history_rows = (
             db.query(RatingsHistory)
             .filter(RatingsHistory.student_id.in_(profile_ids))
@@ -56,11 +76,12 @@ class PublicService:
             latest_history.setdefault(history.student_id, history)
 
         top_5_leaderboard = []
-        place = 1
-        for profile in all_profiles[:5]:
-            user = profile.user
-            last_history = latest_history.get(user.id)
+        for place, item in enumerate(ranking_scores[:5], start=1):
+            user = db.query(User).filter(User.id == item["user_id"]).first()
+            if not user:
+                continue
 
+            last_history = latest_history.get(user.id)
             movement = "same"
             if last_history:
                 if last_history.points_change > 0:
@@ -73,11 +94,10 @@ class PublicService:
                     place=place,
                     user_id=user.id,
                     full_name=f"{user.first_name} {user.last_name}".strip(),
-                    rating=profile.rating_points,
+                    rating=item["rating"],
                     movement=movement,
                 )
             )
-            place += 1
 
         return PublicLeaderboardPayload(
             top_3_students=top_3_students,

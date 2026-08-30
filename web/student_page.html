@@ -889,12 +889,12 @@
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(10px);
   display: none;
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 24px;
+  padding: 20px;
 }
 
 .category-modal.active {
@@ -902,14 +902,17 @@
 }
 
 .category-modal-content {
-  width: min(980px, 100%);
-  max-height: min(90vh, 780px);
+  width: min(880px, 100%);
+  max-height: min(90vh, 760px);
   overflow-y: auto;
-  background: rgba(8, 12, 19, 0.98);
-  border: 1px solid rgba(176, 209, 130, 0.22);
-  border-radius: 24px;
-  padding: 28px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 30px rgba(176, 209, 130, 0.08);
+  background: rgba(10, 15, 22, 0.98);
+  border: 1px solid rgba(176, 209, 130, 0.2);
+  border-radius: 20px;
+  padding: 24px 28px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 30px rgba(176, 209, 130, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
 }
 
 .category-modal-header {
@@ -917,24 +920,57 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: 16px;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
+  padding-bottom: 14px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .category-modal-header h3 {
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   font-weight: 700;
-  color: var(--text-main);
+  color: var(--pal-off-white);
   margin: 0 0 4px 0;
+}
+
+.category-modal-meta-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.category-modal-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+}
+
+.category-modal-pill.progress-done {
+  background: rgba(106, 142, 78, 0.18);
+  border-color: rgba(176, 209, 130, 0.35);
+  color: var(--pal-light-green);
+}
+
+.category-modal-desc {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0;
 }
 
 .category-modal-close-btn {
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.15);
   color: var(--text-muted);
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
@@ -949,220 +985,256 @@
   background: rgba(239, 108, 108, 0.15);
   border-color: rgba(239, 108, 108, 0.4);
   color: var(--pal-accent-red);
-  transform: rotate(90deg);
 }
 
-.category-task-list {
-  display: grid;
-  gap: 16px;
-}
-
-.category-task-item {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--card-border);
-  border-radius: var(--radius-lg);
-  padding: 20px;
-  transition: all 0.3s ease;
+/* СЕКЦИЯ МАТЕРИАЛОВ БЛОКА */
+.block-materials-panel {
+  background: rgba(176, 209, 130, 0.04);
+  border: 1px solid rgba(176, 209, 130, 0.18);
+  border-radius: 14px;
+  padding: 14px 16px;
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.category-task-item:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(176, 209, 130, 0.3);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-}
-
-.category-task-item-head {
+.block-materials-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.category-task-item h4 {
-  margin: 0;
-  font-size: 1.08rem;
-  font-weight: 700;
-  color: var(--text-main);
-}
-
-.category-task-item p {
-  color: var(--text-muted);
-  margin: 0;
-  line-height: 1.5;
-  font-size: 0.92rem;
-}
-
-.category-task-feedback {
-  background: rgba(176, 209, 130, 0.06);
-  border-left: 3px solid var(--pal-light-green);
-  padding: 10px 14px;
-  border-radius: 4px 8px 8px 4px;
-  font-size: 0.88rem;
-  color: var(--pal-off-white);
-  line-height: 1.45;
-}
-
-.category-task-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
   align-items: center;
-}
-
-.task-meta-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.task-meta-chip.status-done {
-  background: rgba(176, 209, 130, 0.15);
-  border-color: rgba(176, 209, 130, 0.35);
-  color: var(--pal-light-green);
-}
-
-.task-attachments-block {
-  margin-top: 8px;
-  padding-top: 14px;
-  border-top: 1px dashed rgba(255, 255, 255, 0.08);
-  display: flex;
-  flex-direction: column;
   gap: 10px;
 }
 
-.task-attachment-header {
-  font-size: 0.78rem;
-  color: var(--pal-light-green);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: 800;
+.block-materials-title {
   display: flex;
   align-items: center;
   gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--pal-light-green);
 }
 
-.task-attachment-list {
+.block-materials-count-badge {
+  background: rgba(176, 209, 130, 0.15);
+  border: 1px solid rgba(176, 209, 130, 0.3);
+  color: var(--pal-light-green);
+  font-size: 0.72rem;
+  padding: 1px 6px;
+  border-radius: 10px;
+}
+
+.block-materials-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 8px;
 }
 
-.task-attachment-item {
+.block-material-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(176, 209, 130, 0.2);
-  border-radius: 12px;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
   padding: 8px 12px;
   transition: all 0.2s ease;
+  min-width: 0;
 }
 
-.task-attachment-item:hover {
-  border-color: var(--pal-light-green);
-  background: rgba(176, 209, 130, 0.08);
-  transform: translateY(-1px);
+.block-material-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(176, 209, 130, 0.3);
 }
 
-.task-attachment-info {
+.block-material-info {
   display: flex;
   align-items: center;
   gap: 8px;
   min-width: 0;
+  flex: 1;
 }
 
-.task-attachment-info iconify-icon {
-  color: var(--pal-light-green);
-  font-size: 1.3rem;
+.block-material-icon {
+  font-size: 1.15rem;
+  color: #64B5F6;
   flex-shrink: 0;
 }
 
-.task-attachment-name {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--pal-off-white);
+.block-material-icon.video { color: #FF7043; }
+.block-material-icon.pdf { color: #EF5350; }
+.block-material-icon.image { color: #AB47BC; }
+.block-material-icon.document { color: #42A5F5; }
+
+.block-material-name {
+  font-size: 0.83rem;
+  font-weight: 500;
+  color: var(--text-main);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.task-attachment-actions {
+.block-material-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.block-mat-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: all 0.15s ease;
+}
+
+.block-mat-btn:hover {
+  background: rgba(176, 209, 130, 0.2);
+  border-color: var(--pal-light-green);
+  color: var(--pal-light-green);
+}
+
+/* СПИСОК ЗАДАНИЙ */
+.category-task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.category-task-item {
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  padding: 14px 16px;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.category-task-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(176, 209, 130, 0.25);
+}
+
+.category-task-item.is-completed {
+  border-color: rgba(106, 142, 78, 0.28);
+}
+
+.category-task-item-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.task-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+
+.task-num-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.task-num-badge.done {
+  background: rgba(106, 142, 78, 0.25);
+  border-color: var(--pal-light-green);
+  color: var(--pal-light-green);
+}
+
+.category-task-item h4 {
+  margin: 0;
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: var(--text-main);
+  line-height: 1.35;
+}
+
+.category-task-meta {
   display: flex;
   align-items: center;
   gap: 6px;
   flex-shrink: 0;
 }
 
-.task-action-btn {
+.task-meta-chip {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  cursor: pointer;
-  text-decoration: none;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-  border: none;
+  gap: 4px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
 }
 
-.task-action-btn.btn-download {
-  background: linear-gradient(135deg, rgba(176, 209, 130, 0.2) 0%, rgba(106, 142, 78, 0.25) 100%);
-  border: 1px solid rgba(176, 209, 130, 0.4);
+.task-meta-chip.status-done {
+  background: rgba(106, 142, 78, 0.18);
+  border-color: rgba(176, 209, 130, 0.35);
   color: var(--pal-light-green);
 }
 
-.task-action-btn.btn-download:hover {
-  background: var(--pal-light-green);
-  color: #05060A;
-  box-shadow: 0 4px 12px rgba(176, 209, 130, 0.35);
-  transform: translateY(-1px);
+.task-meta-chip.score {
+  color: #FFD166;
+  border-color: rgba(255, 209, 102, 0.2);
+  background: rgba(255, 209, 102, 0.05);
 }
 
-.task-action-btn.btn-view {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+.category-task-item p {
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.45;
+  font-size: 0.86rem;
+}
+
+.category-task-feedback {
+  background: rgba(176, 209, 130, 0.05);
+  border-left: 3px solid var(--pal-light-green);
+  padding: 8px 12px;
+  border-radius: 0 8px 8px 0;
+  font-size: 0.83rem;
   color: var(--pal-off-white);
+  line-height: 1.4;
 }
 
-.task-action-btn.btn-view:hover {
-  background: rgba(255, 255, 255, 0.14);
-  color: #FFF;
-  transform: translateY(-1px);
-}
-
-.task-no-attachments {
-  margin-top: 4px;
-  padding: 10px 14px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px dashed rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.45);
-  font-size: 0.84rem;
+.task-individual-attachments {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
-}
-
-.task-no-attachments iconify-icon {
-  font-size: 1.15rem;
-  color: rgba(255, 255, 255, 0.35);
-  flex-shrink: 0;
+  gap: 6px;
+  margin-top: 2px;
+  padding-top: 6px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.06);
 }
 
 @media (max-width: 900px) {
@@ -1683,14 +1755,15 @@
   <div class="category-modal" id="categoryModal">
     <div class="category-modal-content">
       <div class="category-modal-header">
-        <div>
+        <div class="category-modal-header-info">
           <h3 id="categoryModalTitle">Задания блока</h3>
-          <p id="categoryModalSubtitle" style="color: var(--text-muted); font-size: 0.88rem; margin: 0;"></p>
+          <div id="categoryModalSubtitle"></div>
         </div>
         <button type="button" class="category-modal-close-btn" id="closeCategoryModal" aria-label="Закрыть" title="Закрыть окно">
           <iconify-icon icon="solar:close-circle-linear"></iconify-icon>
         </button>
       </div>
+      <div id="blockMaterialsSection" class="block-materials-panel" style="display: none;"></div>
       <div class="category-task-list" id="categoryTaskList"></div>
     </div>
   </div>
@@ -1854,93 +1927,18 @@
       });
     });
 
-    function isTaskComplete(task) {
-      return task.status === 'completed' || Number(task.score) > 0 || Number(task.grade) > 0;
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
     }
 
-    function extractTaskAttachments(task) {
-      const list = [];
-      const seenUrls = new Set();
-
-      function addAttachment(url, title, typeHint) {
-        if (!url || typeof url !== 'string') return;
-        const cleanUrl = url.trim();
-        if (!cleanUrl || seenUrls.has(cleanUrl)) return;
-        seenUrls.add(cleanUrl);
-
-        let type = typeHint || 'file';
-        const lower = cleanUrl.toLowerCase();
-        if (lower.match(/\.(mp4|webm|ogg|mov|m4v)(\?.*)?$/) || lower.includes('youtube.com') || lower.includes('youtu.be') || lower.includes('vimeo.com')) {
-          type = 'video';
-        } else if (lower.match(/\.(pdf)(\?.*)?$/)) {
-          type = 'pdf';
-        } else if (lower.match(/\.(jpg|jpeg|png|webp|gif|svg)(\?.*)?$/)) {
-          type = 'image';
-        } else if (lower.match(/\.(mp3|wav|m4a|aac)(\?.*)?$/)) {
-          type = 'audio';
-        } else if (lower.match(/\.(doc|docx|xls|xlsx|ppt|pptx|zip|rar|7z)(\?.*)?$/)) {
-          type = 'document';
-        }
-
-        let name = title || '';
-        if (!name) {
-          try {
-            const urlPath = new URL(cleanUrl, window.location.href).pathname;
-            const segment = urlPath.split('/').filter(Boolean).pop();
-            name = segment ? decodeURIComponent(segment) : 'Материал к задаче';
-          } catch {
-            name = 'Материал к задаче';
-          }
-        }
-
-        list.push({ url: cleanUrl, name, type });
-      }
-
-      if (Array.isArray(task.videos)) {
-        task.videos.forEach((v, idx) => {
-          if (!v) return;
-          const url = v.video_url || v.url || v.file_url || (typeof v === 'string' ? v : '');
-          const downloadUrl = v.download_url || url;
-          const name = v.title || v.name || `Видеоматериал ${idx + 1}`;
-          addAttachment(downloadUrl, name, 'video');
-        });
-      }
-
-      if (Array.isArray(task.files)) {
-        task.files.forEach((f, idx) => {
-          if (!f) return;
-          const url = f.file_url || f.url || f.download_url || (typeof f === 'string' ? f : '');
-          const name = f.name || f.title || f.filename || `Файл ${idx + 1}`;
-          addAttachment(url, name, 'file');
-        });
-      }
-
-      if (Array.isArray(task.attachments)) {
-        task.attachments.forEach((a, idx) => {
-          if (!a) return;
-          const url = a.url || a.file_url || a.download_url || (typeof a === 'string' ? a : '');
-          const name = a.name || a.title || a.filename || `Прикрепленный файл ${idx + 1}`;
-          addAttachment(url, name, 'file');
-        });
-      }
-
-      if (Array.isArray(task.materials)) {
-        task.materials.forEach((m, idx) => {
-          if (!m) return;
-          const url = m.url || m.file_url || (typeof m === 'string' ? m : '');
-          const name = m.name || m.title || `Материал ${idx + 1}`;
-          addAttachment(url, name, 'file');
-        });
-      } else if (typeof task.materials === 'string' && task.materials.startsWith('http')) {
-        addAttachment(task.materials, 'Материалы к заданию', 'file');
-      }
-
-      if (task.video_url) addAttachment(task.video_url, 'Видеозапись к заданию', 'video');
-      if (task.file_url) addAttachment(task.file_url, 'Прикрепленный файл', 'file');
-      if (task.attachment_url) addAttachment(task.attachment_url, 'Прикрепленный документ', 'file');
-      if (task.document_url) addAttachment(task.document_url, 'Документ к заданию', 'document');
-
-      return list;
+    function isTaskComplete(task) {
+      return task.status === 'completed' || Number(task.score) > 0 || Number(task.grade) > 0;
     }
 
     function getAttachmentIcon(type) {
@@ -1954,106 +1952,259 @@
       }
     }
 
-    function openBlockModal(blockTitle, groupTitle, tasks) {
-      categoryModalTitle.textContent = `${groupTitle} — ${blockTitle}`;
-      const subtitleEl = document.getElementById('categoryModalSubtitle');
-      if (subtitleEl) {
-        const total = tasks.length;
-        const done = tasks.filter(isTaskComplete).length;
-        subtitleEl.textContent = `Выполнено ${done} из ${total} заданий`;
+    function normalizeAttachment(raw, defaultTitle = 'Материал') {
+      if (!raw) return null;
+      const url = typeof raw === 'string' ? raw : (raw.file_url || raw.url || raw.download_url || raw.video_url || '');
+      if (!url || typeof url !== 'string' || !url.trim()) return null;
+      const cleanUrl = url.trim();
+
+      let type = (typeof raw === 'object' && (raw.type || raw.content_type)) ? (raw.type || raw.content_type) : 'file';
+      const lower = cleanUrl.toLowerCase();
+      if (lower.match(/\.(mp4|webm|ogg|mov|m4v)(\?.*)?$/) || lower.includes('youtube.com') || lower.includes('youtu.be') || lower.includes('vimeo.com')) {
+        type = 'video';
+      } else if (lower.match(/\.(pdf)(\?.*)?$/)) {
+        type = 'pdf';
+      } else if (lower.match(/\.(jpg|jpeg|png|webp|gif|svg)(\?.*)?$/)) {
+        type = 'image';
+      } else if (lower.match(/\.(mp3|wav|m4a|aac)(\?.*)?$/)) {
+        type = 'audio';
+      } else if (lower.match(/\.(doc|docx|xls|xlsx|ppt|pptx|zip|rar|7z)(\?.*)?$/)) {
+        type = 'document';
       }
 
+      let name = (typeof raw === 'object' && (raw.file_name || raw.name || raw.title || raw.filename)) ? (raw.file_name || raw.name || raw.title || raw.filename) : '';
+      if (!name) {
+        try {
+          const urlPath = new URL(cleanUrl, window.location.href).pathname;
+          const segment = urlPath.split('/').filter(Boolean).pop();
+          name = segment ? decodeURIComponent(segment) : (type === 'video' ? 'Видеоматериал' : defaultTitle);
+        } catch {
+          name = type === 'video' ? 'Видеоматериал' : defaultTitle;
+        }
+      }
+
+      return { url: cleanUrl, name, type };
+    }
+
+    function extractTaskAttachments(task) {
+      const list = [];
+      const seenUrls = new Set();
+
+      function pushRaw(raw, title) {
+        const item = normalizeAttachment(raw, title);
+        if (item && !seenUrls.has(item.url)) {
+          seenUrls.add(item.url);
+          list.push(item);
+        }
+      }
+
+      if (Array.isArray(task.videos)) task.videos.forEach((v, i) => pushRaw(v, `Видео ${i + 1}`));
+      if (Array.isArray(task.files)) task.files.forEach((f, i) => pushRaw(f, `Файл ${i + 1}`));
+      if (Array.isArray(task.attachments)) task.attachments.forEach((a, i) => pushRaw(a, `Файл ${i + 1}`));
+      if (Array.isArray(task.task_materials)) task.task_materials.forEach((m, i) => pushRaw(m, `Материал ${i + 1}`));
+
+      if (task.video_url) pushRaw(task.video_url, 'Видеозапись к заданию');
+      if (task.file_url) pushRaw(task.file_url, 'Файл к заданию');
+      if (task.attachment_url) pushRaw(task.attachment_url, 'Прикрепленный документ');
+      if (task.document_url) pushRaw(task.document_url, 'Документ к заданию');
+
+      return list;
+    }
+
+    function openBlockModal(blockOrTitle, groupTitle, tasks) {
+      const block = (typeof blockOrTitle === 'object' && blockOrTitle !== null)
+        ? blockOrTitle
+        : { title: blockOrTitle, group_title: groupTitle, tasks: tasks || [] };
+
+      const blockTitle = block.title || 'Блок программы';
+      const effectiveGroup = block.group_title || groupTitle || 'Группа';
+      const blockTasks = Array.isArray(block.tasks) ? block.tasks : [];
+
+      categoryModalTitle.textContent = `${effectiveGroup} — ${blockTitle}`;
+
+      const total = blockTasks.length;
+      const done = blockTasks.filter(isTaskComplete).length;
+      let totalScore = 0;
+      let earnedScore = 0;
+      blockTasks.forEach(t => {
+        const max = Number(t.max_score) || 0;
+        const earned = Number(t.score ?? t.grade ?? 0);
+        totalScore += max;
+        earnedScore += earned;
+      });
+
+      const subtitleEl = document.getElementById('categoryModalSubtitle');
+      if (subtitleEl) {
+        subtitleEl.innerHTML = `
+          <div class="category-modal-meta-row">
+            <span class="category-modal-pill ${done === total && total > 0 ? 'progress-done' : ''}">
+              <iconify-icon icon="${done === total && total > 0 ? 'solar:check-circle-bold' : 'solar:checklist-minimalistic-bold'}"></iconify-icon>
+              ${done} из ${total} заданий выполнено
+            </span>
+            ${totalScore > 0 ? `
+              <span class="category-modal-pill">
+                <iconify-icon icon="solar:cup-star-bold" style="color: #FFD166;"></iconify-icon>
+                ${earnedScore} / ${totalScore} баллов
+              </span>
+            ` : ''}
+          </div>
+          ${block.description ? `<p class="category-modal-desc" style="margin-top: 8px;">${escapeHtml(block.description)}</p>` : ''}
+        `;
+      }
+
+      // Сбор всех материалов уровня блока (чтобы не дублировать их в каждой задаче)
+      const blockMaterialsMap = new Map();
+
+      function addBlockMat(raw, fallback = 'Материал блока') {
+        const item = normalizeAttachment(raw, fallback);
+        if (item && !blockMaterialsMap.has(item.url)) {
+          blockMaterialsMap.set(item.url, item);
+        }
+      }
+
+      if (Array.isArray(block.materials)) block.materials.forEach((m, i) => addBlockMat(m, `Материал блока ${i + 1}`));
+      if (Array.isArray(block.files)) block.files.forEach((f, i) => addBlockMat(f, `Файл ${i + 1}`));
+      if (Array.isArray(block.videos)) block.videos.forEach((v, i) => addBlockMat(v, `Видео ${i + 1}`));
+
+      // Также собираем общие материалы блока/темы, если они были прикреплены к задачам
+      blockTasks.forEach(t => {
+        if (Array.isArray(t.block_materials)) t.block_materials.forEach((m, i) => addBlockMat(m, `Материал блока ${i + 1}`));
+        if (Array.isArray(t.topic_materials)) t.topic_materials.forEach((m, i) => addBlockMat(m, `Материал темы ${i + 1}`));
+        if (Array.isArray(t.materials)) {
+          t.materials.forEach((m, i) => addBlockMat(m, `Материал ${i + 1}`));
+        } else if (typeof t.materials === 'string' && t.materials.startsWith('http')) {
+          addBlockMat(t.materials, 'Материалы блока');
+        }
+      });
+
+      const blockMaterialsList = Array.from(blockMaterialsMap.values());
+
+      // Отображение секции материалов блока
+      const blockMaterialsSection = document.getElementById('blockMaterialsSection');
+      if (blockMaterialsSection) {
+        if (blockMaterialsList.length > 0) {
+          blockMaterialsSection.style.display = 'flex';
+          blockMaterialsSection.innerHTML = `
+            <div class="block-materials-header">
+              <div class="block-materials-title">
+                <iconify-icon icon="solar:folder-with-files-bold"></iconify-icon>
+                <span>Материалы блока</span>
+                <span class="block-materials-count-badge">${blockMaterialsList.length}</span>
+              </div>
+            </div>
+            <div class="block-materials-grid">
+              ${blockMaterialsList.map((m, idx) => {
+                const safeName = escapeHtml(m.name);
+                const icon = getAttachmentIcon(m.type);
+                const isVideo = m.type === 'video';
+                const downloadName = `alanko-block-${idx + 1}${m.url.includes('.') ? m.url.substring(m.url.lastIndexOf('.')) : (isVideo ? '.mp4' : '')}`;
+                return `
+                  <div class="block-material-card">
+                    <div class="block-material-info">
+                      <iconify-icon class="block-material-icon ${m.type}" icon="${icon}"></iconify-icon>
+                      <span class="block-material-name" title="${safeName}">${safeName}</span>
+                    </div>
+                    <div class="block-material-actions">
+                      <a href="${m.url}" target="_blank" rel="noopener" class="block-mat-btn" title="${isVideo ? 'Смотреть видео' : 'Открыть файл'}">
+                        <iconify-icon icon="${isVideo ? 'solar:play-circle-linear' : 'solar:eye-linear'}"></iconify-icon>
+                      </a>
+                      <button type="button" class="block-mat-btn" data-download-url="${m.url}" data-download-name="${downloadName}" title="Скачать">
+                        <iconify-icon icon="solar:download-square-linear"></iconify-icon>
+                      </button>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `;
+        } else {
+          blockMaterialsSection.style.display = 'none';
+          blockMaterialsSection.innerHTML = '';
+        }
+      }
+
+      // Отображение списка задач
       categoryTaskList.innerHTML = '';
 
-      if (!tasks.length) {
+      if (!blockTasks.length) {
         categoryTaskList.innerHTML = `
-          <div class="category-task-item" style="text-align: center; padding: 32px 20px;">
-            <iconify-icon icon="solar:folder-open-linear" style="font-size: 2.5rem; color: rgba(255,255,255,0.3); margin-bottom: 10px;"></iconify-icon>
-            <h4>Нет задач в этом блоке</h4>
-            <p>Преподаватель еще не добавил задания в данный блок программы.</p>
+          <div class="category-task-item" style="text-align: center; padding: 32px 20px; border-style: dashed;">
+            <iconify-icon icon="solar:folder-open-linear" style="font-size: 2.5rem; color: rgba(255,255,255,0.3); margin-bottom: 8px;"></iconify-icon>
+            <h4 style="margin: 0 0 4px 0;">Нет задач в этом блоке</h4>
+            <p style="margin: 0;">Преподаватель еще не добавил задания в данный блок программы.</p>
           </div>
         `;
       } else {
-        tasks.forEach((task, taskIndex) => {
-          const taskItem = document.createElement('div');
-          taskItem.className = 'category-task-item';
-
-          const attachments = extractTaskAttachments(task);
+        blockTasks.forEach((task, taskIndex) => {
           const isDone = isTaskComplete(task);
           const statusText = isDone ? 'Выполнено' : (task.status || 'В процессе');
           const gradeValue = task.grade ?? task.score ?? 0;
           const maxScoreText = task.max_score ? ` / ${task.max_score}` : '';
 
-          let attachmentsHtml = '';
-          if (attachments.length) {
-            const itemsHtml = attachments.map((att, attIdx) => {
-              const safeName = att.name.replace(/"/g, '&quot;');
-              const isVideo = att.type === 'video';
-              const downloadLabel = isVideo ? 'Скачать видеоролик' : 'Скачать файл';
-              const viewLabel = isVideo ? 'Смотреть видео' : 'Открыть файл';
-              const viewIcon = isVideo ? 'solar:play-circle-linear' : 'solar:eye-linear';
-              const downloadIcon = isVideo ? 'solar:video-library-bold' : 'solar:download-square-bold';
-              const downloadName = `alanko-task-${task.program_task_id || taskIndex + 1}-${isVideo ? 'video' : 'file'}-${attIdx + 1}${att.url.includes('.') ? att.url.substring(att.url.lastIndexOf('.')) : (isVideo ? '.mp4' : '')}`;
-              return `
-                <div class="task-attachment-item">
-                  <div class="task-attachment-info">
-                    <iconify-icon icon="${getAttachmentIcon(att.type)}"></iconify-icon>
-                    <span class="task-attachment-name" title="${safeName}">${safeName}</span>
-                  </div>
-                  <div class="task-attachment-actions">
-                    <a href="${att.url}" target="_blank" rel="noopener" class="task-action-btn btn-view" title="${viewLabel}">
-                      <iconify-icon icon="${viewIcon}"></iconify-icon> ${viewLabel}
-                    </a>
-                    <button type="button" class="task-action-btn btn-download" data-download-url="${att.url}" data-download-name="${downloadName}" title="${downloadLabel}">
-                      <iconify-icon icon="${downloadIcon}"></iconify-icon> ${downloadLabel}
-                    </button>
-                  </div>
-                </div>
-              `;
-            }).join('');
+          // Индивидуальные файлы конкретной задачи (только те, которых нет в общих материалах блока)
+          const taskAttachments = extractTaskAttachments(task).filter(a => !blockMaterialsMap.has(a.url));
 
-            attachmentsHtml = `
-              <div class="task-attachments-block">
-                <div class="task-attachment-header">
-                  <iconify-icon icon="solar:paperclip-2-bold"></iconify-icon>
-                  Прикрепленные файлы и видеоматериалы (${attachments.length})
-                </div>
-                <div class="task-attachment-list">
-                  ${itemsHtml}
-                </div>
-              </div>
-            `;
-          } else {
-            attachmentsHtml = `
-              <div class="task-no-attachments">
-                <iconify-icon icon="solar:info-circle-linear"></iconify-icon>
-                <span>Файлы и видеоролики к этому заданию не прикреплены</span>
+          let taskAttachmentsHtml = '';
+          if (taskAttachments.length > 0) {
+            taskAttachmentsHtml = `
+              <div class="task-individual-attachments">
+                <span style="font-size: 0.74rem; color: var(--text-muted); display: inline-flex; align-items: center; gap: 4px; margin-right: 4px;">
+                  <iconify-icon icon="solar:paperclip-2-bold" style="color: var(--pal-light-green);"></iconify-icon> К задаче:
+                </span>
+                ${taskAttachments.map((att, attIdx) => {
+                  const safeName = escapeHtml(att.name);
+                  const isVideo = att.type === 'video';
+                  const downloadName = `task-${taskIndex + 1}-file-${attIdx + 1}${att.url.includes('.') ? att.url.substring(att.url.lastIndexOf('.')) : ''}`;
+                  return `
+                    <span class="block-material-card" style="padding: 3px 8px; font-size: 0.78rem;">
+                      <span class="block-material-info">
+                        <iconify-icon class="block-material-icon ${att.type}" icon="${getAttachmentIcon(att.type)}" style="font-size: 0.95rem;"></iconify-icon>
+                        <span class="block-material-name" style="max-width: 140px;" title="${safeName}">${safeName}</span>
+                      </span>
+                      <span class="block-material-actions">
+                        <a href="${att.url}" target="_blank" rel="noopener" class="block-mat-btn" style="width: 22px; height: 22px; font-size: 0.8rem;" title="Открыть">
+                          <iconify-icon icon="${isVideo ? 'solar:play-circle-linear' : 'solar:eye-linear'}"></iconify-icon>
+                        </a>
+                        <button type="button" class="block-mat-btn" style="width: 22px; height: 22px; font-size: 0.8rem;" data-download-url="${att.url}" data-download-name="${downloadName}" title="Скачать">
+                          <iconify-icon icon="solar:download-square-linear"></iconify-icon>
+                        </button>
+                      </span>
+                    </span>
+                  `;
+                }).join('')}
               </div>
             `;
           }
 
+          const taskItem = document.createElement('div');
+          taskItem.className = `category-task-item ${isDone ? 'is-completed' : ''}`;
           taskItem.innerHTML = `
             <div class="category-task-item-head">
-              <h4>${task.title || `Задание #${taskIndex + 1}`}</h4>
+              <div class="task-title-group">
+                <span class="task-num-badge ${isDone ? 'done' : ''}">${isDone ? '<iconify-icon icon="solar:check-read-linear"></iconify-icon>' : (taskIndex + 1)}</span>
+                <h4>${escapeHtml(task.title || `Задание #${taskIndex + 1}`)}</h4>
+              </div>
               <div class="category-task-meta">
                 <span class="task-meta-chip ${isDone ? 'status-done' : ''}">
                   <iconify-icon icon="${isDone ? 'solar:check-circle-bold' : 'solar:clock-circle-linear'}"></iconify-icon>
                   ${statusText}
                 </span>
-                <span class="task-meta-chip">
+                <span class="task-meta-chip score">
                   <iconify-icon icon="solar:star-bold" style="color: #FFD166;"></iconify-icon>
-                  Оценка: ${gradeValue}${maxScoreText}
+                  ${gradeValue}${maxScoreText}
                 </span>
               </div>
             </div>
-            ${task.description ? `<p>${task.description}</p>` : ''}
+            ${task.description ? `<p>${escapeHtml(task.description)}</p>` : ''}
             ${task.feedback ? `
               <div class="category-task-feedback">
-                <strong style="color: var(--pal-light-green); display: block; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 2px;">Комментарий преподавателя:</strong>
-                ${task.feedback}
+                <strong style="color: var(--pal-light-green); display: block; font-size: 0.76rem; text-transform: uppercase; margin-bottom: 2px;">
+                  <iconify-icon icon="solar:chat-round-dots-bold" style="vertical-align: middle;"></iconify-icon> Комментарий преподавателя:
+                </strong>
+                ${escapeHtml(task.feedback)}
               </div>
             ` : ''}
-            ${attachmentsHtml}
+            ${taskAttachmentsHtml}
           `;
 
           categoryTaskList.appendChild(taskItem);
@@ -2143,7 +2294,7 @@
           <h3>${block.group_title} — ${block.title}</h3>
           <p style="color: rgba(255,255,255,0.7); margin-top: 10px;">${completed} из ${total} задач</p>
         `;
-        card.addEventListener('click', () => openBlockModal(block.title, block.group_title, block.tasks || []));
+        card.addEventListener('click', () => openBlockModal(block));
         studentCategoriesGrid.appendChild(card);
       });
 

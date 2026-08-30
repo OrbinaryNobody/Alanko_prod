@@ -27,8 +27,10 @@ class ProgramRepository:
         assigned_program_ids = (
             db.query(Group.program_id)
             .join(GroupMember, Group.id == GroupMember.group_id)
-            .filter(GroupMember.user_id == user_id, GroupMember.role == "teacher")
+            .filter(GroupMember.user_id == user_id)
+            .filter(GroupMember.role == "teacher")
             .filter(Group.program_id.isnot(None))
+            .distinct()
             .subquery()
         )
 

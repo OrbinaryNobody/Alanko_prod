@@ -89,6 +89,15 @@ class EducationFacade:
     def delete_program_task(self, db: Session, *, ctx: AccessContext, block_id: int, topic_id: int, task_id: int):
         return education_program_service.delete_task(db, ctx=ctx, block_id=block_id, topic_id=topic_id, task_id=task_id)
 
+    async def add_topic_material(self, db: Session, *, ctx: AccessContext, program_id: int, block_id: int, topic_id: int, file):
+        return await education_program_service.add_topic_material(db, ctx=ctx, program_id=program_id, block_id=block_id, topic_id=topic_id, file=file)
+
+    async def add_task_material(self, db: Session, *, ctx: AccessContext, program_id: int, block_id: int, task_id: int, file):
+        return await education_program_service.add_task_material(db, ctx=ctx, program_id=program_id, block_id=block_id, task_id=task_id, file=file)
+
+    def delete_program_material(self, db: Session, *, ctx: AccessContext, program_id: int, material_id: int):
+        return education_program_service.delete_material(db, ctx=ctx, program_id=program_id, material_id=material_id)
+
     def get_programs_for_user(self, db: Session, *, ctx: AccessContext):
         return education_program_service.get_programs_for_user(db, ctx=ctx)
 

@@ -2445,7 +2445,7 @@
     <div class="achievement-tabs">
 
       <button class="achievement-tab active" data-target="achieve1">
-        Чемпионы России
+        Новости
       </button>
 
       <button class="achievement-tab" data-target="achieve2">
@@ -3155,33 +3155,118 @@ MODAL STUDENT PROFILE
     }
   };
 
-  // --- ФУНКЦИЯ ОБНОВЛЕНИЯ СОДЕРЖИМОГО КАРТОЧКИ ДОСТИЖЕНИЯ ---
-  function updateAchievementCard(cardId) {
-    const data = achievementsData[cardId];
-    if (!data) return;
+  function escapeHtml(value = '') {
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
 
-    const card = document.getElementById(cardId);
-    if (!card) return;
+  function formatNewsDate(dateValue) {
+    if (!dateValue) return 'Свежая публикация';
+    const date = new Date(dateValue);
+    if (Number.isNaN(date.getTime())) return 'Свежая публикация';
+    return date.toLocaleDateString('ru-RU', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
 
-    // Обновляем изображение
+  let publicNewsData = null;
+
+  function renderDefaultAchievementCard(card, data) {
+    if (!card || !data) return;
+
     const imgElement = card.querySelector('.achievement-image img');
     if (imgElement) imgElement.src = data.image;
 
-    // Обновляем заголовок
     const titleElement = card.querySelector('.achievement-info h3');
     if (titleElement) titleElement.textContent = data.title;
 
-    // Обновляем описание
     const descElement = card.querySelector('.achievement-info p');
     if (descElement) descElement.textContent = data.description;
 
-    // Обновляем бейджи
     const metaElement = card.querySelector('.achievement-meta');
     if (metaElement) {
-      metaElement.innerHTML = data.badges.map(badge => 
-        `<div class="achievement-badge">${badge}</div>`
+      metaElement.innerHTML = (data.badges || []).map(badge =>
+        `<div class="achievement-badge">${escapeHtml(badge)}</div>`
       ).join('');
     }
+  }
+
+  function renderNewsCard(card, item) {
+    if (!card || !item) return;
+
+    publicNewsData = item;
+    const image = item.image_url || achievementsData.achieve1.image;
+    const dateLabel = formatNewsDate(item.created_at || item.published_at || item.updated_at);
+
+    const imgElement = card.querySelector('.achievement-image img');
+    if (imgElement) imgElement.src = image;
+
+    const titleElement = card.querySelector('.achievement-info h3');
+    if (titleElement) titleElement.textContent = item.title || 'Новости Studio Alanko';
+
+    const descElement = card.querySelector('.achievement-info p');
+    if (descElement) descElement.textContent = item.description || 'Новая публикация от Studio Alanko.';
+
+    const metaElement = card.querySelector('.achievement-meta');
+    if (metaElement) {
+      const badges = [dateLabel, 'ALANKO', 'Новости'];
+      metaElement.innerHTML = badges.map(badge => `<div class="achievement-badge">${escapeHtml(badge)}</div>`).join('');
+    }
+  }
+
+  async function loadPublicNews() {
+    const newsCard = document.getElementById('achieve1');
+    if (!newsCard) return;
+
+    const defaultNews = {
+      title: achievementsData.achieve1.title,
+      description: achievementsData.achieve1.description,
+      image_url: achievementsData.achieve1.image,
+      created_at: new Date().toISOString(),
+    };
+
+    try {
+      const response = await apiFetch('/public/news?limit=4&offset=0', { auth: false });
+      const data = await response.json();
+      const items = Array.isArray(data.items) ? data.items : [];
+      if (items.length > 0) {
+        publicNewsData = items[0];
+        renderNewsCard(newsCard, publicNewsData);
+        return;
+      }
+      publicNewsData = defaultNews;
+      renderNewsCard(newsCard, publicNewsData);
+    } catch (error) {
+      console.error('Error loading public news:', error);
+      publicNewsData = defaultNews;
+      renderNewsCard(newsCard, publicNewsData);
+    }
+  }
+
+  // --- ФУНКЦИЯ ОБНОВЛЕНИЯ СОДЕРЖИМОГО КАРТОЧКИ ДОСТИЖЕНИЯ ---
+  function updateAchievementCard(cardId) {
+    const card = document.getElementById(cardId);
+    if (!card) return;
+
+    if (cardId === 'achieve1') {
+      if (publicNewsData) {
+        renderNewsCard(card, publicNewsData);
+        return;
+      }
+      renderNewsCard(card, {
+        title: achievementsData.achieve1.title,
+        description: achievementsData.achieve1.description,
+        image_url: achievementsData.achieve1.image,
+        created_at: new Date().toISOString(),
+      });
+      return;
+    }
+
+    const data = achievementsData[cardId];
+    if (!data) return;
+    renderDefaultAchievementCard(card, data);
   }
 
   // --- ТАБЫ ДОСТИЖЕНИЙ ---
@@ -3193,17 +3278,22 @@ MODAL STUDENT PROFILE
       tabs.forEach(t => t.classList.remove('active'));
       achCards.forEach(c => c.classList.remove('active'));
       tab.classList.add('active');
-      
+
       const targetId = tab.dataset.target;
       const targetCard = document.getElementById(targetId);
       if (targetCard) {
-        updateAchievementCard(targetId); // Обновляем данные перед показом
+        updateAchievementCard(targetId);
         targetCard.classList.add('active');
       }
     });
   });
 
-  // Инициализируем первую карточку при загрузке
+  publicNewsData = {
+    title: achievementsData.achieve1.title,
+    description: achievementsData.achieve1.description,
+    image_url: achievementsData.achieve1.image,
+    created_at: new Date().toISOString(),
+  };
   updateAchievementCard('achieve1');
 
   // --- ЗАГРУЗКА ДАННЫХ ЛИДЕРБОРДА (БЛОКИ 4 + 5) ---
@@ -3298,15 +3388,15 @@ MODAL STUDENT PROFILE
     try {
       const response = await apiFetch('/public/leaderboard', { auth: false });
       const data = await response.json();
-      
-      // БЛОК 4: Заполняем ТОП-3 студентов
-      populateTopStudents(data.top_3_students);
-      
-      // БЛОК 5: Заполняем таблицу лидеров (ТОП-5)
-      populateLeaderboard(data.top_5_leaderboard);
-      
+      const topStudents = Array.isArray(data.top_3_students) ? data.top_3_students : [];
+      const leaderboard = Array.isArray(data.top_5_leaderboard) ? data.top_5_leaderboard : [];
+
+      populateTopStudents(topStudents);
+      populateLeaderboard(leaderboard);
     } catch (error) {
       console.error('Error loading leaderboard:', error);
+      populateTopStudents([]);
+      populateLeaderboard([]);
     }
   }
 
@@ -3412,6 +3502,7 @@ MODAL STUDENT PROFILE
 
   // Загружаем данные при загрузке страницы
   loadLeaderboardData();
+  loadPublicNews();
 
   // --- АНИМАЦИЯ ПОЯВЛЕНИЯ РУКОВОДИТЕЛЯ ---
 const observerOptions = {

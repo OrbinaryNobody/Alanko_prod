@@ -1455,8 +1455,12 @@ select.custom-input option {
     .topic-hw { font-size: 0.9rem; color: var(--pal-off-white); background: rgba(255, 255, 255, 0.03); padding: 12px; border-radius: 8px; border-left: 3px solid var(--pal-light-green); margin-bottom: 16px; }
 
     .materials-grid { display: flex; flex-wrap: wrap; gap: 12px; align-items: stretch; }
-    .file-square { width: 86px; height: 86px; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--card-border); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px; text-align: center; cursor: pointer; transition: all 0.2s ease; text-decoration: none; }
+    .topic-material-chip { text-decoration: none; }
+    .topic-material-chip:hover { background: rgba(255, 255, 255, 0.08) !important; border-color: rgba(176, 209, 130, 0.35) !important; transform: translateY(-1px); color: var(--pal-light-green) !important; }
+    .file-square { position: relative; width: 86px; height: 86px; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--card-border); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px; text-align: center; cursor: pointer; transition: all 0.2s ease; text-decoration: none; }
     .file-square:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(176, 209, 130, 0.3); transform: translateY(-2px); }
+    .file-square .delete-file-btn { position: absolute; top: 4px; right: 4px; background: transparent; border: none; color: rgba(255, 255, 255, 0.4); cursor: pointer; padding: 2px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; transition: color 0.2s; }
+    .file-square .delete-file-btn:hover { color: #EF6C6C; }
     .file-ext { font-weight: 800; font-size: 1rem; color: var(--pal-light-green); margin-bottom: 4px; }
     .file-ext.pdf { color: #EF6C6C; }
     .file-ext.mp3 { color: #82B1FF; }
@@ -2527,9 +2531,77 @@ select.custom-input option {
   color: #B0D182;
 }
 
+.diff-tag-pill.minus {
+  background: rgba(239, 108, 108, 0.2);
+  color: #EF6C6C;
+}
+
 .diff-tag-pill.neutral {
   background: rgba(255, 255, 255, 0.08);
   color: var(--text-muted);
+}
+
+.diff-materials-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.08);
+}
+
+.diff-materials-header {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.diff-materials-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.diff-material-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.82rem;
+  color: var(--text-main);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.diff-material-chip:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(176, 209, 130, 0.3);
+  transform: translateY(-1px);
+}
+
+.diff-material-chip.is-new {
+  border-color: rgba(176, 209, 130, 0.4);
+  background: rgba(106, 142, 78, 0.15);
+  color: var(--pal-light-green);
+}
+
+.diff-material-chip.is-removed {
+  border-color: rgba(239, 108, 108, 0.3);
+  background: rgba(239, 108, 108, 0.1);
+  color: #EF6C6C;
+  text-decoration: line-through;
+  opacity: 0.85;
+}
+
+.diff-material-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
 }
 
 .diff-block-accordion {
@@ -2660,6 +2732,98 @@ select.custom-input option {
   white-space: nowrap;
 }
 
+.diff-materials-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 8px 10px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: var(--radius-md);
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+}
+
+.diff-materials-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.diff-materials-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.diff-material-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  font-size: 0.78rem;
+  color: var(--text-main);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  max-width: 100%;
+}
+
+.diff-material-chip:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: var(--pal-off-white);
+}
+
+.diff-material-chip.is-new {
+  background: rgba(106, 142, 78, 0.15);
+  border-color: rgba(176, 209, 130, 0.35);
+  color: var(--pal-light-green);
+}
+
+.diff-material-chip.is-new:hover {
+  background: rgba(106, 142, 78, 0.25);
+  border-color: var(--pal-light-green);
+}
+
+.diff-material-chip.is-removed {
+  background: rgba(239, 108, 108, 0.1);
+  border-color: rgba(239, 108, 108, 0.25);
+  color: #EF6C6C;
+  text-decoration: line-through;
+  opacity: 0.85;
+}
+
+.diff-material-icon {
+  font-size: 0.95rem;
+  color: #64B5F6;
+  flex-shrink: 0;
+}
+
+.diff-material-chip.is-new .diff-material-icon {
+  color: var(--pal-light-green);
+}
+
+.diff-material-chip.is-removed .diff-material-icon {
+  color: #EF6C6C;
+}
+
+.diff-material-name {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.diff-tag-pill.minus {
+  background: rgba(239, 108, 108, 0.15);
+  color: #EF6C6C;
+}
+
 
   </style>
 </head>
@@ -2753,39 +2917,38 @@ select.custom-input option {
             <div>
               <div class="program-name-container">
                 <div class="program-name">Contemporary Dance</div>
-                <div class="edit-program-btn-wrap">
-                  <button class="edit-program-btn" title="Изменить программу" onclick="event.stopPropagation(); openEditProgramModal('Contemporary Dance')">
-                    <iconify-icon icon="solar:pen-bold-duotone"></iconify-icon>
-                  </button>
-                  <span class="tooltip">Изменить программу</span>
-                </div>
               </div>
-              <div class="program-level">Средний уровень</div>
+              <div class="program-level">Активная</div>
             </div>
           </div>
           <div class="program-meta">
             <span class="groups-count">1 группа</span>
+            <button class="btn-sm primary edit-program-trigger-btn" type="button" onclick="event.stopPropagation(); openEditProgramModal(1)">
+              <iconify-icon icon="solar:pen-bold"></iconify-icon> Редактировать
+            </button>
             <iconify-icon class="chevron" icon="solar:alt-arrow-down-bold"></iconify-icon>
           </div>
         </div>
 
         <div class="program-body">
           <div class="groups-list">
-            <div class="group-row">
+            <div class="group-row" onclick="openGroupManageModal(1, 'Contemporary Mid'); event.stopPropagation();">
               <div class="group-info">
                 <div class="group-name">Contemporary Mid</div>
                 <div class="group-students">14 учеников</div>
-                <div class="group-teacher" style="font-size: 0.8rem; color: var(--pal-light-green); margin-top: 4px; display: flex; align-items: center; gap: 4px;">
-                  <iconify-icon icon="solar:user-circle-bold-duotone"></iconify-icon> Куратор: Александр Иванов
-                </div>
               </div>
               <div class="group-schedule">
-                <span class="day">Пн, Ср</span>
-                <span class="time">18:00 - 19:30</span>
+                <span class="day">Программа</span>
+                <span class="time">Contemporary Dance</span>
               </div>
-              <button class="btn-sm primary" onclick="openJournalModal(1, 'Contemporary Mid')">
-                <iconify-icon icon="solar:notebook-bold"></iconify-icon> Журнал
-              </button>
+              <div class="dir-actions" style="display: flex; gap: 8px; align-items: center;">
+                <button class="btn-sm primary group-journal-btn" type="button" onclick="event.stopPropagation(); openJournalModal(1, 'Contemporary Mid')">
+                  <iconify-icon icon="solar:notebook-bold"></iconify-icon> Журнал
+                </button>
+                <button class="btn-sm group-edit-btn" type="button" onclick="event.stopPropagation(); openGroupManageModal(1, 'Contemporary Mid')">
+                  <iconify-icon icon="solar:pen-bold"></iconify-icon> Изменить
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -4702,24 +4865,81 @@ select.custom-input option {
       }
     }
 
+    function getProgramMaterialIconInfo(fileName = '', contentType = '') {
+      const name = String(fileName || '').toLowerCase();
+      const type = String(contentType || '').toLowerCase();
+      if (name.endsWith('.pdf') || type.includes('pdf')) return { icon: 'solar:file-text-bold', color: '#EF5350' };
+      if (name.match(/\.(jpg|jpeg|png|webp|gif|svg)$/) || type.includes('image')) return { icon: 'solar:gallery-bold', color: '#AB47BC' };
+      if (name.match(/\.(mp4|mov|avi|webm|mkv)$/) || type.includes('video') || name.includes('youtube') || name.includes('youtu.be')) return { icon: 'solar:videocamera-record-bold', color: '#FF7043' };
+      if (name.match(/\.(mp3|wav|ogg|flac|m4a|aac)$/) || type.includes('audio')) return { icon: 'solar:music-note-bold', color: '#64B5F6' };
+      if (name.match(/\.(doc|docx|rtf|txt|odt)$/) || type.includes('word') || type.includes('text')) return { icon: 'solar:document-bold', color: '#42A5F5' };
+      if (name.match(/\.(xls|xlsx|csv)$/) || type.includes('sheet') || type.includes('excel')) return { icon: 'solar:chart-bold', color: '#66BB6A' };
+      if (name.match(/\.(ppt|pptx)$/) || type.includes('presentation') || type.includes('powerpoint')) return { icon: 'solar:presentation-graph-bold', color: '#FFA726' };
+      if (name.match(/\.(zip|rar|7z|tar|gz)$/) || type.includes('zip') || type.includes('archive')) return { icon: 'solar:archive-bold', color: '#FFCA28' };
+      return { icon: 'solar:file-bold', color: 'var(--pal-light-green)' };
+    }
+
+    function renderProgramMaterials(materials = []) {
+      const normalized = Array.isArray(materials) ? materials.filter(Boolean) : [];
+      if (!normalized.length) return '';
+      return `
+        <div class="topic-materials-section" style="margin-top: 12px; padding-top: 10px; border-top: 1px dashed rgba(255, 255, 255, 0.08);">
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 0.73rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); margin-bottom: 8px;">
+            <iconify-icon icon="solar:paperclip-2-bold" style="color: var(--pal-light-green); font-size: 0.9rem;"></iconify-icon>
+            <span>Материалы к теме (${normalized.length})</span>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            ${normalized.map((material, idx) => {
+              const fileName = material?.file_name || material?.name || material?.title || `Файл ${idx + 1}`;
+              const fileUrl = material?.file_url || material?.url || material?.download_url || '';
+              const contentType = material?.content_type || '';
+              const { icon, color } = getProgramMaterialIconInfo(fileName, contentType);
+              const safeFileName = escapeProgramHtml(String(fileName));
+              const displayName = safeFileName.length > 28 ? `${safeFileName.slice(0, 25)}...` : safeFileName;
+              
+              if (fileUrl) {
+                return `
+                  <a href="${fileUrl}" target="_blank" rel="noopener" class="topic-material-chip" title="${safeFileName}" style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 10px; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); color: var(--text-main); font-size: 0.82rem; transition: all 0.2s ease; max-width: 280px;">
+                    <iconify-icon icon="${icon}" style="font-size: 1.15rem; color: ${color}; flex-shrink: 0;"></iconify-icon>
+                    <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500;">${displayName}</span>
+                    <iconify-icon icon="solar:arrow-right-up-linear" style="font-size: 0.9rem; color: var(--text-muted); flex-shrink: 0; opacity: 0.6;"></iconify-icon>
+                  </a>
+                `;
+              }
+
+              return `
+                <div class="topic-material-chip" title="${safeFileName}" style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 10px; background: rgba(255, 255, 255, 0.025); border: 1px solid rgba(255, 255, 255, 0.06); color: var(--text-muted); font-size: 0.82rem; max-width: 280px;">
+                  <iconify-icon icon="${icon}" style="font-size: 1.15rem; color: ${color}; flex-shrink: 0;"></iconify-icon>
+                  <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500;">${displayName}</span>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }
+
     function renderGroupJournal(groupId, journal) {
       const program = journal.program || {};
       const blocksList = journalModal.querySelector('.blocks-list');
       const studentsList = journalModal.querySelector('.students-list');
       modalTitle.textContent = journal.group?.title || 'Группа';
       modalCount.innerHTML = `<iconify-icon icon="solar:users-group-rounded-bold"></iconify-icon> ${(journal.students || []).length} учеников`;
-      blocksList.innerHTML = (program.blocks || []).length ? program.blocks.map(block => `
-        <div class="course-block current">
-          <div class="block-header-info"><span class="status-badge status-current">Блок</span><span class="block-dates">Порядок: ${block.order}</span></div>
-          <h4>${escapeProgramHtml(block.title)}</h4>
-          <p class="topic-desc">${escapeProgramHtml(block.description || '')}</p>
-          <div class="topics-list">${(block.topics || []).map(topic => `
-            <div class="topic-item">
-              <h5 class="topic-title">${escapeProgramHtml(topic.title)}</h5>
-              <p class="topic-desc">${escapeProgramHtml(topic.description || '')}</p>
-              <div class="topic-hw"><strong>Задания:</strong><ul style="margin:8px 0 0 18px;">${(topic.tasks || []).map(task => `<li>${escapeProgramHtml(task.title)} <span style="color:var(--text-muted);">(${task.max_score} баллов)</span></li>`).join('')}</ul></div>
-            </div>`).join('')}</div>
-        </div>`).join('') : '<div style="padding:24px; color:var(--text-muted);">В программе пока нет учебного плана.</div>';
+      blocksList.innerHTML = (program.blocks || []).length ? program.blocks.map(block => {
+        return `
+          <div class="course-block current">
+            <div class="block-header-info"><span class="status-badge status-current">Блок</span><span class="block-dates">Порядок: ${block.order ?? 0}</span></div>
+            <h4>${escapeProgramHtml(block.title)}</h4>
+            <p class="topic-desc">${escapeProgramHtml(block.description || '')}</p>
+            <div class="topics-list">${(block.topics || []).map(topic => `
+              <div class="topic-item">
+                <h5 class="topic-title">${escapeProgramHtml(topic.title)}</h5>
+                <p class="topic-desc">${escapeProgramHtml(topic.description || '')}</p>
+                ${renderProgramMaterials(topic.materials || [])}
+                <div class="topic-hw"><strong>Задания:</strong><ul style="margin:8px 0 0 18px;">${(topic.tasks || []).map(task => `<li>${escapeProgramHtml(task.title)} <span style="color:var(--text-muted);">(${task.max_score} баллов)</span></li>`).join('')}</ul></div>
+              </div>`).join('')}</div>
+          </div>`;
+      }).join('') : '<div style="padding:24px; color:var(--text-muted);">В программе пока нет учебного плана.</div>';
       studentsList.innerHTML = (journal.students || []).length ? journal.students.map(student => {
         const studentName = student.name || student.full_name || 'Ученик';
         const fullStudent = (window._adminStudentsList && window._adminStudentsList.find(s => Number(s.id) === Number(student.student_id || student.id))) || student;
@@ -4920,6 +5140,96 @@ select.custom-input option {
       document.body.style.overflow = '';
     }
 
+    function renderAdminProgramMaterialList(materials = []) {
+      if (!Array.isArray(materials) || !materials.length) return '';
+      return materials.map((material) => {
+        const fileName = material?.file_name || 'material';
+        const ext = (fileName.split('.').pop() || material?.content_type || 'FILE').toUpperCase();
+        const materialId = material?.id ? Number(material.id) : null;
+        const fileUrl = material?.file_url || '';
+        const fileNameAttr = String(fileName).replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+        return `
+          <div class="file-square material-item" data-material-id="${materialId || ''}" data-file-name="${fileNameAttr}" data-file-url="${fileUrl}" data-content-type="${material?.content_type || ''}" ${fileUrl ? `onclick="if (!event.target.closest('.delete-file-btn')) window.open('${fileUrl}', '_blank')"` : ''} title="${fileNameAttr}">
+            ${materialId ? `<button type="button" class="delete-file-btn" title="Удалить файл" onclick="event.stopPropagation(); deleteAdminProgramMaterial(${materialId}, this.closest('.material-item'))"><iconify-icon icon="solar:close-circle-bold"></iconify-icon></button>` : ''}
+            <span class="file-ext">${escapeProgramHtml(ext)}</span>
+            <span class="file-name">${escapeProgramHtml(fileName.length > 18 ? `${fileName.slice(0, 15)}...` : fileName)}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function buildAdminProgramMaterialUploadButton({ blockId, topicId = null }) {
+      const digitsOnly = value => (Number.isFinite(Number(value)) && Number(value) > 0 ? Number(value) : null);
+      const safeBlockId = digitsOnly(blockId);
+      const safeTopicId = digitsOnly(topicId);
+      const canUpload = Boolean(editingProgramId && safeBlockId && safeTopicId);
+      return `
+        <label class="add-material-btn" ${!canUpload ? 'style="opacity:0.7; cursor:not-allowed;" title="Сохраните программу перед загрузкой файлов"' : ''}>
+          <iconify-icon icon="solar:add-folder-bold"></iconify-icon> Добавить файл
+          ${canUpload ? `<input type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.mp3,.wav,.mp4,.jpeg,.jpg,.png,.webp,.zip" hidden onchange="uploadAdminProgramMaterial(this, ${safeBlockId}, ${safeTopicId})">` : ''}
+        </label>
+      `;
+    }
+
+    async function uploadAdminProgramMaterial(input, blockId, topicId) {
+      const file = input.files?.[0];
+      if (!file || !editingProgramId) {
+        showToast('Сначала откройте сохранённую программу для редактирования.', 'warning');
+        return;
+      }
+
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        const response = await fetchWithAuth(`/education/programs/${editingProgramId}/blocks/${blockId}/topics/${topicId}/materials`, {
+          method: 'POST',
+          body: formData,
+        });
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(payload.detail || payload.message || 'Не удалось загрузить файл');
+
+        const material = payload.data || {};
+        const container = input.closest('.materials-grid');
+        if (container) {
+          const uploadButton = container.querySelector('.add-material-btn');
+          const ext = (material.file_name || file.name || 'FILE').split('.').pop()?.toUpperCase() || 'FILE';
+          const fName = material.file_name || file.name || 'material';
+          const fileUrl = material.file_url || '';
+          const materialMarkup = `
+            <div class="file-square material-item" data-material-id="${material.id || ''}" data-file-name="${escapeProgramHtml(fName)}" data-file-url="${escapeProgramHtml(fileUrl)}" data-content-type="${escapeProgramHtml(material.content_type || file.type || '')}" ${fileUrl ? `onclick="if (!event.target.closest('.delete-file-btn')) window.open('${fileUrl}', '_blank')"` : ''} title="${escapeProgramHtml(fName)}">
+              <button type="button" class="delete-file-btn" title="Удалить файл" onclick="event.stopPropagation(); deleteAdminProgramMaterial(${Number(material.id || 0) || 'null'}, this.closest('.material-item'))"><iconify-icon icon="solar:close-circle-bold"></iconify-icon></button>
+              <span class="file-ext">${escapeProgramHtml(ext)}</span>
+              <span class="file-name">${escapeProgramHtml(fName.length > 18 ? `${fName.slice(0, 15)}...` : fName)}</span>
+            </div>
+          `;
+          if (uploadButton) {
+            uploadButton.insertAdjacentHTML('beforebegin', materialMarkup);
+          } else {
+            container.insertAdjacentHTML('beforeend', materialMarkup);
+          }
+        }
+        input.value = '';
+        showToast('Файл успешно прикреплён к теме', 'success');
+      } catch (error) {
+        showToast(error.message, 'error');
+      }
+    }
+
+    async function deleteAdminProgramMaterial(materialId, materialElement) {
+      if (!editingProgramId || !materialId) return;
+      try {
+        const response = await fetchWithAuth(`/education/programs/${editingProgramId}/materials/${materialId}`, { method: 'DELETE' });
+        if (!response.ok) {
+          const payload = await response.json().catch(() => ({}));
+          throw new Error(payload.detail || payload.message || 'Не удалось удалить файл');
+        }
+        materialElement?.remove();
+        showToast('Файл удалён', 'info');
+      } catch (error) {
+        showToast(error.message, 'error');
+      }
+    }
+
     function renderProgramStructure(blocks) {
       const container = document.getElementById('editProgramBlocksList');
       container.innerHTML = '';
@@ -4949,7 +5259,13 @@ select.custom-input option {
                   </button>
                 </div>
                 <textarea class="ghost-textarea desc-text program-topic-description" rows="2" aria-label="Описание темы">${escapeProgramHtml(topic.description || '')}</textarea>
-                <div class="topic-hw">
+                
+                <div class="materials-grid" style="margin-top: 12px;">
+                  ${renderAdminProgramMaterialList(topic.materials || [])}
+                  ${buildAdminProgramMaterialUploadButton({ blockId: block.id, topicId: topic.id })}
+                </div>
+
+                <div class="topic-hw" style="margin-top: 12px;">
                   <strong>Задания:</strong>
                   ${(topic.tasks || []).length ? topic.tasks.map(task => `
                     <div class="task-edit-row" data-task-id="${task.id}" data-task-order="${task.order ?? 0}">
@@ -5057,7 +5373,12 @@ select.custom-input option {
             </button>
           </div>
           <textarea class="ghost-textarea desc-text program-topic-description" rows="2" placeholder="Описание темы" aria-label="Описание темы"></textarea>
-          <div class="topic-hw">
+          <div class="materials-grid" style="margin-top: 12px;">
+            <label class="add-material-btn" style="opacity:0.7; cursor:not-allowed;" title="Сохраните программу перед загрузкой файлов">
+              <iconify-icon icon="solar:add-folder-bold"></iconify-icon> Добавить файл
+            </label>
+          </div>
+          <div class="topic-hw" style="margin-top: 12px;">
             <strong>Задания:</strong>
             <button type="button" class="add-action-link" onclick="addProgramTask(this)">
               <iconify-icon icon="solar:add-circle-bold"></iconify-icon> Добавить задание
@@ -6538,29 +6859,180 @@ function openDayConfigModal(dayName, dateStr) {
   let _activeProposalCurrentProgram = null;
   let _activeProposalModalView = 'diff';
 
+  function escapeProposalHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function getProposalFileIcon(fileName, contentType) {
+    const name = String(fileName || '').toLowerCase();
+    const type = String(contentType || '').toLowerCase();
+    if (name.endsWith('.pdf') || type.includes('pdf')) return 'solar:file-text-bold';
+    if (name.match(/\.(jpg|jpeg|png|webp|gif|svg)$/) || type.includes('image')) return 'solar:gallery-bold';
+    if (name.match(/\.(mp4|mov|avi|webm|mkv)$/) || type.includes('video')) return 'solar:videocamera-record-bold';
+    if (name.match(/\.(mp3|wav|ogg|flac|m4a)$/) || type.includes('audio')) return 'solar:music-note-bold';
+    if (name.match(/\.(doc|docx|rtf|txt|odt)$/) || type.includes('word') || type.includes('text')) return 'solar:document-bold';
+    if (name.match(/\.(xls|xlsx|csv)$/) || type.includes('sheet') || type.includes('excel')) return 'solar:chart-bold';
+    if (name.match(/\.(ppt|pptx)$/) || type.includes('presentation') || type.includes('powerpoint')) return 'solar:presentation-graph-bold';
+    if (name.match(/\.(zip|rar|7z|tar|gz)$/) || type.includes('zip') || type.includes('archive')) return 'solar:archive-bold';
+    return 'solar:file-bold';
+  }
+
+  function renderTopicMaterialsDiff(proposedMaterials = [], baseMaterials = []) {
+    const propList = Array.isArray(proposedMaterials) ? proposedMaterials : [];
+    const baseList = Array.isArray(baseMaterials) ? baseMaterials : [];
+    
+    if (!propList.length && !baseList.length) return '';
+
+    const baseMap = new Map();
+    baseList.forEach(m => {
+      if (!m) return;
+      if (m.id) baseMap.set(`id_${m.id}`, m);
+      if (m.file_url) baseMap.set(`url_${m.file_url}`, m);
+      if (m.file_name) baseMap.set(`name_${m.file_name}`, m);
+    });
+
+    const propSeen = new Set();
+    const renderedItems = [];
+
+    propList.forEach(pm => {
+      if (!pm) return;
+      const isMatched = (pm.id && baseMap.has(`id_${pm.id}`)) ||
+                        (pm.file_url && baseMap.has(`url_${pm.file_url}`)) ||
+                        (pm.file_name && baseMap.has(`name_${pm.file_name}`));
+      const isNew = !isMatched;
+      if (isMatched) {
+        if (pm.id) propSeen.add(`id_${pm.id}`);
+        if (pm.file_url) propSeen.add(`url_${pm.file_url}`);
+        if (pm.file_name) propSeen.add(`name_${pm.file_name}`);
+      }
+
+      const fName = escapeProposalHtml(pm.file_name || 'Файл');
+      const fUrl = escapeProposalHtml(pm.file_url || '');
+      const icon = getProposalFileIcon(pm.file_name, pm.content_type);
+
+      renderedItems.push(`
+        <a href="${fUrl || '#'}" ${fUrl ? 'target="_blank" rel="noopener"' : ''} class="diff-material-chip ${isNew ? 'is-new' : ''}" title="${isNew ? 'Новый прикреплённый файл' : 'Прикреплённый файл'}">
+          <iconify-icon class="diff-material-icon" icon="${icon}"></iconify-icon>
+          <span class="diff-material-name">${fName}</span>
+          ${isNew ? '<span class="diff-tag-pill plus" style="font-size: 0.68rem; padding: 1px 6px;">+ Добавлен</span>' : ''}
+          ${fUrl ? '<iconify-icon icon="solar:arrow-right-up-linear" style="font-size: 0.75rem; opacity: 0.7;"></iconify-icon>' : ''}
+        </a>
+      `);
+    });
+
+    // Find removed materials
+    baseList.forEach(bm => {
+      if (!bm) return;
+      const wasMatched = (bm.id && propSeen.has(`id_${bm.id}`)) ||
+                         (bm.file_url && propSeen.has(`url_${bm.file_url}`)) ||
+                         (bm.file_name && propSeen.has(`name_${bm.file_name}`));
+      if (!wasMatched) {
+        const fName = escapeProposalHtml(bm.file_name || 'Файл');
+        const icon = getProposalFileIcon(bm.file_name, bm.content_type);
+        renderedItems.push(`
+          <span class="diff-material-chip is-removed" title="Файл был удалён из плана">
+            <iconify-icon class="diff-material-icon" icon="${icon}"></iconify-icon>
+            <span class="diff-material-name">${fName}</span>
+            <span class="diff-tag-pill minus" style="font-size: 0.68rem; padding: 1px 6px;">- Удалён</span>
+          </span>
+        `);
+      }
+    });
+
+    const countDiff = propList.length - baseList.length;
+    const countDiffBadge = countDiff > 0 
+      ? `<span class="diff-tag-pill plus" style="font-size: 0.7rem;">+${countDiff}</span>` 
+      : countDiff < 0 
+        ? `<span class="diff-tag-pill minus" style="font-size: 0.7rem;">${countDiff}</span>` 
+        : '';
+
+    return `
+      <div class="diff-materials-section">
+        <div class="diff-materials-header">
+          <iconify-icon icon="solar:paperclip-2-bold" style="color: #64B5F6; font-size: 0.95rem;"></iconify-icon>
+          <span>Материалы темы (${baseList.length} → ${propList.length})</span>
+          ${countDiffBadge}
+        </div>
+        <div class="diff-materials-grid">
+          ${renderedItems.join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  function renderSnapshotMaterialsList(materials = []) {
+    const list = Array.isArray(materials) ? materials : [];
+    if (!list.length) return '';
+    return `
+      <div class="diff-materials-section">
+        <div class="diff-materials-header">
+          <iconify-icon icon="solar:paperclip-2-bold" style="color: #64B5F6; font-size: 0.95rem;"></iconify-icon>
+          <span>Прикреплённые материалы (${list.length}):</span>
+        </div>
+        <div class="diff-materials-grid">
+          ${list.map(m => {
+            const fName = escapeProposalHtml(m.file_name || 'Файл');
+            const fUrl = escapeProposalHtml(m.file_url || '');
+            const icon = getProposalFileIcon(m.file_name, m.content_type);
+            return `
+              <a href="${fUrl || '#'}" ${fUrl ? 'target="_blank" rel="noopener"' : ''} class="diff-material-chip" title="Открыть файл">
+                <iconify-icon class="diff-material-icon" icon="${icon}"></iconify-icon>
+                <span class="diff-material-name">${fName}</span>
+                ${fUrl ? '<iconify-icon icon="solar:arrow-right-up-linear" style="font-size: 0.8rem; opacity: 0.7;"></iconify-icon>' : ''}
+              </a>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }
+
   function calculateSnapshotStats(snapshot) {
-    const blocks = snapshot?.blocks || [];
+    const safe = typeof snapshot === 'string' ? safeParseSnapshot(snapshot) : (snapshot || {});
+    const blocks = Array.isArray(safe?.blocks) ? safe.blocks : [];
     let topicsCount = 0;
     let tasksCount = 0;
     let totalScore = 0;
+    let materialsCount = 0;
 
     blocks.forEach(b => {
-      const topics = b.topics || [];
+      if (!b) return;
+      if (Array.isArray(b.materials)) materialsCount += b.materials.length;
+      const topics = Array.isArray(b.topics) ? b.topics : [];
       topicsCount += topics.length;
       topics.forEach(t => {
-        const tasks = t.tasks || [];
+        if (!t) return;
+        if (Array.isArray(t.materials)) materialsCount += t.materials.length;
+        const tasks = Array.isArray(t.tasks) ? t.tasks : [];
         tasksCount += tasks.length;
         tasks.forEach(tsk => {
+          if (!tsk) return;
+          if (Array.isArray(tsk.materials)) materialsCount += tsk.materials.length;
           totalScore += (Number(tsk.max_score) || 0);
         });
       });
+      if (Array.isArray(b.tasks)) {
+        tasksCount += b.tasks.length;
+        b.tasks.forEach(tsk => {
+          if (!tsk) return;
+          if (Array.isArray(tsk.materials)) materialsCount += tsk.materials.length;
+          totalScore += (Number(tsk.max_score) || 0);
+        });
+      }
     });
 
     return {
       blocksCount: blocks.length,
       topicsCount,
       tasksCount,
-      totalScore
+      totalScore,
+      materialsCount
     };
   }
 
@@ -6766,6 +7238,9 @@ function openDayConfigModal(dayName, dateStr) {
       const blocksDiff = propStats.blocksCount - baseStats.blocksCount;
       const blocksDiffText = blocksDiff > 0 ? `+${blocksDiff}` : blocksDiff === 0 ? '±0' : `${blocksDiff}`;
 
+      const materialsDiff = propStats.materialsCount - baseStats.materialsCount;
+      const materialsDiffText = materialsDiff > 0 ? `+${materialsDiff}` : materialsDiff === 0 ? '±0' : `${materialsDiff}`;
+
       const card = document.createElement('div');
       card.className = `proposal-item-card status-${statusKey}`;
       card.innerHTML = `
@@ -6820,11 +7295,15 @@ function openDayConfigModal(dayName, dateStr) {
           </div>
           <div class="proposal-metric-pill" title="Количество тем в предлагаемом плане">
             <iconify-icon icon="solar:document-text-bold" style="color: #6A8E4E;"></iconify-icon>
-            <span>Темы: <strong>${propStats.topicsCount}</strong></span>
+            <span>Темы: <strong>${baseStats.topicsCount} → ${propStats.topicsCount}</strong></span>
           </div>
           <div class="proposal-metric-pill" title="Количество практических заданий">
             <iconify-icon icon="solar:checklist-minimalistic-bold" style="color: #F2C94C;"></iconify-icon>
-            <span>Заданий: <strong>${propStats.tasksCount}</strong></span>
+            <span>Заданий: <strong>${baseStats.tasksCount} → ${propStats.tasksCount}</strong></span>
+          </div>
+          <div class="proposal-metric-pill" title="Изменение количества прикрепленных файлов">
+            <iconify-icon icon="solar:paperclip-2-bold" style="color: #64B5F6;"></iconify-icon>
+            <span>Файлов: <strong>${baseStats.materialsCount} → ${propStats.materialsCount}</strong> (${materialsDiffText})</span>
           </div>
           <div class="proposal-metric-pill" title="Суммарный балл по всем заданиям плана">
             <iconify-icon icon="solar:cup-star-bold" style="color: #B0D182;"></iconify-icon>
@@ -6836,14 +7315,16 @@ function openDayConfigModal(dayName, dateStr) {
           <button class="btn btn-secondary btn-sm" onclick="viewProposalDetails(${proposal.id})">
             <iconify-icon icon="solar:eye-bold"></iconify-icon> Просмотреть изменения
           </button>
-          
-          <button class="btn btn-sm" style="background: rgba(239, 108, 108, 0.15); border: 1px solid rgba(239, 108, 108, 0.35); color: #EF6C6C;" onclick="decideProgramProposal(${proposal.id}, false)">
-            <iconify-icon icon="solar:close-circle-bold"></iconify-icon> Отклонить
-          </button>
-          
-          <button class="btn btn-primary btn-sm" onclick="decideProgramProposal(${proposal.id}, true)">
-            <iconify-icon icon="solar:check-circle-bold"></iconify-icon> Принять
-          </button>
+
+          ${statusKey === 'pending' ? `
+            <button class="btn btn-sm" style="background: rgba(239, 108, 108, 0.15); border: 1px solid rgba(239, 108, 108, 0.35); color: #EF6C6C;" onclick="decideProgramProposal(${proposal.id}, false)">
+              <iconify-icon icon="solar:close-circle-bold"></iconify-icon> Отклонить
+            </button>
+
+            <button class="btn btn-primary btn-sm" onclick="decideProgramProposal(${proposal.id}, true)">
+              <iconify-icon icon="solar:check-circle-bold"></iconify-icon> Принять
+            </button>
+          ` : ''}
         </div>
       `;
       list.appendChild(card);
@@ -6923,7 +7404,7 @@ function openDayConfigModal(dayName, dateStr) {
       reviewBox.style.display = 'none';
     }
 
-    // Сетка статистики (Блоки, Темы, Задания, Баллы)
+    // Сетка статистики (Блоки, Темы, Задания, Файлы, Баллы)
     const baseStats = calculateSnapshotStats(proposal.base_snapshot);
     const propStats = calculateSnapshotStats(proposal.proposed_snapshot);
 
@@ -6933,7 +7414,7 @@ function openDayConfigModal(dayName, dateStr) {
         <div class="stat-title">Тематические блоки</div>
         <div class="stat-diff-val">
           <span>${baseStats.blocksCount} → ${propStats.blocksCount}</span>
-          <span class="diff-tag-pill ${propStats.blocksCount > baseStats.blocksCount ? 'plus' : 'neutral'}">
+          <span class="diff-tag-pill ${propStats.blocksCount > baseStats.blocksCount ? 'plus' : propStats.blocksCount < baseStats.blocksCount ? 'minus' : 'neutral'}">
             ${propStats.blocksCount >= baseStats.blocksCount ? `+${propStats.blocksCount - baseStats.blocksCount}` : `${propStats.blocksCount - baseStats.blocksCount}`}
           </span>
         </div>
@@ -6942,7 +7423,7 @@ function openDayConfigModal(dayName, dateStr) {
         <div class="stat-title">Учебные темы</div>
         <div class="stat-diff-val">
           <span>${baseStats.topicsCount} → ${propStats.topicsCount}</span>
-          <span class="diff-tag-pill ${propStats.topicsCount > baseStats.topicsCount ? 'plus' : 'neutral'}">
+          <span class="diff-tag-pill ${propStats.topicsCount > baseStats.topicsCount ? 'plus' : propStats.topicsCount < baseStats.topicsCount ? 'minus' : 'neutral'}">
             ${propStats.topicsCount >= baseStats.topicsCount ? `+${propStats.topicsCount - baseStats.topicsCount}` : `${propStats.topicsCount - baseStats.topicsCount}`}
           </span>
         </div>
@@ -6951,8 +7432,17 @@ function openDayConfigModal(dayName, dateStr) {
         <div class="stat-title">Практические задания</div>
         <div class="stat-diff-val">
           <span>${baseStats.tasksCount} → ${propStats.tasksCount}</span>
-          <span class="diff-tag-pill ${propStats.tasksCount > baseStats.tasksCount ? 'plus' : 'neutral'}">
+          <span class="diff-tag-pill ${propStats.tasksCount > baseStats.tasksCount ? 'plus' : propStats.tasksCount < baseStats.tasksCount ? 'minus' : 'neutral'}">
             ${propStats.tasksCount >= baseStats.tasksCount ? `+${propStats.tasksCount - baseStats.tasksCount}` : `${propStats.tasksCount - baseStats.tasksCount}`}
+          </span>
+        </div>
+      </div>
+      <div class="proposal-stat-card">
+        <div class="stat-title">Прикреплённые файлы</div>
+        <div class="stat-diff-val">
+          <span>${baseStats.materialsCount} → ${propStats.materialsCount}</span>
+          <span class="diff-tag-pill ${propStats.materialsCount > baseStats.materialsCount ? 'plus' : propStats.materialsCount < baseStats.materialsCount ? 'minus' : 'neutral'}">
+            ${propStats.materialsCount >= baseStats.materialsCount ? `+${propStats.materialsCount - baseStats.materialsCount}` : `${propStats.materialsCount - baseStats.materialsCount}`}
           </span>
         </div>
       </div>
@@ -6982,19 +7472,11 @@ function openDayConfigModal(dayName, dateStr) {
         </button>
       `;
     } else if (statusKey === 'approved') {
-      decisionInfo.innerHTML = `<span>Статус: <strong style="color: #6A8E4E;">Утверждено</strong></span>`;
-      actionBtns.innerHTML = `
-        <button type="button" class="btn" style="background: rgba(239, 108, 108, 0.15); border: 1px solid rgba(239, 108, 108, 0.4); color: #EF6C6C;" onclick="decideProgramProposal(${proposal.id}, false)">
-          <iconify-icon icon="solar:close-circle-bold"></iconify-icon> Отклонить
-        </button>
-      `;
+      decisionInfo.innerHTML = `<span>Решение администратора: <strong style="color: #6A8E4E;">Изменения приняты</strong></span>`;
+      actionBtns.innerHTML = '';
     } else {
-      decisionInfo.innerHTML = `<span>Статус: <strong style="color: #EF6C6C;">Отклонено</strong></span>`;
-      actionBtns.innerHTML = `
-        <button type="button" class="btn btn-primary" onclick="decideProgramProposal(${proposal.id}, true)">
-          <iconify-icon icon="solar:check-circle-bold"></iconify-icon> Принять
-        </button>
-      `;
+      decisionInfo.innerHTML = `<span>Решение администратора: <strong style="color: #EF6C6C;">Изменения отклонены</strong></span>`;
+      actionBtns.innerHTML = '';
     }
 
     // Рендер контента по текущей вкладке (по умолчанию "diff")
@@ -7029,8 +7511,11 @@ function openDayConfigModal(dayName, dateStr) {
   }
 
   function renderProposalDiffView(proposal, container) {
-    const baseBlocks = proposal.base_snapshot?.blocks || [];
-    const proposedBlocks = proposal.proposed_snapshot?.blocks || [];
+    const baseSnapshot = typeof proposal.base_snapshot === 'string' ? safeParseSnapshot(proposal.base_snapshot) : (proposal.base_snapshot || {});
+    const proposedSnapshot = typeof proposal.proposed_snapshot === 'string' ? safeParseSnapshot(proposal.proposed_snapshot) : (proposal.proposed_snapshot || {});
+
+    const baseBlocks = Array.isArray(baseSnapshot.blocks) ? baseSnapshot.blocks : [];
+    const proposedBlocks = Array.isArray(proposedSnapshot.blocks) ? proposedSnapshot.blocks : [];
 
     if (!proposedBlocks.length) {
       container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-muted);">В предложении нет блоков.</div>';
@@ -7040,6 +7525,7 @@ function openDayConfigModal(dayName, dateStr) {
     // Построить карту базовых блоков по ID или названию
     const baseBlocksMap = new Map();
     baseBlocks.forEach(b => {
+      if (!b) return;
       if (b.id) baseBlocksMap.set(`id_${b.id}`, b);
       if (b.title) baseBlocksMap.set(`title_${b.title.trim().toLowerCase()}`, b);
     });
@@ -7047,12 +7533,13 @@ function openDayConfigModal(dayName, dateStr) {
     let html = '<div class="diff-block-accordion">';
 
     proposedBlocks.forEach((block, bIdx) => {
+      if (!block) return;
       const matchedBaseBlock = (block.id && baseBlocksMap.get(`id_${block.id}`)) || 
                                (block.title && baseBlocksMap.get(`title_${block.title.trim().toLowerCase()}`));
       
       const isNewBlock = !matchedBaseBlock;
-      const blockTopics = block.topics || [];
-      const baseTopics = matchedBaseBlock?.topics || [];
+      const blockTopics = Array.isArray(block.topics) ? block.topics : [];
+      const baseTopics = Array.isArray(matchedBaseBlock?.topics) ? matchedBaseBlock.topics : [];
       const isModifiedBlock = !isNewBlock && (
         block.title !== matchedBaseBlock.title || 
         block.description !== matchedBaseBlock.description || 
@@ -7070,51 +7557,88 @@ function openDayConfigModal(dayName, dateStr) {
           <div class="diff-block-header">
             <div class="diff-block-title-row">
               <span style="font-weight: 700; color: var(--pal-light-green); font-size: 0.9rem;">Блок ${bIdx + 1}</span>
-              <span class="diff-block-title">${block.title || 'Без названия'}</span>
+              <span class="diff-block-title">${escapeProposalHtml(block.title || 'Без названия')}</span>
               ${blockStatusTag}
             </div>
             <div style="font-size: 0.8rem; color: var(--text-muted);">
               ${blockTopics.length} тем
             </div>
           </div>
-          ${block.description ? `<div class="diff-block-desc">${block.description}</div>` : ''}
+          ${block.description ? `<div class="diff-block-desc">${escapeProposalHtml(block.description)}</div>` : ''}
+
+          <!-- Материалы уровня блока (если есть) -->
+          ${renderTopicMaterialsDiff(block.materials, matchedBaseBlock?.materials)}
 
           <!-- Темы блока -->
           <div class="diff-topics-container">
       `;
 
       if (!blockTopics.length) {
-        html += '<div style="font-size: 0.85rem; color: var(--text-muted); font-style: italic;">В этом блоке пока нет тем.</div>';
+        const blockDirectTasks = Array.isArray(block.tasks) ? block.tasks : [];
+        if (blockDirectTasks.length) {
+          html += '<div class="diff-tasks-list" style="margin-top: 8px;">';
+          blockDirectTasks.forEach((task) => {
+            if (!task) return;
+            html += `
+              <div class="diff-task-row is-new">
+                <div class="diff-task-title">
+                  <iconify-icon icon="solar:check-square-bold" style="color: var(--pal-light-green);"></iconify-icon>
+                  <span>${escapeProposalHtml(task.title || 'Задание')}</span>
+                  <span class="diff-tag-pill plus" style="font-size: 0.7rem;">+ Новое</span>
+                </div>
+                <div class="diff-task-score">${Number(task.max_score) || 0} баллов</div>
+              </div>
+            `;
+          });
+          html += '</div>';
+        } else {
+          html += '<div style="font-size: 0.85rem; color: var(--text-muted); font-style: italic;">В этом блоке пока нет тем.</div>';
+        }
       } else {
         // Построить карту базовых тем для этого блока
         const baseTopicsMap = new Map();
         baseTopics.forEach(t => {
+          if (!t) return;
           if (t.id) baseTopicsMap.set(`id_${t.id}`, t);
           if (t.title) baseTopicsMap.set(`title_${t.title.trim().toLowerCase()}`, t);
         });
 
         blockTopics.forEach((topic, tIdx) => {
+          if (!topic) return;
           const matchedBaseTopic = (topic.id && baseTopicsMap.get(`id_${topic.id}`)) ||
                                    (topic.title && baseTopicsMap.get(`title_${topic.title.trim().toLowerCase()}`));
           const isNewTopic = !matchedBaseTopic;
-          const topicTasks = topic.tasks || [];
-          const baseTasks = matchedBaseTopic?.tasks || [];
+          const topicTasks = Array.isArray(topic.tasks) ? topic.tasks : [];
+          const baseTasks = Array.isArray(matchedBaseTopic?.tasks) ? matchedBaseTopic.tasks : [];
+
+          const topicMaterials = Array.isArray(topic.materials) ? topic.materials : [];
+          const baseTopicMaterials = Array.isArray(matchedBaseTopic?.materials) ? matchedBaseTopic.materials : [];
 
           const topicStatusTag = isNewTopic 
             ? '<span class="diff-tag-pill plus">+ Новая тема</span>' 
             : '';
 
+          const materialsBadge = topicMaterials.length > 0
+            ? `<span style="font-size: 0.78rem; color: #64B5F6; display: inline-flex; align-items: center; gap: 4px;"><iconify-icon icon="solar:paperclip-2-bold"></iconify-icon> ${topicMaterials.length} ${topicMaterials.length === 1 ? 'файл' : topicMaterials.length < 5 ? 'файла' : 'файлов'}</span>`
+            : '';
+
           html += `
             <div class="diff-topic-item ${isNewTopic ? 'is-new' : ''}">
-              <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;">
                 <div class="diff-topic-title">
                   <iconify-icon icon="solar:document-text-bold" style="color: var(--pal-light-green);"></iconify-icon>
-                  <span>Тема ${tIdx + 1}: ${topic.title || 'Без названия'}</span>
+                  <span>Тема ${tIdx + 1}: ${escapeProposalHtml(topic.title || 'Без названия')}</span>
                   ${topicStatusTag}
                 </div>
-                <div style="font-size: 0.78rem; color: var(--text-muted);">${topicTasks.length} заданий</div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  ${materialsBadge}
+                  <div style="font-size: 0.78rem; color: var(--text-muted);">${topicTasks.length} заданий</div>
+                </div>
               </div>
-              ${topic.description ? `<div style="font-size: 0.85rem; color: var(--text-muted);">${topic.description}</div>` : ''}
+              ${topic.description ? `<div style="font-size: 0.85rem; color: var(--text-muted);">${escapeProposalHtml(topic.description)}</div>` : ''}
+
+              <!-- Прикрепленные материалы/файлы к теме -->
+              ${renderTopicMaterialsDiff(topicMaterials, baseTopicMaterials)}
 
               <!-- Задания темы -->
               <div class="diff-tasks-list">
@@ -7125,11 +7649,13 @@ function openDayConfigModal(dayName, dateStr) {
           } else {
             const baseTasksMap = new Map();
             baseTasks.forEach(tsk => {
+              if (!tsk) return;
               if (tsk.id) baseTasksMap.set(`id_${tsk.id}`, tsk);
               if (tsk.title) baseTasksMap.set(`title_${tsk.title.trim().toLowerCase()}`, tsk);
             });
 
             topicTasks.forEach((task, taskIdx) => {
+              if (!task) return;
               const matchedBaseTask = (task.id && baseTasksMap.get(`id_${task.id}`)) ||
                                       (task.title && baseTasksMap.get(`title_${task.title.trim().toLowerCase()}`));
               const isNewTask = !matchedBaseTask;
@@ -7138,7 +7664,7 @@ function openDayConfigModal(dayName, dateStr) {
                 <div class="diff-task-row ${isNewTask ? 'is-new' : ''}">
                   <div class="diff-task-title">
                     <iconify-icon icon="solar:check-square-bold" style="color: ${isNewTask ? 'var(--pal-light-green)' : 'var(--text-muted)'};"></iconify-icon>
-                    <span>${task.title || 'Задание'}</span>
+                    <span>${escapeProposalHtml(task.title || 'Задание')}</span>
                     ${isNewTask ? '<span class="diff-tag-pill plus" style="font-size: 0.7rem;">+ Новое</span>' : ''}
                   </div>
                   <div class="diff-task-score">
@@ -7166,8 +7692,9 @@ function openDayConfigModal(dayName, dateStr) {
     container.innerHTML = html;
   }
 
-  function renderProposalSnapshotTreeView(snapshot, container, titleLabel) {
-    const blocks = snapshot?.blocks || [];
+  function renderProposalSnapshotTreeView(rawSnapshot, container, titleLabel) {
+    const snapshot = typeof rawSnapshot === 'string' ? safeParseSnapshot(rawSnapshot) : (rawSnapshot || {});
+    const blocks = Array.isArray(snapshot?.blocks) ? snapshot.blocks : [];
 
     if (!blocks.length) {
       container.innerHTML = `
@@ -7188,37 +7715,68 @@ function openDayConfigModal(dayName, dateStr) {
     `;
 
     blocks.forEach((block, bIdx) => {
-      const topics = block.topics || [];
+      if (!block) return;
+      const topics = Array.isArray(block.topics) ? block.topics : [];
 
       html += `
         <div class="diff-block-item">
           <div class="diff-block-header">
             <div class="diff-block-title-row">
               <span style="font-weight: 700; color: var(--pal-light-green); font-size: 0.9rem;">Блок ${bIdx + 1}</span>
-              <span class="diff-block-title">${block.title || 'Без названия'}</span>
+              <span class="diff-block-title">${escapeProposalHtml(block.title || 'Без названия')}</span>
             </div>
             <div style="font-size: 0.8rem; color: var(--text-muted);">${topics.length} тем</div>
           </div>
-          ${block.description ? `<div class="diff-block-desc">${block.description}</div>` : ''}
+          ${block.description ? `<div class="diff-block-desc">${escapeProposalHtml(block.description)}</div>` : ''}
+
+          <!-- Материалы блока -->
+          ${renderSnapshotMaterialsList(block.materials)}
 
           <div class="diff-topics-container">
       `;
 
       if (!topics.length) {
-        html += '<div style="font-size: 0.85rem; color: var(--text-muted); font-style: italic;">Нет тем в блоке.</div>';
+        const blockTasks = Array.isArray(block.tasks) ? block.tasks : [];
+        if (blockTasks.length) {
+          html += '<div class="diff-tasks-list" style="margin-top: 8px;">';
+          blockTasks.forEach(task => {
+            if (!task) return;
+            html += `
+              <div class="diff-task-row">
+                <div class="diff-task-title">
+                  <iconify-icon icon="solar:check-square-bold" style="color: var(--pal-light-green);"></iconify-icon>
+                  <span>${escapeProposalHtml(task.title || 'Задание')}</span>
+                </div>
+                <div class="diff-task-score">${Number(task.max_score) || 0} баллов</div>
+              </div>
+            `;
+          });
+          html += '</div>';
+        } else {
+          html += '<div style="font-size: 0.85rem; color: var(--text-muted); font-style: italic;">Нет тем в блоке.</div>';
+        }
       } else {
         topics.forEach((topic, tIdx) => {
-          const tasks = topic.tasks || [];
+          if (!topic) return;
+          const tasks = Array.isArray(topic.tasks) ? topic.tasks : [];
+          const materials = Array.isArray(topic.materials) ? topic.materials : [];
+
           html += `
             <div class="diff-topic-item">
-              <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;">
                 <div class="diff-topic-title">
                   <iconify-icon icon="solar:document-text-bold" style="color: var(--pal-light-green);"></iconify-icon>
-                  <span>Тема ${tIdx + 1}: ${topic.title || 'Без названия'}</span>
+                  <span>Тема ${tIdx + 1}: ${escapeProposalHtml(topic.title || 'Без названия')}</span>
                 </div>
-                <div style="font-size: 0.78rem; color: var(--text-muted);">${tasks.length} заданий</div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  ${materials.length > 0 ? `<span style="font-size: 0.78rem; color: #64B5F6; display: inline-flex; align-items: center; gap: 4px;"><iconify-icon icon="solar:paperclip-2-bold"></iconify-icon> ${materials.length} ${materials.length === 1 ? 'файл' : materials.length < 5 ? 'файла' : 'файлов'}</span>` : ''}
+                  <div style="font-size: 0.78rem; color: var(--text-muted);">${tasks.length} заданий</div>
+                </div>
               </div>
-              ${topic.description ? `<div style="font-size: 0.85rem; color: var(--text-muted);">${topic.description}</div>` : ''}
+              ${topic.description ? `<div style="font-size: 0.85rem; color: var(--text-muted);">${escapeProposalHtml(topic.description)}</div>` : ''}
+
+              <!-- Прикрепленные материалы темы -->
+              ${renderSnapshotMaterialsList(materials)}
 
               <div class="diff-tasks-list">
           `;
@@ -7227,11 +7785,12 @@ function openDayConfigModal(dayName, dateStr) {
             html += '<div style="font-size: 0.8rem; color: var(--text-muted); font-style: italic;">Нет заданий.</div>';
           } else {
             tasks.forEach((task) => {
+              if (!task) return;
               html += `
                 <div class="diff-task-row">
                   <div class="diff-task-title">
                     <iconify-icon icon="solar:check-square-bold" style="color: var(--pal-light-green);"></iconify-icon>
-                    <span>${task.title || 'Задание'}</span>
+                    <span>${escapeProposalHtml(task.title || 'Задание')}</span>
                   </div>
                   <div class="diff-task-score">${Number(task.max_score) || 0} баллов</div>
                 </div>

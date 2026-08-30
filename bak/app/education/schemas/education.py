@@ -8,6 +8,13 @@ class ProgramCreate(BaseModel):
     description: str | None = None
 
 
+class ProgramMaterialProposal(BaseModel):
+    id: int | None = None
+    file_name: str
+    content_type: str | None = None
+    file_url: str
+
+
 class ProgramTaskProposal(BaseModel):
     id: int | None = None
     title: str
@@ -15,6 +22,7 @@ class ProgramTaskProposal(BaseModel):
     max_score: int = Field(ge=0, le=100000)
     order: int = 0
     is_manual: bool = False
+    materials: list[ProgramMaterialProposal] = Field(default_factory=list)
 
 
 class ProgramTopicProposal(BaseModel):
@@ -23,6 +31,7 @@ class ProgramTopicProposal(BaseModel):
     description: str | None = None
     order: int = 0
     tasks: list[ProgramTaskProposal] = Field(default_factory=list)
+    materials: list[ProgramMaterialProposal] = Field(default_factory=list)
 
 
 class ProgramBlockProposal(BaseModel):

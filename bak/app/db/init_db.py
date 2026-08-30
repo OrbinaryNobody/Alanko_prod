@@ -45,8 +45,9 @@ def init_db() -> None:
 
         admin = User(
             email=settings.admin_email,
-            first_name="Admin",
-            middle_name="Admin",
+            first_name="Алина",
+            last_name="Комоватова",
+            middle_name="Анатольевна",
             password_hash=hash_password(settings.admin_password),
         )
         db.add(admin)

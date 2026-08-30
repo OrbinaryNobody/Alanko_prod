@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, File, UploadFile
 from sqlalchemy.orm import Session
 
 from core.access import AccessContext
@@ -24,6 +24,15 @@ def _program_to_payload(program):
 
 def _block_to_payload(block):
     return BlockPayload(block.id, block.title, block.order, block.status).to_dict()
+
+
+def _material_to_payload(material):
+    return {
+        "id": material.id,
+        "file_name": material.file_name,
+        "content_type": material.content_type,
+        "file_url": material.file_url,
+    }
 
 
 @router.post("", status_code=201)
@@ -81,6 +90,7 @@ def get_program_structure(
                             "description": topic.description,
                             "order": topic.order,
                             "status": topic.status,
+                            "materials": [_material_to_payload(material) for material in topic.materials],
                             "tasks": [
                                 {
                                     "id": task.id,
@@ -89,6 +99,7 @@ def get_program_structure(
                                     "max_score": task.max_score,
                                     "order": task.order,
                                     "is_manual": task.is_manual,
+                                    "materials": [_material_to_payload(material) for material in task.materials],
                                 }
                                 for task in topic.tasks
                             ],
@@ -202,6 +213,65 @@ def create_topic_task(
     except EducationError as exc:
         translate_domain_error(exc)
     return {"message": "Task created", "data": {"id": task.id, "topic_id": task.topic_id, "title": task.title, "description": task.description, "max_score": task.max_score, "order": task.order}}
+
+
+@router.post("/{program_id}/blocks/{block_id}/topics/{topic_id}/materials", status_code=201)
+async def upload_topic_material(
+    program_id: int,
+    block_id: int,
+    topic_id: int,
+    file: UploadFile = File(...),
+    ctx: AccessContext = Depends(require_edit_programs),
+    db: Session = Depends(get_db),
+):
+    try:
+        material = await education_facade.add_topic_material(
+            db,
+            ctx=ctx,
+            program_id=program_id,
+            block_id=block_id,
+            topic_id=topic_id,
+            file=file,
+        )
+    except EducationError as exc:
+        translate_domain_error(exc)
+    return {"message": "Topic material uploaded", "data": _material_to_payload(material)}
+
+
+@router.post("/{program_id}/blocks/{block_id}/tasks/{task_id}/materials", status_code=201)
+async def upload_task_material(
+    program_id: int,
+    block_id: int,
+    task_id: int,
+    file: UploadFile = File(...),
+    ctx: AccessContext = Depends(require_edit_programs),
+    db: Session = Depends(get_db),
+):
+    try:
+        material = await education_facade.add_task_material(
+            db,
+            ctx=ctx,
+            program_id=program_id,
+            block_id=block_id,
+            task_id=task_id,
+            file=file,
+        )
+    except EducationError as exc:
+        translate_domain_error(exc)
+    return {"message": "Task material uploaded", "data": _material_to_payload(material)}
+
+
+@router.delete("/{program_id}/materials/{material_id}", status_code=204)
+def delete_program_material(
+    program_id: int,
+    material_id: int,
+    ctx: AccessContext = Depends(require_edit_programs),
+    db: Session = Depends(get_db),
+):
+    try:
+        education_facade.delete_program_material(db, ctx=ctx, program_id=program_id, material_id=material_id)
+    except EducationError as exc:
+        translate_domain_error(exc)
 
 
 @router.put("/{program_id}/blocks/{block_id}")

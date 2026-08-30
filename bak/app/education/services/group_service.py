@@ -80,6 +80,35 @@ class GroupService:
             for enrollment in enrollments
         ]
 
+    @staticmethod
+    def _group_journal_task_payload(task: GroupStudentTask):
+        program_task = task.program_task
+        return {
+            "student_task_id": task.id,
+            "task_id": program_task.id if program_task else task.program_task_id,
+            "title": program_task.title if program_task else None,
+            "description": program_task.description if program_task else None,
+            "max_score": program_task.max_score if program_task else None,
+            "order": program_task.order if program_task else None,
+            "grade": task.grade,
+            "feedback": task.feedback,
+            "status": task.status,
+            "videos": [{
+                "media_id": media.id,
+                "video_url": file_service.get_file_url(media.video_url, BUCKET_NAMES["videos"]),
+            } for media in task.media],
+        }
+
+    @staticmethod
+    def _material_payload(material):
+        return {
+            "id": material.id,
+            "file_name": material.file_name,
+            "content_type": material.content_type,
+            "file_url": file_service.get_file_url(material.file_url, BUCKET_NAMES["documents"]),
+            "created_at": material.created_at.isoformat() if material.created_at else None,
+        }
+
     def get_group_journal(self, db: Session, *, ctx: AccessContext, group_id: int):
         group = self.ensure_group_access(db, ctx=ctx, group_id=group_id)
         students = []
@@ -92,9 +121,25 @@ class GroupService:
                 "email": student.email if student else None,
                 "image_url": None,
                 "status": enrollment.status,
-                    "videos": [{"media_id": media.id, "video_url": file_service.get_file_url(media.video_url, BUCKET_NAMES["videos"])} for media in task.media],
-                    "tasks": [{"id": task.id, "title": task.title, "description": task.description, "max_score": task.max_score, "order": task.order, "materials": [self._material_payload(material) for material in task.materials]} for task in enrollment.tasks if task.program_task],
+                "tasks": [self._group_journal_task_payload(task) for task in enrollment.tasks],
             })
+
+        def _block_materials(block):
+            direct_materials = list(getattr(block, "materials", []) or [])
+            topic_materials = [
+                material
+                for topic in getattr(block, "topics", []) or []
+                for material in list(getattr(topic, "materials", []) or [])
+            ]
+            combined = direct_materials + topic_materials
+            unique_by_id = {}
+            for material in combined:
+                unique_by_id.setdefault(material.id, material)
+            return [
+                self._material_payload(material)
+                for material in sorted(unique_by_id.values(), key=lambda item: (item.id or 0))
+            ]
+
         return {
             "group": {"id": group.id, "title": group.title, "description": group.description, "program_id": group.program_id},
             "program": {
@@ -106,27 +151,19 @@ class GroupService:
                     "title": block.title,
                     "description": block.description,
                     "order": block.order,
+                    "materials": _block_materials(block),
                     "topics": [{
                         "id": topic.id,
                         "title": topic.title,
                         "description": topic.description,
                         "order": topic.order,
+                        "materials": [self._material_payload(material) for material in sorted(getattr(topic, "materials", []) or [], key=lambda item: (item.id or 0))],
                         "tasks": [{"id": task.id, "title": task.title, "description": task.description, "max_score": task.max_score, "order": task.order} for task in topic.tasks],
                     } for topic in block.topics],
                 } for block in group.program.blocks] if group.program else [],
             },
             "students": students,
         }
-
-        @staticmethod
-        def _material_payload(material):
-            return {
-                "id": material.id,
-                "file_name": material.file_name,
-                "content_type": material.content_type,
-                "file_url": file_service.get_file_url(material.file_url, BUCKET_NAMES["documents"]),
-                "created_at": material.created_at.isoformat() if material.created_at else None,
-            }
 
         def add_group_material(self, db: Session, *, ctx: AccessContext, group_id: int, topic_id: int | None, task_id: int | None, file_url: str, file_name: str, content_type: str | None):
             group = self.ensure_group_access(db, ctx=ctx, group_id=group_id)

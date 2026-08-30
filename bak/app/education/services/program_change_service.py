@@ -6,7 +6,7 @@ from core.access import AccessContext
 from education.exceptions.domain_exceptions import PermissionDenied, ProgramNotFound
 from education.repositories.program_repository import program_repository
 from education.services.program_read_service import program_read_service
-from models.domains.education import Program, ProgramBlock, ProgramChangeProposal, ProgramTask, ProgramTopic
+from models.domains.education import Program, ProgramBlock, ProgramChangeProposal, ProgramMaterial, ProgramTask, ProgramTopic
 from shared.unit_of_work import UnitOfWork
 
 
@@ -40,6 +40,12 @@ class ProgramChangeService:
             "max_score": task.max_score,
             "order": task.order,
             "is_manual": task.is_manual,
+            "materials": [{
+                "id": material.id,
+                "file_name": material.file_name,
+                "content_type": material.content_type,
+                "file_url": material.file_url,
+            } for material in sorted(task.materials, key=lambda item: (item.id or 0))],
         }
 
     def _topic_snapshot(self, block) -> list[dict]:
@@ -49,6 +55,12 @@ class ProgramChangeService:
                 "title": topic.title,
                 "description": topic.description,
                 "order": topic.order,
+                "materials": [{
+                    "id": material.id,
+                    "file_name": material.file_name,
+                    "content_type": material.content_type,
+                    "file_url": material.file_url,
+                } for material in sorted(topic.materials, key=lambda item: (item.id or 0))],
                 "tasks": [self._task_snapshot(task) for task in sorted(topic.tasks, key=lambda item: (item.order, item.id))],
             }
             for topic in sorted(block.topics, key=lambda item: (item.order, item.id))
@@ -167,6 +179,17 @@ class ProgramChangeService:
                 topic.description = topic_data.get("description")
                 topic.order = topic_data.get("order", 0)
                 current_tasks = {task.id: task for task in topic.tasks}
+                current_topic_materials = {material.id: material for material in topic.materials}
+                incoming_topic_material_ids = {item["id"] for item in topic_data.get("materials", []) if item.get("id") is not None}
+                for material_id, material in current_topic_materials.items():
+                    if material_id not in incoming_topic_material_ids:
+                        db.delete(material)
+                for material_data in topic_data.get("materials", []):
+                    if material_data.get("id") is not None:
+                        continue
+                    material = ProgramMaterial(topic_id=topic.id, file_url=material_data.get("file_url"), file_name=material_data.get("file_name", "material"), content_type=material_data.get("content_type"))
+                    db.add(material)
+
                 if topic_data.get("id") is None:
                     current_tasks.update({task.id: task for task in block.tasks if task.topic_id is None})
                 incoming_task_ids = {item["id"] for item in topic_data.get("tasks", []) if item.get("id") is not None}
@@ -183,6 +206,17 @@ class ProgramChangeService:
                     task.max_score = task_data.get("max_score", 100)
                     task.order = task_data.get("order", 0)
                     task.is_manual = task_data.get("is_manual", False)
+
+                    current_task_materials = {material.id: material for material in task.materials}
+                    incoming_task_material_ids = {item["id"] for item in task_data.get("materials", []) if item.get("id") is not None}
+                    for material_id, material in current_task_materials.items():
+                        if material_id not in incoming_task_material_ids:
+                            db.delete(material)
+                    for material_data in task_data.get("materials", []):
+                        if material_data.get("id") is not None:
+                            continue
+                        material = ProgramMaterial(task_id=task.id, file_url=material_data.get("file_url"), file_name=material_data.get("file_name", "material"), content_type=material_data.get("content_type"))
+                        db.add(material)
 
     def decide(self, db: Session, *, ctx: AccessContext, proposal_id: int, approved: bool, comment: str | None):
         if not ctx.is_admin:

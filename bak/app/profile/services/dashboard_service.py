@@ -444,6 +444,46 @@ class DashboardService:
                         .all()
                         if student_task else []
                     )
+                    task_materials = [
+                        {
+                            "id": material.id,
+                            "name": material.file_name,
+                            "file_name": material.file_name,
+                            "url": file_service.get_file_url(material.file_url, BUCKET_NAMES["documents"]),
+                            "download_url": file_service.get_file_url(material.file_url, BUCKET_NAMES["documents"]),
+                            "content_type": material.content_type,
+                        }
+                        for material in sorted(program_task.materials, key=lambda item: (item.id or 0))
+                    ]
+                    topic_materials = [
+                        {
+                            "id": material.id,
+                            "name": material.file_name,
+                            "file_name": material.file_name,
+                            "url": file_service.get_file_url(material.file_url, BUCKET_NAMES["documents"]),
+                            "download_url": file_service.get_file_url(material.file_url, BUCKET_NAMES["documents"]),
+                            "content_type": material.content_type,
+                        }
+                        for material in sorted((program_task.topic.materials if program_task.topic else []), key=lambda item: (item.id or 0))
+                    ]
+                    block_materials = [
+                        {
+                            "id": material.id,
+                            "name": material.file_name,
+                            "file_name": material.file_name,
+                            "url": file_service.get_file_url(material.file_url, BUCKET_NAMES["documents"]),
+                            "download_url": file_service.get_file_url(material.file_url, BUCKET_NAMES["documents"]),
+                            "content_type": material.content_type,
+                        }
+                        for material in sorted(
+                            [
+                                topic_material
+                                for topic in block.topics
+                                for topic_material in topic.materials
+                            ],
+                            key=lambda item: (item.id or 0),
+                        )
+                    ]
                     is_completed = bool(
                         student_task
                         and (student_task.status == "completed" or student_task.grade is not None)
@@ -458,6 +498,9 @@ class DashboardService:
                         "grade": student_task.grade if student_task else None,
                         "feedback": student_task.feedback if student_task else None,
                         "max_score": program_task.max_score,
+                        "materials": task_materials,
+                        "topic_materials": topic_materials,
+                        "block_materials": block_materials,
                         "videos": [{
                             "media_id": media.id,
                             "video_url": file_service.get_file_url(media.video_url, BUCKET_NAMES["videos"]),

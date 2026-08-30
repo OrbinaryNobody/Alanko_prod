@@ -1236,6 +1236,8 @@ select.custom-input option {
     .topic-hw { font-size: 0.9rem; color: var(--pal-off-white); background: rgba(255, 255, 255, 0.03); padding: 12px; border-radius: 8px; border-left: 3px solid var(--pal-light-green); margin-bottom: 16px; }
 
     .materials-grid { display: flex; flex-wrap: wrap; gap: 12px; align-items: stretch; }
+    .topic-material-chip { text-decoration: none; }
+    .topic-material-chip:hover { background: rgba(255, 255, 255, 0.08) !important; border-color: rgba(176, 209, 130, 0.35) !important; transform: translateY(-1px); color: var(--pal-light-green) !important; }
     .file-square { width: 86px; height: 86px; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--card-border); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px; text-align: center; cursor: pointer; transition: all 0.2s ease; text-decoration: none; }
     .file-square:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(176, 209, 130, 0.3); transform: translateY(-2px); }
     .file-ext { font-weight: 800; font-size: 1rem; color: var(--pal-light-green); margin-bottom: 4px; }
@@ -2101,9 +2103,77 @@ select.custom-input option {
   color: #B0D182;
 }
 
+.diff-tag-pill.minus {
+  background: rgba(239, 108, 108, 0.2);
+  color: #EF6C6C;
+}
+
 .diff-tag-pill.neutral {
   background: rgba(255, 255, 255, 0.08);
   color: var(--text-muted);
+}
+
+.diff-materials-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.08);
+}
+
+.diff-materials-header {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.diff-materials-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.diff-material-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.82rem;
+  color: var(--text-main);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.diff-material-chip:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(176, 209, 130, 0.3);
+  transform: translateY(-1px);
+}
+
+.diff-material-chip.is-new {
+  border-color: rgba(176, 209, 130, 0.4);
+  background: rgba(106, 142, 78, 0.15);
+  color: var(--pal-light-green);
+}
+
+.diff-material-chip.is-removed {
+  border-color: rgba(239, 108, 108, 0.3);
+  background: rgba(239, 108, 108, 0.1);
+  color: #EF6C6C;
+  text-decoration: line-through;
+  opacity: 0.85;
+}
+
+.diff-material-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
 }
 
 .diff-block-accordion {
@@ -2232,6 +2302,98 @@ select.custom-input option {
   padding: 2px 8px;
   border-radius: var(--radius-pill);
   white-space: nowrap;
+}
+
+.diff-materials-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 8px 10px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: var(--radius-md);
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+}
+
+.diff-materials-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.diff-materials-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.diff-material-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  font-size: 0.78rem;
+  color: var(--text-main);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  max-width: 100%;
+}
+
+.diff-material-chip:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: var(--pal-off-white);
+}
+
+.diff-material-chip.is-new {
+  background: rgba(106, 142, 78, 0.15);
+  border-color: rgba(176, 209, 130, 0.35);
+  color: var(--pal-light-green);
+}
+
+.diff-material-chip.is-new:hover {
+  background: rgba(106, 142, 78, 0.25);
+  border-color: var(--pal-light-green);
+}
+
+.diff-material-chip.is-removed {
+  background: rgba(239, 108, 108, 0.1);
+  border-color: rgba(239, 108, 108, 0.25);
+  color: #EF6C6C;
+  text-decoration: line-through;
+  opacity: 0.85;
+}
+
+.diff-material-icon {
+  font-size: 0.95rem;
+  color: #64B5F6;
+  flex-shrink: 0;
+}
+
+.diff-material-chip.is-new .diff-material-icon {
+  color: var(--pal-light-green);
+}
+
+.diff-material-chip.is-removed .diff-material-icon {
+  color: #EF6C6C;
+}
+
+.diff-material-name {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.diff-tag-pill.minus {
+  background: rgba(239, 108, 108, 0.15);
+  color: #EF6C6C;
 }
 
   </style>
@@ -3640,6 +3802,60 @@ select.custom-input option {
         .replace(/'/g, '&#039;');
     }
 
+    function getTeacherMaterialIconInfo(fileName = '', contentType = '') {
+      const name = String(fileName || '').toLowerCase();
+      const type = String(contentType || '').toLowerCase();
+      if (name.endsWith('.pdf') || type.includes('pdf')) return { icon: 'solar:file-text-bold', color: '#EF5350' };
+      if (name.match(/\.(jpg|jpeg|png|webp|gif|svg)$/) || type.includes('image')) return { icon: 'solar:gallery-bold', color: '#AB47BC' };
+      if (name.match(/\.(mp4|mov|avi|webm|mkv)$/) || type.includes('video') || name.includes('youtube') || name.includes('youtu.be')) return { icon: 'solar:videocamera-record-bold', color: '#FF7043' };
+      if (name.match(/\.(mp3|wav|ogg|flac|m4a|aac)$/) || type.includes('audio')) return { icon: 'solar:music-note-bold', color: '#64B5F6' };
+      if (name.match(/\.(doc|docx|rtf|txt|odt)$/) || type.includes('word') || type.includes('text')) return { icon: 'solar:document-bold', color: '#42A5F5' };
+      if (name.match(/\.(xls|xlsx|csv)$/) || type.includes('sheet') || type.includes('excel')) return { icon: 'solar:chart-bold', color: '#66BB6A' };
+      if (name.match(/\.(ppt|pptx)$/) || type.includes('presentation') || type.includes('powerpoint')) return { icon: 'solar:presentation-graph-bold', color: '#FFA726' };
+      if (name.match(/\.(zip|rar|7z|tar|gz)$/) || type.includes('zip') || type.includes('archive')) return { icon: 'solar:archive-bold', color: '#FFCA28' };
+      return { icon: 'solar:file-bold', color: 'var(--pal-light-green)' };
+    }
+
+    function renderTeacherMaterials(materials = []) {
+      const normalized = Array.isArray(materials) ? materials.filter(Boolean) : [];
+      if (!normalized.length) return '';
+      return `
+        <div class="topic-materials-section" style="margin-top: 12px; padding-top: 10px; border-top: 1px dashed rgba(255, 255, 255, 0.08);">
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 0.73rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); margin-bottom: 8px;">
+            <iconify-icon icon="solar:paperclip-2-bold" style="color: var(--pal-light-green); font-size: 0.9rem;"></iconify-icon>
+            <span>Материалы к теме (${normalized.length})</span>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            ${normalized.map((material, idx) => {
+              const fileName = material?.file_name || material?.name || material?.title || `Файл ${idx + 1}`;
+              const fileUrl = material?.file_url || material?.url || material?.download_url || '';
+              const contentType = material?.content_type || '';
+              const { icon, color } = getTeacherMaterialIconInfo(fileName, contentType);
+              const safeFileName = escapeTeacherHtml(String(fileName));
+              const displayName = safeFileName.length > 28 ? `${safeFileName.slice(0, 25)}...` : safeFileName;
+              
+              if (fileUrl) {
+                return `
+                  <a href="${fileUrl}" target="_blank" rel="noopener" class="topic-material-chip" title="${safeFileName}" style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 10px; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); color: var(--text-main); font-size: 0.82rem; transition: all 0.2s ease; max-width: 280px;">
+                    <iconify-icon icon="${icon}" style="font-size: 1.15rem; color: ${color}; flex-shrink: 0;"></iconify-icon>
+                    <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500;">${displayName}</span>
+                    <iconify-icon icon="solar:arrow-right-up-linear" style="font-size: 0.9rem; color: var(--text-muted); flex-shrink: 0; opacity: 0.6;"></iconify-icon>
+                  </a>
+                `;
+              }
+
+              return `
+                <div class="topic-material-chip" title="${safeFileName}" style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 10px; background: rgba(255, 255, 255, 0.025); border: 1px solid rgba(255, 255, 255, 0.06); color: var(--text-muted); font-size: 0.82rem; max-width: 280px;">
+                  <iconify-icon icon="${icon}" style="font-size: 1.15rem; color: ${color}; flex-shrink: 0;"></iconify-icon>
+                  <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500;">${displayName}</span>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }
+
     function renderTeacherJournal(journal) {
       const group = journal.group || {};
       const program = journal.program || {};
@@ -3650,18 +3866,21 @@ select.custom-input option {
       modalTitle.textContent = group.title || 'Группа';
       modalCount.innerHTML = `<iconify-icon icon="solar:users-group-rounded-bold"></iconify-icon> ${students.length} учеников`;
 
-      blocksList.innerHTML = program.blocks?.length ? program.blocks.map(block => `
-        <div class="course-block current">
-          <div class="block-header-info"><span class="status-badge status-current">Блок</span><span class="block-dates">Порядок: ${block.order ?? 0}</span></div>
-          <h4>${escapeTeacherHtml(block.title)}</h4>
-          <p class="topic-desc">${escapeTeacherHtml(block.description || '')}</p>
-          <div class="topics-list">${(block.topics || []).map(topic => `
-            <div class="topic-item">
-              <h5 class="topic-title">${escapeTeacherHtml(topic.title)}</h5>
-              <p class="topic-desc">${escapeTeacherHtml(topic.description || '')}</p>
-              <div class="topic-hw"><strong>Задания:</strong><ul style="margin:8px 0 0 18px;">${(topic.tasks || []).map(task => `<li>${escapeTeacherHtml(task.title)} <span style="color:var(--text-muted);">(${task.max_score} баллов)</span></li>`).join('')}</ul></div>
-            </div>`).join('')}</div>
-        </div>`).join('') : '<div style="padding:24px; color:var(--text-muted);">В программе пока нет учебного плана.</div>';
+      blocksList.innerHTML = program.blocks?.length ? program.blocks.map(block => {
+        return `
+          <div class="course-block current">
+            <div class="block-header-info"><span class="status-badge status-current">Блок</span><span class="block-dates">Порядок: ${block.order ?? 0}</span></div>
+            <h4>${escapeTeacherHtml(block.title)}</h4>
+            <p class="topic-desc">${escapeTeacherHtml(block.description || '')}</p>
+            <div class="topics-list">${(block.topics || []).map(topic => `
+              <div class="topic-item">
+                <h5 class="topic-title">${escapeTeacherHtml(topic.title)}</h5>
+                <p class="topic-desc">${escapeTeacherHtml(topic.description || '')}</p>
+                ${renderTeacherMaterials(topic.materials || [])}
+                <div class="topic-hw"><strong>Задания:</strong><ul style="margin:8px 0 0 18px;">${(topic.tasks || []).map(task => `<li>${escapeTeacherHtml(task.title)} <span style="color:var(--text-muted);">(${task.max_score} баллов)</span></li>`).join('')}</ul></div>
+              </div>`).join('')}</div>
+          </div>`;
+      }).join('') : '<div style="padding:24px; color:var(--text-muted);">В программе пока нет учебного плана.</div>';
 
       studentsList.innerHTML = students.length ? students.map(student => `
         <div class="student-item" data-student-id="${student.student_id}" onclick="openTeacherStudentTasks(${group.id}, ${student.student_id})">
@@ -3809,6 +4028,98 @@ select.custom-input option {
     }
 
 
+    function renderProgramMaterialList(materials = []) {
+      if (!Array.isArray(materials) || !materials.length) return '';
+      return materials.map((material) => {
+        const fileName = material?.file_name || 'material';
+        const ext = (fileName.split('.').pop() || material?.content_type || 'FILE').toUpperCase();
+        const materialId = material?.id ? Number(material.id) : null;
+        const fileUrl = material?.file_url || '';
+        const fileNameAttr = String(fileName).replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+        return `
+          <div class="file-square material-item" data-material-id="${materialId || ''}" data-file-name="${fileNameAttr}" data-file-url="${fileUrl}" data-content-type="${material?.content_type || ''}" ${fileUrl ? `onclick="if (!event.target.closest('.delete-file-btn')) window.open('${fileUrl}', '_blank')"` : ''} title="${fileNameAttr}">
+            ${materialId ? `<button type="button" class="delete-file-btn" title="Удалить файл" onclick="event.stopPropagation(); deleteProgramMaterial(${materialId}, this.closest('.material-item'))"><iconify-icon icon="solar:close-circle-bold"></iconify-icon></button>` : ''}
+            <span class="file-ext">${escapeTeacherHtml(ext)}</span>
+            <span class="file-name">${escapeTeacherHtml(fileName.length > 18 ? `${fileName.slice(0, 15)}...` : fileName)}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function buildProgramMaterialUploadButton({ blockId, topicId = null }) {
+      const digitsOnly = value => (Number.isFinite(Number(value)) && Number(value) > 0 ? Number(value) : null);
+      const safeBlockId = digitsOnly(blockId);
+      const safeTopicId = digitsOnly(topicId);
+      const canUpload = Boolean(activeProgramId && safeBlockId && safeTopicId);
+      return `
+        <label class="add-material-btn" ${!canUpload ? 'style="opacity:0.7; cursor:not-allowed;" title="Сохраните программу перед загрузкой файлов"' : ''}>
+          <iconify-icon icon="solar:add-folder-bold"></iconify-icon> Добавить файл
+          ${canUpload ? `<input type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.mp3,.wav,.mp4,.jpeg,.jpg,.png,.webp,.zip" hidden onchange="uploadProgramEditorMaterial(this, ${safeBlockId}, ${safeTopicId})">` : ''}
+        </label>
+      `;
+    }
+
+    async function uploadProgramEditorMaterial(input, blockId, topicId) {
+      const file = input.files?.[0];
+      if (!file || !activeProgramId) {
+        if (window.showToast) window.showToast('Сначала откройте программу для редактирования.', 'warning');
+        return;
+      }
+
+      const endpoint = `/education/programs/${activeProgramId}/blocks/${blockId}/topics/${topicId}/materials`;
+
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        const response = await fetchWithAuth(endpoint, { method: 'POST', body: formData });
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(payload.detail || payload.message || 'Не удалось загрузить файл');
+
+        const material = payload.data || {};
+        const container = input.closest('.materials-grid');
+        if (container) {
+          const uploadButton = container.querySelector('.add-material-btn');
+          const ext = (material.file_name || file.name || 'FILE').split('.').pop()?.toUpperCase() || 'FILE';
+          const fName = material.file_name || file.name || 'material';
+          const fileUrl = material.file_url || '';
+          const materialMarkup = `
+            <div class="file-square material-item" data-material-id="${material.id || ''}" data-file-name="${escapeTeacherHtml(String(fName))}" data-file-url="${escapeTeacherHtml(String(fileUrl))}" data-content-type="${escapeTeacherHtml(String(material.content_type || file.type || ''))}" ${fileUrl ? `onclick="if (!event.target.closest('.delete-file-btn')) window.open('${fileUrl}', '_blank')"` : ''} title="${escapeTeacherHtml(String(fName))}">
+              <button type="button" class="delete-file-btn" title="Удалить файл" onclick="event.stopPropagation(); deleteProgramMaterial(${Number(material.id || 0) || 'null'}, this.closest('.material-item'))"><iconify-icon icon="solar:close-circle-bold"></iconify-icon></button>
+              <span class="file-ext">${escapeTeacherHtml(ext)}</span>
+              <span class="file-name">${escapeTeacherHtml(fName.length > 18 ? `${fName.slice(0, 15)}...` : fName)}</span>
+            </div>
+          `;
+          if (uploadButton) {
+            uploadButton.insertAdjacentHTML('beforebegin', materialMarkup);
+          } else {
+            container.insertAdjacentHTML('beforeend', materialMarkup);
+          }
+        }
+
+        input.value = '';
+        if (window.showToast) window.showToast('Файл успешно прикреплён к теме', 'success');
+      } catch (error) {
+        if (window.showToast) window.showToast(error.message, 'error');
+        else alert(error.message);
+      }
+    }
+
+    async function deleteProgramMaterial(materialId, materialElement) {
+      if (!activeProgramId || !materialId) return;
+      try {
+        const response = await fetchWithAuth(`/education/programs/${activeProgramId}/materials/${materialId}`, { method: 'DELETE' });
+        if (!response.ok) {
+          const payload = await response.json().catch(() => ({}));
+          throw new Error(payload.detail || payload.message || 'Не удалось удалить файл');
+        }
+        materialElement?.remove();
+        if (window.showToast) window.showToast('Файл удалён', 'info');
+      } catch (error) {
+        if (window.showToast) window.showToast(error.message, 'error');
+        else alert(error.message);
+      }
+    }
+
     function renderProgramEditorStructure(program) {
       const list = document.getElementById('editProgramBlocksList');
       const blocks = Array.isArray(program?.blocks) ? program.blocks : [];
@@ -3823,7 +4134,7 @@ select.custom-input option {
         const topicsHtml = (block.topics || []).map((topic, topicIndex) => {
           const tasksHtml = (topic.tasks || []).map((task, taskIndex) => `
             <div class="task-edit-row" data-task-id="${task.id || ''}" style="animation: fadeIn 0.2s ease;">
-              <textarea class="ghost-textarea" style="flex: 1;" rows="2" data-role="task-title">${(task.title || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>
+              <textarea class="ghost-textarea" style="flex: 1;" rows="2" data-role="task-title" placeholder="Описание задания...">${(task.title || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>
               <div class="task-points-wrap">
                 <span>Max:</span>
                 <input type="number" class="task-points-input" value="${task.max_score || 10}" min="1" data-role="task-max-score">
@@ -3843,6 +4154,10 @@ select.custom-input option {
                 </button>
               </div>
               <textarea class="ghost-textarea desc-text" rows="2" data-role="topic-description">${(topic.description || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>
+              <div class="materials-grid" style="margin-top: 12px;">
+                ${renderProgramMaterialList(topic.materials || [])}
+                ${buildProgramMaterialUploadButton({ blockId: block.id, topicId: topic.id })}
+              </div>
               <div class="topic-hw" style="margin-top: 12px;">
                 <strong style="display: block; margin-bottom: 8px; color: var(--text-main);">Задания и ДЗ:</strong>
                 <div class="tasks-container">${tasksHtml || '<div style="color: var(--text-muted); font-size: 0.8rem; padding: 8px 0;">Пока нет заданий</div>'}</div>
@@ -3881,6 +4196,12 @@ select.custom-input option {
           taskEls.forEach((taskEl) => {
             const title = (taskEl.querySelector('[data-role="task-title"]')?.value || '').trim();
             if (!title) return;
+            const materials = Array.from(taskEl.querySelectorAll('.material-item')).map((item) => ({
+              id: item.dataset.materialId ? Number(item.dataset.materialId) : null,
+              file_name: item.dataset.fileName || 'material',
+              content_type: item.dataset.contentType || null,
+              file_url: item.dataset.fileUrl || '',
+            }));
             tasks.push({
               id: taskEl.dataset.taskId ? Number(taskEl.dataset.taskId) : null,
               title,
@@ -3888,17 +4209,25 @@ select.custom-input option {
               max_score: Number(taskEl.querySelector('[data-role="task-max-score"]')?.value || 10),
               order: tasks.length,
               is_manual: false,
+              materials,
             });
           });
 
           const topicTitle = (topicEl.querySelector('[data-role="topic-title"]')?.value || '').trim();
           if (!topicTitle && !tasks.length) return;
+          const materials = Array.from(topicEl.querySelectorAll('.material-item')).map((item) => ({
+            id: item.dataset.materialId ? Number(item.dataset.materialId) : null,
+            file_name: item.dataset.fileName || 'material',
+            content_type: item.dataset.contentType || null,
+            file_url: item.dataset.fileUrl || '',
+          }));
 
           topics.push({
             id: topicEl.dataset.topicId ? Number(topicEl.dataset.topicId) : null,
             title: topicTitle || `Тема ${topicIndex + 1}`,
             description: (topicEl.querySelector('[data-role="topic-description"]')?.value || '').trim() || null,
             order: topicIndex,
+            materials,
             tasks,
           });
         });
@@ -4368,6 +4697,8 @@ function addNewBlock(containerId) {
 // Добавление Темы внутри блока
 function addNewTopic(btnElement) {
   const topicsList = btnElement.previousElementSibling;
+  const blockEl = btnElement.closest('.course-block');
+  const blockId = blockEl?.dataset?.blockId ? Number(blockEl.dataset.blockId) : null;
   const topicHTML = `
     <div class="topic-item" data-topic-id="" style="animation: fadeIn 0.3s ease;">
       <div style="display: flex; justify-content: space-between; align-items: flex-start;">
@@ -4376,8 +4707,14 @@ function addNewTopic(btnElement) {
       </div>
       <textarea class="ghost-textarea desc-text" rows="2" data-role="topic-description" placeholder="Опишите, что будет изучаться..."></textarea>
       
+      <div class="materials-grid" style="margin-top: 12px;">
+        <label class="add-material-btn" style="opacity:0.7; cursor:not-allowed;" title="Сохраните предложение для загрузки файлов в новую тему">
+          <iconify-icon icon="solar:add-folder-bold"></iconify-icon> Добавить файл
+        </label>
+      </div>
+
       <div class="topic-hw" style="margin-top: 12px;">
-        <strong style="display: block; margin-bottom: 8px; color: var(--text-main);">Задания и материалы:</strong>
+        <strong style="display: block; margin-bottom: 8px; color: var(--text-main);">Задания и ДЗ:</strong>
         <div class="tasks-container"></div>
         <button class="add-action-link" onclick="addNewTask(this)"><iconify-icon icon="solar:add-circle-bold"></iconify-icon> Добавить задание</button>
       </div>
@@ -4483,23 +4820,160 @@ function safeParseSnapshot(snapshot) {
   return { blocks: [] };
 }
 
+function escapeProposalHtml(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function getProposalFileIcon(fileName, contentType) {
+  const name = String(fileName || '').toLowerCase();
+  const type = String(contentType || '').toLowerCase();
+  if (name.endsWith('.pdf') || type.includes('pdf')) return 'solar:file-text-bold';
+  if (name.match(/\.(jpg|jpeg|png|webp|gif|svg)$/) || type.includes('image')) return 'solar:gallery-bold';
+  if (name.match(/\.(mp4|mov|avi|webm|mkv)$/) || type.includes('video')) return 'solar:videocamera-record-bold';
+  if (name.match(/\.(mp3|wav|ogg|flac|m4a)$/) || type.includes('audio')) return 'solar:music-note-bold';
+  if (name.match(/\.(doc|docx|rtf|txt|odt)$/) || type.includes('word') || type.includes('text')) return 'solar:document-bold';
+  if (name.match(/\.(xls|xlsx|csv)$/) || type.includes('sheet') || type.includes('excel')) return 'solar:chart-bold';
+  if (name.match(/\.(ppt|pptx)$/) || type.includes('presentation') || type.includes('powerpoint')) return 'solar:presentation-graph-bold';
+  if (name.match(/\.(zip|rar|7z|tar|gz)$/) || type.includes('zip') || type.includes('archive')) return 'solar:archive-bold';
+  return 'solar:file-bold';
+}
+
+function renderTopicMaterialsDiff(proposedMaterials = [], baseMaterials = []) {
+  const propList = Array.isArray(proposedMaterials) ? proposedMaterials : [];
+  const baseList = Array.isArray(baseMaterials) ? baseMaterials : [];
+  
+  if (!propList.length && !baseList.length) return '';
+
+  const baseMap = new Map();
+  baseList.forEach(m => {
+    if (!m) return;
+    if (m.id) baseMap.set(`id_${m.id}`, m);
+    if (m.file_url) baseMap.set(`url_${m.file_url}`, m);
+    if (m.file_name) baseMap.set(`name_${m.file_name}`, m);
+  });
+
+  const propSeen = new Set();
+  const renderedItems = [];
+
+  propList.forEach(pm => {
+    if (!pm) return;
+    const isMatched = (pm.id && baseMap.has(`id_${pm.id}`)) ||
+                      (pm.file_url && baseMap.has(`url_${pm.file_url}`)) ||
+                      (pm.file_name && baseMap.has(`name_${pm.file_name}`));
+    const isNew = !isMatched;
+    if (isMatched) {
+      if (pm.id) propSeen.add(`id_${pm.id}`);
+      if (pm.file_url) propSeen.add(`url_${pm.file_url}`);
+      if (pm.file_name) propSeen.add(`name_${pm.file_name}`);
+    }
+
+    const fName = escapeProposalHtml(pm.file_name || 'Файл');
+    const fUrl = escapeProposalHtml(pm.file_url || '');
+    const icon = getProposalFileIcon(pm.file_name, pm.content_type);
+
+    renderedItems.push(`
+      <a href="${fUrl || '#'}" ${fUrl ? 'target="_blank" rel="noopener"' : ''} class="diff-material-chip ${isNew ? 'is-new' : ''}" title="${isNew ? 'Новый прикреплённый файл' : 'Прикреплённый файл'}">
+        <iconify-icon class="diff-material-icon" icon="${icon}"></iconify-icon>
+        <span class="diff-material-name">${fName}</span>
+        ${isNew ? '<span class="diff-tag-pill plus" style="font-size: 0.68rem; padding: 1px 6px;">+ Добавлен</span>' : ''}
+        ${fUrl ? '<iconify-icon icon="solar:arrow-right-up-linear" style="font-size: 0.75rem; opacity: 0.7;"></iconify-icon>' : ''}
+      </a>
+    `);
+  });
+
+  baseList.forEach(bm => {
+    if (!bm) return;
+    const wasMatched = (bm.id && propSeen.has(`id_${bm.id}`)) ||
+                       (bm.file_url && propSeen.has(`url_${bm.file_url}`)) ||
+                       (bm.file_name && propSeen.has(`name_${bm.file_name}`));
+    if (!wasMatched) {
+      const fName = escapeProposalHtml(bm.file_name || 'Файл');
+      const icon = getProposalFileIcon(bm.file_name, bm.content_type);
+      renderedItems.push(`
+        <span class="diff-material-chip is-removed" title="Файл был удалён из плана">
+          <iconify-icon class="diff-material-icon" icon="${icon}"></iconify-icon>
+          <span class="diff-material-name">${fName}</span>
+          <span class="diff-tag-pill minus" style="font-size: 0.68rem; padding: 1px 6px;">- Удалён</span>
+        </span>
+      `);
+    }
+  });
+
+  const countDiff = propList.length - baseList.length;
+  const countDiffBadge = countDiff > 0 
+    ? `<span class="diff-tag-pill plus" style="font-size: 0.7rem;">+${countDiff}</span>` 
+    : countDiff < 0 
+      ? `<span class="diff-tag-pill minus" style="font-size: 0.7rem;">${countDiff}</span>` 
+      : '';
+
+  return `
+    <div class="diff-materials-section">
+      <div class="diff-materials-header">
+        <iconify-icon icon="solar:paperclip-2-bold" style="color: #64B5F6; font-size: 0.95rem;"></iconify-icon>
+        <span>Материалы темы (${baseList.length} → ${propList.length})</span>
+        ${countDiffBadge}
+      </div>
+      <div class="diff-materials-grid">
+        ${renderedItems.join('')}
+      </div>
+    </div>
+  `;
+}
+
+function renderSnapshotMaterialsList(materials = []) {
+  const list = Array.isArray(materials) ? materials : [];
+  if (!list.length) return '';
+  return `
+    <div class="diff-materials-section">
+      <div class="diff-materials-header">
+        <iconify-icon icon="solar:paperclip-2-bold" style="color: #64B5F6; font-size: 0.95rem;"></iconify-icon>
+        <span>Прикреплённые материалы (${list.length}):</span>
+      </div>
+      <div class="diff-materials-grid">
+        ${list.map(m => {
+          const fName = escapeProposalHtml(m.file_name || 'Файл');
+          const fUrl = escapeProposalHtml(m.file_url || '');
+          const icon = getProposalFileIcon(m.file_name, m.content_type);
+          return `
+            <a href="${fUrl || '#'}" ${fUrl ? 'target="_blank" rel="noopener"' : ''} class="diff-material-chip" title="Открыть файл">
+              <iconify-icon class="diff-material-icon" icon="${icon}"></iconify-icon>
+              <span class="diff-material-name">${fName}</span>
+              ${fUrl ? '<iconify-icon icon="solar:arrow-right-up-linear" style="font-size: 0.8rem; opacity: 0.7;"></iconify-icon>' : ''}
+            </a>
+          `;
+        }).join('')}
+      </div>
+    </div>
+  `;
+}
+
 function calculateSnapshotStats(rawSnapshot) {
   const snapshot = safeParseSnapshot(rawSnapshot);
   const blocks = Array.isArray(snapshot?.blocks) ? snapshot.blocks : [];
   let topicsCount = 0;
   let tasksCount = 0;
   let totalScore = 0;
+  let materialsCount = 0;
 
   blocks.forEach(b => {
     if (!b) return;
+    if (Array.isArray(b.materials)) materialsCount += b.materials.length;
     const topics = Array.isArray(b.topics) ? b.topics : [];
     topicsCount += topics.length;
     topics.forEach(t => {
       if (!t) return;
+      if (Array.isArray(t.materials)) materialsCount += t.materials.length;
       const tasks = Array.isArray(t.tasks) ? t.tasks : [];
       tasksCount += tasks.length;
       tasks.forEach(tsk => {
         if (!tsk) return;
+        if (Array.isArray(tsk.materials)) materialsCount += tsk.materials.length;
         totalScore += (Number(tsk.max_score) || 0);
       });
     });
@@ -4507,6 +4981,7 @@ function calculateSnapshotStats(rawSnapshot) {
       tasksCount += b.tasks.length;
       b.tasks.forEach(tsk => {
         if (!tsk) return;
+        if (Array.isArray(tsk.materials)) materialsCount += tsk.materials.length;
         totalScore += (Number(tsk.max_score) || 0);
       });
     }
@@ -4516,7 +4991,8 @@ function calculateSnapshotStats(rawSnapshot) {
     blocksCount: blocks.length,
     topicsCount,
     tasksCount,
-    totalScore
+    totalScore,
+    materialsCount
   };
 }
 
@@ -4700,6 +5176,8 @@ function renderTeacherProposalsList() {
 
     const blocksDiff = propStats.blocksCount - baseStats.blocksCount;
     const blocksDiffText = blocksDiff > 0 ? `+${blocksDiff}` : blocksDiff === 0 ? '±0' : `${blocksDiff}`;
+    const materialsDiff = propStats.materialsCount - baseStats.materialsCount;
+    const materialsDiffText = materialsDiff > 0 ? `+${materialsDiff}` : materialsDiff === 0 ? '±0' : `${materialsDiff}`;
 
     const card = document.createElement('div');
     card.className = `proposal-item-card status-${statusKey}`;
@@ -4755,11 +5233,15 @@ function renderTeacherProposalsList() {
         </div>
         <div class="proposal-metric-pill" title="Количество тем в предлагаемом плане">
           <iconify-icon icon="solar:document-text-bold" style="color: #6A8E4E;"></iconify-icon>
-          <span>Темы: <strong>${propStats.topicsCount}</strong></span>
+          <span>Темы: <strong>${baseStats.topicsCount} → ${propStats.topicsCount}</strong></span>
         </div>
         <div class="proposal-metric-pill" title="Количество практических заданий">
           <iconify-icon icon="solar:checklist-minimalistic-bold-duotone" style="color: #F2C94C;"></iconify-icon>
-          <span>Заданий: <strong>${propStats.tasksCount}</strong></span>
+          <span>Заданий: <strong>${baseStats.tasksCount} → ${propStats.tasksCount}</strong></span>
+        </div>
+        <div class="proposal-metric-pill" title="Изменение количества прикрепленных файлов">
+          <iconify-icon icon="solar:paperclip-2-bold" style="color: #64B5F6;"></iconify-icon>
+          <span>Файлов: <strong>${baseStats.materialsCount} → ${propStats.materialsCount}</strong> (${materialsDiffText})</span>
         </div>
         <div class="proposal-metric-pill" title="Суммарный балл по всем заданиям плана">
           <iconify-icon icon="solar:cup-star-bold" style="color: #B0D182;"></iconify-icon>
@@ -4897,6 +5379,7 @@ function openProposalDetailsModal(proposal) {
 
   const statsGrid = document.getElementById('proposalModalStatsGrid');
   if (statsGrid) {
+    const materialsDiffVal = propStats.materialsCount - baseStats.materialsCount;
     statsGrid.innerHTML = `
       <div class="proposal-stat-card">
         <div class="stat-title">Тематические блоки</div>
@@ -4922,6 +5405,15 @@ function openProposalDetailsModal(proposal) {
           <span>${baseStats.tasksCount} → ${propStats.tasksCount}</span>
           <span class="diff-tag-pill ${propStats.tasksCount > baseStats.tasksCount ? 'plus' : 'neutral'}">
             ${propStats.tasksCount >= baseStats.tasksCount ? `+${propStats.tasksCount - baseStats.tasksCount}` : `${propStats.tasksCount - baseStats.tasksCount}`}
+          </span>
+        </div>
+      </div>
+      <div class="proposal-stat-card">
+        <div class="stat-title">Прикреплённые файлы</div>
+        <div class="stat-diff-val">
+          <span>${baseStats.materialsCount} → ${propStats.materialsCount}</span>
+          <span class="diff-tag-pill ${materialsDiffVal > 0 ? 'plus' : materialsDiffVal < 0 ? 'minus' : 'neutral'}">
+            ${materialsDiffVal >= 0 ? `+${materialsDiffVal}` : `${materialsDiffVal}`}
           </span>
         </div>
       </div>
@@ -5095,6 +5587,8 @@ function renderProposalDiffView(proposal, container) {
           ? '<span class="diff-tag-pill plus">+ Новая тема</span>' 
           : '';
 
+        const topicMaterialsDiffHTML = renderTopicMaterialsDiff(topic.materials, matchedBaseTopic?.materials);
+
         html += `
           <div class="diff-topic-item ${isNewTopic ? 'is-new' : ''}">
             <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
@@ -5106,6 +5600,7 @@ function renderProposalDiffView(proposal, container) {
               <div style="font-size: 0.78rem; color: var(--text-muted);">${topicTasks.length} заданий</div>
             </div>
             ${topic.description ? `<div style="font-size: 0.85rem; color: var(--text-muted);">${topic.description}</div>` : ''}
+            ${topicMaterialsDiffHTML}
 
             <div class="diff-tasks-list">
         `;
@@ -5234,6 +5729,7 @@ function renderProposalSnapshotTreeView(rawSnapshot, container, titleLabel) {
               <div style="font-size: 0.78rem; color: var(--text-muted);">${tasks.length} заданий</div>
             </div>
             ${topic.description ? `<div style="font-size: 0.85rem; color: var(--text-muted);">${topic.description}</div>` : ''}
+            ${renderSnapshotMaterialsList(topic.materials)}
 
             <div class="diff-tasks-list">
         `;
@@ -5383,6 +5879,14 @@ dossierModal.addEventListener('click', (e) => {
       const programs = programsPayload.data || [];
       const groups = groupsPayload.data || [];
 
+      const teacherProgramIds = new Set(
+        groups
+          .filter(group => group.program_id != null)
+          .map(group => Number(group.program_id))
+      );
+
+      const visiblePrograms = programs.filter(program => teacherProgramIds.has(Number(program.id)));
+
       const groupsByProgram = groups.reduce((acc, group) => {
         if (!group.program_id) return acc;
         if (!acc[group.program_id]) acc[group.program_id] = [];
@@ -5390,14 +5894,19 @@ dossierModal.addEventListener('click', (e) => {
         return acc;
       }, {});
 
-      if (!programs.length && !groups.length) {
+      if (!visiblePrograms.length && !groups.length) {
         list.innerHTML = '<div style="padding: 32px; color: var(--text-muted);">У вас пока нет назначенных программ и групп.</div>';
+        return;
+      }
+
+      if (!visiblePrograms.length) {
+        list.innerHTML = '<div style="padding: 32px; color: var(--text-muted);">У вас пока нет программ, к которым назначены группы с вами в роли преподавателя.</div>';
         return;
       }
 
       list.innerHTML = '';
 
-      programs.forEach(program => {
+      visiblePrograms.forEach(program => {
         const programGroups = groupsByProgram[program.id] || [];
         const card = document.createElement('div');
         card.className = 'program-card';
