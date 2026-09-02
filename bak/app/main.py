@@ -13,7 +13,6 @@ from achievements.api.routes import router as achievements_router
 from public.api.routes import router as public_router
 from assessment.api.routes import router as assessment_router_context
 from media.api.routes import router as media_router
-from catalog.api.routes import router as catalog_router
 from consultations.api.student import router as consultations_student_router
 from consultations.api.admin import router as consultations_admin_router
 from attendance.api.admin import router as attendance_admin_router, student_router as attendance_student_router
@@ -86,7 +85,6 @@ app.include_router(education_router, prefix="/api")
 app.include_router(achievements_router, prefix="/api")
 app.include_router(assessment_router_context, prefix="/api")
 app.include_router(media_router, prefix="/api")
-app.include_router(catalog_router, prefix="/api")
 app.include_router(profile_dashboard_router, prefix="/api/profile")
 app.include_router(profile_router, prefix="/api")
 app.include_router(public_router, prefix="/api")

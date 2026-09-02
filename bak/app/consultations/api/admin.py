@@ -20,6 +20,14 @@ from models.domains.auth import User
 router = APIRouter(prefix="/consultations/admin", tags=["consultations-admin"])
 
 
+def resolve_consultation_teacher_id(ctx: AccessContext, teacher_id: int | None = None) -> int:
+    if ctx.is_admin:
+        return ctx.user_id
+    if teacher_id is not None:
+        return teacher_id
+    return ctx.user_id
+
+
 @router.get("/days")
 def list_days(
     date_from: date | None = Query(default=None),
@@ -52,7 +60,7 @@ def create_day(
     day = consultations_facade.create_day(
         db,
         date=data.date,
-        teacher_id=ctx.user_id,
+        teacher_id=resolve_consultation_teacher_id(ctx, data.teacher_id),
         status=data.status,
         available_from=data.available_from,
         available_to=data.available_to,
@@ -158,7 +166,7 @@ def create_slot(
     slot = consultations_facade.create_slot(
         db,
         day_id=data.day_id,
-        teacher_id=data.teacher_id,
+        teacher_id=resolve_consultation_teacher_id(ctx, data.teacher_id),
         start_at=data.start_at,
         end_at=data.end_at,
         capacity=data.capacity,

@@ -5,6 +5,7 @@ from types import SimpleNamespace
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "app"))
 
 from core.access import AccessContext
+from education.policies.group_policy import GroupPolicy
 from education.policies.program_policy import ProgramPolicy
 from education.policies.student_task_policy import StudentTaskPolicy
 
@@ -82,3 +83,11 @@ def test_student_task_policy_allows_group_manager():
         StudentTaskPolicy.require_grade(ctx, student_task, db)
     except PermissionError:
         raise AssertionError("Expected manager to be allowed to grade")
+
+
+def test_group_policy_allows_permissioned_secretary_to_manage_group():
+    ctx = AccessContext.from_parts(user_id=42, roles=["secretary"], permissions=["manage_groups"], is_admin=False)
+    group = SimpleNamespace(created_by=1, members=[])
+
+    GroupPolicy.require_manage_group(ctx, group)
+    GroupPolicy.require_view_group(ctx, group)

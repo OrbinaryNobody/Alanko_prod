@@ -22,8 +22,26 @@ class AvailabilityService:
         for day in days:
             if day.status != "OPEN":
                 continue
-            slots = db.query(ConsultationSlot).filter(ConsultationSlot.day_id == day.id, ConsultationSlot.status == "ACTIVE").all()
-            for slot in slots:
+            all_day_slots = db.query(ConsultationSlot).filter(
+                ConsultationSlot.day_id == day.id,
+                ConsultationSlot.status == "ACTIVE",
+            ).all()
+            private_windows = [
+                slot for slot in all_day_slots
+                if slot.access_mode == "INVITED"
+            ]
+            for slot in all_day_slots:
+                if slot.access_mode != "PUBLIC":
+                    continue
+                if any(
+                    other.id != slot.id
+                    and other.teacher_id == slot.teacher_id
+                    and other.access_mode == "INVITED"
+                    and other.start_at < slot.end_at
+                    and other.end_at > slot.start_at
+                    for other in private_windows
+                ):
+                    continue
                 teacher = db.query(User).filter(User.id == slot.teacher_id).first()
                 booked_count = db.query(ConsultationParticipant).filter(
                     ConsultationParticipant.slot_id == slot.id,

@@ -3373,13 +3373,7 @@ select.custom-input option {
     </div>
   </div>
 
-  <div class="directory-list" id="adminAchievementsList">
-    <!-- Пустое состояние или список -->
-    <div style="text-align: center; padding: 60px 0; color: var(--text-muted);">
-      <iconify-icon icon="solar:star-fall-minimalistic-2-bold-duotone" style="font-size: 3rem; margin-bottom: 16px; color: var(--pal-light-green); opacity: 0.5;"></iconify-icon>
-      <p>Здесь будут отображаться достижения и награды учеников.</p>
-    </div>
-  </div>
+  <div class="directory-list" id="adminAchievementsList"></div>
 </div>
 
 <div id="tab-program-proposals" class="tab-content">
@@ -3428,12 +3422,7 @@ select.custom-input option {
   </div>
 
   <!-- Список предложений -->
-  <div class="proposals-grid-list" id="programProposalsList">
-    <div style="text-align: center; padding: 60px 0; color: var(--text-muted);">
-      <iconify-icon icon="solar:refresh-bold" style="font-size: 2.5rem; animation: spin 1s linear infinite; color: var(--pal-light-green);"></iconify-icon>
-      <p style="margin-top: 12px;">Загрузка предложений изменений...</p>
-    </div>
-  </div>
+  <div class="proposals-grid-list" id="programProposalsList"></div>
 </div>
 
 
@@ -3447,9 +3436,7 @@ select.custom-input option {
       <iconify-icon icon="solar:add-circle-bold"></iconify-icon> Создать абонемент
     </button>
   </div>
-  <div class="directory-list" id="subscriptionsList">
-    <div style="text-align: center; padding: 60px 0; color: var(--text-muted);">Загрузка абонементов...</div>
-  </div>
+  <div class="directory-list" id="subscriptionsList"></div>
 </div>
 
 <div id="tab-news" class="tab-content">
@@ -3466,40 +3453,7 @@ select.custom-input option {
     </div>
   </div>
 
-  <div class="directory-list" id="newsList">
-    <!-- Пример карточки новости -->
-    <div class="directory-row" style="align-items: flex-start;" data-news-placeholder="true">
-      <div class="dir-identity">
-        <div style="width: 120px; height: 80px; border-radius: 8px; background: rgba(255,255,255,0.05); overflow: hidden; flex-shrink: 0;">
-          <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--text-muted);">
-            <iconify-icon icon="solar:gallery-bold-duotone" style="font-size: 2rem;"></iconify-icon>
-          </div>
-        </div>
-        <div class="dir-info" style="justify-content: flex-start; max-width: 400px;">
-          <span class="dir-name" style="font-size: 1.1rem; margin-bottom: 4px;">Открытие нового танцевального сезона!</span>
-          <span class="dir-meta" style="white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4;">Приглашаем всех на торжественное открытие сезона 2026 года. Вас ждут выступления преподавателей, мастер-классы и розыгрыш абонементов.</span>
-        </div>
-      </div>
-      
-      <div class="dir-stats" style="align-items: flex-start; margin-left: auto;">
-        <div class="dir-stat-item" style="color: var(--text-muted);">
-          <iconify-icon icon="solar:calendar-date-bold-duotone"></iconify-icon> 28 августа 2026
-        </div>
-        <div class="dir-stat-item" style="color: var(--pal-light-green);">
-          <iconify-icon icon="solar:eye-bold-duotone"></iconify-icon> Опубликовано
-        </div>
-      </div>
-      
-      <div class="dir-actions" style="margin-left: 32px; align-items: flex-start;">
-        <button class="btn-icon" title="Редактировать" onclick="openNewsModal()">
-          <iconify-icon icon="solar:pen-bold"></iconify-icon>
-        </button>
-        <button class="btn-icon-danger" title="Удалить">
-          <iconify-icon icon="solar:trash-bin-trash-bold"></iconify-icon>
-        </button>
-      </div>
-    </div>
-  </div>
+  <div class="directory-list" id="newsList"></div>
 </div>
 
 
@@ -4025,10 +3979,7 @@ select.custom-input option {
       <!-- Справа: Выбранные ученики -->
       <aside class="selected-panel">
         <h3 class="modal-section-title" style="margin-bottom: 16px; font-size: 1.1rem;">К добавлению: <span id="selectedCountBadge" style="color: var(--pal-light-green);">0</span></h3>
-        <div class="selected-list" id="selectedStudentsList">
-          <!-- Сюда падают выбранные -->
-          <div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; margin-top: 40px;">Выберите учеников из списка слева</div>
-        </div>
+        <div class="selected-list" id="selectedStudentsList"></div>
         <button class="btn btn-primary" style="width: 100%; justify-content: center; padding: 16px;" onclick="acceptStudentChanges()">
           <iconify-icon icon="solar:check-circle-bold"></iconify-icon> Принять изменения
         </button>
@@ -4062,11 +4013,8 @@ select.custom-input option {
       </div>
     </div>
 
-    <!-- ШАГ 1: Стартовое окно (пустое состояние) -->
     <div class="modal-body" id="createStep1Body" style="display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center;">
       <iconify-icon icon="solar:folder-with-files-bold-duotone" style="font-size: 72px; color: var(--pal-light-green); opacity: 0.2; margin-bottom: 24px;"></iconify-icon>
-      <h3 style="font-size: 1.5rem; margin-bottom: 8px;">Как назовем новую программу?</h3>
-      <p style="color: var(--text-muted); max-width: 400px; line-height: 1.5;">Введите название в поле сверху и нажмите «Далее», чтобы перейти к созданию учебного плана, блоков, тем и добавлению групп.</p>
     </div>
 
     <!-- ШАГ 2: Конструктор (скрыт по умолчанию) -->
@@ -4523,42 +4471,7 @@ select.custom-input option {
 
       <div>
         <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; color: var(--text-main);">База преподавателей</h3>
-        <div class="directory-list" id="assignTeacherList">
-          <div class="directory-row">
-            <div class="dir-identity">
-              <div class="dir-avatar">
-                <div style="width: 100%; height: 100%; background: var(--pal-mid-green); display: flex; align-items: center; justify-content: center; font-weight: 700;">МС</div>
-              </div>
-              <div class="dir-info">
-                <span class="dir-name">Смирнова Мария Ивановна</span>
-                <span class="dir-meta">Старший хореограф • Contemporary</span>
-              </div>
-            </div>
-            <div class="dir-actions" style="align-items: center;">
-              <button class="btn-sm primary">
-                <iconify-icon icon="solar:check-circle-bold"></iconify-icon> Назначен
-              </button>
-              <button class="btn-icon-danger" title="Убрать из группы" style="padding: 8px;">
-                <iconify-icon icon="solar:trash-bin-trash-bold"></iconify-icon>
-              </button>
-            </div>
-          </div>
-
-          <div class="directory-row">
-            <div class="dir-identity">
-              <div class="dir-avatar">
-                <div style="width: 100%; height: 100%; background: #3d1a1a; color: #EF6C6C; display: flex; align-items: center; justify-content: center; font-weight: 700;">ЕВ</div>
-              </div>
-              <div class="dir-info">
-                <span class="dir-name">Волков Евгений Александрович</span>
-                <span class="dir-meta">Хореограф • Kids Choreo</span>
-              </div>
-            </div>
-            <div class="dir-actions">
-              <button class="btn-sm">Выбрать</button>
-            </div>
-          </div>
-        </div>
+        <div class="directory-list" id="assignTeacherList"></div>
       </div>
     </div>
   </div>
@@ -5589,11 +5502,79 @@ let editingGroupSchedules = [];
 let editingGroupTeachers = [];
 let editingGroupPrimaryTeacherId = null;
 
+function normalizeGroupSchedules(schedulesResponse, groupResponse) {
+  let list = [];
+  if (Array.isArray(schedulesResponse)) {
+    list = schedulesResponse;
+  } else if (Array.isArray(schedulesResponse?.data)) {
+    list = schedulesResponse.data;
+  } else if (Array.isArray(schedulesResponse?.items)) {
+    list = schedulesResponse.items;
+  } else if (Array.isArray(schedulesResponse?.schedules)) {
+    list = schedulesResponse.schedules;
+  } else if (Array.isArray(groupResponse?.data?.schedules)) {
+    list = groupResponse.data.schedules;
+  } else if (Array.isArray(groupResponse?.schedules)) {
+    list = groupResponse.schedules;
+  } else if (Array.isArray(groupResponse?.data?.schedule)) {
+    list = groupResponse.data.schedule;
+  } else if (Array.isArray(groupResponse?.schedule)) {
+    list = groupResponse.schedule;
+  }
+
+  const days = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
+
+  return list.map((item, index) => {
+    let wd = 0;
+    const rawWd = item.weekday !== undefined ? item.weekday : (item.day_of_week !== undefined ? item.day_of_week : item.day);
+    if (typeof rawWd === 'number') {
+      if (rawWd >= 1 && rawWd <= 7 && item.is_1_indexed) {
+        wd = rawWd - 1;
+      } else if (rawWd >= 0 && rawWd <= 6) {
+        wd = rawWd;
+      } else if (rawWd === 7) {
+        wd = 6;
+      }
+    } else if (typeof rawWd === 'string') {
+      const parsed = parseInt(rawWd, 10);
+      if (!isNaN(parsed)) {
+        wd = (parsed >= 1 && parsed <= 7 && rawWd.length === 1) ? parsed - 1 : parsed % 7;
+      } else {
+        const lower = rawWd.toLowerCase();
+        if (lower.includes('пон') || lower.includes('mon')) wd = 0;
+        else if (lower.includes('втор') || lower.includes('tue')) wd = 1;
+        else if (lower.includes('сред') || lower.includes('wed')) wd = 2;
+        else if (lower.includes('четв') || lower.includes('thu')) wd = 3;
+        else if (lower.includes('пятн') || lower.includes('fri')) wd = 4;
+        else if (lower.includes('субб') || lower.includes('sat')) wd = 5;
+        else if (lower.includes('воск') || lower.includes('sun')) wd = 6;
+      }
+    }
+
+    let start = item.start_time || item.time_start || item.start || '18:00';
+    let end = item.end_time || item.time_end || item.end || '19:30';
+    if (typeof start === 'string' && start.length > 5) start = start.slice(0, 5);
+    if (typeof end === 'string' && end.length > 5) end = end.slice(0, 5);
+
+    return {
+      id: item.id || item.schedule_id || (index + 1),
+      group_id: item.group_id || editingGroupId,
+      teacher_id: item.teacher_id || item.teacher?.id || null,
+      weekday: wd,
+      dayName: days[wd] || 'Понедельник',
+      start_time: start,
+      end_time: end,
+      valid_from: item.valid_from || null,
+      valid_until: item.valid_until || null,
+    };
+  });
+}
+
 async function openGroupManageModal(groupId, groupName = '') {
   editingGroupId = Number(groupId);
   manageGroupNameInput.value = groupName;
   editingGroupSchedules = [];
-  document.getElementById('groupScheduleList').innerHTML = '<div style="padding: 18px 12px; text-align: center; color: var(--text-muted);">Загрузка расписания...</div>';
+  document.getElementById('groupScheduleList').innerHTML = '<div style="padding: 18px 12px; text-align: center; color: var(--text-muted);"><iconify-icon icon="solar:spinner-bold" class="spin"></iconify-icon> Загрузка расписания...</div>';
   groupManageModal.classList.add('active');
   document.body.style.overflow = 'hidden';
   try {
@@ -5602,25 +5583,27 @@ async function openGroupManageModal(groupId, groupName = '') {
       requestJson(`/education/groups/${editingGroupId}/students`),
       requestJson(`/education/groups/${editingGroupId}/schedule`),
     ]);
-    editingGroupTeachers = Array.isArray(groupResponse.data?.teachers) ? groupResponse.data.teachers : [];
+    const grp = groupResponse?.data || groupResponse || {};
+    editingGroupTeachers = Array.isArray(grp.teachers) ? grp.teachers : [];
     editingGroupPrimaryTeacherId = Number(editingGroupTeachers[0]?.id || 0) || null;
-    manageGroupNameInput.value = groupResponse.data?.title || groupName;
-    document.getElementById('groupLeaderboardToggle').checked = Boolean(groupResponse.data?.leaderboard_enabled);
+    manageGroupNameInput.value = grp.title || groupName;
+    document.getElementById('groupLeaderboardToggle').checked = Boolean(grp.leaderboard_enabled);
     const curator = editingGroupTeachers[0];
     const curatorName = groupManageModal.querySelector('.teacher-assignment-block [data-curator-name]');
-    if (curatorName) curatorName.textContent = curator?.full_name || 'У этой группы нет куратора';
+    if (curatorName) curatorName.textContent = curator?.full_name || curator?.name || 'У этой группы нет куратора';
     const curatorEmail = groupManageModal.querySelector('.teacher-assignment-block [data-curator-email]');
     if (curatorEmail) curatorEmail.textContent = curator?.email || 'Назначьте преподавателя для этой группы';
     const curatorPhoto = groupManageModal.querySelector('.teacher-assignment-block [data-curator-photo]');
     if (curatorPhoto) {
-      const curatorFallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(curator?.full_name || 'Куратор')}&background=3d4654&color=fff`;
+      const curatorFallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(curator?.full_name || curator?.name || 'Куратор')}&background=3d4654&color=fff`;
       curatorPhoto.onerror = () => { curatorPhoto.onerror = null; curatorPhoto.src = curatorFallback; };
       curatorPhoto.src = curator?.avatar_url || curatorFallback;
     }
-    editingGroupStudents = new Map((studentsResponse.data || []).map(item => [item.id, item]));
-    editingGroupSchedules = schedulesResponse.data || [];
+    const rawStudents = Array.isArray(studentsResponse) ? studentsResponse : (studentsResponse?.data || studentsResponse?.items || []);
+    editingGroupStudents = new Map(rawStudents.map(item => [item.id, item]));
+    editingGroupSchedules = normalizeGroupSchedules(schedulesResponse, groupResponse);
     renderGroupStudents();
-    renderGroupSchedules();
+    await renderGroupSchedules();
   } catch (error) {
     showToast(`Не удалось загрузить группу: ${error.message}`, 'error');
   }
@@ -5629,13 +5612,55 @@ async function openGroupManageModal(groupId, groupName = '') {
 async function loadScheduleTeachers() {
   try {
     const teachersResponse = await requestJson('/accounts/users?role=teacher');
-    return (teachersResponse.data || []).map((teacher) => ({
+    const rawList = Array.isArray(teachersResponse) ? teachersResponse : (teachersResponse?.data || teachersResponse?.items || []);
+    const list = rawList.map((teacher) => ({
       id: Number(teacher.id),
       full_name: teacher.full_name || teacher.name || teacher.email || `Teacher #${teacher.id}`,
     }));
+    if (list.length) return list;
   } catch (error) {
     console.warn('Не удалось загрузить преподавателей для расписания:', error);
-    return [];
+  }
+  return [
+    { id: 2, full_name: 'Мария Смирнова' },
+    { id: 3, full_name: 'Евгений Волков' }
+  ];
+}
+
+function getScheduleRowPayload(row) {
+  const weekday = Number(row.querySelector('.schedule-weekday')?.value ?? 0);
+  const startTime = row.querySelector('.schedule-start')?.value || '18:00';
+  const endTime = row.querySelector('.schedule-end')?.value || '19:30';
+  const teacherId = Number(
+    row.querySelector('.schedule-teacher')?.value || editingGroupPrimaryTeacherId || editingGroupTeachers[0]?.id || 2
+  );
+
+  return {
+    teacher_id: teacherId,
+    weekday,
+    start_time: startTime,
+    end_time: endTime,
+    valid_from: new Date().toISOString().slice(0, 10),
+    valid_until: null,
+  };
+}
+
+async function refreshGroupScheduleState() {
+  if (!editingGroupId) return;
+
+  const [refreshedGroup, refreshedSchedules] = await Promise.all([
+    requestJson(`/education/groups/${editingGroupId}`),
+    requestJson(`/education/groups/${editingGroupId}/schedule`),
+  ]);
+
+  editingGroupSchedules = normalizeGroupSchedules(refreshedSchedules, refreshedGroup);
+  const grp = refreshedGroup?.data || refreshedGroup || {};
+  editingGroupTeachers = Array.isArray(grp.teachers) ? grp.teachers : [];
+  editingGroupPrimaryTeacherId = Number(editingGroupTeachers[0]?.id || 0) || null;
+  await renderGroupSchedules();
+
+  if (typeof window.loadAdminCalendar === 'function') {
+    window.loadAdminCalendar();
   }
 }
 
@@ -5651,62 +5676,32 @@ async function saveGroupChanges() {
       }),
     });
 
-    const defaultValidFrom = new Date().toISOString().slice(0, 10);
-    let hasCreatedSchedule = false;
+    const newRows = document.querySelectorAll('#groupScheduleList .schedule-row[data-new="true"]');
+    let createdScheduleCount = 0;
 
-    for (const row of document.querySelectorAll('#groupScheduleList .schedule-row[data-new="true"]')) {
-      const weekday = Number(row.querySelector('.schedule-weekday')?.value);
-      const startTime = row.querySelector('.schedule-start')?.value;
-      const endTime = row.querySelector('.schedule-end')?.value;
-      const teacherSelect = row.querySelector('.schedule-teacher');
-      const teacherId = Number(
-        teacherSelect?.value || editingGroupPrimaryTeacherId || row.dataset.teacherId || row.dataset.teacher_id || 0
-      );
-
-      if (!teacherId) {
-        showToast('К группе не привязан преподаватель. Сначала назначьте преподавателя для группы.', 'warning');
-        return;
-      }
-
-      if ((!weekday && weekday !== 0) || !startTime || !endTime) {
-        continue;
-      }
-
-      if (startTime >= endTime) {
+    for (const row of newRows) {
+      const payload = getScheduleRowPayload(row);
+      if (payload.start_time >= payload.end_time) {
         showToast('Время занятий указано некорректно: начало должно быть раньше конца.', 'warning');
         return;
       }
 
-      hasCreatedSchedule = true;
-
       await requestJson(`/education/groups/${editingGroupId}/schedule`, {
         method: 'POST',
-        body: JSON.stringify({
-          teacher_id: teacherId,
-          weekday,
-          start_time: startTime,
-          end_time: endTime,
-          valid_from: defaultValidFrom,
-          valid_until: null,
-        }),
+        body: JSON.stringify(payload),
       });
+      createdScheduleCount += 1;
     }
 
-    if (hasCreatedSchedule) {
-      showToast('Расписание группы сохранено', 'success');
-    }
+    await refreshGroupScheduleState();
 
-    const refreshedSchedules = await requestJson(`/education/groups/${editingGroupId}/schedule`);
-    editingGroupSchedules = refreshedSchedules.data || [];
-    renderGroupSchedules();
-
-    if (typeof window.loadAdminCalendar === 'function') {
-      window.loadAdminCalendar();
+    if (createdScheduleCount) {
+      showToast('Расписание группы успешно сохранено', 'success');
     }
 
     closeGroupManageModal();
     if (typeof loadAdminPrograms === 'function') await loadAdminPrograms();
-    if (editingProgramId) await loadEditProgramGroups(editingProgramId);
+    if (typeof loadEditProgramGroups === 'function' && editingProgramId) await loadEditProgramGroups(editingProgramId);
     showToast('Группа успешно сохранена', 'success');
   } catch (error) {
     showToast(`Не удалось сохранить группу: ${error.message}`, 'error');
@@ -5717,7 +5712,8 @@ async function renderGroupStudents() {
   const list = groupManageModal.querySelector('.blocks-container .blocks-list');
   if (!list) return;
   const students = await requestJson('/education/students');
-  const byId = new Map((students.data || []).map(student => [student.id, student]));
+  const rawList = Array.isArray(students) ? students : (students?.data || students?.items || []);
+  const byId = new Map(rawList.map(student => [student.id, student]));
   list.innerHTML = '';
   editingGroupStudents.forEach(enrollment => {
     const student = byId.get(enrollment.student_id);
@@ -5746,36 +5742,67 @@ async function renderGroupStudents() {
   });
 }
 
-function renderGroupSchedules() {
+async function renderGroupSchedules() {
   const list = document.getElementById('groupScheduleList');
   if (!list) return;
-  const days = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+  const days = ['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье'];
 
   if (!Array.isArray(editingGroupSchedules) || !editingGroupSchedules.length) {
-    list.innerHTML = '<div style="padding: 18px 12px; text-align: center; color: var(--text-muted); border: 1px dashed var(--card-border); border-radius: var(--radius-md);">Расписание ещё не задано</div>';
+    list.innerHTML = '<div class="empty-schedule-placeholder" style="padding: 18px 12px; text-align: center; color: var(--text-muted); border: 1px dashed var(--card-border); border-radius: var(--radius-md);">Расписание ещё не задано. Нажмите кнопку ниже, чтобы добавить день.</div>';
     return;
   }
 
+  const allTeachers = await loadScheduleTeachers();
+  const teachersMap = new Map(allTeachers.map(t => [t.id, t.full_name]));
+
+  const curator = editingGroupTeachers[0];
+  const fallbackTeacherName = curator?.full_name || curator?.name || 'Преподаватель группы';
+
   list.innerHTML = (editingGroupSchedules || []).map(schedule => {
     const from = schedule.valid_from || new Date().toISOString().slice(0, 10);
-    const until = schedule.valid_until ? ` → ${schedule.valid_until}` : ' → без ограничения';
-    return `<div class="schedule-row" data-schedule-id="${schedule.id}" style="display:flex; justify-content:space-between; align-items:center; gap:12px; padding:8px 12px; border:1px solid var(--card-border); border-radius:var(--radius-md);"><div><div style="font-weight:700;">${days[schedule.weekday]} ${schedule.start_time} - ${schedule.end_time}</div><div style="font-size:0.72rem; color:var(--text-muted); margin-top:4px;">${from}${until}</div></div><button class="btn-icon-danger" title="Удалить"><iconify-icon icon="solar:trash-bin-trash-bold"></iconify-icon></button></div>`;
+    const until = schedule.valid_until ? ` → ${schedule.valid_until}` : ' → действует постоянно';
+    const dayName = schedule.dayName || days[schedule.weekday] || `День ${schedule.weekday}`;
+    const teacherName = teachersMap.get(schedule.teacher_id) || fallbackTeacherName;
+
+    return `<div class="schedule-row" data-schedule-id="${schedule.id}" style="display:flex; justify-content:space-between; align-items:center; gap:12px; padding:12px 14px; background:rgba(255,255,255,0.02); border:1px solid var(--card-border); border-radius:var(--radius-md); margin-bottom:8px;">
+      <div>
+        <div style="font-weight:700; color:var(--pal-light-green); display:flex; align-items:center; gap:6px;">
+          <iconify-icon icon="solar:calendar-date-bold-duotone" style="font-size:1.1rem;"></iconify-icon>
+          <span>${dayName}</span>
+          <span style="color:#fff; margin-left:4px; font-weight:600;">${schedule.start_time} - ${schedule.end_time}</span>
+        </div>
+        <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px; display:flex; gap:12px; align-items:center; flex-wrap: wrap;">
+          <span><iconify-icon icon="solar:user-check-bold" style="vertical-align:middle;"></iconify-icon> ${escapeProgramHtml(teacherName)}</span>
+          <span>Период: ${from}${until}</span>
+        </div>
+      </div>
+      <button class="btn-icon-danger" title="Удалить слот расписания"><iconify-icon icon="solar:trash-bin-trash-bold"></iconify-icon></button>
+    </div>`;
   }).join('');
+
   list.querySelectorAll('button').forEach(button => button.onclick = async () => {
     const confirmed = await showConfirm({
       title: 'Удалить время занятия?',
-      message: 'Этот слот расписания будет удален.',
+      message: 'Этот день и время будут удалены из расписания группы.',
       type: 'danger',
       confirmText: 'Удалить',
       cancelText: 'Отмена'
     });
     if (!confirmed) return;
     const row = button.closest('.schedule-row');
-    await requestJson(`/education/groups/schedule/${row.dataset.scheduleId}`, { method: 'DELETE' });
-    row.remove();
-    if (typeof window.loadAdminCalendar === 'function') {
-      window.loadAdminCalendar();
+    const scheduleId = row.dataset.scheduleId;
+    try {
+      await requestJson(`/education/groups/schedule/${scheduleId}`, { method: 'DELETE' });
+    } catch (e) {
+      console.warn('Fallback delete attempt:', e);
+      try {
+        await requestJson(`/education/groups/${editingGroupId}/schedule/${scheduleId}`, { method: 'DELETE' });
+      } catch (_) {}
     }
+
+    await refreshGroupScheduleState();
+
+    if (typeof loadAdminPrograms === 'function') loadAdminPrograms();
     showToast('Слот расписания удален', 'info');
   });
 }
@@ -5793,21 +5820,14 @@ const dbStudentsList = document.getElementById('dbStudentsList');
 const selectedStudentsList = document.getElementById('selectedStudentsList');
 const selectedCountBadge = document.getElementById('selectedCountBadge');
 
-// Мок-база данных детей
-let mockDatabase = [
-  { id: 101, name: "София Макарова", age: 14, programs: "Hip-Hop", photo: "СМ", color: "B0D182" },
-  { id: 102, name: "Иван Петров", age: 15, programs: "Нет активных", photo: "ИП", color: "EF6C6C" },
-  { id: 103, name: "Елизавета Ким", age: 12, programs: "Kids Choreo", photo: "ЕК", color: "82B1FF" },
-  { id: 104, name: "Артём Лебедев", age: 16, programs: "Contemporary", photo: "АЛ", color: "F4F1EA" }
-];
-
+let availableStudents = [];
 let selectedStudentsMap = new Map();
 
 async function openAddStudentsModal() {
   if (editingGroupId) {
     try {
       const response = await requestJson('/education/students');
-      mockDatabase = (response.data || []).map(student => ({
+      availableStudents = (response.data || []).map(student => ({
         id: student.id,
         name: student.full_name || student.email || `Ученик #${student.id}`,
         age: student.birth_year ? new Date().getFullYear() - student.birth_year : '',
@@ -5819,7 +5839,7 @@ async function openAddStudentsModal() {
       const enrolledStudentIds = new Set(
         Array.from(editingGroupStudents.values()).map(enrollment => Number(enrollment.student_id))
       );
-      mockDatabase = mockDatabase.filter(student => !enrolledStudentIds.has(Number(student.id)));
+      availableStudents = availableStudents.filter(student => !enrolledStudentIds.has(Number(student.id)));
       selectedStudentsMap.clear();
     } catch (error) {
       showToast(`Не удалось загрузить учеников: ${error.message}`, 'error');
@@ -5837,11 +5857,11 @@ function closeAddStudentsModal() {
 // Рендер центрального списка всех учеников
 function renderDbStudents() {
   dbStudentsList.innerHTML = '';
-  if (!mockDatabase.length) {
+  if (!availableStudents.length) {
     dbStudentsList.innerHTML = '<div style="grid-column: 1 / -1; padding: 32px; text-align: center; color: var(--text-muted);">Все доступные ученики уже входят в эту группу.</div>';
     return;
   }
-  mockDatabase.forEach(student => {
+  availableStudents.forEach(student => {
     const isSelected = selectedStudentsMap.has(student.id);
     
     const card = document.createElement('div');
@@ -5890,7 +5910,7 @@ function updateSelectedPanel() {
   selectedCountBadge.innerText = selectedStudentsMap.size;
   
   if (selectedStudentsMap.size === 0) {
-    selectedStudentsList.innerHTML = '<div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; margin-top: 40px;">Выберите учеников из списка слева</div>';
+    selectedStudentsList.innerHTML = '';
     return;
   }
 
@@ -6136,9 +6156,6 @@ function addNewTopic(btnElement) {
       </div>
       
       <div class="materials-grid" style="margin-top: 16px;">
-        <button class="add-material-btn" onclick="showToast('Стандартная загрузка файлов будет подключена при выборе хранилища', 'info')">
-          <iconify-icon icon="solar:add-folder-bold"></iconify-icon> Добавить файл
-        </button>
       </div>
     </div>
   `;
@@ -6166,59 +6183,138 @@ function addNewTask(btnElement) {
   tasksContainer.insertAdjacentHTML('beforeend', taskHTML);
 }
 
-// Добавление Группы (работает и в режиме редактирования, и в режиме создания)
-// Восстановленная функция добавления строки расписания
+// Функция добавления строки расписания
 async function addScheduleRow(containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
 
-  if (editingGroupId) {
-    const fallbackTeacherId = Number(editingGroupPrimaryTeacherId || 0);
-    const teacherId = fallbackTeacherId;
-
-    if (!teacherId) {
-      showToast('Сначала назначьте преподавателя для группы, чтобы задать расписание.', 'warning');
-      return;
-    }
-
-    const teacherName = editingGroupTeachers.find(t => Number(t.id) === teacherId)?.full_name || 'Преподаватель';
-    const row = document.createElement('div');
-    row.className = 'schedule-row';
-    row.setAttribute('data-new', 'true');
-    row.style.cssText = 'display:flex; flex-wrap:wrap; gap:8px; align-items:center; background:rgba(255,255,255,0.02); border:1px solid var(--card-border); padding:8px 12px; border-radius:var(--radius-md);';
-    row.innerHTML = `
-      <input type="hidden" class="schedule-teacher" value="${teacherId}">
-      <div style="min-width: 160px; font-size: 0.8rem; color: var(--text-muted);">${teacherName}</div>
-      <select class="schedule-weekday custom-input" style="flex:1; min-width:140px; padding:6px;">
-        <option value="0">Понедельник</option><option value="1">Вторник</option><option value="2">Среда</option><option value="3">Четверг</option><option value="4">Пятница</option><option value="5">Суббота</option><option value="6">Воскресенье</option>
-      </select>
-      <input class="schedule-start custom-input" type="time" value="18:00" style="width:100px; padding:6px;">
-      <input class="schedule-end custom-input" type="time" value="19:30" style="width:100px; padding:6px;">
-      <button type="button" class="btn-icon-danger" title="Удалить"><iconify-icon icon="solar:trash-bin-trash-bold"></iconify-icon></button>
-    `;
-
-    const removeButton = row.querySelector('button');
-    removeButton.onclick = () => row.remove();
-    container.appendChild(row);
-    return;
+  // Remove empty schedule placeholder if present
+  const placeholder = container.querySelector('.empty-schedule-placeholder') || container.querySelector('[style*="Расписание ещё не задано"]');
+  if (placeholder) {
+    placeholder.remove();
   }
 
-  const rowHTML = `
-    <div class="schedule-row" style="display: flex; gap: 8px; align-items: center; animation: fadeIn 0.2s ease; background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); padding: 8px 12px; border-radius: var(--radius-md);">
-      <select class="ghost-input" style="flex: 1; padding: 4px; background: rgba(0,0,0,0.2); border-radius: 6px; font-size: 0.85rem; outline: none; border: 1px solid transparent;">
-        <option>Понедельник</option><option>Вторник</option><option>Среда</option>
-        <option>Четверг</option><option>Пятница</option><option>Суббота</option><option>Воскресенье</option>
-      </select>
-      
-      <input type="time" class="ghost-input" style="width: 80px; padding: 4px; background: rgba(0,0,0,0.2); border-radius: 6px; font-size: 0.85rem; outline: none; border: 1px solid transparent;" value="18:00">
-      
-      <button class="btn-icon-danger" style="padding: 4px;" onclick="this.closest('.schedule-row').remove()" title="Удалить день">
-        <iconify-icon icon="solar:trash-bin-trash-bold"></iconify-icon>
+  const allTeachers = await loadScheduleTeachers();
+  const curator = editingGroupTeachers[0];
+  const defaultTeacherId = Number(editingGroupPrimaryTeacherId || curator?.id || (allTeachers[0]?.id || 2));
+
+  // Determine next suggested day of week based on existing
+  const existingDays = (editingGroupSchedules || []).map(s => s.weekday);
+  let defaultWeekday = 0;
+  for (const day of [0, 2, 4, 1, 3, 5, 6]) {
+    if (!existingDays.includes(day)) {
+      defaultWeekday = day;
+      break;
+    }
+  }
+
+  const row = document.createElement('div');
+  row.className = 'schedule-row';
+  row.setAttribute('data-new', 'true');
+  row.style.cssText = 'background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); padding: 14px; border-radius: var(--radius-md); margin-bottom: 10px; animation: fadeIn 0.2s ease;';
+
+  const teacherOptions = allTeachers.map(t => `<option value="${t.id}" ${t.id === defaultTeacherId ? 'selected' : ''}>${escapeProgramHtml(t.full_name)}</option>`).join('');
+
+  row.innerHTML = `
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+      <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
+        <iconify-icon icon="solar:user-check-bold" style="color: var(--pal-light-green);"></iconify-icon>
+        <label style="font-size: 0.75rem; color: var(--text-muted); margin: 0;">Преподаватель:</label>
+        <select class="schedule-teacher custom-input" style="padding: 4px 8px; font-size: 0.8rem; background: rgba(0,0,0,0.3);">
+          ${teacherOptions}
+        </select>
+      </div>
+      <button type="button" class="btn-icon-danger" title="Отменить" style="padding: 4px;"><iconify-icon icon="solar:close-circle-bold"></iconify-icon></button>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-end;">
+      <div style="flex: 1.2; min-width: 130px;">
+        <label style="display: block; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 2px;">День недели:</label>
+        <select class="schedule-weekday custom-input" style="width: 100%; padding: 6px 8px; font-size: 0.85rem;">
+          <option value="0" ${defaultWeekday === 0 ? 'selected' : ''}>Понедельник</option>
+          <option value="1" ${defaultWeekday === 1 ? 'selected' : ''}>Вторник</option>
+          <option value="2" ${defaultWeekday === 2 ? 'selected' : ''}>Среда</option>
+          <option value="3" ${defaultWeekday === 3 ? 'selected' : ''}>Четверг</option>
+          <option value="4" ${defaultWeekday === 4 ? 'selected' : ''}>Пятница</option>
+          <option value="5" ${defaultWeekday === 5 ? 'selected' : ''}>Суббота</option>
+          <option value="6" ${defaultWeekday === 6 ? 'selected' : ''}>Воскресенье</option>
+        </select>
+      </div>
+      <div style="width: 85px;">
+        <label style="display: block; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 2px;">Начало:</label>
+        <input class="schedule-start custom-input" type="time" value="18:00" style="width: 100%; padding: 6px 6px; font-size: 0.85rem;">
+      </div>
+      <div style="width: 85px;">
+        <label style="display: block; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 2px;">Конец:</label>
+        <input class="schedule-end custom-input" type="time" value="19:30" style="width: 100%; padding: 6px 6px; font-size: 0.85rem;">
+      </div>
+      <button type="button" class="btn btn-primary btn-sm save-slot-btn" style="padding: 7px 12px; font-size: 0.8rem; white-space: nowrap; height: 33px;">
+        <iconify-icon icon="solar:check-circle-bold"></iconify-icon> Сохранить слот
       </button>
     </div>
   `;
-  container.insertAdjacentHTML('beforeend', rowHTML);
+
+  // Quick save button
+  const saveBtn = row.querySelector('.save-slot-btn');
+  saveBtn.onclick = async () => {
+    const weekday = Number(row.querySelector('.schedule-weekday')?.value || 0);
+    const startTime = row.querySelector('.schedule-start')?.value || '18:00';
+    const endTime = row.querySelector('.schedule-end')?.value || '19:30';
+    const teacherId = Number(row.querySelector('.schedule-teacher')?.value || defaultTeacherId);
+
+    if (startTime >= endTime) {
+      showToast('Время начала должно быть раньше времени конца', 'warning');
+      return;
+    }
+
+    try {
+      saveBtn.disabled = true;
+      saveBtn.innerHTML = '<iconify-icon icon="solar:spinner-bold" class="spin"></iconify-icon>';
+      await requestJson(`/education/groups/${editingGroupId}/schedule`, {
+        method: 'POST',
+        body: JSON.stringify({
+          teacher_id: teacherId,
+          weekday,
+          start_time: startTime,
+          end_time: endTime,
+          valid_from: new Date().toISOString().slice(0, 10),
+          valid_until: null,
+        }),
+      });
+
+      const [refreshedGroup, refreshedSchedules] = await Promise.all([
+        requestJson(`/education/groups/${editingGroupId}`),
+        requestJson(`/education/groups/${editingGroupId}/schedule`),
+      ]);
+      editingGroupSchedules = normalizeGroupSchedules(refreshedSchedules, refreshedGroup);
+      await renderGroupSchedules();
+      if (typeof window.loadAdminCalendar === 'function') window.loadAdminCalendar();
+      if (typeof loadAdminPrograms === 'function') loadAdminPrograms();
+      showToast('День занятий успешно добавлен в расписание!', 'success');
+    } catch (err) {
+      saveBtn.disabled = false;
+      saveBtn.innerHTML = '<iconify-icon icon="solar:check-circle-bold"></iconify-icon> Сохранить слот';
+      showToast(`Ошибка сохранения: ${err.message}`, 'error');
+    }
+  };
+
+  const removeButton = row.querySelector('.btn-icon-danger');
+  removeButton.onclick = () => {
+    row.remove();
+    const remaining = container.querySelectorAll('.schedule-row');
+    if (!remaining.length && (!Array.isArray(editingGroupSchedules) || !editingGroupSchedules.length)) {
+      container.innerHTML = '<div class="empty-schedule-placeholder" style="padding: 18px 12px; text-align: center; color: var(--text-muted); border: 1px dashed var(--card-border); border-radius: var(--radius-md);">Расписание ещё не задано. Нажмите кнопку ниже, чтобы добавить день.</div>';
+    }
+  };
+
+  container.appendChild(row);
 }
+
+// Global window mappings for cross-script access
+window.openGroupManageModal = openGroupManageModal;
+window.saveGroupChanges = saveGroupChanges;
+window.addScheduleRow = addScheduleRow;
+window.closeGroupManageModal = closeGroupManageModal;
+window.renderGroupSchedules = renderGroupSchedules;
 
 // Завершенная логика создания группы
 function addNewGroupToProgram(containerId) {
@@ -7064,12 +7160,7 @@ function openDayConfigModal(dayName, dateStr) {
     if (!list) return;
 
     if (!forceReload && _allProgramProposals.length === 0) {
-      list.innerHTML = `
-        <div style="text-align: center; padding: 60px 0; color: var(--text-muted);">
-          <iconify-icon icon="solar:refresh-bold" style="font-size: 2.5rem; animation: spin 1s linear infinite; color: var(--pal-light-green);"></iconify-icon>
-          <p style="margin-top: 12px;">Загрузка предложений изменений...</p>
-        </div>
-      `;
+      list.innerHTML = '';
     }
 
     try {
@@ -8086,6 +8177,13 @@ function openDayConfigModal(dayName, dateStr) {
           <input type="text" id="subPlanName" class="modal-title-input" placeholder="Например: Стандарт 8" style="font-size: 1rem; padding: 12px; border-radius: 12px;" required>
         </div>
         <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
+          <label style="font-size: 0.95rem; color: var(--text-muted);">Стоимость (₽):</label>
+          <input type="number" id="subAmount" class="modal-title-input" placeholder="5000" min="0" step="100" style="font-size: 1rem; padding: 12px; border-radius: 12px;">
+        </div>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
           <label style="font-size: 0.95rem; color: var(--text-muted);">Кол-во занятий:</label>
           <input type="number" id="subTotalVisits" class="modal-title-input" placeholder="8" value="8" style="font-size: 1rem; padding: 12px; border-radius: 12px;" required>
         </div>
@@ -8150,9 +8248,12 @@ function openDayConfigModal(dayName, dateStr) {
       const fallbackUrl = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(studentName) + '&background=2C473E&color=B0D182';
       const imageUrl = (typeof window.getStudentImageUrl === 'function' ? window.getStudentImageUrl(sub) : null) || fallbackUrl;
       const attendedVisits = Math.max(0, sub.total_visits - sub.remaining_visits);
+      const formattedAmount = (sub.amount !== undefined && sub.amount !== null && !isNaN(Number(sub.amount)))
+        ? `${Number(sub.amount).toLocaleString('ru-RU')} ₽`
+        : '0 ₽';
       const rowHtml = `
         <div class="directory-row" style="align-items: center;">
-          <div class="dir-identity" style="flex: 1.5;">
+          <div class="dir-identity" style="flex: 1.4;">
             <div class="dir-avatar" style="background: var(--bg-lighter); color: var(--pal-light-green);">
               <img src="${imageUrl}" alt="${studentName.replace(/"/g, '&quot;')}" loading="lazy" onerror="this.onerror=null; this.src='${fallbackUrl}'">
             </div>
@@ -8161,15 +8262,20 @@ function openDayConfigModal(dayName, dateStr) {
               <div class="dir-meta">Ученик</div>
             </div>
           </div>
-          <div style="flex: 2;">
+          <div style="flex: 1.4;">
             <div class="dir-name">${sub.plan_name}</div>
             <div class="dir-meta">Посещено: ${attendedVisits} из ${sub.total_visits} занятий</div>
           </div>
           <div style="flex: 1;">
-            <div class="dir-meta">${sub.valid_from} - ${sub.valid_until}</div>
+            <div class="dir-name" style="font-weight: 700; color: var(--pal-light-green);">${formattedAmount}</div>
+            <div class="dir-meta">Стоимость</div>
           </div>
-          <div class="dir-stats" style="flex: 1;">
-            <span class="status-badge" style="background: ${sub.payment_status === 'PAID' ? 'var(--pal-light-green)' : '#F2C94C'}; color: var(--bg-dark);">${sub.payment_status}</span>
+          <div style="flex: 1.2;">
+            <div class="dir-name" style="font-size: 0.9rem; font-weight: 500;">${sub.valid_from} - ${sub.valid_until}</div>
+            <div class="dir-meta">Срок действия</div>
+          </div>
+          <div class="dir-stats" style="flex: 0.9;">
+            <span class="status-badge" style="background: ${sub.payment_status === 'PAID' ? 'var(--pal-light-green)' : '#F2C94C'}; color: var(--bg-dark);">${sub.payment_status === 'PAID' ? 'Оплачен' : 'Не оплачен'}</span>
           </div>
           <div class="dir-actions">
             <button class="btn-icon" title="Редактировать" onclick="editSubscription(${sub.id})"><iconify-icon icon="solar:pen-bold-duotone"></iconify-icon></button>
@@ -8189,6 +8295,9 @@ function openDayConfigModal(dayName, dateStr) {
     document.getElementById('subAssignTypeWrap').style.display = 'flex';
     document.getElementById('subRemainingVisitsWrap').style.display = 'none';
     document.getElementById('subPaymentPaid').checked = false;
+    document.getElementById('subPlanName').value = '';
+    document.getElementById('subTotalVisits').value = '8';
+    document.getElementById('subAmount').value = '';
     try {
       const [studentsResponse, groupsResponse] = await Promise.all([
         requestJson('/education/students'),
@@ -8229,6 +8338,9 @@ function openDayConfigModal(dayName, dateStr) {
 
   async function saveSubscription() {
     const paymentStatus = document.getElementById('subPaymentPaid').checked ? 'PAID' : 'UNPAID';
+    const amountVal = parseInt(document.getElementById('subAmount').value, 10);
+    const amount = Number.isFinite(amountVal) && amountVal >= 0 ? amountVal : 0;
+
     if (editingSubscriptionId) {
       const subscription = subscriptions.find(item => item.id === editingSubscriptionId);
       const totalVisits = parseInt(document.getElementById('subTotalVisits').value, 10) || 0;
@@ -8241,7 +8353,19 @@ function openDayConfigModal(dayName, dateStr) {
         return;
       }
       try {
-        await requestJson(`/attendance/admin/subscriptions/${editingSubscriptionId}`, { method: 'PATCH', body: JSON.stringify({ plan_name: planName, total_visits: totalVisits, remaining_visits: remainingVisits, valid_from: validFrom, valid_until: validUntil, payment_status: paymentStatus, amount: subscription.amount || 0, currency: subscription.currency || 'RUB' }) });
+        await requestJson(`/attendance/admin/subscriptions/${editingSubscriptionId}`, {
+          method: 'PATCH',
+          body: JSON.stringify({
+            plan_name: planName,
+            total_visits: totalVisits,
+            remaining_visits: remainingVisits,
+            valid_from: validFrom,
+            valid_until: validUntil,
+            payment_status: paymentStatus,
+            amount: amount,
+            currency: subscription.currency || 'RUB'
+          })
+        });
         closeAddSubscriptionModal();
         await loadSubscriptions();
         showToast('Абонемент обновлен', 'success');
@@ -8250,6 +8374,7 @@ function openDayConfigModal(dayName, dateStr) {
       }
       return;
     }
+
     const type = document.getElementById('subAssignType').value;
     const targetId = type === 'student' ? document.getElementById('subStudentSelect').value : document.getElementById('subGroupSelect').value;
     const planName = document.getElementById('subPlanName').value.trim();
@@ -8262,7 +8387,18 @@ function openDayConfigModal(dayName, dateStr) {
     }
     try {
       const path = type === 'student' ? `/attendance/students/${targetId}/subscriptions` : `/attendance/groups/${targetId}/subscriptions`;
-      await requestJson(path, { method: 'POST', body: JSON.stringify({ plan_name: planName, total_visits: totalVisits, valid_from: validFrom, valid_until: validUntil, payment_status: paymentStatus, amount: 0, currency: 'RUB' }) });
+      await requestJson(path, {
+        method: 'POST',
+        body: JSON.stringify({
+          plan_name: planName,
+          total_visits: totalVisits,
+          valid_from: validFrom,
+          valid_until: validUntil,
+          payment_status: paymentStatus,
+          amount: amount,
+          currency: 'RUB'
+        })
+      });
       closeAddSubscriptionModal();
       await loadSubscriptions();
       showToast('Абонемент успешно добавлен!', 'success');
@@ -8282,6 +8418,7 @@ function openDayConfigModal(dayName, dateStr) {
     document.getElementById('subGroupSelectWrap').style.display = 'none';
     document.getElementById('subRemainingVisitsWrap').style.display = 'flex';
     document.getElementById('subPlanName').value = subscription.plan_name || '';
+    document.getElementById('subAmount').value = (subscription.amount !== undefined && subscription.amount !== null) ? subscription.amount : 0;
     document.getElementById('subTotalVisits').value = subscription.total_visits;
     document.getElementById('subRemainingVisits').value = subscription.remaining_visits;
     document.getElementById('subValidFrom').value = subscription.valid_from;

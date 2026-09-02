@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, File, Form, Query, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile
 from sqlalchemy.orm import Session
 
 from accounts.facade import accounts_facade
@@ -6,18 +6,14 @@ from accounts.services.auth_service import auth_service
 from attendance.facade import attendance_facade
 from core.access import AccessContext
 from core.exceptions import ConflictError, DomainError, to_http_exception
-from core.permissions import require_manage_users
+from core.permissions import get_access_context, require_manage_users
 from db.database import get_db
 from accounts.schemas.auth import AdminAddUserSchema, LoginSchema, StudentUpdateSchema, TeacherAddStudentSchema, TeacherUpdateSchema
 from infrastructure.storage.file_service import file_service
 from db.minio_client import BUCKET_NAMES
+from accounts.repositories.user_repository import user_repository
 
 router = APIRouter(prefix="/accounts", tags=["accounts"])
-
-
-@router.get("/health")
-def health():
-    return {"status": "ok", "service": "accounts"}
 
 
 @router.post("/login")
@@ -28,6 +24,24 @@ def login(data: LoginSchema, db: Session = Depends(get_db)):
         to_http_exception(exc)
 
     return {"access_token": token, "token_type": "bearer"}
+
+
+@router.get("/me")
+def get_current_user_profile(
+    ctx: AccessContext = Depends(get_access_context),
+    db: Session = Depends(get_db),
+):
+    user = user_repository.get_by_id(db, ctx.user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return {
+        "id": user.id,
+        "email": user.email,
+        "full_name": " ".join(part for part in (user.first_name, user.last_name) if part).strip() or user.email,
+        "role": next((item.role.name for item in user.roles if item.role), None),
+        "image_url": user.image_url,
+    }
 
 
 @router.post("/users", status_code=201)

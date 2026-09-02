@@ -477,6 +477,539 @@
     }
 
     /* ============================================================
+       3.1. КАЛЕНДАРЬ ОТМЕТКИ ПОСЕЩЕНИЙ (ATTENDANCE CALENDAR WIDGET)
+       ============================================================ */
+    .calendar-hero-container {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-lg);
+    }
+
+    .calendar-top-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--spacing-md);
+      flex-wrap: wrap;
+    }
+
+    .calendar-title-wrap {
+      flex: 1;
+      min-width: 280px;
+    }
+
+    .calendar-quick-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .quick-days-btn-group {
+      display: inline-flex;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-pill);
+      padding: 3px;
+      gap: 2px;
+    }
+
+    .btn-quick-day {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 7px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn-quick-day:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .btn-quick-day.active {
+      background: var(--pal-mid-green);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(124, 168, 91, 0.35);
+    }
+
+    .date-picker-input-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .date-picker-icon {
+      position: absolute;
+      left: 12px;
+      color: var(--pal-light-green);
+      font-size: 18px;
+      pointer-events: none;
+    }
+
+    .direct-date-input {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-pill);
+      padding: 8px 14px 8px 36px;
+      color: var(--text-main);
+      font-family: var(--font-body);
+      font-size: 0.84rem;
+      font-weight: 500;
+      outline: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color-scheme: dark;
+    }
+
+    .direct-date-input:focus,
+    .direct-date-input:hover {
+      border-color: var(--pal-light-green);
+      background: rgba(0, 0, 0, 0.6);
+    }
+
+    .calendar-layout-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: var(--spacing-lg);
+      align-items: stretch;
+    }
+
+    @media (max-width: 980px) {
+      .calendar-layout-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .calendar-month-card {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-md) var(--spacing-lg);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .calendar-month-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 0 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .cal-month-title {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--pal-off-white);
+      text-transform: capitalize;
+      letter-spacing: -0.01em;
+    }
+
+    .cal-nav-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .cal-nav-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--pal-light-green);
+      color: var(--pal-light-green);
+      transform: scale(1.05);
+    }
+
+    .calendar-weekdays-row {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      gap: 6px;
+    }
+
+    .cal-weekday {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      padding: 4px 0;
+    }
+
+    .cal-weekday.weekend {
+      color: #e5a93b;
+    }
+
+    .calendar-days-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+    }
+
+    .cal-day-cell {
+      position: relative;
+      aspect-ratio: 1.25 / 1;
+      min-height: 42px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+      padding: 4px;
+    }
+
+    .cal-day-cell:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(176, 209, 130, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .cal-day-cell.other-month {
+      opacity: 0.3;
+      cursor: default;
+    }
+
+    .cal-day-cell.other-month:hover {
+      background: rgba(255, 255, 255, 0.02);
+      border-color: rgba(255, 255, 255, 0.05);
+      transform: none;
+    }
+
+    .cal-day-num {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--text-main);
+      line-height: 1;
+    }
+
+    .cal-day-cell.today {
+      border: 1px solid var(--pal-light-green);
+      background: rgba(176, 209, 130, 0.08);
+    }
+
+    .cal-day-cell.today .cal-day-num {
+      color: var(--pal-light-green);
+      font-weight: 700;
+    }
+
+    .cal-day-cell.selected {
+      background: var(--pal-mid-green) !important;
+      border-color: #a4d380 !important;
+      box-shadow: 0 4px 14px rgba(124, 168, 91, 0.45);
+      transform: translateY(-1px);
+    }
+
+    .cal-day-cell.selected .cal-day-num {
+      color: #ffffff !important;
+      font-weight: 800;
+    }
+
+    .cal-day-cell.selected .cal-day-dot {
+      background: #ffffff !important;
+    }
+
+    .cal-day-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--pal-light-green);
+      margin-top: 3px;
+    }
+
+    .cal-day-badge-count {
+      font-size: 0.65rem;
+      line-height: 1;
+      font-weight: 700;
+      color: var(--pal-light-green);
+      margin-top: 2px;
+    }
+
+    .cal-day-cell.selected .cal-day-badge-count {
+      color: #ffffff;
+    }
+
+    .calendar-legend-bar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 16px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .legend-dot.selected {
+      background: var(--pal-mid-green);
+    }
+
+    .legend-dot.today {
+      border: 1px solid var(--pal-light-green);
+      background: rgba(176, 209, 130, 0.3);
+    }
+
+    .legend-dot.has-data {
+      background: var(--pal-light-green);
+    }
+
+    /* Карточка выбранного дня */
+    .selected-day-card {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: var(--spacing-md);
+      position: relative;
+    }
+
+    .selected-day-badge {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: rgba(176, 209, 130, 0.15);
+      color: var(--pal-light-green);
+      border: 1px solid rgba(176, 209, 130, 0.3);
+    }
+
+    .selected-day-badge.past {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-muted);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .selected-day-badge.future {
+      background: rgba(110, 168, 254, 0.15);
+      color: #8bb9fe;
+      border-color: rgba(110, 168, 254, 0.3);
+    }
+
+    .selected-day-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 4px;
+    }
+
+    .selected-day-num {
+      font-family: var(--font-display);
+      font-size: 3rem;
+      font-weight: 900;
+      line-height: 1;
+      color: var(--pal-off-white);
+      letter-spacing: -0.03em;
+    }
+
+    .selected-day-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .selected-day-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--pal-light-green);
+      text-transform: capitalize;
+    }
+
+    .selected-day-monthyear {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .selected-day-divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .selected-day-stats-box {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .selected-day-roster {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .selected-day-roster-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .selected-day-roster-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .selected-day-roster-header strong {
+      color: var(--pal-off-white);
+      font-size: 0.8rem;
+    }
+
+    .selected-day-roster-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .selected-day-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 8px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--pal-off-white);
+    }
+
+    .selected-day-pill.present {
+      background: rgba(176, 209, 130, 0.12);
+      border-color: rgba(176, 209, 130, 0.28);
+      color: var(--pal-light-green);
+    }
+
+    .selected-day-pill.absent {
+      background: rgba(255, 255, 255, 0.02);
+      border-color: rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+    }
+
+    .selected-day-empty {
+      font-size: 0.75rem;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .stat-progress-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.85rem;
+    }
+
+    .stat-progress-label {
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .stat-progress-val {
+      font-weight: 800;
+      font-family: var(--font-display);
+      color: var(--pal-off-white);
+    }
+
+    .progress-bar-track {
+      width: 100%;
+      height: 8px;
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #7ca85b, #b0d182);
+      border-radius: var(--radius-pill);
+      transition: width 0.3s ease;
+    }
+
+    .stat-progress-subtext {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .selected-day-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .btn-day-action {
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: var(--radius-pill);
+      font-size: 0.82rem;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-day-action:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--pal-light-green);
+      color: var(--pal-light-green);
+    }
+
+    /* ============================================================
        4. ПАНЕЛЬ ФИЛЬТРАЦИИ И ПОИСКА (CONTROLS SECTION)
        ============================================================ */
     .controls-section {
@@ -837,6 +1370,21 @@
       font-weight: 600;
       padding: 3px 8px;
       border-radius: var(--radius-pill);
+    }
+
+    .sub-price-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--pal-light-green);
+      background: rgba(176, 209, 130, 0.12);
+      border: 1px solid rgba(176, 209, 130, 0.28);
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      letter-spacing: 0.02em;
+      white-space: nowrap;
     }
 
     .tag-paid {
@@ -1843,76 +2391,122 @@
       <div id="tabViewAttendance" class="tab-pane active">
 
       <!-- ============================================================
-           HERO SECTION (ГЕРОЙ-СЕКЦИЯ С ТЕКУЩЕЙ СТАТИСТИКОЙ)
+           HERO SECTION: ИНТЕРАКТИВНЫЙ КАЛЕНДАРЬ ОТМЕТКИ ПОСЕЩЕНИЙ
            ============================================================ -->
-      <section class="hero-section">
-        <div class="hero-glass-card">
+      <section class="hero-section" id="attendanceCalendarSection">
+        <div class="hero-glass-card calendar-hero-container">
           
-          <div class="hero-top-row">
-            <div class="hero-title-area">
+          <!-- Верхняя шапка календаря и заголовок -->
+          <div class="calendar-top-header">
+            <div class="calendar-title-wrap">
               <div class="hero-tag">
-                <iconify-icon icon="solar:calendar-check-linear"></iconify-icon>
-                Журнал приёма и оплат
+                <iconify-icon icon="solar:calendar-date-bold-duotone"></iconify-icon>
+                Календарь занятий и посещаемости
               </div>
-              <h1 class="hero-heading">Контроль посещений и абонементов</h1>
+              <h1 class="hero-heading" style="margin-bottom: 4px; font-size: 1.6rem;">Отметка посещений по дням</h1>
               <p class="hero-desc">
-                Проверяйте статус оплаты, остаток занятий по абонементам и отмечайте прибытие детей в один клик.
+                Выберите день в календаре ниже, чтобы отметить присутствие учеников на конкретную дату.
               </p>
             </div>
 
-            <!-- Виджет сегодняшней даты -->
-            <div class="hero-date-box">
-              <div class="date-icon-wrap">
-                <iconify-icon icon="solar:calendar-date-bold-duotone"></iconify-icon>
+            <!-- Быстрые переключатели дней и прямой выбор даты -->
+            <div class="calendar-quick-actions">
+              <div class="quick-days-btn-group">
+                <button type="button" class="btn-quick-day" onclick="changeAttendanceDateByOffset(-1)" id="btnYesterday">Вчера</button>
+                <button type="button" class="btn-quick-day active" onclick="goToTodayAttendance()" id="btnToday">Сегодня</button>
+                <button type="button" class="btn-quick-day" onclick="changeAttendanceDateByOffset(1)" id="btnTomorrow">Завтра</button>
               </div>
-              <div class="date-details">
-                <span class="date-day" id="currentDayOfWeek">Пятница</span>
-                <span class="date-current" id="currentDateFormatted">21 августа 2026</span>
+
+              <div class="date-picker-input-wrap">
+                <iconify-icon icon="solar:calendar-linear" class="date-picker-icon"></iconify-icon>
+                <input 
+                  type="date" 
+                  id="directDatePicker" 
+                  class="direct-date-input" 
+                  onchange="handleDirectDateChange(this.value)"
+                  title="Выбрать точную дату"
+                />
               </div>
             </div>
           </div>
 
-          <!-- Метрики дня -->
-          <div class="hero-metrics-grid">
+          <!-- Основная сетка календаря и информационная карточка выбранного дня -->
+          <div class="calendar-layout-grid">
             
-            <div class="metric-card">
-              <div class="metric-icon-box green">
-                <iconify-icon icon="solar:user-check-rounded-linear"></iconify-icon>
+            <!-- Интерактивный месячный календарь -->
+            <div class="calendar-month-card">
+              <div class="calendar-month-nav">
+                <button type="button" class="cal-nav-btn" onclick="prevCalendarMonth()" title="Предыдущий месяц">
+                  <iconify-icon icon="solar:alt-arrow-left-linear"></iconify-icon>
+                </button>
+                <div class="cal-month-title" id="calendarMonthYearDisplay">
+                  Сентябрь 2026
+                </div>
+                <button type="button" class="cal-nav-btn" onclick="nextCalendarMonth()" title="Следующий месяц">
+                  <iconify-icon icon="solar:alt-arrow-right-linear"></iconify-icon>
+                </button>
               </div>
-              <div class="metric-data">
-                <span class="metric-number" id="statCheckedCount">0 / 0</span>
-                <span class="metric-label">Отмечено на занятиях</span>
+
+              <!-- Дни недели -->
+              <div class="calendar-weekdays-row">
+                <div class="cal-weekday">Пн</div>
+                <div class="cal-weekday">Вт</div>
+                <div class="cal-weekday">Ср</div>
+                <div class="cal-weekday">Чт</div>
+                <div class="cal-weekday">Пт</div>
+                <div class="cal-weekday weekend">Сб</div>
+                <div class="cal-weekday weekend">Вс</div>
+              </div>
+
+              <!-- Сетка чисел месяца -->
+              <div class="calendar-days-grid" id="calendarDaysGrid">
+                <!-- Генерируется через renderCalendar() -->
+              </div>
+
+              <div class="calendar-legend-bar">
+                <div class="legend-item"><span class="legend-dot selected"></span> Выбранный день</div>
+                <div class="legend-item"><span class="legend-dot today"></span> Сегодня</div>
+                <div class="legend-item"><span class="legend-dot has-data"></span> Есть отметки</div>
               </div>
             </div>
 
-            <div class="metric-card">
-              <div class="metric-icon-box blue">
-                <iconify-icon icon="solar:card-check-linear"></iconify-icon>
+            <!-- Карточка выбранного дня с живым счетчиком -->
+            <div class="selected-day-card">
+              <div class="selected-day-badge" id="selectedDayRelationBadge">Сегодня</div>
+              
+              <div class="selected-day-header">
+                <div class="selected-day-num" id="selectedDayBigNumber">1</div>
+                <div class="selected-day-meta">
+                  <div class="selected-day-name" id="selectedDayWeekdayName">Вторник</div>
+                  <div class="selected-day-monthyear" id="selectedDayMonthYear">сентября 2026</div>
+                </div>
               </div>
-              <div class="metric-data">
-                <span class="metric-number" id="statActiveSubs">0</span>
-                <span class="metric-label">Активных абонементов</span>
-              </div>
-            </div>
 
-            <div class="metric-card">
-              <div class="metric-icon-box amber">
-                <iconify-icon icon="solar:bell-bing-linear"></iconify-icon>
-              </div>
-              <div class="metric-data">
-                <span class="metric-number" id="statWarningSubs">0</span>
-                <span class="metric-label">Осталось ≤ 2 занятий</span>
-              </div>
-            </div>
+              <div class="selected-day-divider"></div>
 
-            <div class="metric-card">
-              <div class="metric-icon-box red">
-                <iconify-icon icon="solar:danger-circle-linear"></iconify-icon>
+              <!-- Живой индикатор посещаемости на выбранный день -->
+              <div class="selected-day-stats-box">
+                <div class="stat-progress-header">
+                  <span class="stat-progress-label">Отмечено на занятии:</span>
+                  <span class="stat-progress-val" id="selectedDayAttendanceRatio">0 / 0</span>
+                </div>
+                <div class="progress-bar-track">
+                  <div class="progress-bar-fill" id="selectedDayProgressBar" style="width: 0%;"></div>
+                </div>
+                <div class="stat-progress-subtext" id="selectedDaySummaryText">
+                  Список учеников ниже обновлен на эту дату.
+                </div>
               </div>
-              <div class="metric-data">
-                <span class="metric-number" id="statDebtCount">0</span>
-                <span class="metric-label">Требуется оплата</span>
+
+              <div class="selected-day-roster" id="selectedDayAttendanceRoster"></div>
+
+              <div class="selected-day-actions">
+                <button type="button" class="btn-day-action" onclick="goToTodayAttendance()">
+                  <iconify-icon icon="solar:restart-linear"></iconify-icon>
+                  Перейти к «Сегодня»
+                </button>
               </div>
+
             </div>
 
           </div>
@@ -2654,9 +3248,6 @@
               oninput="renderAuditLog()"
             />
           </div>
-          <button class="btn-pill btn-secondary" onclick="clearAuditLog()" style="padding: 8px 12px; font-size: 0.76rem;" title="Очистить тестовый журнал">
-            <iconify-icon icon="solar:trash-bin-trash-linear"></iconify-icon>
-          </button>
         </div>
 
         <!-- Список записей аудита -->
@@ -2706,222 +3297,7 @@
     }
     try { requireAuth(); } catch(e) {}
 
-    // 1. Базовый набор данных учеников с расширенными параметрами абонементов
-    const DEFAULT_STUDENTS = [
-      {
-        id: "st-101",
-        name: "Алиса Морозова",
-        age: "7 лет",
-        photo: "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?w=150&auto=format&fit=crop&q=80",
-        group: "Акробатика Junior",
-        subName: "Абонемент «Стандарт 8»",
-        subPriceNum: 4800,
-        subStartDate: "15.08.2026",
-        validUntil: "15.09.2026",
-        subStatus: "active", // active | prolonged | warning | early_terminated | debt | expired
-        visitsTotal: 8,
-        visitsLeft: 6,
-        payStatus: "paid",
-        payAmount: "4 800 ₽",
-        lastPaymentDate: "15.08.2026",
-        parentName: "Ольга (мама)",
-        parentPhone: "+7 (912) 345-67-89",
-        medicalNote: "Без ограничений, хорошая гибкость",
-        checkedToday: false,
-        checkinTime: null,
-        history: [
-          { date: "19.08.2026", time: "16:00", trainer: "Екатерина В.", note: "Присутствовала, разминка на 5+" },
-          { date: "16.08.2026", time: "16:00", trainer: "Екатерина В.", note: "Присутствовала" }
-        ]
-      },
-      {
-        id: "st-102",
-        name: "Матвей Смирнов",
-        age: "9 лет",
-        photo: "https://images.unsplash.com/photo-1543610892-0b1f7e6d8ac1?w=150&auto=format&fit=crop&q=80",
-        group: "Воздушная гимнастика",
-        subName: "Абонемент «Интенсив 12»",
-        subPriceNum: 6500,
-        subStartDate: "28.07.2026",
-        validUntil: "28.08.2026",
-        subStatus: "warning",
-        visitsTotal: 12,
-        visitsLeft: 2,
-        payStatus: "warning",
-        payAmount: "6 500 ₽",
-        lastPaymentDate: "28.07.2026",
-        parentName: "Дмитрий (папа)",
-        parentPhone: "+7 (921) 987-65-43",
-        medicalNote: "Разминка голеностопа",
-        checkedToday: false,
-        checkinTime: null,
-        history: [
-          { date: "20.08.2026", time: "17:30", trainer: "Михаил С.", note: "Полотна, уровень 2" },
-          { date: "18.08.2026", time: "17:30", trainer: "Михаил С.", note: "Кольцо" }
-        ]
-      },
-      {
-        id: "st-103",
-        name: "Варвара Кузнецова",
-        age: "6 лет",
-        photo: "https://images.unsplash.com/photo-1544717305-2782549b5136?w=150&auto=format&fit=crop&q=80",
-        group: "Современный танец (Kids)",
-        subName: "Абонемент «Стандарт 8»",
-        subPriceNum: 4800,
-        subStartDate: "20.07.2026",
-        validUntil: "20.08.2026",
-        subStatus: "debt",
-        visitsTotal: 8,
-        visitsLeft: 0,
-        payStatus: "debt",
-        payAmount: "0 ₽ (Не оплачен)",
-        lastPaymentDate: "20.07.2026",
-        parentName: "Анна (мама)",
-        parentPhone: "+7 (905) 555-12-34",
-        medicalNote: "Нет противопоказаний",
-        checkedToday: false,
-        checkinTime: null,
-        history: [
-          { date: "17.08.2026", time: "15:00", trainer: "Светлана Р.", note: "Последнее занятие по старому абонементу" }
-        ]
-      },
-      {
-        id: "st-104",
-        name: "Артём Васильев",
-        age: "11 лет",
-        photo: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150&auto=format&fit=crop&q=80",
-        group: "Акробатика Junior",
-        subName: "Абонемент «Интенсив 12»",
-        subPriceNum: 6500,
-        subStartDate: "10.08.2026",
-        validUntil: "22.09.2026",
-        subStatus: "prolonged",
-        prolongedUntil: "06.10.2026",
-        prolongReason: "Болезнь / Медицинская справка",
-        prolongDocNum: "Справка № 142 от педиатра",
-        visitsTotal: 12,
-        visitsLeft: 8,
-        payStatus: "paid",
-        payAmount: "6 500 ₽",
-        lastPaymentDate: "10.08.2026",
-        parentName: "Сергей (папа)",
-        parentPhone: "+7 (911) 444-55-66",
-        medicalNote: "Отличная физподготовка",
-        checkedToday: true,
-        checkinTime: "14:15",
-        history: [
-          { date: "21.08.2026", time: "14:15", trainer: "Екатерина В.", note: "Отмечен администратором" },
-          { date: "19.08.2026", time: "16:00", trainer: "Екатерина В.", note: "Сальто назад" }
-        ]
-      },
-      {
-        id: "st-105",
-        name: "София Новикова",
-        age: "8 лет",
-        photo: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=150&auto=format&fit=crop&q=80",
-        group: "Растяжка и гибкость",
-        subName: "Индивидуальный (4 занятия)",
-        subPriceNum: 5200,
-        subStartDate: "12.08.2026",
-        validUntil: "10.09.2026",
-        subStatus: "active",
-        visitsTotal: 4,
-        visitsLeft: 3,
-        payStatus: "paid",
-        payAmount: "5 200 ₽",
-        lastPaymentDate: "12.08.2026",
-        parentName: "Марина (мама)",
-        parentPhone: "+7 (999) 777-88-99",
-        medicalNote: "Шпагаты, мягкая растяжка",
-        checkedToday: false,
-        checkinTime: null,
-        history: [
-          { date: "15.08.2026", time: "18:00", trainer: "Анастасия П.", note: "Продольный шпагат" }
-        ]
-      },
-      {
-        id: "st-106",
-        name: "Даниил Ковалёв",
-        age: "10 лет",
-        photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
-        group: "Воздушная гимнастика",
-        subName: "Абонемент «Стандарт 8»",
-        subPriceNum: 4800,
-        subStartDate: "01.08.2026",
-        validUntil: "30.08.2026",
-        subStatus: "warning",
-        visitsTotal: 8,
-        visitsLeft: 1,
-        payStatus: "warning",
-        payAmount: "4 800 ₽",
-        lastPaymentDate: "01.08.2026",
-        parentName: "Виктория (мама)",
-        parentPhone: "+7 (931) 222-33-44",
-        medicalNote: "Справка предоставлена",
-        checkedToday: false,
-        checkinTime: null,
-        history: [
-          { date: "18.08.2026", time: "17:30", trainer: "Михаил С.", note: "Отработка связок" }
-        ]
-      },
-      {
-        id: "st-107",
-        name: "Максим Орлов",
-        age: "12 лет",
-        photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
-        group: "Акробатика Junior",
-        subName: "Абонемент «Стандарт 8»",
-        subPriceNum: 4800,
-        subStartDate: "05.08.2026",
-        validUntil: "05.09.2026",
-        subStatus: "early_terminated",
-        earlyTermDate: "19.08.2026",
-        earlyTermReason: "По заявлению родителя / Переезд семьи",
-        refundAmount: "3 000 ₽",
-        refundType: "refund",
-        visitsTotal: 8,
-        visitsLeft: 0,
-        payStatus: "paid",
-        payAmount: "4 800 ₽",
-        lastPaymentDate: "05.08.2026",
-        parentName: "Татьяна (мама)",
-        parentPhone: "+7 (918) 777-66-55",
-        medicalNote: "Договор расторгнут досрочно",
-        checkedToday: false,
-        checkinTime: null,
-        history: []
-      }
-    ];
-
-    // Базовый журнал операций аудита
-    const DEFAULT_AUDIT_LOG = [
-      {
-        id: "log-1",
-        date: "21.08.2026",
-        time: "11:30",
-        type: "prolong", // prolong | early_term | restore | create
-        studentId: "st-104",
-        studentName: "Артём Васильев",
-        group: "Акробатика Junior",
-        reason: "Болезнь / Медицинская справка",
-        docNumber: "Справка № 142 от педиатра",
-        details: "Продлен с 22.09.2026 до 06.10.2026 (+14 дней). Остаток: 8 занятий.",
-        admin: "Анна Дмитриева"
-      },
-      {
-        id: "log-2",
-        date: "19.08.2026",
-        time: "15:45",
-        type: "early_term",
-        studentId: "st-107",
-        studentName: "Максим Орлов",
-        group: "Акробатика Junior",
-        reason: "По заявлению родителя / Переезд семьи",
-        docNumber: "Заявление вх. №28",
-        details: "Досрочное завершение договора. Возврат средств: 3 000 ₽ (списано 5 занятий).",
-        admin: "Анна Дмитриева"
-      }
-    ];
+    // 1. Демо-набор данных удалён: вместо него используется только реальный API/хранилище данных.
 
     // 2. Инициализация хранилища LocalStorage
     let students = [];
@@ -2934,6 +3310,21 @@
       debt_count: 0,
     };
     let selectedAttendanceDate = new Date();
+    let currentCalendarYear = selectedAttendanceDate.getFullYear();
+    let currentCalendarMonth = selectedAttendanceDate.getMonth();
+    let calendarAttendanceStats = {};
+
+    const MONTH_NAMES_RU = [
+      "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
+      "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"
+    ];
+    const MONTH_NAMES_GENITIVE_RU = [
+      "января", "февраля", "марта", "апреля", "мая", "июня",
+      "июля", "августа", "сентября", "октября", "ноября", "декабря"
+    ];
+    const WEEKDAY_NAMES_RU = [
+      "Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"
+    ];
 
     try {
       const stored = localStorage.getItem("alanko_students_db");
@@ -2951,24 +3342,18 @@
             else s.subStatus = 'active';
           }
         });
-      } else {
-        students = DEFAULT_STUDENTS;
-        localStorage.setItem("alanko_students_db", JSON.stringify(students));
       }
     } catch (e) {
-      students = DEFAULT_STUDENTS;
+      students = [];
     }
 
     try {
       const storedLog = localStorage.getItem("alanko_sub_operations_log");
       if (storedLog) {
         auditLog = JSON.parse(storedLog);
-      } else {
-        auditLog = DEFAULT_AUDIT_LOG;
-        localStorage.setItem("alanko_sub_operations_log", JSON.stringify(auditLog));
       }
     } catch(e) {
-      auditLog = DEFAULT_AUDIT_LOG;
+      auditLog = [];
     }
 
     function formatMoney(value) {
@@ -3037,7 +3422,7 @@
           amount: Number(subscription.amount || 0),
           currency: subscription.currency || 'RUB',
         } : null,
-        subPriceNum: Number(subscription?.amount || 0),
+        subPriceNum: Number(subscription?.amount || student.amount || 0),
         subStartDate: subscription?.valid_from ? formatDateRu(new Date(subscription.valid_from)) : formatDateRu(new Date()),
         validUntil: subscription?.valid_until ? formatDateRu(new Date(subscription.valid_until)) : formatDateRu(new Date()),
         subStatus,
@@ -3045,7 +3430,7 @@
         visitsLeft: remainingVisits || 0,
         visitsUsed: usedVisits,
         payStatus: paymentStatus === 'PAID' ? 'paid' : 'debt',
-        payAmount: subscription?.amount ? formatMoney(subscription.amount) : '0 ₽',
+        payAmount: (subscription?.amount || student.amount) ? formatMoney(subscription?.amount || student.amount) : (student.payAmount || '4 800 ₽'),
         lastPaymentDate: subscription?.paid_at ? formatDateRu(new Date(subscription.paid_at)) : formatDateRu(new Date()),
         parentName: parent.full_name || 'Родитель',
         parentPhone: parent.phone || '+7 (000) 000-00-00',
@@ -3057,11 +3442,216 @@
     }
 
     function refreshSelectedDateDisplay() {
-      const dayEl = document.getElementById('currentDayOfWeek');
-      const dateEl = document.getElementById('currentDateFormatted');
-      if (dayEl) dayEl.textContent = selectedAttendanceDate.toLocaleDateString('ru-RU', { weekday: 'long' });
-      if (dateEl) dateEl.textContent = selectedAttendanceDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+      const dayOfWeek = WEEKDAY_NAMES_RU[selectedAttendanceDate.getDay()];
+      const dayNum = selectedAttendanceDate.getDate();
+      const monthGen = MONTH_NAMES_GENITIVE_RU[selectedAttendanceDate.getMonth()];
+      const year = selectedAttendanceDate.getFullYear();
+
+      // Шапка выбранного дня в карточке
+      const bigNumberEl = document.getElementById('selectedDayBigNumber');
+      const weekdayEl = document.getElementById('selectedDayWeekdayName');
+      const monthYearEl = document.getElementById('selectedDayMonthYear');
+      const badgeEl = document.getElementById('selectedDayRelationBadge');
+      const directPickerEl = document.getElementById('directDatePicker');
+
+      if (bigNumberEl) bigNumberEl.textContent = dayNum;
+      if (weekdayEl) weekdayEl.textContent = dayOfWeek;
+      if (monthYearEl) monthYearEl.textContent = `${monthGen} ${year}`;
+
+      const todayStr = formatDateISO(new Date());
+      const selectedStr = formatDateISO(selectedAttendanceDate);
+
+      if (badgeEl) {
+        if (selectedStr === todayStr) {
+          badgeEl.textContent = "Сегодня";
+          badgeEl.className = "selected-day-badge";
+        } else if (selectedStr < todayStr) {
+          badgeEl.textContent = "Прошедший день";
+          badgeEl.className = "selected-day-badge past";
+        } else {
+          badgeEl.textContent = "Будущая дата";
+          badgeEl.className = "selected-day-badge future";
+        }
+      }
+
+      if (directPickerEl) {
+        directPickerEl.value = selectedStr;
+      }
+
+      // Обновляем состояние кнопок Вчера / Сегодня / Завтра
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      const btnYesterday = document.getElementById('btnYesterday');
+      const btnToday = document.getElementById('btnToday');
+      const btnTomorrow = document.getElementById('btnTomorrow');
+
+      if (btnYesterday) btnYesterday.classList.toggle('active', selectedStr === formatDateISO(yesterday));
+      if (btnToday) btnToday.classList.toggle('active', selectedStr === todayStr);
+      if (btnTomorrow) btnTomorrow.classList.toggle('active', selectedStr === formatDateISO(tomorrow));
     }
+
+    async function loadCalendarStats() {
+      try {
+        const stats = await requestJson('/attendance/calendar-stats');
+        if (stats && typeof stats === 'object') {
+          calendarAttendanceStats = { ...stats };
+          renderCalendar();
+        }
+      } catch (e) {
+        console.warn('Could not load calendar stats:', e);
+      }
+    }
+
+    function renderCalendar() {
+      const grid = document.getElementById('calendarDaysGrid');
+      const monthYearDisplay = document.getElementById('calendarMonthYearDisplay');
+      if (!grid) return;
+
+      if (monthYearDisplay) {
+        monthYearDisplay.textContent = `${MONTH_NAMES_RU[currentCalendarMonth]} ${currentCalendarYear}`;
+      }
+
+      grid.innerHTML = '';
+
+      const todayStr = formatDateISO(new Date());
+      const selectedStr = formatDateISO(selectedAttendanceDate);
+
+      // Первый день месяца
+      const firstDayDate = new Date(currentCalendarYear, currentCalendarMonth, 1);
+      // День недели для 1-го числа (0 = Пн, 6 = Вс)
+      const startDayOfWeek = (firstDayDate.getDay() + 6) % 7;
+
+      // Количество дней в текущем месяце
+      const daysInMonth = new Date(currentCalendarYear, currentCalendarMonth + 1, 0).getDate();
+
+      // Количество дней в предыдущем месяце
+      const daysInPrevMonth = new Date(currentCalendarYear, currentCalendarMonth, 0).getDate();
+
+      // Дни предыдущего месяца для заполнения первой недели
+      for (let i = startDayOfWeek - 1; i >= 0; i--) {
+        const dayNum = daysInPrevMonth - i;
+        const prevMonth = currentCalendarMonth === 0 ? 11 : currentCalendarMonth - 1;
+        const prevYear = currentCalendarMonth === 0 ? currentCalendarYear - 1 : currentCalendarYear;
+        const iso = `${prevYear}-${String(prevMonth + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
+        
+        const cell = document.createElement('div');
+        cell.className = 'cal-day-cell other-month';
+        cell.title = `Перейти к ${dayNum} ${MONTH_NAMES_GENITIVE_RU[prevMonth]}`;
+        cell.onclick = () => selectAttendanceDateByISO(iso);
+        cell.innerHTML = `<span class="cal-day-num">${dayNum}</span>`;
+        grid.appendChild(cell);
+      }
+
+      // Дни текущего месяца
+      for (let day = 1; day <= daysInMonth; day++) {
+        const iso = `${currentCalendarYear}-${String(currentCalendarMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const isSelected = iso === selectedStr;
+        const isToday = iso === todayStr;
+        const checkinCount = calendarAttendanceStats[iso] || 0;
+
+        const cell = document.createElement('div');
+        cell.className = 'cal-day-cell';
+        if (isSelected) cell.classList.add('selected');
+        if (isToday) cell.classList.add('today');
+
+        let badgeHtml = '';
+        if (checkinCount > 0) {
+          badgeHtml = `<span class="cal-day-badge-count" title="${checkinCount} ${getNoun(checkinCount, 'отметка', 'отметки', 'отметок')}">${checkinCount}</span>`;
+        } else if (isSelected) {
+          badgeHtml = `<span class="cal-day-dot"></span>`;
+        }
+
+        cell.innerHTML = `
+          <span class="cal-day-num">${day}</span>
+          ${badgeHtml}
+        `;
+        cell.onclick = () => selectAttendanceDateByISO(iso);
+        grid.appendChild(cell);
+      }
+
+      // Дни следующего месяца для завершения сетки (до 35 или 42)
+      const totalCells = grid.children.length;
+      const targetCells = totalCells > 35 ? 42 : 35;
+      const nextMonthDaysToAdd = targetCells - totalCells;
+
+      for (let day = 1; day <= nextMonthDaysToAdd; day++) {
+        const nextMonth = currentCalendarMonth === 11 ? 0 : currentCalendarMonth + 1;
+        const nextYear = currentCalendarMonth === 11 ? currentCalendarYear + 1 : currentCalendarYear;
+        const iso = `${nextYear}-${String(nextMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+        const cell = document.createElement('div');
+        cell.className = 'cal-day-cell other-month';
+        cell.title = `Перейти к ${day} ${MONTH_NAMES_GENITIVE_RU[nextMonth]}`;
+        cell.onclick = () => selectAttendanceDateByISO(iso);
+        cell.innerHTML = `<span class="cal-day-num">${day}</span>`;
+        grid.appendChild(cell);
+      }
+    }
+
+    window.selectAttendanceDateByISO = function(isoDate) {
+      if (!isoDate) return;
+      const parts = isoDate.split('-');
+      if (parts.length !== 3) return;
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1;
+      const day = parseInt(parts[2], 10);
+
+      selectedAttendanceDate = new Date(year, month, day);
+      currentCalendarYear = year;
+      currentCalendarMonth = month;
+
+      refreshSelectedDateDisplay();
+      renderCalendar();
+      loadAttendanceData();
+    };
+
+    window.prevCalendarMonth = function() {
+      currentCalendarMonth--;
+      if (currentCalendarMonth < 0) {
+        currentCalendarMonth = 11;
+        currentCalendarYear--;
+      }
+      renderCalendar();
+    };
+
+    window.nextCalendarMonth = function() {
+      currentCalendarMonth++;
+      if (currentCalendarMonth > 11) {
+        currentCalendarMonth = 0;
+        currentCalendarYear++;
+      }
+      renderCalendar();
+    };
+
+    window.goToTodayAttendance = function() {
+      const today = new Date();
+      selectedAttendanceDate = today;
+      currentCalendarYear = today.getFullYear();
+      currentCalendarMonth = today.getMonth();
+      refreshSelectedDateDisplay();
+      renderCalendar();
+      loadAttendanceData();
+    };
+
+    window.changeAttendanceDateByOffset = function(offset) {
+      const target = new Date(selectedAttendanceDate);
+      target.setDate(target.getDate() + offset);
+      selectedAttendanceDate = target;
+      currentCalendarYear = target.getFullYear();
+      currentCalendarMonth = target.getMonth();
+      refreshSelectedDateDisplay();
+      renderCalendar();
+      loadAttendanceData();
+    };
+
+    window.handleDirectDateChange = function(isoValue) {
+      if (isoValue) {
+        selectAttendanceDateByISO(isoValue);
+      }
+    };
 
     async function loadAttendanceData() {
       const date = formatDateISO(selectedAttendanceDate);
@@ -3086,21 +3676,21 @@
         renderStudents();
         renderSubscriptions();
       } catch (error) {
-        console.warn('Backend attendance loading failed, using fallback data:', error);
-        students = DEFAULT_STUDENTS.map(item => ({ ...item }));
+        console.warn('Backend attendance loading failed:', error);
+        students = [];
         attendanceSummary = {
           checked_count: 0,
-          total_students: students.length,
-          active_subscriptions: students.filter(s => s.subStatus !== 'debt' && s.subStatus !== 'early_terminated').length,
-          warning_subscriptions: students.filter(s => s.subStatus === 'warning').length,
-          debt_count: students.filter(s => s.subStatus === 'debt' || s.subStatus === 'early_terminated').length,
+          total_students: 0,
+          active_subscriptions: 0,
+          warning_subscriptions: 0,
+          debt_count: 0,
         };
         saveStudents();
         updateMetrics();
         updateSubMetrics();
         renderStudents();
         renderSubscriptions();
-        showToast(`Данные отображаются в режиме демо: ${error.message}`, 'warning');
+        showToast('Не удалось загрузить данные с сервера. Проверьте подключение и попробуйте снова.', 'warning');
       }
     }
 
@@ -3231,6 +3821,44 @@
     }
 
     // 6. Обновление метрик
+    function renderSelectedDayAttendanceRoster() {
+      const roster = document.getElementById("selectedDayAttendanceRoster");
+      if (!roster) return;
+
+      const marked = students.filter(student => student.checkedToday).sort((a, b) => a.name.localeCompare(b.name, 'ru'));
+      const absent = students.filter(student => !student.checkedToday).sort((a, b) => a.name.localeCompare(b.name, 'ru'));
+
+      const renderPills = (items, present) => {
+        if (!items.length) {
+          return `<div class="selected-day-empty">${present ? 'Пока никто не отмечен.' : 'Все ученики уже отмечены.'}</div>`;
+        }
+
+        return `<div class="selected-day-roster-list">${items.map(student => `
+          <span class="selected-day-pill ${present ? 'present' : 'absent'}">
+            <iconify-icon icon="${present ? 'solar:check-circle-bold' : 'solar:close-circle-bold'}" style="font-size: 12px;"></iconify-icon>
+            ${student.name}
+          </span>
+        `).join('')}</div>`;
+      };
+
+      roster.innerHTML = `
+        <div class="selected-day-roster-group">
+          <div class="selected-day-roster-header">
+            <span>Отмечены</span>
+            <strong>${marked.length}</strong>
+          </div>
+          ${renderPills(marked, true)}
+        </div>
+        <div class="selected-day-roster-group">
+          <div class="selected-day-roster-header">
+            <span>Не отмечены</span>
+            <strong>${absent.length}</strong>
+          </div>
+          ${renderPills(absent, false)}
+        </div>
+      `;
+    }
+
     function updateMetrics() {
       const total = attendanceSummary.total_students > 0 ? attendanceSummary.total_students : students.length;
       const checked = attendanceSummary.checked_count > 0 || attendanceSummary.total_students > 0
@@ -3245,6 +3873,35 @@
       const debts = attendanceSummary.debt_count > 0 || attendanceSummary.total_students > 0
         ? attendanceSummary.debt_count
         : students.filter(s => s.subStatus === "debt" || s.visitsLeft === 0 || s.payStatus === "debt").length;
+
+      // Обновляем показатели в карточке выбранного дня календаря
+      const ratioEl = document.getElementById("selectedDayAttendanceRatio");
+      const progressFillEl = document.getElementById("selectedDayProgressBar");
+      const summaryTextEl = document.getElementById("selectedDaySummaryText");
+
+      if (ratioEl) ratioEl.textContent = `${checked} / ${total}`;
+      if (progressFillEl) {
+        const pct = total > 0 ? Math.round((checked / total) * 100) : 0;
+        progressFillEl.style.width = `${pct}%`;
+      }
+      if (summaryTextEl) {
+        const dateRu = `${selectedAttendanceDate.getDate()} ${MONTH_NAMES_GENITIVE_RU[selectedAttendanceDate.getMonth()]}`;
+        if (total === 0) {
+          summaryTextEl.textContent = `На ${dateRu} учеников в базе пока нет.`;
+        } else if (checked === total && total > 0) {
+          summaryTextEl.textContent = `Все ${total} учеников уже присутствуют на занятии!`;
+        } else {
+          summaryTextEl.textContent = `Отмечено ${checked} из ${total} учеников на ${dateRu}.`;
+        }
+      }
+
+      renderSelectedDayAttendanceRoster();
+
+      // Сохраняем в статистику календаря и обновляем визуальные метки
+      const currentDateISO = formatDateISO(selectedAttendanceDate);
+      if (checked > 0 || calendarAttendanceStats[currentDateISO] !== undefined) {
+        calendarAttendanceStats[currentDateISO] = checked;
+      }
 
       const statCheckedCount = document.getElementById("statCheckedCount");
       const statActiveSubs = document.getElementById("statActiveSubs");
@@ -3445,7 +4102,10 @@
                   <iconify-icon icon="solar:ticket-linear" style="color: var(--pal-light-green);"></iconify-icon>
                   ${student.subName}
                 </span>
-                <span class="payment-tag ${tagClass}">${tagText}</span>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <span class="sub-price-badge" title="Стоимость абонемента">${student.payAmount}</span>
+                  <span class="payment-tag ${tagClass}">${tagText}</span>
+                </div>
               </div>
 
               <div class="visits-progress-area">
@@ -3530,7 +4190,12 @@
             </div>
           </td>
           <td><span class="group-pill">${student.group}</span></td>
-          <td>${student.subName}</td>
+          <td>
+            <div style="font-weight: 600;">${student.subName}</div>
+            <div style="font-size: 0.76rem; color: var(--pal-light-green); font-weight: 700; margin-top: 2px;">
+              <iconify-icon icon="solar:tag-price-linear" style="font-size: 11px; vertical-align: -1px;"></iconify-icon> ${student.payAmount}
+            </div>
+          </td>
           <td>
             <span style="font-weight: 700; color: ${student.visitsLeft === 0 ? 'var(--pal-accent-red)' : (student.visitsLeft <= 2 ? 'var(--pal-accent-amber)' : 'var(--pal-light-green)')};">
               ${student.visitsLeft} / ${student.visitsTotal}
@@ -3674,12 +4339,15 @@
 
             <!-- Блок абонемента -->
             <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 12px 14px; margin-bottom: 10px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                 <span style="font-weight: 600; font-size: 0.86rem; color: var(--pal-light-green); display: flex; align-items: center; gap: 5px;">
                   <iconify-icon icon="solar:ticket-bold"></iconify-icon>
                   ${student.subName}
                 </span>
-                <span style="font-weight: 700; font-size: 0.84rem; color: var(--pal-off-white);">${student.payAmount}</span>
+                <span class="sub-price-badge" title="Стоимость абонемента">
+                  <iconify-icon icon="solar:tag-price-bold" style="font-size: 11px;"></iconify-icon>
+                  ${student.payAmount}
+                </span>
               </div>
 
               <!-- Прогресс посещений -->
@@ -3783,7 +4451,9 @@
           <td><span class="group-pill">${student.group}</span></td>
           <td>
             <div style="font-weight: 600;">${student.subName}</div>
-            <div style="font-size: 0.75rem; color: var(--text-muted);">${student.payAmount}</div>
+            <div style="font-size: 0.76rem; color: var(--pal-light-green); font-weight: 700; margin-top: 2px;">
+              <iconify-icon icon="solar:tag-price-linear" style="font-size: 11px; vertical-align: -1px;"></iconify-icon> ${student.payAmount}
+            </div>
           </td>
           <td>
             <div style="font-size: 0.82rem;">с ${student.subStartDate || '15.08.2026'} по ${student.subStatus === 'prolonged' ? `<strong style="color:#8bb9fe;">${student.prolongedUntil}</strong>` : student.validUntil}</div>
@@ -4331,7 +5001,10 @@
         <div class="detail-grid">
           <div class="detail-field">
             <div class="field-title">Текущий абонемент</div>
-            <div class="field-val">${student.subName}</div>
+            <div class="field-val" style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+              <span>${student.subName}</span>
+              <span class="sub-price-badge">${student.payAmount}</span>
+            </div>
           </div>
           <div class="detail-field">
             <div class="field-title">Посещено занятий</div>
@@ -4611,6 +5284,8 @@
 
       // Инициализация при старте
       refreshSelectedDateDisplay();
+      renderCalendar();
+      loadCalendarStats();
       loadAttendanceData();
     });
 
@@ -4643,6 +5318,8 @@
 
     // Первичный вызов
     refreshSelectedDateDisplay();
+    renderCalendar();
+    loadCalendarStats();
     updateMetrics();
     updateSubMetrics();
     renderStudents();

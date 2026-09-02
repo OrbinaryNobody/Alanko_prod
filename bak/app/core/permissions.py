@@ -66,6 +66,18 @@ def require_permission(permission: str):
     return dependency
 
 
+def require_student_consultation_booking():
+    def dependency(ctx: AccessContext = Depends(get_access_context)):
+        if not ctx.has_role("student"):
+            raise HTTPException(
+                status_code=403,
+                detail="Only students can book consultations",
+            )
+        return ctx
+
+    return dependency
+
+
 def require_any_permission(*permissions: str):
     def dependency(ctx: AccessContext = Depends(get_access_context)):
         if not ctx.is_admin and not ctx.can_any(*permissions):

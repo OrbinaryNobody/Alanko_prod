@@ -12,8 +12,30 @@ from models.domains.auth import Role, User, UserRole
 SUPPORTED_ROLES = ("student", "admin", "teacher", "secretary")
 
 
+def ensure_user_with_role(db, *, email: str, password: str, first_name: str, last_name: str | None, middle_name: str, role_name: str) -> None:
+    """Create a user with the requested role if it does not already exist."""
+    role = db.query(Role).filter(Role.name == role_name).one()
+    user = db.query(User).filter(User.email == email).first()
+    if user:
+        has_role = any(user_role.role_id == role.id for user_role in user.roles)
+        if not has_role:
+            db.add(UserRole(user_id=user.id, role_id=role.id))
+        return
+
+    user = User(
+        email=email,
+        first_name=first_name,
+        last_name=last_name,
+        middle_name=middle_name,
+        password_hash=hash_password(password),
+    )
+    db.add(user)
+    db.flush()
+    db.add(UserRole(user_id=user.id, role_id=role.id))
+
+
 def init_db() -> None:
-    """Create the schema, roles, and the configured first administrator."""
+    """Create the schema, roles, and the configured first administrator plus default secretary."""
     Base.metadata.create_all(bind=engine)
     with engine.begin() as connection:
         connection.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS image_url TEXT"))
@@ -41,18 +63,29 @@ def init_db() -> None:
             has_admin_role = any(user_role.role_id == admin_role.id for user_role in admin.roles)
             if not has_admin_role:
                 raise RuntimeError(f"Configured ADMIN_EMAIL belongs to a non-admin user: {settings.admin_email}")
-            return
+        else:
+            admin = User(
+                email=settings.admin_email,
+                first_name="Алина",
+                last_name="Комоватова",
+                middle_name="Анатольевна",
+                password_hash=hash_password(settings.admin_password),
+            )
+            db.add(admin)
+            db.flush()
+            db.add(UserRole(user_id=admin.id, role_id=admin_role.id))
 
-        admin = User(
-            email=settings.admin_email,
-            first_name="Алина",
-            last_name="Комоватова",
-            middle_name="Анатольевна",
-            password_hash=hash_password(settings.admin_password),
+        secretary_email = "secretary@alanko.com"
+        secretary_password = "Secret123!"
+        ensure_user_with_role(
+            db,
+            email=secretary_email,
+            password=secretary_password,
+            first_name="Секретарь",
+            last_name="Служебный",
+            middle_name="",
+            role_name="secretary",
         )
-        db.add(admin)
-        db.flush()
-        db.add(UserRole(user_id=admin.id, role_id=admin_role.id))
 
 
 if __name__ == "__main__":

@@ -10,11 +10,6 @@ from media.facade import media_facade
 router = APIRouter(prefix="/media", tags=["media"])
 
 
-@router.get("/health")
-def health():
-    return {"status": "ok", "service": "media"}
-
-
 @router.post("/upload")
 async def upload_media(
     file: UploadFile = File(...),

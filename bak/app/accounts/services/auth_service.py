@@ -387,6 +387,10 @@ class AuthService:
             return [
                 Permission.VIEW_ATTENDANCE,
                 Permission.MANAGE_ATTENDANCE,
+                Permission.VIEW_GROUPS,
+                Permission.MANAGE_GROUPS,
+                Permission.VIEW_CONSULTATIONS,
+                Permission.MANAGE_CONSULTATIONS,
             ]
 
         return []

@@ -5,27 +5,33 @@ document.addEventListener('DOMContentLoaded', () => {
   const tabs = document.querySelectorAll('.tab-btn');
   tabs.forEach(tab => {
     tab.addEventListener('click', (e) => {
-      const tabId = e.target.getAttribute('data-tab');
-      handleTabChange(tabId);
+      const targetBtn = e.target.closest('.tab-btn');
+      const tabId = targetBtn ? targetBtn.getAttribute('data-tab') : null;
+      if (tabId) {
+        handleTabChange(tabId);
+      }
     });
   });
   
   // Инициализация при загрузке
   const activeTab = document.querySelector('.tab-btn.active');
   if (activeTab) {
-    handleTabChange(activeTab.getAttribute('data-tab'));
+    const tabId = activeTab.getAttribute('data-tab');
+    if (tabId) handleTabChange(tabId);
   }
 });
 
 function handleTabChange(tabId) {
-  if (tabId === 'tab-students') loadAdminStudents();
-  if (tabId === 'tab-teachers') loadAdminTeachers();
-  if (tabId === 'tab-programs') loadAdminPrograms();
-  if (tabId === 'tab-consultations') loadAdminConsultations();
-  if (tabId === 'tab-calendar') loadAdminCalendar();
-  if (tabId === 'tab-achievements') loadAdminAchievements();
-  if (tabId === 'tab-subscriptions') loadAdminSubscriptions();
+  if (tabId === 'tab-students' && typeof loadAdminStudents === 'function') loadAdminStudents();
+  if (tabId === 'tab-teachers' && typeof loadAdminTeachers === 'function') loadAdminTeachers();
+  if (tabId === 'tab-programs' && typeof loadAdminPrograms === 'function') loadAdminPrograms();
+  if (tabId === 'tab-consultations' && typeof loadAdminConsultations === 'function') loadAdminConsultations();
+  if (tabId === 'tab-calendar' && typeof loadAdminCalendar === 'function') loadAdminCalendar();
+  if (tabId === 'tab-achievements' && typeof loadAdminAchievements === 'function') loadAdminAchievements();
+  if (tabId === 'tab-subscriptions' && typeof loadAdminSubscriptions === 'function') loadAdminSubscriptions();
 }
+
+window.handleTabChange = handleTabChange;
 
 let adminCalendarWeekStart = getAdminCalendarWeekStart(new Date());
 let adminCalendarFilter = 'all';
@@ -39,7 +45,10 @@ function getAdminCalendarWeekStart(value) {
 }
 
 function formatCalendarDate(value) {
-  return value.toISOString().slice(0, 10);
+  const y = value.getFullYear();
+  const m = String(value.getMonth() + 1).padStart(2, '0');
+  const d = String(value.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
 }
 
 function escapeCalendarText(value) {
@@ -49,10 +58,21 @@ function escapeCalendarText(value) {
 }
 
 function formatCalendarEventDate(value) {
+  if (typeof value === 'string' && value.includes('T')) {
+    const [dPart] = value.split('T');
+    const [y, m, d] = dPart.split('-').map(Number);
+    const dateObj = new Date(y, m - 1, d);
+    return dateObj.toLocaleDateString('ru-RU', { day: '2-digit', month: 'short' });
+  }
   return new Date(value).toLocaleDateString('ru-RU', { day: '2-digit', month: 'short' });
 }
 
 function formatCalendarEventTime(value) {
+  if (typeof value === 'string' && value.includes('T')) {
+    const [, tPart] = value.split('T');
+    const parts = tPart.split(':');
+    return `${parts[0]}:${parts[1]}`;
+  }
   return new Date(value).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
 }
 
@@ -63,10 +83,10 @@ window.loadAdminCalendar = async function() {
   const dateToValue = new Date(adminCalendarWeekStart);
   dateToValue.setDate(dateToValue.getDate() + 6);
   const dateTo = formatCalendarDate(dateToValue);
-  container.innerHTML = '<div style="padding: 32px; color: var(--text-muted);">Загрузка календаря...</div>';
+  container.innerHTML = '<div style="padding: 32px; color: var(--text-muted); text-align: center;"><iconify-icon icon="solar:spinner-bold" class="spin"></iconify-icon> Загрузка календаря...</div>';
   try {
     const response = await requestJson(`/calendar/events?date_from=${dateFrom}&date_to=${dateTo}`);
-    renderAdminCalendar(response.items || []);
+    renderAdminCalendar(response.items || response.data || []);
   } catch (error) {
     container.innerHTML = `<div style="padding: 32px; color: var(--pal-accent-red);">Не удалось загрузить календарь: ${escapeCalendarText(error.message)}</div>`;
   }
@@ -81,20 +101,33 @@ function renderAdminCalendar(events) {
   if (label) label.textContent = `${adminCalendarWeekStart.toLocaleDateString('ru-RU', { day: '2-digit', month: 'long' })} - ${weekEnd.toLocaleDateString('ru-RU', { day: '2-digit', month: 'long', year: 'numeric' })}`;
   const filtered = adminCalendarFilter === 'all' ? events : events.filter(event => event.type === adminCalendarFilter);
   if (!filtered.length) {
-    container.innerHTML = '<div style="text-align: center; padding: 60px 0; color: var(--text-muted);">Событий на этой неделе нет.</div>';
+    container.innerHTML = '<div style="text-align: center; padding: 60px 0; color: var(--text-muted);"><iconify-icon icon="solar:calendar-minimalistic-bold-duotone" style="font-size: 2.5rem; display: block; margin-bottom: 8px; opacity: 0.5;"></iconify-icon>Событий на этой неделе нет.</div>';
     return;
   }
   container.innerHTML = filtered.map(event => {
     const typeLabel = event.type === 'consultation' ? 'Консультация' : 'Занятие';
     const tagClass = event.type === 'consultation' ? 'tag-class' : 'tag-class';
-    const eventDate = new Date(event.start_at);
+    let dayNum = '01';
+    let monthStr = 'Сен';
+    if (typeof event.start_at === 'string' && event.start_at.includes('T')) {
+      const [dPart] = event.start_at.split('T');
+      const [y, m, d] = dPart.split('-').map(Number);
+      const dateObj = new Date(y, m - 1, d);
+      dayNum = String(d).padStart(2, '0');
+      monthStr = dateObj.toLocaleDateString('ru-RU', { month: 'short' });
+    } else {
+      const eventDate = new Date(event.start_at);
+      dayNum = String(eventDate.getDate()).padStart(2, '0');
+      monthStr = eventDate.toLocaleDateString('ru-RU', { month: 'short' });
+    }
+    const timeStr = `${escapeCalendarText(formatCalendarEventTime(event.start_at))} - ${escapeCalendarText(formatCalendarEventTime(event.end_at))}`;
     return `<div class="agenda-item">
-      <div class="agenda-date"><span class="agenda-day">${String(eventDate.getDate()).padStart(2, '0')}</span><span class="agenda-month">${escapeCalendarText(eventDate.toLocaleDateString('ru-RU', { month: 'short' }))}</span></div>
+      <div class="agenda-date"><span class="agenda-day">${dayNum}</span><span class="agenda-month">${escapeCalendarText(monthStr)}</span></div>
       <div class="agenda-timeline"><div class="agenda-dot pulse"></div><div class="agenda-line"></div></div>
       <div class="agenda-card">
-        <div class="agenda-card-header"><span class="agenda-time"><iconify-icon icon="solar:clock-circle-bold-duotone"></iconify-icon> ${escapeCalendarText(formatCalendarEventTime(event.start_at))} - ${escapeCalendarText(formatCalendarEventTime(event.end_at))}</span><span class="tag-sm ${tagClass}">${typeLabel}</span></div>
+        <div class="agenda-card-header"><span class="agenda-time"><iconify-icon icon="solar:clock-circle-bold-duotone"></iconify-icon> ${timeStr}</span><span class="tag-sm ${tagClass}">${typeLabel}</span></div>
         <h4 class="agenda-title">${escapeCalendarText(event.title)}</h4>
-        <p class="agenda-desc">${event.status === 'CANCELLED' ? 'Отменено' : event.type === 'consultation' ? 'Индивидуальная консультация' : 'Групповое занятие'}</p>
+        <p class="agenda-desc">${event.status === 'CANCELLED' ? 'Отменено' : (event.description || (event.type === 'consultation' ? 'Индивидуальная консультация' : `Групповое занятие • ${event.teacher_name || 'Преподаватель'} • ${event.room || 'Зал 1'}`))}</p>
       </div>
     </div>`;
   }).join('');
@@ -143,10 +176,12 @@ function renderProgramGroups(card, program, groups) {
   programGroups.forEach(group => {
     const row = document.createElement('div');
     row.className = 'group-row';
+    const studentCount = group.student_count !== undefined ? group.student_count : (Array.isArray(group.students) ? group.students.length : 0);
+    const scheduleInfo = (group.days && group.time) ? `${group.days} • ${group.time}` : (group.days || group.time || 'Расписание не задано');
     row.innerHTML = `
       <div class="group-info">
         <div class="group-name"></div>
-        <div class="group-students">Статус: ${group.status || 'active'}</div>
+        <div class="group-students">${studentCount} учеников • ${escapeCalendarText(scheduleInfo)}</div>
       </div>
       <div class="dir-actions">
         <button type="button" class="btn-sm primary group-journal-btn"><iconify-icon icon="solar:notebook-bold"></iconify-icon> Журнал</button>

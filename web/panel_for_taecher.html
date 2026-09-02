@@ -2632,9 +2632,6 @@ select.custom-input option {
                     <span class="file-ext">MP4</span>
                     <span class="file-name">reference_fl...</span>
                   </div>
-<button class="add-material-btn" onclick="alert('Вызов стандартного окна загрузки файла')">
-  <iconify-icon icon="solar:add-folder-bold"></iconify-icon> Добавить файл
-</button>
                 </div>
               </div>
             </div>
@@ -2651,14 +2648,7 @@ select.custom-input option {
         <h3 class="modal-section-title">
           <div class="title-left"><iconify-icon icon="solar:users-group-two-rounded-bold-duotone"></iconify-icon> Группы программы</div>
         </h3>
-        <div class="program-groups-list" id="editProgramGroupsList">
-          <div class="program-group-card" onclick="openGroupManageModal('Contemporary Mid')">
-            <div class="program-group-info">
-              <span class="program-group-name">Contemporary Mid</span>
-              <span class="program-group-meta">14 учеников • Пн, Ср 18:00</span>
-            </div>
-          </div>
-        </div>
+        <div class="program-groups-list" id="editProgramGroupsList"></div>
       </div>
     </div>
   </div>
@@ -3030,10 +3020,7 @@ select.custom-input option {
       <!-- Справа: Выбранные ученики -->
       <aside class="selected-panel">
         <h3 class="modal-section-title" style="margin-bottom: 16px; font-size: 1.1rem;">К добавлению: <span id="selectedCountBadge" style="color: var(--pal-light-green);">0</span></h3>
-        <div class="selected-list" id="selectedStudentsList">
-          <!-- Сюда падают выбранные -->
-          <div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; margin-top: 40px;">Выберите учеников из списка слева</div>
-        </div>
+        <div class="selected-list" id="selectedStudentsList"></div>
         <button class="btn btn-primary" style="width: 100%; justify-content: center; padding: 16px;" onclick="acceptStudentChanges()">
           <iconify-icon icon="solar:check-circle-bold"></iconify-icon> Принять изменения
         </button>
@@ -3275,7 +3262,7 @@ select.custom-input option {
       </div>
       <div class="header-actions">
         <!-- Кнопка сохранения закроет окно (сюда позже добавите JS логику сохранения) -->
-        <button class="btn btn-primary btn-sm" onclick="alert('Новый профиль ученика отправлен на согласование!'); closeModal('addNewStudentModal')">
+        <button class="btn btn-primary btn-sm" onclick="closeModal('addNewStudentModal')">
           <iconify-icon icon="solar:send-square-bold"></iconify-icon> Отправить на согласование
         </button>
         <button class="btn-close" onclick="closeModal('addNewStudentModal')">
@@ -3378,7 +3365,7 @@ select.custom-input option {
         </div>
       </div>
       <div class="header-actions">
-        <button class="btn btn-primary btn-sm" onclick="alert('Отметки о присутствии сохранены!'); closeModal('manageConsultationModal')">
+        <button class="btn btn-primary btn-sm" onclick="closeModal('manageConsultationModal')">
           <iconify-icon icon="solar:diskette-bold"></iconify-icon> Сохранить отметки
         </button>
         <button class="btn-close" onclick="closeModal('manageConsultationModal')">
@@ -3490,7 +3477,7 @@ select.custom-input option {
         <div class="modal-subtitle">Назначение или создание профиля преподавателя для группы</div>
       </div>
       <div class="header-actions">
-        <button class="btn btn-primary btn-sm" onclick="alert('Назначение преподавателя отправлено на согласование!'); closeModal('assignTeacherModal')">
+        <button class="btn btn-primary btn-sm" onclick="closeModal('assignTeacherModal')">
           <iconify-icon icon="solar:send-square-bold"></iconify-icon> Отправить на согласование
         </button>
         <button class="btn-close" onclick="closeModal('assignTeacherModal')">
@@ -3533,42 +3520,7 @@ select.custom-input option {
 
       <div>
         <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; color: var(--text-main);">База преподавателей</h3>
-        <div class="directory-list">
-          <div class="directory-row">
-            <div class="dir-identity">
-              <div class="dir-avatar">
-                <div style="width: 100%; height: 100%; background: var(--pal-mid-green); display: flex; align-items: center; justify-content: center; font-weight: 700;">МС</div>
-              </div>
-              <div class="dir-info">
-                <span class="dir-name">Смирнова Мария Ивановна</span>
-                <span class="dir-meta">Старший хореограф • Contemporary</span>
-              </div>
-            </div>
-            <div class="dir-actions" style="align-items: center;">
-              <button class="btn-sm primary">
-                <iconify-icon icon="solar:check-circle-bold"></iconify-icon> Назначен
-              </button>
-              <button class="btn-icon-danger" title="Убрать из группы" style="padding: 8px;">
-                <iconify-icon icon="solar:trash-bin-trash-bold"></iconify-icon>
-              </button>
-            </div>
-          </div>
-
-          <div class="directory-row">
-            <div class="dir-identity">
-              <div class="dir-avatar">
-                <div style="width: 100%; height: 100%; background: #3d1a1a; color: #EF6C6C; display: flex; align-items: center; justify-content: center; font-weight: 700;">ЕВ</div>
-              </div>
-              <div class="dir-info">
-                <span class="dir-name">Волков Евгений Александрович</span>
-                <span class="dir-meta">Хореограф • Kids Choreo</span>
-              </div>
-            </div>
-            <div class="dir-actions">
-              <button class="btn-sm">Выбрать</button>
-            </div>
-          </div>
-        </div>
+        <div class="directory-list"></div>
       </div>
     </div>
   </div>
@@ -3778,7 +3730,7 @@ select.custom-input option {
     async function openJournalModal(groupId, groupName, studentsCount = 0) {
       if (!Number(groupId)) return;
       modalTitle.innerText = groupName || 'Группа';
-      modalCount.innerHTML = '<iconify-icon icon="solar:refresh-bold"></iconify-icon> Загрузка...';
+      modalCount.innerHTML = '';
       journalModal.classList.add('active');
       document.body.style.overflow = 'hidden';
 
@@ -4395,14 +4347,6 @@ const dbStudentsList = document.getElementById('dbStudentsList');
 const selectedStudentsList = document.getElementById('selectedStudentsList');
 const selectedCountBadge = document.getElementById('selectedCountBadge');
 
-// Мок-база данных детей
-const mockDatabase = [
-  { id: 101, name: "София Макарова", age: 14, programs: "Hip-Hop", photo: "СМ", color: "B0D182" },
-  { id: 102, name: "Иван Петров", age: 15, programs: "Нет активных", photo: "ИП", color: "EF6C6C" },
-  { id: 103, name: "Елизавета Ким", age: 12, programs: "Kids Choreo", photo: "ЕК", color: "82B1FF" },
-  { id: 104, name: "Артём Лебедев", age: 16, programs: "Contemporary", photo: "АЛ", color: "F4F1EA" }
-];
-
 let selectedStudentsMap = new Map();
 
 function openAddStudentsModal() {
@@ -4414,33 +4358,8 @@ function closeAddStudentsModal() {
   addStudentsModal.classList.remove('active');
 }
 
-// Рендер центрального списка всех учеников
 function renderDbStudents() {
   dbStudentsList.innerHTML = '';
-  mockDatabase.forEach(student => {
-    const isSelected = selectedStudentsMap.has(student.id);
-    
-    const card = document.createElement('div');
-    card.className = `student-select-card ${isSelected ? 'selected' : ''}`;
-    card.onclick = () => toggleStudentSelection(student, card);
-    
-    card.innerHTML = `
-      <div class="student-photo" style="background: rgba(255,255,255,0.05); color: #${student.color}; font-weight: bold;">
-        ${student.photo}
-      </div>
-      <div class="student-card-info">
-        <div class="student-card-name">${student.name}</div>
-        <div class="student-card-meta">
-          <span>Возраст: ${student.age} лет</span>
-          <span>Программы: ${student.programs}</span>
-        </div>
-      </div>
-      <div class="checkbox-circle">
-        <iconify-icon icon="solar:check-read-bold"></iconify-icon>
-      </div>
-    `;
-    dbStudentsList.appendChild(card);
-  });
 }
 
 // Логика выбора галочкой
@@ -4466,7 +4385,7 @@ function updateSelectedPanel() {
   selectedCountBadge.innerText = selectedStudentsMap.size;
   
   if (selectedStudentsMap.size === 0) {
-    selectedStudentsList.innerHTML = '<div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; margin-top: 40px;">Выберите учеников из списка слева</div>';
+    selectedStudentsList.innerHTML = '';
     return;
   }
 
@@ -5842,15 +5761,6 @@ function openStudentDossier(name, age, group) {
 function closeStudentDossier() {
   dossierModal.classList.remove('active');
   document.body.style.overflow = '';
-}
-
-// Заглушки для кнопок редактирования и удаления
-function editStudentInfo() {
-  alert('Отправка запроса на редактирование профиля ученика...');
-}
-
-function deleteStudent() {
-  alert('Отправлен запрос на удаление ученика.');
 }
 
 // Закрытие по клику вне области для окна досье

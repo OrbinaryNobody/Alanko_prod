@@ -278,42 +278,44 @@ class GroupService:
         valid_until: date | None,
     ):
         valid_from = valid_from or date.today()
-        group = self.ensure_group_access(db, ctx=ctx, group_id=group_id)
-        teacher = db.query(User).join(User.roles).join(Role).filter(
-            User.id == teacher_id,
-            Role.name == "teacher",
-        ).first()
-        if not teacher:
-            raise PermissionDenied("Teacher not found")
+        with UnitOfWork(db):
+            group = self.ensure_group_access(db, ctx=ctx, group_id=group_id)
+            teacher = db.query(User).join(User.roles).join(Role).filter(
+                User.id == teacher_id,
+                Role.name == "teacher",
+            ).first()
+            if not teacher:
+                raise PermissionDenied("Teacher not found")
 
-        schedules = group_repository.list_schedules(db, group_id=group_id)
-        for schedule in schedules:
-            if schedule.status != "ACTIVE" or schedule.weekday != weekday:
-                continue
-            periods_overlap = (
-                schedule.valid_from <= (valid_until or date.max)
-                and (schedule.valid_until is None or schedule.valid_until >= valid_from)
-            )
-            times_overlap = schedule.start_time < end_time and schedule.end_time > start_time
-            if periods_overlap and times_overlap:
-                raise PermissionDenied("Schedule overlaps with an existing group lesson")
+            schedules = group_repository.list_schedules(db, group_id=group_id)
+            for schedule in schedules:
+                if schedule.status != "ACTIVE" or schedule.weekday != weekday:
+                    continue
+                periods_overlap = (
+                    schedule.valid_from <= (valid_until or date.max)
+                    and (schedule.valid_until is None or schedule.valid_until >= valid_from)
+                )
+                times_overlap = schedule.start_time < end_time and schedule.end_time > start_time
+                if periods_overlap and times_overlap:
+                    raise PermissionDenied("Schedule overlaps with an existing group lesson")
 
-        return group_repository.create_schedule(db, GroupSchedule(
-            group_id=group.id,
-            teacher_id=teacher_id,
-            weekday=weekday,
-            start_time=start_time,
-            end_time=end_time,
-            valid_from=valid_from,
-            valid_until=valid_until,
-        ))
+            return group_repository.create_schedule(db, GroupSchedule(
+                group_id=group.id,
+                teacher_id=teacher_id,
+                weekday=weekday,
+                start_time=start_time,
+                end_time=end_time,
+                valid_from=valid_from,
+                valid_until=valid_until,
+            ))
 
     def delete_schedule(self, db: Session, *, ctx: AccessContext, schedule_id: int):
-        schedule = group_repository.get_schedule(db, schedule_id=schedule_id)
-        if not schedule:
-            raise PermissionDenied("Schedule not found")
-        self.ensure_group_access(db, ctx=ctx, group_id=schedule.group_id)
-        group_repository.delete_schedule(db, schedule)
+        with UnitOfWork(db):
+            schedule = group_repository.get_schedule(db, schedule_id=schedule_id)
+            if not schedule:
+                raise PermissionDenied("Schedule not found")
+            self.ensure_group_access(db, ctx=ctx, group_id=schedule.group_id)
+            group_repository.delete_schedule(db, schedule)
 
     def list_calendar_schedules(self, db: Session, *, date_from: date, date_to: date):
         return group_repository.list_active_schedules(db, date_from=date_from, date_to=date_to)

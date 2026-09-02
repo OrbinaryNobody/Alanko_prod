@@ -2,7 +2,7 @@ from datetime import date, datetime
 
 from sqlalchemy.orm import Session
 
-from consultations.models.consultation_slot import ConsultationSlot
+from consultations.models.consultation_slot import ConsultationAccessMode, ConsultationSlot, ConsultationSlotStatus
 from consultations.repositories.slot_repository import consultation_slot_repository
 from consultations.timezone import to_utc
 from core.config import settings
@@ -24,6 +24,10 @@ def consultation_price_for_participants(participant_count: int, capacity: int) -
 
 
 class SlotService:
+    @staticmethod
+    def _slots_overlap(start_a: datetime, end_a: datetime, start_b: datetime, end_b: datetime) -> bool:
+        return start_a < end_b and end_a > start_b
+
     def create_slot(
         self,
         db: Session,
@@ -47,11 +51,20 @@ class SlotService:
 
         if not settings.consultations_allow_overlapping_slots:
             for existing in consultation_slot_repository.list_for_day(db, day_id=day_id):
-                if existing.status != "ACTIVE":
+                if existing.status != ConsultationSlotStatus.ACTIVE.value or existing.teacher_id != teacher_id:
                     continue
-                overlap = existing.start_at < end_at and existing.end_at > start_at
-                if overlap:
-                    raise ValidationError("slot overlaps with an existing active consultation")
+                overlap = self._slots_overlap(start_at, end_at, existing.start_at, existing.end_at)
+                if not overlap:
+                    continue
+
+                if access_mode == ConsultationAccessMode.PUBLIC.value and existing.access_mode == ConsultationAccessMode.INVITED.value:
+                    raise ValidationError("Private consultation already occupies this time")
+                if access_mode == ConsultationAccessMode.INVITED.value and existing.access_mode == ConsultationAccessMode.PUBLIC.value:
+                    existing.status = ConsultationSlotStatus.CANCELLED.value
+                    continue
+                if access_mode == ConsultationAccessMode.INVITED.value and existing.access_mode == ConsultationAccessMode.INVITED.value:
+                    raise ValidationError("Another private consultation already occupies this time")
+                raise ValidationError("slot overlaps with an existing active consultation")
 
         slot = ConsultationSlot(
             day_id=day_id,

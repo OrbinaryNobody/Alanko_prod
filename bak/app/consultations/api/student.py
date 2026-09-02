@@ -8,7 +8,7 @@ from consultations.facade import consultations_facade
 from core.access import AccessContext
 from core.exceptions import DomainError
 from core.http import translate_domain_error
-from core.permissions import Permission, require_permission
+from core.permissions import Permission, require_permission, require_student_consultation_booking
 from db.database import get_db
 
 router = APIRouter(prefix="/consultations", tags=["consultations"]) 
@@ -89,7 +89,7 @@ def get_notifications(
 @router.post("/slots/{slot_id}/book", status_code=201)
 def book_slot(
     slot_id: int,
-    ctx: AccessContext = Depends(require_permission(Permission.BOOK_CONSULTATIONS)),
+    ctx: AccessContext = Depends(require_student_consultation_booking()),
     db: Session = Depends(get_db),
 ):
     try:
@@ -107,7 +107,7 @@ def book_slot(
 @router.post("/bookings/{participant_id}/cancel")
 def cancel_booking(
     participant_id: int,
-    ctx: AccessContext = Depends(require_permission(Permission.BOOK_CONSULTATIONS)),
+    ctx: AccessContext = Depends(require_student_consultation_booking()),
     db: Session = Depends(get_db),
 ):
     try:
@@ -124,7 +124,7 @@ def cancel_booking(
 @router.post("/invitations/{invitation_id}/accept")
 def accept_invitation(
     invitation_id: int,
-    ctx: AccessContext = Depends(require_permission(Permission.BOOK_CONSULTATIONS)),
+    ctx: AccessContext = Depends(require_student_consultation_booking()),
     db: Session = Depends(get_db),
 ):
     try:
@@ -148,7 +148,7 @@ def accept_invitation(
 @router.post("/invitations/{invitation_id}/decline")
 def decline_invitation(
     invitation_id: int,
-    ctx: AccessContext = Depends(require_permission(Permission.BOOK_CONSULTATIONS)),
+    ctx: AccessContext = Depends(require_student_consultation_booking()),
     db: Session = Depends(get_db),
 ):
     try:

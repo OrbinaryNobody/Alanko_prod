@@ -6,16 +6,20 @@ from typing import Any
 class GroupPolicy:
     @staticmethod
     def require_manage_group(ctx: AccessContext, group: Group) -> None:
-        if ctx.is_admin or ctx.can_manage(group.created_by):
+        if ctx.is_admin or ctx.can("manage_groups"):
             return
-        if any(member.user_id == ctx.user_id for member in group.members):
+        if ctx.can_manage(group.created_by):
+            return
+        if any(member.user_id == ctx.user_id for member in getattr(group, "members", []) or []):
             return
         raise PermissionError("Access denied: manage group")
 
     @staticmethod
     def require_view_group(ctx: AccessContext, group: Group) -> None:
-        if ctx.is_admin or ctx.can_manage(group.created_by):
+        if ctx.is_admin or ctx.can("view_groups"):
             return
-        if any(member.user_id == ctx.user_id for member in group.members):
+        if ctx.can_manage(group.created_by):
+            return
+        if any(member.user_id == ctx.user_id for member in getattr(group, "members", []) or []):
             return
         raise PermissionError("Access denied: view group")

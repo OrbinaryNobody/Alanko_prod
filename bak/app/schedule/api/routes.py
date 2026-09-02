@@ -9,6 +9,12 @@ from core.permissions import Permission, require_any_permission
 from db.database import get_db
 
 router = APIRouter(prefix="/calendar", tags=["calendar"])
+CALENDAR_ACCESS_PERMISSIONS = (
+    Permission.VIEW_CONSULTATIONS,
+    Permission.MANAGE_CONSULTATIONS,
+    Permission.VIEW_GROUPS,
+    Permission.MANAGE_GROUPS,
+)
 
 
 def _date_range(
@@ -29,10 +35,7 @@ def list_events(
     teacher_id: int | None = Query(default=None, ge=1),
     event_type: str | None = Query(default=None, alias="type"),
     status: str | None = Query(default=None),
-    ctx: AccessContext = Depends(require_any_permission(
-        Permission.VIEW_CONSULTATIONS,
-        Permission.MANAGE_CONSULTATIONS,
-    )),
+    ctx: AccessContext = Depends(require_any_permission(*CALENDAR_ACCESS_PERMISSIONS)),
     db: Session = Depends(get_db),
 ):
     start, end = _date_range(date_from, date_to)
@@ -54,10 +57,7 @@ def list_events(
 def list_days(
     date_from: date | None = Query(default=None),
     date_to: date | None = Query(default=None),
-    ctx: AccessContext = Depends(require_any_permission(
-        Permission.VIEW_CONSULTATIONS,
-        Permission.MANAGE_CONSULTATIONS,
-    )),
+    ctx: AccessContext = Depends(require_any_permission(*CALENDAR_ACCESS_PERMISSIONS)),
     db: Session = Depends(get_db),
 ):
     start, end = _date_range(date_from, date_to)

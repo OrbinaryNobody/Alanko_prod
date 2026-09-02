@@ -181,3 +181,52 @@ def test_program_creation_service_assigns_new_task_to_program_students():
     assert len(db.added) == 2
     assert {obj.enrollment_id for obj in db.added} == {10, 11}
     assert all(obj.program_task_id == 99 for obj in db.added)
+ё
+
+def test_group_service_create_schedule_commits_transaction():
+    service = GroupService()
+
+    class FakeDB:
+        def __init__(self):
+            self.committed = False
+            self.rolled_back = False
+
+        def query(self, model):
+            if model.__name__ == "User":
+                return SimpleNamespace(first=lambda *args, **kwargs: SimpleNamespace(id=3))
+            return SimpleNamespace(filter=lambda *args, **kwargs: SimpleNamespace(first=lambda: None))
+
+        def commit(self):
+            self.committed = True
+
+        def rollback(self):
+            self.rolled_back = True
+
+    class FakeGroup:
+        id = 7
+
+    db = FakeDB()
+    service.ensure_group_access = lambda db_arg, ctx, group_id: FakeGroup()
+
+    original_list = group_repository.list_schedules
+    original_create = group_repository.create_schedule
+    group_repository.list_schedules = lambda db_arg, group_id: []
+    group_repository.create_schedule = lambda db_arg, schedule: (db_arg.commit(), schedule)
+
+    try:
+        service.create_schedule(
+            db,
+            ctx=AccessContext.from_parts(user_id=1, roles=["admin"], permissions=[], is_admin=True),
+            group_id=7,
+            teacher_id=3,
+            weekday=1,
+            start_time=SimpleNamespace(__lt__=lambda self, other: True, __gt__=lambda self, other: True),
+            end_time=SimpleNamespace(__lt__=lambda self, other: True, __gt__=lambda self, other: True),
+            valid_from=None,
+            valid_until=None,
+        )
+    finally:
+        group_repository.list_schedules = original_list
+        group_repository.create_schedule = original_create
+
+    assert db.committed is True
