@@ -249,7 +249,7 @@ window.getStudentImageUrl = function(student) {
     return trimmed;
   }
 
-  const apiBase = window.ALANKO_API_URL || 'http://localhost:8000/api';
+  const apiBase = window.ALANKO_API_URL || 'https://alanko.online/api';
   const origin = apiBase.replace(/\/api\/?$/, '');
 
   // Если относительный путь со слэшем
