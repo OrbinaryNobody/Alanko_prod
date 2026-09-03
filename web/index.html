@@ -792,7 +792,14 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: top center;
+}
+
+.collab-image.left-img img {
+  object-position: 0% top;
+}
+
+.collab-image.right-img img {
+  object-position: 90% top;
 }
 
 /* Адаптивность */
@@ -967,156 +974,6 @@
     background-position: 65% bottom;
   }
 }
-
-
-:root {
-  /* Временные переменные плоской минималистичной палитры */
-  --site-bg: #0a0a0a;
-  --site-text: #ffffff;
-  --site-accent: #ffffff;
-  --site-muted: #888888;
-}
-
-.collab-section {
-  position: relative;
-  background-color: var(--site-bg);
-  color: var(--site-text);
-  min-height: 85vh;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  padding: 100px 0;
-}
-
-.collab-container {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  justify-content: center;
-  gap: 80px;
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.collab-block {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  width: 50%;
-}
-
-.collab-headings {
-  position: relative;
-  margin-bottom: 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  line-height: 0.95;
-}
-
-.title-serif {
-  font-family: 'Times New Roman', Times, serif;
-  font-size: 5.5rem;
-  font-weight: 400;
-  letter-spacing: -0.03em;
-  color: var(--site-text);
-}
-
-.title-sans {
-  font-family: sans-serif;
-  font-size: 5rem;
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  text-transform: uppercase;
-  color: var(--site-text);
-}
-
-/* Линия строго под текстом */
-.heading-base-line {
-  width: 120%;
-  height: 2px;
-  background-color: var(--site-accent);
-  margin-top: 8px;
-}
-
-.collab-desc {
-  font-size: 1rem;
-  line-height: 1.5;
-  color: var(--site-muted);
-  margin-bottom: 32px;
-  max-width: 260px;
-}
-
-.collab-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 0;
-  border: 1px solid var(--site-accent);
-  background-color: transparent;
-  color: var(--site-text);
-  font-size: 1.5rem;
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.collab-btn:hover {
-  background-color: var(--site-text);
-  color: var(--site-bg);
-}
-
-.collab-image {
-  position: absolute;
-  bottom: 0;
-  height: 85%;
-  width: 25vw;
-  max-width: 400px;
-  z-index: 1;
-}
-
-.collab-image.left-img {
-  left: 0;
-}
-
-.collab-image.right-img {
-  right: 0;
-}
-
-.collab-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top center;
-  filter: grayscale(100%);
-}
-
-@media (max-width: 1200px) {
-  .title-serif { font-size: 4rem; }
-  .title-sans { font-size: 3.5rem; }
-  .collab-image { width: 22vw; }
-}
-
-@media (max-width: 768px) {
-  .collab-section {
-    padding: 80px 0;
-    min-height: auto;
-  }
-  .collab-container {
-    flex-direction: column;
-    gap: 60px;
-  }
-  .collab-block {
-    width: 100%;
-    padding: 0 24px;
-  }
-  .collab-image {
-    display: none;
-  }
-}
-
-
 
 /* ============================================================
    БЛОК: ЧАСТНЫЕ ТРЕНИРОВКИ (PRICING)
@@ -2652,7 +2509,7 @@
 
   <!-- Боковые изображения по краям страницы -->
   <div class="collab-image left-img">
-    <img src="https://images.unsplash.com/photo-1547153760-18fc86324498?w=800" alt="Alanko Dance">
+    <img src="images/logo_alina_collaboration.PNG" alt="Alanko Dance">
   </div>
 
   <div class="container collab-container">
@@ -2717,7 +2574,7 @@
   </div>
 
   <div class="collab-image right-img">
-    <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=800" alt="Partner Dance">
+    <img src="images/My_territory_2.png" alt="My Territory">
   </div>
 </section>
 <section class="students-section" id="students">
@@ -2948,12 +2805,12 @@ MODAL STUDENT PROFILE
             <!-- Вопрос 1 -->
             <div class="faq-item">
                 <button class="faq-question">
-                    Нужна ли специальная подготовка для начала занятий?
+                    Что такое технический интенсив «ALANKO» и зачем он нужен?
                     <iconify-icon icon="solar:add-circle-bold" class="faq-icon"></iconify-icon>
                 </button>
                 <div class="faq-answer">
                     <div class="faq-answer-content">
-                        Нет, в Studio Alanko есть группы для всех уровней подготовки — от полных новичков ("Zero Level") до профессиональных танцоров. Наши педагоги помогут вам адаптироваться с первого занятия.
+                        Это дополнительный день в неделю, полностью посвящённый чистой технике. <br>Здесь мы не ставим и не отрабатываем танцы, а развиваем мышцы кора, выворотность, координацию, правильные прыжки и вращения.  Это  дает детям сильную базу для дальнейшего развития в более взрослом возрасте, а также спасает детей от травм коленей, спины и голеностопа на конкурсах.
                     </div>
                 </div>
             </div>
@@ -2961,12 +2818,12 @@ MODAL STUDENT PROFILE
             <!-- Вопрос 2 -->
             <div class="faq-item">
                 <button class="faq-question">
-                    Как записаться на пробное занятие?
+                    Можно ли отслеживать прогресс ребёнка? Как вы оцениваете успехи?
                     <iconify-icon icon="solar:add-circle-bold" class="faq-icon"></iconify-icon>
                 </button>
                 <div class="faq-answer">
                     <div class="faq-answer-content">
-                        Вы можете оставить заявку через форму внизу сайта ("Стать клиентом") или написать нам в любой удобный мессенджер. Администратор подберет группу и время.
+                        Да! У нас есть система чек-листов по каждому ребёнку: шпагаты, мостик, баланс на полупальцах, высота прыжка, гибкость. Кроме того, Вы можете видеть эти данные в процентах в личном кабинете на нашем сайте. Также мы проводим открытые уроки по развитию данных, и техническим классам, где Вы видите динамику «было/стало» своими глазами.
                     </div>
                 </div>
             </div>
@@ -2974,12 +2831,12 @@ MODAL STUDENT PROFILE
             <!-- Вопрос 3 -->
             <div class="faq-item">
                 <button class="faq-question">
-                    Какие возрастные ограничения в вашей студии?
+                    Что делать, если ребёнок пропустил занятие? Можно ли его перенести?
                     <iconify-icon icon="solar:add-circle-bold" class="faq-icon"></iconify-icon>
                 </button>
                 <div class="faq-answer">
                     <div class="faq-answer-content">
-                        Мы работаем с учениками от 6 лет. У нас есть специализированные детские группы, подростковые команды и взрослые составы без верхнего возрастного ценза.
+                        Пропущенные занятия не переносятся на следующий месяц и не возвращаются, потому что мы оплачиваем зал и работу педагога независимо от вашего присутствия. Исключение — болезнь. По справке от врача мы можем «заморозить» абонемент (приостановить его действие) не более чем на 14 дней. Если заморозка дольше — делаем возврат за остаток тренировок.
                     </div>
                 </div>
             </div>
@@ -2987,12 +2844,12 @@ MODAL STUDENT PROFILE
             <!-- Вопрос 4 -->
             <div class="faq-item">
                 <button class="faq-question">
-                    Можно ли арендовать зал для самостоятельных тренировок?
+                    Что входит в стоимость абонемента, а что оплачивается отдельно?
                     <iconify-icon icon="solar:add-circle-bold" class="faq-icon"></iconify-icon>
                 </button>
                 <div class="faq-answer">
                     <div class="faq-answer-content">
-                        Да, наши залы доступны для почасовой аренды. Для действующих учеников студии действуют специальные льготные условия на самоподготовку.
+                        В абонемент входят только регулярные тренировки по расписанию. Всё остальное оплачивается отдельно:<br>· Семинары и мастер-классы;<br>· Пошив костюмов и фирменной формы;<br>· Участие в конкурсах, соревнованиях, концертах;<br>· Выездные поездки (транспорт, проживание, питание).
                     </div>
                 </div>
             </div>
@@ -3000,12 +2857,12 @@ MODAL STUDENT PROFILE
             <!-- Вопрос 5 -->
             <div class="faq-item">
                 <button class="faq-question">
-                    Что брать с собой на первую тренировку?
+                    Обязательно ли участвовать в конкурсах и концертах?
                     <iconify-icon icon="solar:add-circle-bold" class="faq-icon"></iconify-icon>
                 </button>
                 <div class="faq-answer">
                     <div class="faq-answer-content">
-                        Удобную спортивную одежду, которая не сковывает движения, чистую сменную обувь (кроссовки или кеды) и хорошее настроение. Вода в студии всегда есть.
+                        Да, обязательно. Это часть учебного процесса и профессионального роста. Участие в соревнованиях и отчётных концертах развивает дисциплину, уверенность и сценический опыт.
                     </div>
                 </div>
             </div>
@@ -3013,12 +2870,12 @@ MODAL STUDENT PROFILE
             <!-- Вопрос 6 -->
             <div class="faq-item">
                 <button class="faq-question">
-                    Участвуют ли ваши ученики в соревнованиях?
+                    Можно ли прервать занятия и расторгнуть договор?
                     <iconify-icon icon="solar:add-circle-bold" class="faq-icon"></iconify-icon>
                 </button>
                 <div class="faq-answer">
                     <div class="faq-answer-content">
-                        Конечно! Мы формируем команды для участия в федеральных и международных чемпионатах. Наши ученики регулярно привозят награды и занимают топовые места в рейтингах.
+                        Да. Вы можете расторгнуть договор по своему желанию, предупредив нас за 14 дней. Возврат денег мы делаем только за оставшиеся тренировки текущего абонемента (по количеству неиспользованных занятий). Пропущенные занятия не возвращаются. Если же договор расторгается по нашей инициативе (например, при систематических пропусках без уважительной причины), возврат также производится за остаток тренировок.
                     </div>
                 </div>
             </div>
